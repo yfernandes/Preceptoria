@@ -1,0 +1,14 @@
+[env]
+  NODE_ENV = "development"
+
+[package]
+  type = "module"
+
+[ts]
+  transpileOnly = true
+  jsx = "react"
+  target = "esnext"
+
+[build]
+  sourceMap = true
+  minify = false

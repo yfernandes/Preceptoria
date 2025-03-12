@@ -1,0 +1,16 @@
+export { BaseEntity } from "./baseEntity";
+export { User } from "./user.entity";
+export { Document } from "./document.entity";
+export { Classes } from "./classes.entity";
+export { Course } from "./course.entity";
+export { Hospital } from "./hospital.entity";
+export { HospitalManager } from "./hospitalManager.entity";
+export { OrgAdmin } from "./OrgAdmin.entity";
+export { Preceptor } from "./preceptor.entity";
+export { Role } from "./role.abstract";
+export { School } from "./school.entity";
+export { Shift } from "./shift.entity";
+export { Student } from "./student.entity";
+export { Supervisor } from "./supervisor.entity";
+export { SysAdmin } from "./SysAdmin.entity";
+export { Organization } from "./organization.abstract";

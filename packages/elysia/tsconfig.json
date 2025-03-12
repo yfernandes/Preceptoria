@@ -1,0 +1,42 @@
+{
+	"compilerOptions": {
+		/* Language and Environment */
+		"target": "ESNext" /* Bun works well with ESNext */,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+
+		/* Modules */
+		"module": "ES2022" /* Ensure compatibility with ES module syntax */,
+		"moduleResolution": "node" /* Use Bun's module resolution */,
+		"types": ["bun-types" /* Bun-specific types for better compatibility */],
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+
+		/* Type Checking */
+		"strict": true /* Keep TypeScript's strict type checking */,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noImplicitOverride": true,
+		"skipLibCheck": true /* Skip checking libraries for faster compilation */,
+
+		/* Completeness */
+		"skipDefaultLibCheck": true,
+
+		/* Output Settings */
+		"declaration": true /* Optional if you need type declarations */,
+		"declarationMap": true,
+		"sourceMap": true /* If debugging with Bun, sourcemaps are useful */,
+
+		/* Others */
+		"forceConsistentCasingInFileNames": true /* Ensure consistent file name casing */
+	},
+	"include": [
+		"src",
+		"eslint.config.mjs",
+		"drizzle.config.ts",
+		"types/types.d.ts",
+		"lib"
+	],
+	"exclude": ["node_modules" /* Exclude node_modules from the compilation */]
+}
