@@ -13,9 +13,9 @@ export const adminController = new Elysia({ prefix: "admin" })
 	.use(authMiddleware)
 	.post(
 		"/",
-		async ({ requester, error, body: { userId } }) => {
+		async ({ requester, status, body: { userId } }) => {
 			try {
-				if (!requester.sysAdminId) return error(401);
+				if (!requester.sysAdminId) return status(401);
 
 				const user = await db.user.findOne({ id: userId });
 				if (!user) {
@@ -26,20 +26,20 @@ export const adminController = new Elysia({ prefix: "admin" })
 				await db.em.persistAndFlush(sysAdmin);
 				return sysAdmin;
 			} catch (err) {
-				return error(500, { err });
+				return status(500, { err });
 			}
 		},
 		createSysAdminDto
 	)
-	.get("/:id", async ({ requester, error, params: { id } }) => {
+	.get("/:id", async ({ requester, status, params: { id } }) => {
 		try {
 			if (requester.sysAdminId !== id) {
-				return error(401);
+				return status(401);
 			}
 			// Used only by each SysAdmin
 			return await db.sysAdmin.findOne({ id });
 		} catch (err) {
-			return error(500, { err });
+			return status(500, { err });
 		}
 	})
 	// .patch("/:id", "Update One") // Nothing to do here since SysAdmins don't have any properties

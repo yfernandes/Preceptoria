@@ -18,7 +18,7 @@ export async function hasPermission(
 		// Own Resources
 		if (permissions.includes(`${resource}:${action}_Own`)) {
 			// Assuming Managed follows the same ownership pattern
-			const checkOwnership = resolvers[role][resource]?.Managed;
+			const checkOwnership = resolvers[role][resource]?.Own;
 			if (!checkOwnership) {
 				return false;
 			}
@@ -70,7 +70,14 @@ const resolvers: Resolvers = {
 				return student?.class.id == resourceId;
 			},
 		},
-		Shift: {},
+		Shift: {
+			Own: async (requester, resourceId) => {
+				const student = await db.student.findOne({ id: requester.studentId });
+				return (
+					student?.shifts.exists((shift) => shift.id === resourceId) ?? false
+				);
+			},
+		},
 	},
 	Supervisor: {},
 };
