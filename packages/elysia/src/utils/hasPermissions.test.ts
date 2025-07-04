@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import { hasPermission } from "./hasPermissions";
-import { Resource, Actions, Modifiers } from "./permissions";
+import { Resource, Actions } from "./permissions";
 import { UserRoles } from "../entities/role.abstract";
 import { CachedUserType } from "../middlewares/auth";
 
