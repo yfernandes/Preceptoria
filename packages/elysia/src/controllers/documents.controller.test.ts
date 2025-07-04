@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, mock } from "bun:test";
 import { Document, DocumentType, DocumentStatus } from "../entities/document.entity";
 import { User } from "../entities/user.entity";
-import { Student } from "../entities/student.entity";
 
 // Mock the entities for controller testing
 const mockDocument = {
@@ -25,10 +24,6 @@ const mockUser = {
   roles: ["Student"],
 } as unknown as User;
 
-const mockStudent = {
-  id: "student-123",
-  user: mockUser,
-} as unknown as Student;
 
 describe("Document Controller (with mocked entities)", () => {
   beforeEach(() => {
@@ -44,8 +39,6 @@ describe("Document Controller (with mocked entities)", () => {
       const notes = "Document looks good";
 
       // Mock the database find operations
-      const mockFindDocument = mock(() => Promise.resolve(mockDocument));
-      const mockFindUser = mock(() => Promise.resolve(mockUser));
 
       // Mock the document's canBeVerified method
       mockDocument.canBeVerified = mock(() => true);
@@ -82,7 +75,6 @@ describe("Document Controller (with mocked entities)", () => {
       const userId = "user-123";
 
       // Mock the database to return null
-      const mockFindDocument = mock(() => Promise.resolve(null));
 
       // Act
       const result = await approveDocument(documentId, userId);
