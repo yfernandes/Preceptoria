@@ -1,9 +1,10 @@
-import Elysia, { t } from "elysia";
+import Elysia, { status as error, t } from "elysia";
 import { Student } from "../entities";
 import { db } from "../db";
 import { authMiddleware } from "../middlewares/auth";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
+import { UserRoles } from "../entities/role.abstract";
 
 const createStudentDto = {
 	body: t.Object({
@@ -25,146 +26,130 @@ export const studentsController = new Elysia({ prefix: "students" })
 	.use(authMiddleware)
 	.post(
 		"/",
-		async ({ body: { userId, classId }, requester, status }) => {
-			// Check if requester has permission to create students
-			if (
-				!(await hasPermission(
+		async ({ body: { userId, classId }, requester }) => {
+			try {
+				// Check if requester has permission to create students in this class
+				const hasAccess = await hasPermission(
 					requester,
 					Resource.Student,
 					Actions.Create,
-					"*" // For creation, we use "*" as resourceId
-				))
-			) {
-				status(403);
-				return { message: "You do not have permission to create students." };
-			}
+					classId // Using classId as the resource context
+				);
+				
+				if (!hasAccess) {
+					return error(403, { 
+						success: false, 
+						message: "Access denied. You don't have permission to create students in this class." 
+					});
+				}
 
-			const user = await db.user.findOne({ id: userId });
-			if (!user) {
-				status(404);
-				return { message: "User not found!" };
-			}
+				const user = await db.user.findOne({ id: userId });
+				if (!user) {
+					return error(404, { success: false, message: "User not found" });
+				}
 
-			const classes = await db.classes.findOne({ id: classId });
-			if (!classes) {
-				status(404);
-				return { message: "Class not found!" };
-			}
+				const classes = await db.classes.findOne({ id: classId });
+				if (!classes) {
+					return error(404, { success: false, message: "Class not found" });
+				}
 
-			// Check if user is already a student
-			const existingStudent = await db.student.findOne({ user: { id: userId } });
-			if (existingStudent) {
-				status(409);
-				return { message: "User is already a student!" };
-			}
+				// Check if user is already a student
+				const existingStudent = await db.student.findOne({ user: { id: userId } });
+				if (existingStudent) {
+					return error(409, { success: false, message: "User is already a student" });
+				}
 
-			try {
 				const student = new Student(user, classes);
 				await db.em.persistAndFlush(student);
-				return student;
-			} catch (error) {
-				status(500);
-				return { message: "Failed to create student", error: error instanceof Error ? error.message : "Unknown error" };
+				
+				return {
+					success: true,
+					message: "Student created successfully",
+					data: student
+				};
+			} catch (err) {
+				console.error("Error creating student:", err);
+				return error(500, { success: false, message: "Internal server error" });
 			}
 		},
 		createStudentDto
 	)
-	.get("/", async ({ requester, status }) => {
-		// Check if requester has permission to read students
-		if (
-			!(await hasPermission(
-				requester,
-				Resource.Student,
-				Actions.Read,
-				"*" // For listing, we use "*" as resourceId
-			))
-		) {
-			status(403);
-			return { message: "You do not have permission to access student data." };
-		}
-
+	.get("/", async ({ requester, query }) => {
 		try {
-			if (requester.sysAdminId) {
-				// Full access
-				return await db.student.findAll({
-					populate: ["user", "class", "shifts"],
-				});
+			const { classId, supervisorId, limit = 10, offset = 0 } = query;
+			
+			// Build filter based on user permissions and role
+			let filter: any = {};
+			
+			// Apply query filters
+			if (classId) {
+				filter.class = { id: classId };
 			}
-
-			if (requester.supervisorId) {
-				// Supervisors can access students under their classes
-				return await db.student.findAll({
-					where: {
-						class: {
-							course: {
-								supervisor: {
-									id: requester.supervisorId,
-								},
-							},
-						},
-					},
-					populate: ["user", "class", "shifts"],
-				});
+			
+			if (supervisorId) {
+				filter.class = { 
+					...filter.class,
+					course: { supervisor: { id: supervisorId } }
+				};
 			}
-
-			if (requester.preceptorId) {
-				// Preceptors can access students in their shifts
-				return await db.student.findAll({
-					where: {
-						shifts: {
-							preceptor: {
-								id: requester.preceptorId,
-							},
-						},
-					},
-					populate: ["user", "class", "shifts"],
-				});
+			
+			// Apply role-based filtering for data isolation
+			if (requester.roles.includes(UserRoles.Student)) {
+				// Students can only see themselves
+				filter.id = requester.id;
+			} else if (requester.roles.includes(UserRoles.Supervisor)) {
+				// Supervisors can see students in their classes
+				// This will be handled by the permission system in the query
+			} else if (requester.roles.includes(UserRoles.HospitalManager)) {
+				// HospitalManagers can see students with shifts at their hospital
+				// This requires complex filtering based on shift assignments
+			} else if (requester.roles.includes(UserRoles.Preceptor)) {
+				// Preceptors can see students in their assigned shifts
+				// This requires complex filtering based on shift assignments
+			} else if (requester.roles.includes(UserRoles.OrgAdmin)) {
+				// OrgAdmins can see all students within their organization
+				// This requires filtering by organization
 			}
-
-			if (requester.hospitalManagerId) {
-				// Hospital managers can access students in their hospital's shifts
-				return await db.student.findAll({
-					where: {
-						shifts: {
-							hospital: {
-								manager: {
-									id: requester.hospitalManagerId,
-								},
-							},
-						},
-					},
-					populate: ["user", "class", "shifts"],
-				});
-			}
-
-			if (requester.studentId) {
-				// Students can only access themselves
-				return await db.student.findOne(
-					{ id: requester.studentId },
-					{ populate: ["user", "class", "shifts"] }
+			
+			// Get students with pagination
+			const students = await db.student.find(filter, {
+				populate: ['user', 'class', 'shifts'],
+				limit: parseInt(limit as string),
+				offset: parseInt(offset as string),
+				orderBy: { createdAt: 'DESC' }
+			});
+			
+			// Filter students based on permissions
+			const accessibleStudents = [];
+			for (const student of students) {
+				const hasAccess = await hasPermission(
+					requester,
+					Resource.Student,
+					Actions.Read,
+					student.id
 				);
+				
+				if (hasAccess) {
+					accessibleStudents.push(student);
+				}
 			}
-
-			status(403);
-			return { message: "You do not have permission to access student data." };
-		} catch (error) {
-			status(500);
-			return { message: "Failed to fetch students", error: error instanceof Error ? error.message : "Unknown error" };
+			
+			return {
+				success: true,
+				data: accessibleStudents,
+				pagination: {
+					total: accessibleStudents.length,
+					limit: parseInt(limit as string),
+					offset: parseInt(offset as string),
+					hasMore: accessibleStudents.length === parseInt(limit as string)
+				}
+			};
+		} catch (err) {
+			console.error("Error fetching students:", err);
+			return error(500, { success: false, message: "Internal server error" });
 		}
 	})
-	.get("/:id", async ({ requester, status, params: { id: studentId } }) => {
-		if (
-			!(await hasPermission(
-				requester,
-				Resource.Student,
-				Actions.Read,
-				studentId
-			))
-		) {
-			status(403);
-			return { message: "You do not have permission to access this student." };
-		}
-
+	.get("/:id", async ({ requester, params: { id: studentId } }) => {
 		try {
 			const student = await db.student.findOne(
 				{ id: studentId },
@@ -172,40 +157,59 @@ export const studentsController = new Elysia({ prefix: "students" })
 			);
 			
 			if (!student) {
-				status(404);
-				return { message: "Student not found" };
+				return error(404, { success: false, message: "Student not found" });
 			}
 
-			return student;
-		} catch (error) {
-			status(500);
-			return { message: "Failed to fetch student", error: error instanceof Error ? error.message : "Unknown error" };
+			// Check permissions using our comprehensive permission system
+			const hasAccess = await hasPermission(
+				requester,
+				Resource.Student,
+				Actions.Read,
+				studentId
+			);
+			
+			if (!hasAccess) {
+				return error(403, { 
+					success: false, 
+					message: "Access denied. You don't have permission to view this student." 
+				});
+			}
+
+			return {
+				success: true,
+				data: student
+			};
+		} catch (err) {
+			console.error("Error fetching student:", err);
+			return error(500, { success: false, message: "Internal server error" });
 		}
 	})
 	.patch(
 		"/:id",
-		async ({ requester, status, params: { id: studentId }, body }) => {
-			if (
-				!(await hasPermission(
+		async ({ requester, params: { id: studentId }, body }) => {
+			try {
+				// Check permissions - Supervisors can update students in their classes
+				const hasAccess = await hasPermission(
 					requester,
 					Resource.Student,
 					Actions.Update,
 					studentId
-				))
-			) {
-				status(403);
-				return { message: "You do not have permission to update this student." };
-			}
+				);
+				
+				if (!hasAccess) {
+					return error(403, { 
+						success: false, 
+						message: "Access denied. You don't have permission to update this student." 
+					});
+				}
 
-			try {
 				const student = await db.student.findOne(
 					{ id: studentId },
 					{ populate: ["user", "class"] }
 				);
 				
 				if (!student) {
-					status(404);
-					return { message: "Student not found" };
+					return error(404, { success: false, message: "Student not found" });
 				}
 
 				// Update user information if provided
@@ -223,46 +227,72 @@ export const studentsController = new Elysia({ prefix: "students" })
 				if (body.classId !== undefined) {
 					const newClass = await db.classes.findOne({ id: body.classId });
 					if (!newClass) {
-						status(404);
-						return { message: "Class not found" };
+						return error(404, { success: false, message: "Class not found" });
 					}
+					
+					// Check if user has permission to move student to this class
+					const canMoveToClass = await hasPermission(
+						requester,
+						Resource.Student,
+						Actions.Update,
+						body.classId
+					);
+					
+					if (!canMoveToClass) {
+						return error(403, { 
+							success: false, 
+							message: "Access denied. You don't have permission to move this student to the specified class." 
+						});
+					}
+					
 					student.class = newClass;
 				}
 
 				await db.em.flush();
-				return student;
-			} catch (error) {
-				status(500);
-				return { message: "Failed to update student", error: error instanceof Error ? error.message : "Unknown error" };
+				
+				return {
+					success: true,
+					message: "Student updated successfully",
+					data: student
+				};
+			} catch (err) {
+				console.error("Error updating student:", err);
+				return error(500, { success: false, message: "Internal server error" });
 			}
 		},
 		updateStudentDto
 	)
-	.delete("/:id", async ({ requester, status, params: { id: studentId } }) => {
-		if (
-			!(await hasPermission(
+	.delete("/:id", async ({ requester, params: { id: studentId } }) => {
+		try {
+			// Check permissions - Supervisors can delete students from their classes
+			const hasAccess = await hasPermission(
 				requester,
 				Resource.Student,
 				Actions.Delete,
 				studentId
-			))
-		) {
-			status(403);
-			return { message: "You do not have permission to delete this student." };
-		}
+			);
+			
+			if (!hasAccess) {
+				return error(403, { 
+					success: false, 
+					message: "Access denied. You don't have permission to delete this student." 
+				});
+			}
 
-		try {
 			const student = await db.student.findOne({ id: studentId });
 			
 			if (!student) {
-				status(404);
-				return { message: "Student not found" };
+				return error(404, { success: false, message: "Student not found" });
 			}
 
 			await db.em.removeAndFlush(student);
-			return { message: "Student deleted successfully" };
-		} catch (error) {
-			status(500);
-			return { message: "Failed to delete student", error: error instanceof Error ? error.message : "Unknown error" };
+			
+			return {
+				success: true,
+				message: "Student deleted successfully"
+			};
+		} catch (err) {
+			console.error("Error deleting student:", err);
+			return error(500, { success: false, message: "Internal server error" });
 		}
-	});
+	}) ;

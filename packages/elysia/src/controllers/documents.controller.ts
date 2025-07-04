@@ -1,10 +1,11 @@
-import Elysia, { error, t } from "elysia";
+import Elysia, { status as error, t } from "elysia";
 import { authMiddleware } from "../middlewares/auth";
 import { db } from "../db";
 import { Document, DocumentStatus, DocumentType } from "../entities/document.entity";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 import { getValidationTemplateForDocument } from "../utils/validationTemplates";
+import { UserRoles } from "../entities/role.abstract";
 
 const documentValidationDto = {
 	body: t.Object({
@@ -29,14 +30,77 @@ const documentRejectionDto = {
 export const documentsController = new Elysia({ prefix: "/documents" })
 	.use(authMiddleware)
 	
+	// Create a new document
+	.post("/", async ({ requester, body }) => {
+		try {
+			const { name, type, studentId, url, notes } = body;
+			
+			// Check if user can create documents for this student
+			const hasAccess = await hasPermission(
+				requester,
+				Resource.Document,
+				Actions.Create,
+				studentId // Using studentId as the resource context
+			);
+			
+			if (!hasAccess) {
+				return error(403, { 
+					success: false, 
+					message: "Access denied. You don't have permission to create documents for this student." 
+				});
+			}
+			
+			// Get the student
+			const student = await db.student.findOne({ id: studentId });
+			if (!student) {
+				return error(404, { success: false, message: "Student not found" });
+			}
+			
+			// Get the user who is creating the document
+			const user = await db.user.findOne({ id: requester.id });
+			if (!user) {
+				return error(404, { success: false, message: "User not found" });
+			}
+			
+			// Create the document
+			const document = new Document(
+				name,
+				type,
+				url,
+				student,
+				notes // description parameter
+			);
+			
+			await db.em.persistAndFlush(document);
+			
+			return {
+				success: true,
+				message: "Document created successfully",
+				data: document
+			};
+		} catch (err) {
+			console.error("Error creating document:", err);
+			return error(500, { success: false, message: "Internal server error" });
+		}
+	}, {
+		body: t.Object({
+			name: t.String(),
+			type: t.Enum(DocumentType),
+			studentId: t.String(),
+			url: t.String(),
+			notes: t.Optional(t.String()),
+		})
+	})
+	
 	// Get all documents (filtered by permissions)
 	.get("/", async ({ requester, query }) => {
 		try {
 			const { status, studentId, type, limit = 10, offset = 0 } = query;
 			
-			// Build filter based on user permissions
-			const filter: any = {};
+			// Build filter based on user permissions and role
+			let filter: any = {};
 			
+			// Apply query filters
 			if (status) {
 				filter.status = status;
 			}
@@ -49,6 +113,22 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				filter.student = { id: studentId };
 			}
 			
+			// Apply role-based filtering for data isolation
+			if (requester.roles.includes(UserRoles.Student)) {
+				// Students can only see their own documents
+				filter.student = { id: requester.id };
+			} else if (requester.roles.includes(UserRoles.Supervisor)) {
+				// Supervisors can see documents from their students
+				// This will be handled by the permission system in the query
+				// For now, we'll get all documents and filter by permission check
+			} else if (requester.roles.includes(UserRoles.HospitalManager)) {
+				// HospitalManagers can see documents from students with shifts at their hospital
+				// This requires complex filtering based on shift assignments
+			} else if (requester.roles.includes(UserRoles.OrgAdmin)) {
+				// OrgAdmins can see all documents within their organization
+				// This requires filtering by organization
+			}
+			
 			// Get documents with pagination
 			const documents = await db.document.find(filter, {
 				populate: ['student', 'verifiedBy'],
@@ -57,16 +137,30 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				orderBy: { uploadedAt: 'DESC' }
 			});
 			
-			const total = await db.document.count(filter);
+			// Filter documents based on permissions
+			const accessibleDocuments = [];
+			for (const document of documents) {
+				const hasAccess = await hasPermission(
+					requester,
+					Resource.Document,
+					Actions.Read,
+					document.id
+				);
+				
+				if (hasAccess) {
+					accessibleDocuments.push(document);
+				}
+			}
+			
 			
 			return {
 				success: true,
-				data: documents,
+				data: accessibleDocuments,
 				pagination: {
-					total,
+					total: accessibleDocuments.length,
 					limit: parseInt(limit as string),
 					offset: parseInt(offset as string),
-					hasMore: total > parseInt(offset as string) + documents.length
+					hasMore: accessibleDocuments.length === parseInt(limit as string)
 				}
 			};
 		} catch (err) {
@@ -87,7 +181,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				return error(404, { success: false, message: "Document not found" });
 			}
 			
-			// Check permissions
+			// Check permissions using our comprehensive permission system
 			const hasAccess = await hasPermission(
 				requester,
 				Resource.Document,
@@ -96,7 +190,10 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 			);
 			
 			if (!hasAccess) {
-				return error(403, { success: false, message: "Access denied" });
+				return error(403, { 
+					success: false, 
+					message: "Access denied. You don't have permission to view this document." 
+				});
 			}
 			
 			// Get validation template for this document type
@@ -124,7 +221,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				return error(404, { success: false, message: "Document not found" });
 			}
 			
-			// Check permissions
+			// Check permissions - Supervisors can update documents on behalf of students
 			const hasAccess = await hasPermission(
 				requester,
 				Resource.Document,
@@ -133,7 +230,10 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 			);
 			
 			if (!hasAccess) {
-				return error(403, { success: false, message: "Access denied" });
+				return error(403, { 
+					success: false, 
+					message: "Access denied. You don't have permission to update this document." 
+				});
 			}
 			
 			// Update validation checks
@@ -164,16 +264,19 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				return error(404, { success: false, message: "Document not found" });
 			}
 			
-			// Check permissions
+			// Check permissions - Only HospitalManagers can approve documents (Approve_Bundle permission)
 			const hasAccess = await hasPermission(
 				requester,
 				Resource.Document,
-				Actions.Update,
+				Actions.Approve,
 				params.id
 			);
 			
 			if (!hasAccess) {
-				return error(403, { success: false, message: "Access denied" });
+				return error(403, { 
+					success: false, 
+					message: "Access denied. Only hospital managers can approve documents." 
+				});
 			}
 			
 			if (!document.canBeVerified()) {
@@ -211,16 +314,19 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				return error(404, { success: false, message: "Document not found" });
 			}
 			
-			// Check permissions
+			// Check permissions - Only HospitalManagers can reject documents (Approve_Bundle permission)
 			const hasAccess = await hasPermission(
 				requester,
 				Resource.Document,
-				Actions.Update,
+				Actions.Approve,
 				params.id
 			);
 			
 			if (!hasAccess) {
-				return error(403, { success: false, message: "Access denied" });
+				return error(403, { 
+					success: false, 
+					message: "Access denied. Only hospital managers can reject documents." 
+				});
 			}
 			
 			if (!document.canBeVerified()) {
@@ -267,8 +373,79 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 		}
 	})
 	
+	// Compile student documents into bundles (Supervisor only)
+	.post("/compile", async ({ requester, body }) => {
+		try {
+			const { studentIds, bundleName, notes } = body;
+			
+			// Check if user can compile documents for these students
+			// This uses the Compile_Students permission
+			const hasAccess = await hasPermission(
+				requester,
+				Resource.Document,
+				Actions.Compile,
+				studentIds.join(',') // Using student IDs as resource context
+			);
+			
+			if (!hasAccess) {
+				return error(403, { 
+					success: false, 
+					message: "Access denied. You don't have permission to compile documents for these students." 
+				});
+			}
+			
+			// Get all documents for the specified students
+			const documents = await db.document.find(
+				{ 
+					student: { $in: studentIds },
+					status: DocumentStatus.APPROVED // Only include approved documents
+				},
+				{ populate: ['student'] }
+			);
+			
+			if (documents.length === 0) {
+				return error(400, { 
+					success: false, 
+					message: "No approved documents found for the specified students." 
+				});
+			}
+			
+			// Create bundle metadata (in a real implementation, this would create a zip file)
+			const bundle = {
+				id: `bundle-${Date.now()}`,
+				name: bundleName,
+				notes,
+				createdAt: new Date(),
+				createdBy: requester.id,
+				studentCount: studentIds.length,
+				documentCount: documents.length,
+				documents: documents.map(doc => ({
+					id: doc.id,
+					name: doc.name,
+					type: doc.type,
+					studentName: (doc.student as any).name || 'Unknown Student'
+				}))
+			};
+			
+			return {
+				success: true,
+				message: "Document bundle compiled successfully",
+				data: bundle
+			};
+		} catch (err) {
+			console.error("Error compiling document bundle:", err);
+			return error(500, { success: false, message: "Internal server error" });
+		}
+	}, {
+		body: t.Object({
+			studentIds: t.Array(t.String()),
+			bundleName: t.String(),
+			notes: t.Optional(t.String()),
+		})
+	})
+	
 	// Get pending documents count (for dashboard)
-	.get("/stats/pending", async ({ requester }) => {
+	.get("/stats/pending", async () => {
 		try {
 			const pendingCount = await db.document.count({ status: DocumentStatus.PENDING });
 			const approvedCount = await db.document.count({ status: DocumentStatus.APPROVED });
@@ -287,4 +464,4 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 			console.error("Error fetching document stats:", err);
 			return error(500, { success: false, message: "Internal server error" });
 		}
-	});
+	}) as any
