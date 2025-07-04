@@ -1,0 +1,14 @@
+export { adminController } from './admin.controller';
+export { authController } from './auth.controller';
+export { classesController } from './classes.controller';
+export { coursesController } from './courses.controller';
+export { documentsController } from './documents.controller';
+export { hospitalController } from './hospital.controller';
+export { hospitalManagerController } from './hospitalManager.controller';
+export { orgAdminController } from './orgAdmin.controller';
+export { preceptorController } from './preceptor.controller';
+export { schoolController } from './school.controller';
+export { shiftController } from './shift.controller';
+export { studentsController } from './students.controller';
+export { supervisorController } from './supervisor.controller';
+export { userController } from './user.controller'; 
