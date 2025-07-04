@@ -1,0 +1,52 @@
+{
+	"name": "@preceptoria/core",
+	"version": "0.0.1",
+	"type": "module",
+	"description": "PreceptoriaJs Core Module",
+	"repository": "https://github.com/yfernandes/PreceptoriaJs",
+	"author": "Yago Fernandes",
+	"private": true,
+	"types": "index.ts",
+	"files": [
+		"src"
+	],
+	"scripts": {
+		"db:cache": "bunx --bun mikro-orm cache:generate --combined",
+		"db:initialMigration": "bunx --bun mikro-orm migration:create --initial",
+		"db:createMigration": "bunx --bun mikro-orm migration:create",
+		"db:migrate": "bunx --bun mikro-orm migration:up",
+		"db:rebuild": "bun run db:clear && bun run db:cache && bun run db:initialMigration && bun run db:migrate",
+		"db:clear": "rm -rf ./db",
+		"start": "bun src/cli.ts"
+	},
+	"dependencies": {
+		"@googleapis/drive": "^13.0.1",
+		"@googleapis/sheets": "^10.0.1",
+		"@inquirer/prompts": "^7.5.3",
+		"@mikro-orm/core": "^6.4.16",
+		"@mikro-orm/migrations": "^6.4.16",
+		"@mikro-orm/sql-highlighter": "^1.0.1",
+		"@mikro-orm/sqlite": "^6.4.16",
+		"archiver": "^7.0.1",
+		"globby": "^14.1.0",
+		"googleapis": "^150.0.1",
+		"pdf-lib": "^1.17.1",
+		"pdfkit": "^0.17.1",
+		"sharp": "^0.34.2",
+		"uuid": "^11.1.0"
+	},
+	"devDependencies": {
+		"@mikro-orm/cli": "^6.4.16",
+		"@mikro-orm/reflection": "^6.4.16",
+		"@mikro-orm/seeder": "^6.4.16",
+		"@types/archiver": "^6.0.3",
+		"@types/bun": "^1.2.17",
+		"@types/node": "^24.0.4",
+		"@types/pdfkit": "^0.14.0",
+		"@types/uuid": "^10.0.0",
+		"typescript": "^5.8.3"
+	},
+	"mikro-orm": {
+		"alwaysAllowTs": true
+	}
+}
