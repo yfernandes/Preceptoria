@@ -4,7 +4,12 @@ import { tCookie, TJwtPayload } from "../types/jwtCookie";
 import { User } from "../entities";
 import { LRUCache } from "lru-cache";
 import { db } from "../db";
-import { jwt } from "../../lib/jwt";
+import { jwt } from "@elysiajs/jwt";
+
+// Interface for database operations - makes it easier to mock
+export interface IUserRepository {
+	findOneById(id: string): Promise<any | null>; // Using any to accommodate MikroORM's Loaded type
+}
 
 export type CachedUserType = Pick<User, "id" | "roles"> & {
 	sysAdminId?: string;
@@ -14,6 +19,45 @@ export type CachedUserType = Pick<User, "id" | "roles"> & {
 	preceptorId?: string;
 	studentId?: string;
 };
+
+// Extract user lookup logic for better testability
+export async function findUserById(
+	userId: string,
+	userRepository: IUserRepository = {
+		findOneById: async (id: string) => {
+			return await db.user.findOne(
+				{ id },
+				{
+					populate: [
+						"sysAdmin.id",
+						"orgAdmin.id",
+						"supervisor.id",
+						"hospitalManager.id",
+						"preceptor.id",
+						"student.id",
+					],
+					fields: ["id", "roles"],
+				}
+			);
+		}
+	}
+): Promise<CachedUserType | null> {
+	const dbUser = await userRepository.findOneById(userId);
+	if (!dbUser) {
+		return null;
+	}
+
+	return {
+		id: dbUser.id,
+		roles: dbUser.roles,
+		sysAdminId: dbUser.sysAdmin?.id ?? undefined,
+		orgAdminId: dbUser.orgAdmin?.id ?? undefined,
+		supervisorId: dbUser.supervisor?.id ?? undefined,
+		hospitalManagerId: dbUser.hospitalManager?.id ?? undefined,
+		preceptorId: dbUser.preceptor?.id ?? undefined,
+		studentId: dbUser.student?.id ?? undefined,
+	};
+}
 
 export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 	.use(jwt(JwtOptions))
@@ -25,7 +69,7 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 		})
 	) // Maybe use LRU-cache to avoid memory leak
 	.guard(tCookie)
-	.resolve(async ({ error, cookie, jwt, store: { users } }) => {
+	.resolve(async ({ status, cookie, jwt, store: { users } }) => {
 		try {
 			const token = (await jwt.verify(
 				cookie.session.value.CookieValue
@@ -33,41 +77,17 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 
 			let user = users.get(token.id);
 			if (!user) {
-				const dbUser = await db.user.findOne(
-					{ id: token.id },
-					{
-						populate: [
-							"sysAdmin.id",
-							"orgAdmin.id",
-							"supervisor.id",
-							"hospitalManager.id",
-							"preceptor.id",
-							"student.id",
-						],
-						fields: ["id", "roles"],
-					}
-				);
-				if (!dbUser) {
-					return error(401);
+				const foundUser = await findUserById(token.id);
+				if (!foundUser) {
+					return status(401);
 				}
-				user = {
-					id: dbUser.id,
-					roles: dbUser.roles,
-					sysAdminId: dbUser.sysAdmin?.id ?? undefined,
-					orgAdminId: dbUser.orgAdmin?.id ?? undefined,
-					supervisorId: dbUser.supervisor?.id ?? undefined,
-					hospitalManagerId: dbUser.hospitalManager?.id ?? undefined,
-					preceptorId: dbUser.preceptor?.id ?? undefined,
-					studentId: dbUser.student?.id ?? undefined,
-				};
-				users.set(dbUser.id, user);
+				user = foundUser;
+				users.set(user.id, user);
 			}
 
-			console.log(token);
 			return { requester: user };
 		} catch (err) {
 			console.error(err);
-			return error(401);
+			return status(401);
 		}
-	})
-	.as("plugin");
+	});

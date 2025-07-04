@@ -1,5 +1,6 @@
-import Elysia, { error, t } from "elysia";
+import Elysia, {  status, t } from "elysia";
 import { User } from "../entities/user.entity";
+import { UserRoles } from "../entities/role.abstract";
 
 import { JwtOptions } from "../jwt";
 import { tCookie, TJwtPayload } from "../types/jwtCookie";
@@ -43,7 +44,7 @@ const authController = new Elysia({ prefix: "/auth" })
 				// Check if user already exists
 				const existing = await db.user.findOne({ email });
 				if (existing) {
-					return error(401, {
+					return status(401, {
 						success: false,
 						message: "User already exists",
 					});
@@ -51,6 +52,9 @@ const authController = new Elysia({ prefix: "/auth" })
 
 				// Create new user
 				const user = await User.create(name, email, phone, password);
+
+				// Assign default role (Student) to new users
+				user.roles = [UserRoles.Student];
 
 				// Ensure ID is assigned by flushing and reloading
 				await db.em.persistAndFlush(user);
@@ -97,7 +101,7 @@ const authController = new Elysia({ prefix: "/auth" })
 					Array.isArray(err) &&
 					err.every((e) => e instanceof ValidationError)
 				) {
-					return error(400, {
+					return status(400, {
 						success: false,
 						message: "Validation failed",
 						errors: err.map((e) => ({
@@ -116,7 +120,7 @@ const authController = new Elysia({ prefix: "/auth" })
 				// }
 
 				// Fallback for unexpected errors
-				return error(500, { success: false, message: "Internal Server Error" });
+				return status(500, { success: false, message: "Internal Server Error" });
 			}
 		},
 		{
@@ -144,55 +148,59 @@ const authController = new Elysia({ prefix: "/auth" })
 			cookie: { session: auth, refresh: refreshCookie },
 			body: { email, password },
 		}) => {
-			console.log("Searching User");
-			const user = await db.user.findOne(
-				{ email },
-				{ populate: ["passwordHash"] }
-			);
-			// Check if user exists
-			if (!user || !(await Bun.password.verify(password, user.passwordHash))) {
-				return error(401, {
-					success: false,
-					message: "User or password incorrect",
+			try {
+				const user = await db.user.findOne(
+					{ email },
+					{ populate: ["passwordHash"] }
+				);
+				// Check if user exists
+				if (!user || !(await Bun.password.verify(password, user.passwordHash))) {
+					return status(401, {
+						success: false,
+						message: "User or password incorrect",
+					});
+				}
+
+				// Generate JWT Token
+				const accessToken = jwt.sign({
+					id: user.id,
+					roles: user.roles.toString(),
 				});
+
+				// Generate Refresh Token
+				const refreshToken = jwt.sign({
+					id: user.id,
+					roles: user.roles.toString(),
+					exp: "7d",
+				});
+
+				auth.set({
+					httpOnly: true,
+					secure: true,
+					sameSite: "strict",
+					maxAge: 15 * 60,
+					path: "/",
+					value: accessToken,
+				});
+
+				refreshCookie.set({
+					httpOnly: true,
+					secure: true,
+					sameSite: "strict",
+					maxAge: 7 * 24 * 60 * 60,
+					path: "/",
+					value: refreshToken,
+				});
+
+				return {
+					success: true,
+					message: "User logged in successfully",
+					user: { id: user.id, name: user.name, email: user.email },
+				};
+			} catch (err) {
+				console.error("Signin error:", err);
+				return status(500, { success: false, message: "Internal Server Error" });
 			}
-
-			// Generate JWT Token
-			const accessToken = jwt.sign({
-				id: user.id,
-				roles: user.roles.toString(),
-			});
-
-			// Generate Refresh Token
-			const refreshToken = jwt.sign({
-				id: user.id,
-				roles: user.roles.toString(),
-				exp: "7d",
-			});
-
-			auth.set({
-				httpOnly: true,
-				secure: true,
-				sameSite: "strict",
-				maxAge: 15 * 60,
-				path: "/",
-				value: accessToken,
-			});
-
-			refreshCookie.set({
-				httpOnly: true,
-				secure: true,
-				sameSite: "strict",
-				maxAge: 7 * 24 * 60 * 60,
-				path: "/",
-				value: refreshToken,
-			});
-
-			return {
-				success: true,
-				message: "User logged in successfully",
-				user: { id: user.id, name: user.name, email: user.email },
-			};
 		},
 		{
 			...signInDto,
@@ -227,7 +235,7 @@ const authController = new Elysia({ prefix: "/auth" })
 		async ({
 			jwt,
 			set,
-			error,
+			status,
 			cookie: { refresh: refreshCookie, session: auth },
 		}) => {
 			// Extract refresh token
@@ -261,7 +269,7 @@ const authController = new Elysia({ prefix: "/auth" })
 				refreshCookie.remove(); // Clear the invalid refresh token
 
 				console.error(curError);
-				return error(401, `Invalid or Expired refresh token.`);
+				return status(401, `Invalid or Expired refresh token.`);
 			}
 		},
 		tCookie
