@@ -24,6 +24,16 @@ cp env.example .env
 - `NODE_ENV` - Environment (development/production/test)
 - `DB_URL` - Alternative database connection string
 
+### Google Sheets Setup
+
+For Google Sheets integration, you need to:
+
+1. **Create a Google Service Account** in the Google Cloud Console
+2. **Download the service account JSON file**
+3. **Place it in the `secrets/` directory** as `service_account.json`
+
+The `secrets/` directory is automatically ignored by git for security.
+
 ### Environment Files
 
 The project supports multiple environment files for different contexts:

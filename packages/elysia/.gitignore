@@ -32,6 +32,14 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# secrets and sensitive files
+/secrets/
+*.key
+*.pem
+*.crt
+service_account.json
+google-credentials.json
+
 # vercel
 .vercel
 
