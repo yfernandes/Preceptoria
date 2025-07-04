@@ -113,7 +113,7 @@ describe("User Entity", () => {
       const user2 = await User.create(
         "User 2",
         "user2@example.com",
-        "+5511888888888",
+        "+5511999999998",
         "password123"
       );
 

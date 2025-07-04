@@ -5,7 +5,7 @@ import {
 	Property,
 	type Rel,
 } from "@mikro-orm/postgresql";
-import { IsEmail, IsPhoneNumber, validateOrReject } from "class-validator";
+import { IsEmail, IsPhoneNumber, validateOrReject, IsNotEmpty, MinLength } from "class-validator";
 
 import { HospitalManager } from "./hospitalManager.entity";
 import { OrgAdmin } from "./OrgAdmin.entity";
@@ -19,18 +19,25 @@ import { BaseEntity } from "./baseEntity";
 @Entity()
 export class User extends BaseEntity {
 	@Property()
+	@IsNotEmpty()
 	name: string;
 
 	@Property({ hidden: true })
 	@IsEmail()
+	@IsNotEmpty()
 	email: string;
 
 	@Property({ hidden: true })
 	@IsPhoneNumber("BR")
+	@IsNotEmpty()
 	phoneNumber: string;
 
 	@Property({ hidden: true, lazy: true })
 	passwordHash: string;
+
+	@IsNotEmpty()
+	@MinLength(6)
+	private _password: string;
 
 	@Enum({ default: [] })
 	roles: UserRoles[] = [];
@@ -65,6 +72,7 @@ export class User extends BaseEntity {
 		this.name = username;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
+		this._password = password;
 		this.passwordHash = Bun.password.hashSync(password);
 	}
 
