@@ -70,13 +70,13 @@ export interface MockClass {
 
 // Mock database state
 export class MockDatabase {
-	private users: Map<string, MockUser> = new Map();
-	private documents: Map<string, MockDocument> = new Map();
-	private shifts: Map<string, MockShift> = new Map();
-	private hospitals: Map<string, MockHospital> = new Map();
-	private schools: Map<string, MockSchool> = new Map();
-	private courses: Map<string, MockCourse> = new Map();
-	private classes: Map<string, MockClass> = new Map();
+	private users = new Map<string, MockUser>();
+	private documents = new Map<string, MockDocument>();
+	private shifts = new Map<string, MockShift>();
+	private hospitals = new Map<string, MockHospital>();
+	private schools = new Map<string, MockSchool>();
+	private courses = new Map<string, MockCourse>();
+	private classes = new Map<string, MockClass>();
 
 	// User operations
 	async findUserById(id: string): Promise<MockUser | null> {
