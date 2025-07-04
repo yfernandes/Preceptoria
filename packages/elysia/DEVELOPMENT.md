@@ -13,8 +13,16 @@ This document outlines the development setup, best practices, and workflow for t
 2. **Setup environment:**
    ```bash
    cp env.example .env
-   # Edit .env with your database credentials
+   # Edit .env with your database credentials and other required variables
    ```
+
+   **Required environment variables:**
+   - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME` - Database configuration
+   - `JWT_SECRET` - JWT signing secret
+   - `GOOGLE_SPREADSHEET_ID` - Google Sheets integration ID
+   - `NODE_ENV` - Environment (development/production/test)
+
+   **For testing:** Create a `.env.test` file with test-specific values using the same variable names.
 
 3. **Start development:**
    ```bash

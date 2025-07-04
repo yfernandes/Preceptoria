@@ -18,10 +18,21 @@ cp env.example .env
 
 ### Environment Variables
 
-- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME` - Main database configuration
-- `TEST_DB_*` - Test database configuration (optional)
+- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME` - Database configuration
 - `JWT_SECRET` - JWT signing secret
+- `GOOGLE_SPREADSHEET_ID` - Google Sheets integration ID
 - `NODE_ENV` - Environment (development/production/test)
+- `DB_URL` - Alternative database connection string
+
+### Environment Files
+
+The project supports multiple environment files for different contexts:
+
+- **`.env`** - Development environment (default)
+- **`.env.test`** - Test environment (same variable names, different values)
+- **`.env.production`** - Production environment (same variable names, different values)
+
+All environment files use the same variable names - only the values change per environment.
 
 ### Configuration Profiles
 
@@ -99,7 +110,19 @@ bun run test:coverage
 
 ### Test Database
 
-For testing, set `NODE_ENV=test` and configure your test database variables. The configuration will automatically use test-optimized settings.
+For testing, set `NODE_ENV=test` and use a `.env.test` file with test-specific values. The configuration will automatically use test-optimized settings.
+
+**Example `.env.test`:**
+```bash
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASS=test_password
+DB_NAME=preceptoria_test
+JWT_SECRET=test_secret
+GOOGLE_SPREADSHEET_ID=test_spreadsheet_id
+NODE_ENV=test
+```
 
 ### Writing Tests
 

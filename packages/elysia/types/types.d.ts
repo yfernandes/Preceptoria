@@ -7,11 +7,7 @@ declare module "bun" {
 		DB_PASS: string;
 		DB_NAME: string;
 		DB_URL: string;
-		TEST_DB_HOST?: string;
-		TEST_DB_PORT?: string;
-		TEST_DB_USER?: string;
-		TEST_DB_PASS?: string;
-		TEST_DB_NAME?: string;
+		GOOGLE_SPREADSHEET_ID: string;
 		NODE_ENV?: string;
 	}
 }
