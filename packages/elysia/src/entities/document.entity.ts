@@ -74,10 +74,10 @@ export class Document extends BaseEntity {
 	mimeType?: string;
 
 	@Property({ default: false })
-	isRequired: boolean = true;
+	isRequired = true;
 
 	@Property({ default: false })
-	isPublic: boolean = false; // for documents that can be viewed by hospital managers
+	isPublic = false; // for documents that can be viewed by hospital managers
 
 	// Validation fields
 	@Property({ type: 'json', nullable: true })
@@ -99,7 +99,7 @@ export class Document extends BaseEntity {
 		student: Rel<Student>,
 		description?: string,
 		expiresAt?: Date,
-		isRequired: boolean = true
+		isRequired = true
 	) {
 		super();
 		this.name = name;
