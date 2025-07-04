@@ -19,7 +19,7 @@ import {
 	Supervisor,
 	SysAdmin,
 	User,
-} from "./entities";
+} from "./entities/index";
 
 // Base configuration shared across all environments
 const baseConfig = {
@@ -187,3 +187,6 @@ export const configs = {
 	production: prodConfig,
 	test: testConfig,
 };
+
+// Default export for MikroORM CLI
+export default localConfig;
