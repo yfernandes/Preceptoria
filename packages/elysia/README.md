@@ -63,11 +63,13 @@ The MikroORM configuration automatically adapts based on `NODE_ENV`:
 ### Setup
 
 1. **Install dependencies:**
+
    ```bash
    bun install
    ```
 
 2. **Configure environment:**
+
    ```bash
    cp env.example .env
    # Edit .env with your database credentials
@@ -82,17 +84,17 @@ Open http://localhost:3000/ with your browser to see the result.
 
 ### Development Scripts
 
-| Command | Description |
-|---------|-------------|
-| `bun run dev` | Start development server with hot reload |
-| `bun run test` | Run tests |
-| `bun run test:watch` | Run tests in watch mode |
-| `bun run test:coverage` | Run tests with coverage report |
-| `bun run lint` | Check code with ESLint |
-| `bun run lint:fix` | Fix ESLint issues automatically |
-| `bun run format` | Format code with Prettier |
-| `bun run format:check` | Check code formatting |
-| `bun run type-check` | Run TypeScript type checking |
+| Command                 | Description                              |
+| ----------------------- | ---------------------------------------- |
+| `bun run dev`           | Start development server with hot reload |
+| `bun run test`          | Run tests                                |
+| `bun run test:watch`    | Run tests in watch mode                  |
+| `bun run test:coverage` | Run tests with coverage report           |
+| `bun run lint`          | Check code with ESLint                   |
+| `bun run lint:fix`      | Fix ESLint issues automatically          |
+| `bun run format`        | Format code with Prettier                |
+| `bun run format:check`  | Check code formatting                    |
+| `bun run type-check`    | Run TypeScript type checking             |
 
 ## Testing
 
@@ -123,6 +125,7 @@ bun run test:coverage
 For testing, set `NODE_ENV=test` and use a `.env.test` file with test-specific values. The configuration will automatically use test-optimized settings.
 
 **Example `.env.test`:**
+
 ```bash
 DB_HOST=localhost
 DB_PORT=5432
@@ -183,6 +186,7 @@ bun run db:studio
 ```
 
 This opens a lightweight web interface at `http://localhost:4983` for:
+
 - Browsing tables and data
 - Running queries
 - Viewing schema
@@ -193,6 +197,7 @@ This opens a lightweight web interface at `http://localhost:4983` for:
 All database operations are handled by MikroORM with convenient Bun scripts:
 
 #### Migrations
+
 ```bash
 bun run db:migration:create    # Create a new migration
 bun run db:migration:up        # Apply pending migrations
@@ -201,12 +206,14 @@ bun run db:migration:list      # List all migrations
 ```
 
 #### Schema Management
+
 ```bash
 bun run db:schema:update       # Update database schema
 bun run db:schema:drop         # Drop all tables (⚠️ destructive)
 ```
 
 #### Seeding
+
 ```bash
 bun run db:seed:create         # Create a new seeder
 bun run db:seed                # Run all seeders
@@ -216,11 +223,11 @@ bun run db:seed                # Run all seeders
 
 ### Quick Reference
 
-| Command | Description |
-|---------|-------------|
-| `bun run db:studio` | Open Drizzle Studio for data browsing |
-| `bun run db:migration:create` | Create new migration file |
-| `bun run db:migration:up` | Apply pending migrations |
-| `bun run db:migration:down` | Rollback last migration |
-| `bun run db:schema:update` | Update database schema |
-| `bun run db:seed` | Run database seeders |
+| Command                       | Description                           |
+| ----------------------------- | ------------------------------------- |
+| `bun run db:studio`           | Open Drizzle Studio for data browsing |
+| `bun run db:migration:create` | Create new migration file             |
+| `bun run db:migration:up`     | Apply pending migrations              |
+| `bun run db:migration:down`   | Rollback last migration               |
+| `bun run db:schema:update`    | Update database schema                |
+| `bun run db:seed`             | Run database seeders                  |

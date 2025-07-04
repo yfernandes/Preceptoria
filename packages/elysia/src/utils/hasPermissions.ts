@@ -64,7 +64,7 @@ type Resolvers = Record<
 
 const resolvers: Resolvers = {
 	SysAdmin: {}, // Needs no impl since it's allowed everything
-	OrgAdmin: { 
+	OrgAdmin: {
 		Document: { Managed: () => true },
 		Student: { Managed: () => true },
 		Hospital: { Managed: () => true },
@@ -77,11 +77,18 @@ const resolvers: Resolvers = {
 			Own: async (requester, resourceId) => {
 				try {
 					const student = await db.student.findOne({ id: resourceId });
-					return student?.shifts.exists((shift) => 
-						shift.hospital.manager.exists((manager) => manager.id === requester.hospitalManagerId)
-					) ?? false;
+					return (
+						student?.shifts.exists((shift) =>
+							shift.hospital.manager.exists(
+								(manager) => manager.id === requester.hospitalManagerId
+							)
+						) ?? false
+					);
 				} catch (error) {
-					console.error("Error checking HospitalManager student ownership:", error);
+					console.error(
+						"Error checking HospitalManager student ownership:",
+						error
+					);
 					return false;
 				}
 			},
@@ -90,9 +97,16 @@ const resolvers: Resolvers = {
 			Own: async (requester, resourceId) => {
 				try {
 					const shift = await db.shift.findOne({ id: resourceId });
-					return shift?.hospital.manager.exists((manager) => manager.id === requester.hospitalManagerId) ?? false;
+					return (
+						shift?.hospital.manager.exists(
+							(manager) => manager.id === requester.hospitalManagerId
+						) ?? false
+					);
 				} catch (error) {
-					console.error("Error checking HospitalManager shift ownership:", error);
+					console.error(
+						"Error checking HospitalManager shift ownership:",
+						error
+					);
 					return false;
 				}
 			},
@@ -105,9 +119,11 @@ const resolvers: Resolvers = {
 			Own: async (requester, resourceId) => {
 				try {
 					const student = await db.student.findOne({ id: resourceId });
-					return student?.shifts.exists((shift) => 
-						shift.preceptor.id === requester.preceptorId
-					) ?? false;
+					return (
+						student?.shifts.exists(
+							(shift) => shift.preceptor.id === requester.preceptorId
+						) ?? false
+					);
 				} catch (error) {
 					console.error("Error checking Preceptor student ownership:", error);
 					return false;
@@ -129,9 +145,11 @@ const resolvers: Resolvers = {
 			Own: async (requester, resourceId) => {
 				try {
 					const hospital = await db.hospital.findOne({ id: resourceId });
-					return hospital?.shifts.exists((shift) => 
-						shift.preceptor.id === requester.preceptorId
-					) ?? false;
+					return (
+						hospital?.shifts.exists(
+							(shift) => shift.preceptor.id === requester.preceptorId
+						) ?? false
+					);
 				} catch (error) {
 					console.error("Error checking Preceptor hospital ownership:", error);
 					return false;
@@ -166,7 +184,9 @@ const resolvers: Resolvers = {
 			Own: async (requester, resourceId) => {
 				try {
 					const student = await db.student.findOne({ id: requester.studentId });
-					return student?.shifts.exists((shift) => shift.id === resourceId) ?? false;
+					return (
+						student?.shifts.exists((shift) => shift.id === resourceId) ?? false
+					);
 				} catch (error) {
 					console.error("Error checking Student shift ownership:", error);
 					return false;
@@ -206,9 +226,15 @@ const resolvers: Resolvers = {
 			Students: async (requester, resourceId) => {
 				try {
 					const document = await db.document.findOne({ id: resourceId });
-					return document?.student.class.course.supervisor.id === requester.supervisorId;
+					return (
+						document?.student.class.course.supervisor.id ===
+						requester.supervisorId
+					);
 				} catch (error) {
-					console.error("Error checking Supervisor document students access:", error);
+					console.error(
+						"Error checking Supervisor document students access:",
+						error
+					);
 					return false;
 				}
 			},

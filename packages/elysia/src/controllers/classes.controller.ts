@@ -23,7 +23,7 @@ const updateClassDto = {
 
 export const classesController = new Elysia({ prefix: "/classes" })
 	.use(authMiddleware)
-	
+
 	// Create a new class
 	.post(
 		"/",
@@ -36,23 +36,23 @@ export const classesController = new Elysia({ prefix: "/classes" })
 					Actions.Create,
 					""
 				);
-				
+
 				if (!hasAccess) {
-					return error(403, { 
-						success: false, 
-						message: "You don't have permission to create classes" 
+					return error(403, {
+						success: false,
+						message: "You don't have permission to create classes",
 					});
 				}
-				
+
 				// Validate course exists and user has access to it
 				const course = await db.course.findOne({ id: courseId });
 				if (!course) {
-					return error(404, { 
-						success: false, 
-						message: "Course not found" 
+					return error(404, {
+						success: false,
+						message: "Course not found",
 					});
 				}
-				
+
 				// Check if user has access to this course
 				const hasCourseAccess = await hasPermission(
 					requester,
@@ -60,29 +60,30 @@ export const classesController = new Elysia({ prefix: "/classes" })
 					Actions.Read,
 					courseId
 				);
-				
+
 				if (!hasCourseAccess) {
-					return error(403, { 
-						success: false, 
-						message: "You don't have permission to create classes for this course" 
+					return error(403, {
+						success: false,
+						message:
+							"You don't have permission to create classes for this course",
 					});
 				}
-				
+
 				// Create new class
 				const newClass = new Classes(name, course);
-				
+
 				await db.em.persistAndFlush(newClass);
-				
+
 				// Return created class with populated relationships
 				const createdClass = await db.classes.findOne(
 					{ id: newClass.id },
-					{ populate: ['course', 'course.supervisor', 'course.school'] }
+					{ populate: ["course", "course.supervisor", "course.school"] }
 				);
-				
+
 				return {
 					success: true,
 					data: createdClass,
-					message: "Class created successfully"
+					message: "Class created successfully",
 				};
 			} catch (err) {
 				console.error("Error creating class:", err);
@@ -91,27 +92,27 @@ export const classesController = new Elysia({ prefix: "/classes" })
 		},
 		createClassDto
 	)
-	
+
 	// Get all classes (with optional filtering)
 	.get("/", async ({ requester, query }) => {
 		try {
 			const { courseId, supervisorId, limit = 10, offset = 0 } = query;
-			
+
 			// Build filter based on user permissions and role
 			let filter: any = {};
-			
+
 			// Apply query filters
 			if (courseId) {
 				filter.course = { id: courseId };
 			}
-			
+
 			if (supervisorId) {
-				filter.course = { 
+				filter.course = {
 					...filter.course,
-					supervisor: { id: supervisorId }
+					supervisor: { id: supervisorId },
 				};
 			}
-			
+
 			// Apply role-based filtering for data isolation
 			if (requester.roles.includes(UserRoles.Student)) {
 				// Students can only see their own class
@@ -126,15 +127,15 @@ export const classesController = new Elysia({ prefix: "/classes" })
 				// OrgAdmins can see all classes within their organization
 				// This requires filtering by organization
 			}
-			
+
 			// Get classes with pagination
 			const classes = await db.classes.find(filter, {
-				populate: ['course', 'students'],
+				populate: ["course", "students"],
 				limit: parseInt(limit as string),
 				offset: parseInt(offset as string),
-				orderBy: { createdAt: 'DESC' }
+				orderBy: { createdAt: "DESC" },
 			});
-			
+
 			// Filter classes based on permissions
 			const accessibleClasses = [];
 			for (const classItem of classes) {
@@ -144,12 +145,12 @@ export const classesController = new Elysia({ prefix: "/classes" })
 					Actions.Read,
 					classItem.id
 				);
-				
+
 				if (hasAccess) {
 					accessibleClasses.push(classItem);
 				}
 			}
-			
+
 			return {
 				success: true,
 				data: accessibleClasses,
@@ -157,15 +158,15 @@ export const classesController = new Elysia({ prefix: "/classes" })
 					total: accessibleClasses.length,
 					limit: parseInt(limit as string),
 					offset: parseInt(offset as string),
-					hasMore: accessibleClasses.length === parseInt(limit as string)
-				}
+					hasMore: accessibleClasses.length === parseInt(limit as string),
+				},
 			};
 		} catch (err) {
 			console.error("Error fetching classes:", err);
 			return error(500, { success: false, message: "Internal server error" });
 		}
 	})
-	
+
 	// Get a specific class by ID
 	.get("/:id", async ({ params: { id }, requester }) => {
 		try {
@@ -176,44 +177,44 @@ export const classesController = new Elysia({ prefix: "/classes" })
 				Actions.Read,
 				id
 			);
-			
+
 			if (!hasAccess) {
-				return error(403, { 
-					success: false, 
-					message: "You don't have permission to view this class" 
+				return error(403, {
+					success: false,
+					message: "You don't have permission to view this class",
 				});
 			}
-			
+
 			// Find class by ID with populated relationships
 			const classItem = await db.classes.findOne(
 				{ id },
-				{ 
+				{
 					populate: [
-						'course', 
-						'students', 
-						'course.supervisor',
-						'course.school'
-					] 
+						"course",
+						"students",
+						"course.supervisor",
+						"course.school",
+					],
 				}
 			);
-			
+
 			if (!classItem) {
-				return error(404, { 
-					success: false, 
-					message: "Class not found" 
+				return error(404, {
+					success: false,
+					message: "Class not found",
 				});
 			}
-			
+
 			return {
 				success: true,
-				data: classItem
+				data: classItem,
 			};
 		} catch (err) {
 			console.error("Error fetching class:", err);
 			return error(500, { success: false, message: "Internal server error" });
 		}
 	})
-	
+
 	// Update a class
 	.patch(
 		"/:id",
@@ -226,33 +227,33 @@ export const classesController = new Elysia({ prefix: "/classes" })
 					Actions.Update,
 					id
 				);
-				
+
 				if (!hasAccess) {
-					return error(403, { 
-						success: false, 
-						message: "You don't have permission to update this class" 
+					return error(403, {
+						success: false,
+						message: "You don't have permission to update this class",
 					});
 				}
-				
+
 				// Find class by ID
 				const classItem = await db.classes.findOne({ id });
 				if (!classItem) {
-					return error(404, { 
-						success: false, 
-						message: "Class not found" 
+					return error(404, {
+						success: false,
+						message: "Class not found",
 					});
 				}
-				
+
 				// Validate course exists if courseId is being updated
 				if (body.courseId) {
 					const course = await db.course.findOne({ id: body.courseId });
 					if (!course) {
-						return error(404, { 
-							success: false, 
-							message: "Course not found" 
+						return error(404, {
+							success: false,
+							message: "Course not found",
 						});
 					}
-					
+
 					// Check if user has access to this course
 					const hasCourseAccess = await hasPermission(
 						requester,
@@ -260,34 +261,35 @@ export const classesController = new Elysia({ prefix: "/classes" })
 						Actions.Read,
 						body.courseId
 					);
-					
+
 					if (!hasCourseAccess) {
-						return error(403, { 
-							success: false, 
-							message: "You don't have permission to assign this class to the specified course" 
+						return error(403, {
+							success: false,
+							message:
+								"You don't have permission to assign this class to the specified course",
 						});
 					}
-					
+
 					classItem.course = course;
 				}
-				
+
 				// Update class properties
 				if (body.name) {
 					classItem.name = body.name;
 				}
-				
+
 				await db.em.persistAndFlush(classItem);
-				
+
 				// Return updated class with populated relationships
 				const updatedClass = await db.classes.findOne(
 					{ id },
-					{ populate: ['course', 'course.supervisor', 'course.school'] }
+					{ populate: ["course", "course.supervisor", "course.school"] }
 				);
-				
+
 				return {
 					success: true,
 					data: updatedClass,
-					message: "Class updated successfully"
+					message: "Class updated successfully",
 				};
 			} catch (err) {
 				console.error("Error updating class:", err);
@@ -296,7 +298,7 @@ export const classesController = new Elysia({ prefix: "/classes" })
 		},
 		updateClassDto
 	)
-	
+
 	// Delete a class
 	.delete("/:id", async ({ params: { id }, requester }) => {
 		try {
@@ -307,41 +309,42 @@ export const classesController = new Elysia({ prefix: "/classes" })
 				Actions.Delete,
 				id
 			);
-			
+
 			if (!hasAccess) {
-				return error(403, { 
-					success: false, 
-					message: "You don't have permission to delete this class" 
+				return error(403, {
+					success: false,
+					message: "You don't have permission to delete this class",
 				});
 			}
-			
+
 			// Find class by ID with students
 			const classItem = await db.classes.findOne(
 				{ id },
-				{ populate: ['students'] }
+				{ populate: ["students"] }
 			);
-			
+
 			if (!classItem) {
-				return error(404, { 
-					success: false, 
-					message: "Class not found" 
+				return error(404, {
+					success: false,
+					message: "Class not found",
 				});
 			}
-			
+
 			// Check if class has students (prevent deletion if occupied)
 			if (classItem.students.length > 0) {
-				return error(400, { 
-					success: false, 
-					message: "Cannot delete class that has students. Please reassign or remove students first." 
+				return error(400, {
+					success: false,
+					message:
+						"Cannot delete class that has students. Please reassign or remove students first.",
 				});
 			}
-			
+
 			// Delete class
 			await db.em.removeAndFlush(classItem);
-			
+
 			return {
 				success: true,
-				message: "Class deleted successfully"
+				message: "Class deleted successfully",
 			};
 		} catch (err) {
 			console.error("Error deleting class:", err);

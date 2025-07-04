@@ -99,10 +99,13 @@ export class MockDatabase {
 		return user;
 	}
 
-	async updateUser(id: string, updates: Partial<MockUser>): Promise<MockUser | null> {
+	async updateUser(
+		id: string,
+		updates: Partial<MockUser>
+	): Promise<MockUser | null> {
 		const user = this.users.get(id);
 		if (!user) return null;
-		
+
 		const updatedUser = { ...user, ...updates };
 		this.users.set(id, updatedUser);
 		return updatedUser;
@@ -119,11 +122,13 @@ export class MockDatabase {
 
 	async findDocumentsByStudent(studentId: string): Promise<MockDocument[]> {
 		return Array.from(this.documents.values()).filter(
-			doc => doc.student.id === studentId
+			(doc) => doc.student.id === studentId
 		);
 	}
 
-	async createDocument(documentData: Omit<MockDocument, "id" | "createdAt" | "updatedAt">): Promise<MockDocument> {
+	async createDocument(
+		documentData: Omit<MockDocument, "id" | "createdAt" | "updatedAt">
+	): Promise<MockDocument> {
 		const id = `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 		const now = new Date();
 		const document: MockDocument = {
@@ -143,19 +148,19 @@ export class MockDatabase {
 
 	async findShiftsByHospital(hospitalId: string): Promise<MockShift[]> {
 		return Array.from(this.shifts.values()).filter(
-			shift => shift.hospital.id === hospitalId
+			(shift) => shift.hospital.id === hospitalId
 		);
 	}
 
 	async findShiftsByPreceptor(preceptorId: string): Promise<MockShift[]> {
 		return Array.from(this.shifts.values()).filter(
-			shift => shift.preceptor.id === preceptorId
+			(shift) => shift.preceptor.id === preceptorId
 		);
 	}
 
 	async findShiftsByStudent(studentId: string): Promise<MockShift[]> {
-		return Array.from(this.shifts.values()).filter(
-			shift => shift.students.some(student => student.id === studentId)
+		return Array.from(this.shifts.values()).filter((shift) =>
+			shift.students.some((student) => student.id === studentId)
 		);
 	}
 
@@ -164,7 +169,9 @@ export class MockDatabase {
 		return this.hospitals.get(id) || null;
 	}
 
-	async createHospital(hospitalData: Omit<MockHospital, "id">): Promise<MockHospital> {
+	async createHospital(
+		hospitalData: Omit<MockHospital, "id">
+	): Promise<MockHospital> {
 		const id = `hospital-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 		const hospital: MockHospital = { ...hospitalData, id };
 		this.hospitals.set(id, hospital);
@@ -183,7 +190,7 @@ export class MockDatabase {
 
 	async findCoursesBySupervisor(supervisorId: string): Promise<MockCourse[]> {
 		return Array.from(this.courses.values()).filter(
-			course => course.supervisor.id === supervisorId
+			(course) => course.supervisor.id === supervisorId
 		);
 	}
 
@@ -194,7 +201,7 @@ export class MockDatabase {
 
 	async findClassesByCourse(courseId: string): Promise<MockClass[]> {
 		return Array.from(this.classes.values()).filter(
-			cls => cls.course.id === courseId
+			(cls) => cls.course.id === courseId
 		);
 	}
 
@@ -223,7 +230,9 @@ export class MockDatabase {
 }
 
 // Factory functions for creating mock data
-export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => ({
+export const createMockUser = (
+	overrides: Partial<MockUser> = {}
+): MockUser => ({
 	id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
 	name: "Test User",
 	email: "test@example.com",
@@ -239,7 +248,9 @@ export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => (
 	...overrides,
 });
 
-export const createMockDocument = (overrides: Partial<MockDocument> = {}): MockDocument => ({
+export const createMockDocument = (
+	overrides: Partial<MockDocument> = {}
+): MockDocument => ({
 	id: `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
 	name: "Test Document",
 	url: "https://example.com/document.pdf",
@@ -250,7 +261,9 @@ export const createMockDocument = (overrides: Partial<MockDocument> = {}): MockD
 	...overrides,
 });
 
-export const createMockShift = (overrides: Partial<MockShift> = {}): MockShift => ({
+export const createMockShift = (
+	overrides: Partial<MockShift> = {}
+): MockShift => ({
 	id: `shift-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
 	date: new Date(),
 	startTime: "08:00",
@@ -276,8 +289,12 @@ export const createDatabaseMock = () => {
 			}
 			return Promise.resolve(null);
 		}),
-		create: mock((userData: any) => Promise.resolve(mockDb.createUser(userData))),
-		update: mock((id: string, updates: any) => Promise.resolve(mockDb.updateUser(id, updates))),
+		create: mock((userData: any) =>
+			Promise.resolve(mockDb.createUser(userData))
+		),
+		update: mock((id: string, updates: any) =>
+			Promise.resolve(mockDb.updateUser(id, updates))
+		),
 		delete: mock((id: string) => Promise.resolve(mockDb.deleteUser(id))),
 	};
 
@@ -294,7 +311,9 @@ export const createDatabaseMock = () => {
 			}
 			return Promise.resolve([]);
 		}),
-		create: mock((documentData: any) => Promise.resolve(mockDb.createDocument(documentData))),
+		create: mock((documentData: any) =>
+			Promise.resolve(mockDb.createDocument(documentData))
+		),
 	};
 
 	const mockShiftRepository = {
@@ -309,7 +328,9 @@ export const createDatabaseMock = () => {
 				return Promise.resolve(mockDb.findShiftsByHospital(query.hospital.id));
 			}
 			if (query.preceptor?.id) {
-				return Promise.resolve(mockDb.findShiftsByPreceptor(query.preceptor.id));
+				return Promise.resolve(
+					mockDb.findShiftsByPreceptor(query.preceptor.id)
+				);
 			}
 			return Promise.resolve([]);
 		}),
@@ -322,7 +343,9 @@ export const createDatabaseMock = () => {
 			}
 			return Promise.resolve(null);
 		}),
-		create: mock((hospitalData: any) => Promise.resolve(mockDb.createHospital(hospitalData))),
+		create: mock((hospitalData: any) =>
+			Promise.resolve(mockDb.createHospital(hospitalData))
+		),
 	};
 
 	const mockSchoolRepository = {
@@ -343,7 +366,9 @@ export const createDatabaseMock = () => {
 		}),
 		find: mock((query: any) => {
 			if (query.supervisor?.id) {
-				return Promise.resolve(mockDb.findCoursesBySupervisor(query.supervisor.id));
+				return Promise.resolve(
+					mockDb.findCoursesBySupervisor(query.supervisor.id)
+				);
 			}
 			return Promise.resolve([]);
 		}),
@@ -381,4 +406,4 @@ export const createDatabaseMock = () => {
 };
 
 // Export the mock database for use in tests
-export default createDatabaseMock; 
+export default createDatabaseMock;

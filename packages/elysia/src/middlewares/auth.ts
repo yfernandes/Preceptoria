@@ -39,7 +39,7 @@ export async function findUserById(
 					fields: ["id", "roles"],
 				}
 			);
-		}
+		},
 	}
 ): Promise<CachedUserType | null> {
 	const dbUser = await userRepository.findOneById(userId);
@@ -69,7 +69,7 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 		})
 	) // Maybe use LRU-cache to avoid memory leak
 	.guard(tCookie)
-	.derive(async ({  cookie, jwt, store: { users } }) => {
+	.derive(async ({ cookie, jwt, store: { users } }) => {
 		try {
 			// Check if session cookie exists
 			if (!cookie.session?.value?.CookieValue) {
@@ -101,12 +101,13 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 		}
 	})
 	.onError(({ error, set }) => {
-		if (error instanceof Error && (
-			error.message === "Authentication failed" || 
-			error.message === "No session cookie found" || 
-			error.message === "Invalid token" || 
-			error.message === "User not found"
-		)) {
+		if (
+			error instanceof Error &&
+			(error.message === "Authentication failed" ||
+				error.message === "No session cookie found" ||
+				error.message === "Invalid token" ||
+				error.message === "User not found")
+		) {
 			set.status = 401;
 			return { message: "Authentication failed" };
 		}
@@ -114,4 +115,4 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 		set.status = 500;
 		return { message: "Internal server error" };
 	})
-	.as('scoped');
+	.as("scoped");

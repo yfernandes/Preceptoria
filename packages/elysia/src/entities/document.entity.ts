@@ -18,14 +18,14 @@ export enum DocumentType {
 	ADMISSION_FORM = "ADMISSION_FORM",
 	BADGE_PICTURE = "BADGE_PICTURE",
 	INSURANCE_DOCUMENTATION = "INSURANCE_DOCUMENTATION",
-	OTHER = "OTHER"
+	OTHER = "OTHER",
 }
 
 export enum DocumentStatus {
 	PENDING = "PENDING",
 	APPROVED = "APPROVED",
 	REJECTED = "REJECTED",
-	EXPIRED = "EXPIRED"
+	EXPIRED = "EXPIRED",
 }
 
 @Entity()
@@ -80,7 +80,7 @@ export class Document extends BaseEntity {
 	isPublic = false; // for documents that can be viewed by hospital managers
 
 	// Validation fields
-	@Property({ type: 'json', nullable: true })
+	@Property({ type: "json", nullable: true })
 	validationChecks?: Record<string, boolean>; // e.g., { "hasVaccineA": true, "hasVaccineB": false }
 
 	@Property({ nullable: true })

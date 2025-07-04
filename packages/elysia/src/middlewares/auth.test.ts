@@ -32,4 +32,4 @@ describe("Auth Middleware", () => {
 
 		expect(typeof repository.findOneById).toBe("function");
 	});
-}); 
+});

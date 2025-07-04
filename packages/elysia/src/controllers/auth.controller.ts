@@ -1,4 +1,4 @@
-import Elysia, {  status, t } from "elysia";
+import Elysia, { status, t } from "elysia";
 import { User } from "../entities/user.entity";
 import { UserRoles } from "../entities/role.abstract";
 
@@ -120,7 +120,10 @@ const authController = new Elysia({ prefix: "/auth" })
 				// }
 
 				// Fallback for unexpected errors
-				return status(500, { success: false, message: "Internal Server Error" });
+				return status(500, {
+					success: false,
+					message: "Internal Server Error",
+				});
 			}
 		},
 		{
@@ -154,7 +157,10 @@ const authController = new Elysia({ prefix: "/auth" })
 					{ populate: ["passwordHash"] }
 				);
 				// Check if user exists
-				if (!user || !(await Bun.password.verify(password, user.passwordHash))) {
+				if (
+					!user ||
+					!(await Bun.password.verify(password, user.passwordHash))
+				) {
 					return status(401, {
 						success: false,
 						message: "User or password incorrect",
@@ -199,7 +205,10 @@ const authController = new Elysia({ prefix: "/auth" })
 				};
 			} catch (err) {
 				console.error("Signin error:", err);
-				return status(500, { success: false, message: "Internal Server Error" });
+				return status(500, {
+					success: false,
+					message: "Internal Server Error",
+				});
 			}
 		},
 		{

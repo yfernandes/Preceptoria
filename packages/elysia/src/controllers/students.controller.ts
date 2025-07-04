@@ -35,11 +35,12 @@ export const studentsController = new Elysia({ prefix: "students" })
 					Actions.Create,
 					classId // Using classId as the resource context
 				);
-				
+
 				if (!hasAccess) {
-					return error(403, { 
-						success: false, 
-						message: "Access denied. You don't have permission to create students in this class." 
+					return error(403, {
+						success: false,
+						message:
+							"Access denied. You don't have permission to create students in this class.",
 					});
 				}
 
@@ -54,18 +55,23 @@ export const studentsController = new Elysia({ prefix: "students" })
 				}
 
 				// Check if user is already a student
-				const existingStudent = await db.student.findOne({ user: { id: userId } });
+				const existingStudent = await db.student.findOne({
+					user: { id: userId },
+				});
 				if (existingStudent) {
-					return error(409, { success: false, message: "User is already a student" });
+					return error(409, {
+						success: false,
+						message: "User is already a student",
+					});
 				}
 
 				const student = new Student(user, classes);
 				await db.em.persistAndFlush(student);
-				
+
 				return {
 					success: true,
 					message: "Student created successfully",
-					data: student
+					data: student,
 				};
 			} catch (err) {
 				console.error("Error creating student:", err);
@@ -77,22 +83,22 @@ export const studentsController = new Elysia({ prefix: "students" })
 	.get("/", async ({ requester, query }) => {
 		try {
 			const { classId, supervisorId, limit = 10, offset = 0 } = query;
-			
+
 			// Build filter based on user permissions and role
 			let filter: any = {};
-			
+
 			// Apply query filters
 			if (classId) {
 				filter.class = { id: classId };
 			}
-			
+
 			if (supervisorId) {
-				filter.class = { 
+				filter.class = {
 					...filter.class,
-					course: { supervisor: { id: supervisorId } }
+					course: { supervisor: { id: supervisorId } },
 				};
 			}
-			
+
 			// Apply role-based filtering for data isolation
 			if (requester.roles.includes(UserRoles.Student)) {
 				// Students can only see themselves
@@ -110,15 +116,15 @@ export const studentsController = new Elysia({ prefix: "students" })
 				// OrgAdmins can see all students within their organization
 				// This requires filtering by organization
 			}
-			
+
 			// Get students with pagination
 			const students = await db.student.find(filter, {
-				populate: ['user', 'class', 'shifts'],
+				populate: ["user", "class", "shifts"],
 				limit: parseInt(limit as string),
 				offset: parseInt(offset as string),
-				orderBy: { createdAt: 'DESC' }
+				orderBy: { createdAt: "DESC" },
 			});
-			
+
 			// Filter students based on permissions
 			const accessibleStudents = [];
 			for (const student of students) {
@@ -128,12 +134,12 @@ export const studentsController = new Elysia({ prefix: "students" })
 					Actions.Read,
 					student.id
 				);
-				
+
 				if (hasAccess) {
 					accessibleStudents.push(student);
 				}
 			}
-			
+
 			return {
 				success: true,
 				data: accessibleStudents,
@@ -141,8 +147,8 @@ export const studentsController = new Elysia({ prefix: "students" })
 					total: accessibleStudents.length,
 					limit: parseInt(limit as string),
 					offset: parseInt(offset as string),
-					hasMore: accessibleStudents.length === parseInt(limit as string)
-				}
+					hasMore: accessibleStudents.length === parseInt(limit as string),
+				},
 			};
 		} catch (err) {
 			console.error("Error fetching students:", err);
@@ -155,7 +161,7 @@ export const studentsController = new Elysia({ prefix: "students" })
 				{ id: studentId },
 				{ populate: ["user", "class", "shifts", "documents"] }
 			);
-			
+
 			if (!student) {
 				return error(404, { success: false, message: "Student not found" });
 			}
@@ -167,17 +173,18 @@ export const studentsController = new Elysia({ prefix: "students" })
 				Actions.Read,
 				studentId
 			);
-			
+
 			if (!hasAccess) {
-				return error(403, { 
-					success: false, 
-					message: "Access denied. You don't have permission to view this student." 
+				return error(403, {
+					success: false,
+					message:
+						"Access denied. You don't have permission to view this student.",
 				});
 			}
 
 			return {
 				success: true,
-				data: student
+				data: student,
 			};
 		} catch (err) {
 			console.error("Error fetching student:", err);
@@ -195,11 +202,12 @@ export const studentsController = new Elysia({ prefix: "students" })
 					Actions.Update,
 					studentId
 				);
-				
+
 				if (!hasAccess) {
-					return error(403, { 
-						success: false, 
-						message: "Access denied. You don't have permission to update this student." 
+					return error(403, {
+						success: false,
+						message:
+							"Access denied. You don't have permission to update this student.",
 					});
 				}
 
@@ -207,7 +215,7 @@ export const studentsController = new Elysia({ prefix: "students" })
 					{ id: studentId },
 					{ populate: ["user", "class"] }
 				);
-				
+
 				if (!student) {
 					return error(404, { success: false, message: "Student not found" });
 				}
@@ -229,7 +237,7 @@ export const studentsController = new Elysia({ prefix: "students" })
 					if (!newClass) {
 						return error(404, { success: false, message: "Class not found" });
 					}
-					
+
 					// Check if user has permission to move student to this class
 					const canMoveToClass = await hasPermission(
 						requester,
@@ -237,23 +245,24 @@ export const studentsController = new Elysia({ prefix: "students" })
 						Actions.Update,
 						body.classId
 					);
-					
+
 					if (!canMoveToClass) {
-						return error(403, { 
-							success: false, 
-							message: "Access denied. You don't have permission to move this student to the specified class." 
+						return error(403, {
+							success: false,
+							message:
+								"Access denied. You don't have permission to move this student to the specified class.",
 						});
 					}
-					
+
 					student.class = newClass;
 				}
 
 				await db.em.flush();
-				
+
 				return {
 					success: true,
 					message: "Student updated successfully",
-					data: student
+					data: student,
 				};
 			} catch (err) {
 				console.error("Error updating student:", err);
@@ -271,28 +280,29 @@ export const studentsController = new Elysia({ prefix: "students" })
 				Actions.Delete,
 				studentId
 			);
-			
+
 			if (!hasAccess) {
-				return error(403, { 
-					success: false, 
-					message: "Access denied. You don't have permission to delete this student." 
+				return error(403, {
+					success: false,
+					message:
+						"Access denied. You don't have permission to delete this student.",
 				});
 			}
 
 			const student = await db.student.findOne({ id: studentId });
-			
+
 			if (!student) {
 				return error(404, { success: false, message: "Student not found" });
 			}
 
 			await db.em.removeAndFlush(student);
-			
+
 			return {
 				success: true,
-				message: "Student deleted successfully"
+				message: "Student deleted successfully",
 			};
 		} catch (err) {
 			console.error("Error deleting student:", err);
 			return error(500, { success: false, message: "Internal server error" });
 		}
-	}) ;
+	});

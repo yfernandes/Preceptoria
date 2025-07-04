@@ -5,7 +5,12 @@ import {
 	Property,
 	type Rel,
 } from "@mikro-orm/postgresql";
-import { IsEmail, IsPhoneNumber, validateOrReject, IsNotEmpty } from "class-validator";
+import {
+	IsEmail,
+	IsPhoneNumber,
+	validateOrReject,
+	IsNotEmpty,
+} from "class-validator";
 
 import { HospitalManager } from "./hospitalManager.entity";
 import { OrgAdmin } from "./OrgAdmin.entity";
@@ -81,7 +86,7 @@ export class User extends BaseEntity {
 		if (!password || password.length < 6) {
 			throw new Error("Password must be at least 6 characters long");
 		}
-		
+
 		const user = new User(username, email, phoneNumber, password);
 		await validateOrReject(user);
 		return user;

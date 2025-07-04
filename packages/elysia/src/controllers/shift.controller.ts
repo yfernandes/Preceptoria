@@ -33,11 +33,22 @@ const updateShiftDto = {
 
 export const shiftController = new Elysia({ prefix: "/shifts" })
 	.use(authMiddleware)
-	
+
 	// Create a new shift
 	.post(
 		"/",
-		async ({ body: { date, startTime, endTime, location, hospitalId, preceptorId, studentIds }, requester }) => {
+		async ({
+			body: {
+				date,
+				startTime,
+				endTime,
+				location,
+				hospitalId,
+				preceptorId,
+				studentIds,
+			},
+			requester,
+		}) => {
 			try {
 				// Check permissions for creating shifts
 				const hasAccess = await hasPermission(
@@ -46,23 +57,23 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 					Actions.Create,
 					""
 				);
-				
+
 				if (!hasAccess) {
-					return error(403, { 
-						success: false, 
-						message: "You don't have permission to create shifts" 
+					return error(403, {
+						success: false,
+						message: "You don't have permission to create shifts",
 					});
 				}
-				
+
 				// Validate hospital exists and user has access to it
 				const hospital = await db.hospital.findOne({ id: hospitalId });
 				if (!hospital) {
-					return error(404, { 
-						success: false, 
-						message: "Hospital not found" 
+					return error(404, {
+						success: false,
+						message: "Hospital not found",
 					});
 				}
-				
+
 				// Check if user has access to this hospital
 				const hasHospitalAccess = await hasPermission(
 					requester,
@@ -70,23 +81,24 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 					Actions.Read,
 					hospitalId
 				);
-				
+
 				if (!hasHospitalAccess) {
-					return error(403, { 
-						success: false, 
-						message: "You don't have permission to create shifts at this hospital" 
+					return error(403, {
+						success: false,
+						message:
+							"You don't have permission to create shifts at this hospital",
 					});
 				}
-				
+
 				// Validate preceptor exists and user has access to them
 				const preceptor = await db.preceptor.findOne({ id: preceptorId });
 				if (!preceptor) {
-					return error(404, { 
-						success: false, 
-						message: "Preceptor not found" 
+					return error(404, {
+						success: false,
+						message: "Preceptor not found",
 					});
 				}
-				
+
 				// Check if user has access to this preceptor
 				const hasPreceptorAccess = await hasPermission(
 					requester,
@@ -94,25 +106,26 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 					Actions.Read,
 					preceptorId
 				);
-				
+
 				if (!hasPreceptorAccess) {
-					return error(403, { 
-						success: false, 
-						message: "You don't have permission to assign this preceptor to the shift" 
+					return error(403, {
+						success: false,
+						message:
+							"You don't have permission to assign this preceptor to the shift",
 					});
 				}
-				
+
 				// Validate students exist and user has access to them
 				const students = [];
 				for (const studentId of studentIds) {
 					const student = await db.student.findOne({ id: studentId });
 					if (!student) {
-						return error(404, { 
-							success: false, 
-							message: `Student with ID ${studentId} not found` 
+						return error(404, {
+							success: false,
+							message: `Student with ID ${studentId} not found`,
 						});
 					}
-					
+
 					// Check if user has access to this student
 					const hasStudentAccess = await hasPermission(
 						requester,
@@ -120,22 +133,22 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 						Actions.Read,
 						studentId
 					);
-					
+
 					if (!hasStudentAccess) {
-						return error(403, { 
-							success: false, 
-							message: `You don't have permission to assign student ${studentId} to the shift` 
+						return error(403, {
+							success: false,
+							message: `You don't have permission to assign student ${studentId} to the shift`,
 						});
 					}
-					
+
 					students.push(student);
 				}
-				
+
 				// Check for time conflicts
 				const shiftDate = new Date(date);
 				const shiftStartTime = new Date(startTime);
 				const shiftEndTime = new Date(endTime);
-				
+
 				// Check if preceptor has conflicting shifts
 				const preceptorConflicts = await db.shift.find({
 					preceptor: { id: preceptorId },
@@ -143,18 +156,18 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 					$or: [
 						{
 							startTime: { $lt: shiftEndTime },
-							endTime: { $gt: shiftStartTime }
-						}
-					]
+							endTime: { $gt: shiftStartTime },
+						},
+					],
 				});
-				
+
 				if (preceptorConflicts.length > 0) {
-					return error(400, { 
-						success: false, 
-						message: "Preceptor has conflicting shifts at this time" 
+					return error(400, {
+						success: false,
+						message: "Preceptor has conflicting shifts at this time",
 					});
 				}
-				
+
 				// Check if students have conflicting shifts
 				for (const student of students) {
 					const studentConflicts = await db.shift.find({
@@ -163,19 +176,19 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 						$or: [
 							{
 								startTime: { $lt: shiftEndTime },
-								endTime: { $gt: shiftStartTime }
-							}
-						]
+								endTime: { $gt: shiftStartTime },
+							},
+						],
 					});
-					
+
 					if (studentConflicts.length > 0) {
-						return error(400, { 
-							success: false, 
-							message: `Student ${student.id} has conflicting shifts at this time` 
+						return error(400, {
+							success: false,
+							message: `Student ${student.id} has conflicting shifts at this time`,
 						});
 					}
 				}
-				
+
 				// Create new shift
 				const newShift = new Shift(
 					shiftDate,
@@ -185,24 +198,24 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 					hospital,
 					preceptor
 				);
-				
+
 				// Add students to the shift
 				for (const student of students) {
 					newShift.students.add(student);
 				}
-				
+
 				await db.em.persistAndFlush(newShift);
-				
+
 				// Return created shift with populated relationships
 				const createdShift = await db.shift.findOne(
 					{ id: newShift.id },
-					{ populate: ['hospital', 'preceptor', 'students'] }
+					{ populate: ["hospital", "preceptor", "students"] }
 				);
-				
+
 				return {
 					success: true,
 					data: createdShift,
-					message: "Shift created successfully"
+					message: "Shift created successfully",
 				};
 			} catch (err) {
 				console.error("Error creating shift:", err);
@@ -211,32 +224,39 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 		},
 		createShiftDto
 	)
-	
+
 	// Get all shifts (with optional filtering)
 	.get("/", async ({ requester, query }) => {
 		try {
-			const { hospitalId, preceptorId, studentId, date, limit = 10, offset = 0 } = query;
-			
+			const {
+				hospitalId,
+				preceptorId,
+				studentId,
+				date,
+				limit = 10,
+				offset = 0,
+			} = query;
+
 			// Build filter based on user permissions and role
 			let filter: any = {};
-			
+
 			// Apply query filters
 			if (hospitalId) {
 				filter.hospital = { id: hospitalId };
 			}
-			
+
 			if (preceptorId) {
 				filter.preceptor = { id: preceptorId };
 			}
-			
+
 			if (studentId) {
 				filter.students = { id: studentId };
 			}
-			
+
 			if (date) {
 				filter.date = new Date(date as string);
 			}
-			
+
 			// Apply role-based filtering for data isolation
 			if (requester.roles.includes(UserRoles.Student)) {
 				// Students can only see their own shifts
@@ -254,15 +274,15 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 				// OrgAdmins can see all shifts within their organization
 				// This requires filtering by organization
 			}
-			
+
 			// Get shifts with pagination
 			const shifts = await db.shift.find(filter, {
-				populate: ['hospital', 'preceptor', 'students'],
+				populate: ["hospital", "preceptor", "students"],
 				limit: parseInt(limit as string),
 				offset: parseInt(offset as string),
-				orderBy: { date: 'DESC', startTime: 'ASC' }
+				orderBy: { date: "DESC", startTime: "ASC" },
 			});
-			
+
 			// Filter shifts based on permissions
 			const accessibleShifts = [];
 			for (const shift of shifts) {
@@ -272,12 +292,12 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 					Actions.Read,
 					shift.id
 				);
-				
+
 				if (hasAccess) {
 					accessibleShifts.push(shift);
 				}
 			}
-			
+
 			return {
 				success: true,
 				data: accessibleShifts,
@@ -285,15 +305,15 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 					total: accessibleShifts.length,
 					limit: parseInt(limit as string),
 					offset: parseInt(offset as string),
-					hasMore: accessibleShifts.length === parseInt(limit as string)
-				}
+					hasMore: accessibleShifts.length === parseInt(limit as string),
+				},
 			};
 		} catch (err) {
 			console.error("Error fetching shifts:", err);
 			return error(500, { success: false, message: "Internal server error" });
 		}
 	})
-	
+
 	// Get a specific shift by ID
 	.get("/:id", async ({ params: { id }, requester }) => {
 		try {
@@ -304,45 +324,45 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 				Actions.Read,
 				id
 			);
-			
+
 			if (!hasAccess) {
-				return error(403, { 
-					success: false, 
-					message: "You don't have permission to view this shift" 
+				return error(403, {
+					success: false,
+					message: "You don't have permission to view this shift",
 				});
 			}
-			
+
 			// Find shift by ID with populated relationships
 			const shift = await db.shift.findOne(
 				{ id },
-				{ 
+				{
 					populate: [
-						'hospital', 
-						'preceptor', 
-						'students',
-						'students.class',
-						'students.class.course'
-					] 
+						"hospital",
+						"preceptor",
+						"students",
+						"students.class",
+						"students.class.course",
+					],
 				}
 			);
-			
+
 			if (!shift) {
-				return error(404, { 
-					success: false, 
-					message: "Shift not found" 
+				return error(404, {
+					success: false,
+					message: "Shift not found",
 				});
 			}
-			
+
 			return {
 				success: true,
-				data: shift
+				data: shift,
 			};
 		} catch (err) {
 			console.error("Error fetching shift:", err);
 			return error(500, { success: false, message: "Internal server error" });
 		}
 	})
-	
+
 	// Update a shift
 	.patch(
 		"/:id",
@@ -355,33 +375,33 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 					Actions.Update,
 					id
 				);
-				
+
 				if (!hasAccess) {
-					return error(403, { 
-						success: false, 
-						message: "You don't have permission to update this shift" 
+					return error(403, {
+						success: false,
+						message: "You don't have permission to update this shift",
 					});
 				}
-				
+
 				// Find shift by ID
 				const shift = await db.shift.findOne({ id });
 				if (!shift) {
-					return error(404, { 
-						success: false, 
-						message: "Shift not found" 
+					return error(404, {
+						success: false,
+						message: "Shift not found",
 					});
 				}
-				
+
 				// Validate hospital exists if hospitalId is being updated
 				if (body.hospitalId) {
 					const hospital = await db.hospital.findOne({ id: body.hospitalId });
 					if (!hospital) {
-						return error(404, { 
-							success: false, 
-							message: "Hospital not found" 
+						return error(404, {
+							success: false,
+							message: "Hospital not found",
 						});
 					}
-					
+
 					// Check if user has access to this hospital
 					const hasHospitalAccess = await hasPermission(
 						requester,
@@ -389,27 +409,30 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 						Actions.Read,
 						body.hospitalId
 					);
-					
+
 					if (!hasHospitalAccess) {
-						return error(403, { 
-							success: false, 
-							message: "You don't have permission to assign this shift to the specified hospital" 
+						return error(403, {
+							success: false,
+							message:
+								"You don't have permission to assign this shift to the specified hospital",
 						});
 					}
-					
+
 					shift.hospital = hospital;
 				}
-				
+
 				// Validate preceptor exists if preceptorId is being updated
 				if (body.preceptorId) {
-					const preceptor = await db.preceptor.findOne({ id: body.preceptorId });
+					const preceptor = await db.preceptor.findOne({
+						id: body.preceptorId,
+					});
 					if (!preceptor) {
-						return error(404, { 
-							success: false, 
-							message: "Preceptor not found" 
+						return error(404, {
+							success: false,
+							message: "Preceptor not found",
 						});
 					}
-					
+
 					// Check if user has access to this preceptor
 					const hasPreceptorAccess = await hasPermission(
 						requester,
@@ -417,32 +440,33 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 						Actions.Read,
 						body.preceptorId
 					);
-					
+
 					if (!hasPreceptorAccess) {
-						return error(403, { 
-							success: false, 
-							message: "You don't have permission to assign this preceptor to the shift" 
+						return error(403, {
+							success: false,
+							message:
+								"You don't have permission to assign this preceptor to the shift",
 						});
 					}
-					
+
 					shift.preceptor = preceptor;
 				}
-				
+
 				// Update students if studentIds is being updated
 				if (body.studentIds) {
 					// Clear existing students
 					shift.students.removeAll();
-					
+
 					// Add new students
 					for (const studentId of body.studentIds) {
 						const student = await db.student.findOne({ id: studentId });
 						if (!student) {
-							return error(404, { 
-								success: false, 
-								message: `Student with ID ${studentId} not found` 
+							return error(404, {
+								success: false,
+								message: `Student with ID ${studentId} not found`,
 							});
 						}
-						
+
 						// Check if user has access to this student
 						const hasStudentAccess = await hasPermission(
 							requester,
@@ -450,47 +474,47 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 							Actions.Read,
 							studentId
 						);
-						
+
 						if (!hasStudentAccess) {
-							return error(403, { 
-								success: false, 
-								message: `You don't have permission to assign student ${studentId} to the shift` 
+							return error(403, {
+								success: false,
+								message: `You don't have permission to assign student ${studentId} to the shift`,
 							});
 						}
-						
+
 						shift.students.add(student);
 					}
 				}
-				
+
 				// Update shift properties
 				if (body.date) {
 					shift.date = new Date(body.date);
 				}
-				
+
 				if (body.startTime) {
 					shift.startTime = new Date(body.startTime);
 				}
-				
+
 				if (body.endTime) {
 					shift.endTime = new Date(body.endTime);
 				}
-				
+
 				if (body.location) {
 					shift.location = body.location;
 				}
-				
+
 				await db.em.persistAndFlush(shift);
-				
+
 				// Return updated shift with populated relationships
 				const updatedShift = await db.shift.findOne(
 					{ id },
-					{ populate: ['hospital', 'preceptor', 'students'] }
+					{ populate: ["hospital", "preceptor", "students"] }
 				);
-				
+
 				return {
 					success: true,
 					data: updatedShift,
-					message: "Shift updated successfully"
+					message: "Shift updated successfully",
 				};
 			} catch (err) {
 				console.error("Error updating shift:", err);
@@ -499,7 +523,7 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 		},
 		updateShiftDto
 	)
-	
+
 	// Delete a shift
 	.delete("/:id", async ({ params: { id }, requester }) => {
 		try {
@@ -510,29 +534,29 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 				Actions.Delete,
 				id
 			);
-			
+
 			if (!hasAccess) {
-				return error(403, { 
-					success: false, 
-					message: "You don't have permission to delete this shift" 
+				return error(403, {
+					success: false,
+					message: "You don't have permission to delete this shift",
 				});
 			}
-			
+
 			// Find shift by ID
 			const shift = await db.shift.findOne({ id });
 			if (!shift) {
-				return error(404, { 
-					success: false, 
-					message: "Shift not found" 
+				return error(404, {
+					success: false,
+					message: "Shift not found",
 				});
 			}
-			
+
 			// Delete shift
 			await db.em.removeAndFlush(shift);
-			
+
 			return {
 				success: true,
-				message: "Shift deleted successfully"
+				message: "Shift deleted successfully",
 			};
 		} catch (err) {
 			console.error("Error deleting shift:", err);

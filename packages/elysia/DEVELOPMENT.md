@@ -5,12 +5,14 @@ This document outlines the development setup, best practices, and workflow for t
 ## 🚀 Quick Start
 
 1. **Clone and install:**
+
    ```bash
    cd packages/elysia
    bun install
    ```
 
 2. **Setup environment:**
+
    ```bash
    cp env.example .env
    # Edit .env with your database credentials and other required variables
@@ -31,17 +33,17 @@ This document outlines the development setup, best practices, and workflow for t
 
 ## 📋 Development Scripts
 
-| Script | Description |
-|--------|-------------|
-| `bun run dev` | Start development server with hot reload |
-| `bun run test` | Run all tests |
-| `bun run test:watch` | Run tests in watch mode |
-| `bun run test:coverage` | Generate coverage report |
-| `bun run lint` | Check code quality |
-| `bun run lint:fix` | Auto-fix linting issues |
-| `bun run format` | Format code with Prettier |
-| `bun run format:check` | Check code formatting |
-| `bun run type-check` | Run TypeScript type checking |
+| Script                  | Description                              |
+| ----------------------- | ---------------------------------------- |
+| `bun run dev`           | Start development server with hot reload |
+| `bun run test`          | Run all tests                            |
+| `bun run test:watch`    | Run tests in watch mode                  |
+| `bun run test:coverage` | Generate coverage report                 |
+| `bun run lint`          | Check code quality                       |
+| `bun run lint:fix`      | Auto-fix linting issues                  |
+| `bun run format`        | Format code with Prettier                |
+| `bun run format:check`  | Check code formatting                    |
+| `bun run type-check`    | Run TypeScript type checking             |
 
 ## 🛠️ Development Tools
 
@@ -156,4 +158,4 @@ bun run test:watch
 - [Elysia Documentation](https://elysiajs.com/)
 - [MikroORM Documentation](https://mikro-orm.io/)
 - [Bun Test Documentation](https://bun.sh/docs/cli/test)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/) 
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)

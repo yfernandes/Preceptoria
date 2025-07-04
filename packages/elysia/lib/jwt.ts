@@ -77,42 +77,55 @@ export interface JWTOption<
 
 // Supported algorithms for HMAC
 const HMAC_ALGORITHMS = ["HS256", "HS384", "HS512"] as const;
-type HMACAlgorithm = typeof HMAC_ALGORITHMS[number];
+type HMACAlgorithm = (typeof HMAC_ALGORITHMS)[number];
 
 // Supported algorithms for RSA/EC
 const ASYMMETRIC_ALGORITHMS = [
-	"RS256", "RS384", "RS512",
-	"PS256", "PS384", "PS512",
-	"ES256", "ES384", "ES512",
-	"EdDSA"
+	"RS256",
+	"RS384",
+	"RS512",
+	"PS256",
+	"PS384",
+	"PS512",
+	"ES256",
+	"ES384",
+	"ES512",
+	"EdDSA",
 ] as const;
-type AsymmetricAlgorithm = typeof ASYMMETRIC_ALGORITHMS[number];
+type AsymmetricAlgorithm = (typeof ASYMMETRIC_ALGORITHMS)[number];
 
 type SupportedAlgorithm = HMACAlgorithm | AsymmetricAlgorithm;
 
 /**
  * Validates if the algorithm is supported for the given secret type
  */
-function validateAlgorithm(alg: string, secret: string | Uint8Array): alg is SupportedAlgorithm {
+function validateAlgorithm(
+	alg: string,
+	secret: string | Uint8Array
+): alg is SupportedAlgorithm {
 	if (HMAC_ALGORITHMS.includes(alg as HMACAlgorithm)) {
 		return true; // HMAC algorithms work with any secret
 	}
-	
+
 	if (ASYMMETRIC_ALGORITHMS.includes(alg as AsymmetricAlgorithm)) {
-		return typeof secret === "string" && (
-			secret.includes("-----BEGIN PRIVATE KEY-----") ||
-			secret.includes("-----BEGIN RSA PRIVATE KEY-----") ||
-			secret.includes("-----BEGIN EC PRIVATE KEY-----")
+		return (
+			typeof secret === "string" &&
+			(secret.includes("-----BEGIN PRIVATE KEY-----") ||
+				secret.includes("-----BEGIN RSA PRIVATE KEY-----") ||
+				secret.includes("-----BEGIN EC PRIVATE KEY-----"))
 		);
 	}
-	
+
 	return false;
 }
 
 /**
  * Prepares the key based on the secret type and algorithm
  */
-async function prepareKey(secret: string | Uint8Array, alg: string): Promise<Uint8Array | CryptoKey> {
+async function prepareKey(
+	secret: string | Uint8Array,
+	alg: string
+): Promise<Uint8Array | CryptoKey> {
 	if (typeof secret === "string") {
 		// Check if it's a PEM key
 		if (secret.includes("-----BEGIN")) {
@@ -123,13 +136,15 @@ async function prepareKey(secret: string | Uint8Array, alg: string): Promise<Uin
 					return await importSPKI(secret, alg);
 				}
 			} catch (error) {
-				throw new Error(`Invalid PEM key format: ${error instanceof Error ? error.message : 'Unknown error'}`);
+				throw new Error(
+					`Invalid PEM key format: ${error instanceof Error ? error.message : "Unknown error"}`
+				);
 			}
 		}
 		// Treat as HMAC secret
 		return new TextEncoder().encode(secret);
 	}
-	
+
 	// Uint8Array - treat as HMAC secret
 	return secret;
 }
@@ -156,7 +171,9 @@ JWTOption<Name, Schema>) => {
 	}
 
 	if (!validateAlgorithm(alg, secret)) {
-		throw new Error(`Algorithm '${alg}' is not supported for the provided secret type`);
+		throw new Error(
+			`Algorithm '${alg}' is not supported for the provided secret type`
+		);
 	}
 
 	const validator = schema
@@ -196,7 +213,7 @@ JWTOption<Name, Schema>) => {
 		): Promise<string> {
 			try {
 				const key = await prepareKey(secret, alg);
-				
+
 				let jwt = new SignJWT({
 					...payload,
 					...morePayload,
@@ -218,7 +235,9 @@ JWTOption<Name, Schema>) => {
 
 				return await jwt.sign(key);
 			} catch (error) {
-				throw new Error(`JWT signing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+				throw new Error(
+					`JWT signing failed: ${error instanceof Error ? error.message : "Unknown error"}`
+				);
 			}
 		},
 		async verify(
@@ -239,7 +258,8 @@ JWTOption<Name, Schema>) => {
 					throw new ValidationError("JWT", validator, data);
 				}
 
-				return data as UnwrapSchema<Schema, Record<string, string | number>> & JWTPayloadSpec;
+				return data as UnwrapSchema<Schema, Record<string, string | number>> &
+					JWTPayloadSpec;
 			} catch (error) {
 				// Handle specific JWT errors
 				if (error instanceof joseErrors.JWTExpired) {
@@ -247,7 +267,10 @@ JWTOption<Name, Schema>) => {
 				} else if (error instanceof joseErrors.JWSSignatureVerificationFailed) {
 					console.error("JWT signature verification failed:", error.message);
 				} else {
-					console.error("JWT verification error:", error instanceof Error ? error.message : 'Unknown error');
+					console.error(
+						"JWT verification error:",
+						error instanceof Error ? error.message : "Unknown error"
+					);
 				}
 				return false;
 			}

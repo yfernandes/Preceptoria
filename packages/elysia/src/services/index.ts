@@ -1,2 +1,2 @@
-export { SyncService } from './syncService';
-export { GoogleSheetsService } from './googleSheets'; 
+export { SyncService } from "./syncService";
+export { GoogleSheetsService } from "./googleSheets";

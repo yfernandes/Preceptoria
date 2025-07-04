@@ -1,7 +1,15 @@
 import { db } from "../db";
-import { Student, Document, User, School, Classes, Course, Supervisor } from "../entities";
+import {
+	Student,
+	Document,
+	User,
+	School,
+	Classes,
+	Course,
+	Supervisor,
+} from "../entities";
 import { GoogleSheetsService, GoogleSheetsSubmission } from "./googleSheets";
-import {  DocumentType } from "../entities/document.entity";
+import { DocumentType } from "../entities/document.entity";
 
 export interface SyncResult {
 	success: boolean;
@@ -40,7 +48,10 @@ export class SyncService {
 			console.log("Starting Google Sheets sync...");
 
 			// Fetch submissions from Google Sheets
-			const submissions = await this.googleSheets.getSubmissions(spreadsheetId, range);
+			const submissions = await this.googleSheets.getSubmissions(
+				spreadsheetId,
+				range
+			);
 			result.stats.totalSubmissions = submissions.length;
 
 			if (submissions.length === 0) {
@@ -53,7 +64,7 @@ export class SyncService {
 				try {
 					await this.processSubmission(submission, result);
 				} catch (error) {
-					const errorMsg = `Error processing submission for ${submission.fullName}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+					const errorMsg = `Error processing submission for ${submission.fullName}: ${error instanceof Error ? error.message : "Unknown error"}`;
 					console.error(errorMsg);
 					result.stats.errors.push(errorMsg);
 				}
@@ -62,26 +73,34 @@ export class SyncService {
 			// Flush all changes
 			await db.em.flush();
 
-			console.log(`Sync completed. Processed ${submissions.length} submissions.`);
-			console.log(`Created ${result.stats.newStudents} new students and ${result.stats.newDocuments} new documents.`);
+			console.log(
+				`Sync completed. Processed ${submissions.length} submissions.`
+			);
+			console.log(
+				`Created ${result.stats.newStudents} new students and ${result.stats.newDocuments} new documents.`
+			);
 
 			if (result.stats.errors.length > 0) {
 				result.success = false;
 				result.message = `Sync completed with ${result.stats.errors.length} errors`;
 			}
-
 		} catch (error) {
 			result.success = false;
-			result.message = `Sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`;
+			result.message = `Sync failed: ${error instanceof Error ? error.message : "Unknown error"}`;
 			console.error("Sync failed:", error);
 		}
 
 		return result;
 	}
 
-	private async processSubmission(submission: GoogleSheetsSubmission, result: SyncResult): Promise<void> {
+	private async processSubmission(
+		submission: GoogleSheetsSubmission,
+		result: SyncResult
+	): Promise<void> {
 		// Check if student already exists by crefito (we'll need to add this field to Student entity)
-		let student = await db.student.findOne({ user: { email: submission.email } });
+		let student = await db.student.findOne({
+			user: { email: submission.email },
+		});
 
 		if (!student) {
 			// Create new student
@@ -93,10 +112,12 @@ export class SyncService {
 		await this.processDocuments(submission, student, result);
 	}
 
-	private async createStudentFromSubmission(submission: GoogleSheetsSubmission): Promise<Student> {
+	private async createStudentFromSubmission(
+		submission: GoogleSheetsSubmission
+	): Promise<Student> {
 		// Create or find user
 		let user = await db.user.findOne({ email: submission.email });
-		
+
 		if (!user) {
 			user = await User.create(
 				submission.fullName,
@@ -109,7 +130,7 @@ export class SyncService {
 
 		// Find or create school (using studentsSchoolId as school name for now)
 		let school = await db.school.findOne({ name: submission.studentsSchoolId });
-		
+
 		if (!school) {
 			// Create a default school if it doesn't exist
 			school = new School(
@@ -122,8 +143,10 @@ export class SyncService {
 		}
 
 		// Find or create supervisor (using a default supervisor for now)
-		let supervisor = await db.supervisor.findOne({ user: { email: "supervisor@example.com" } });
-		
+		let supervisor = await db.supervisor.findOne({
+			user: { email: "supervisor@example.com" },
+		});
+
 		if (!supervisor) {
 			// Create a default supervisor if it doesn't exist
 			const supervisorUser = await User.create(
@@ -140,23 +163,19 @@ export class SyncService {
 
 		// Find or create course (using classNumber as course name for now)
 		let course = await db.course.findOne({ name: submission.classNumber });
-		
+
 		if (!course) {
 			// Create a default course if it doesn't exist
-			course = new Course(
-				submission.classNumber,
-				school,
-				supervisor
-			);
+			course = new Course(submission.classNumber, school, supervisor);
 			await db.em.persist(course);
 		}
 
 		// Find or create class
-		let classEntity = await db.classes.findOne({ 
+		let classEntity = await db.classes.findOne({
 			course: course.id,
-			name: submission.classNumber 
+			name: submission.classNumber,
 		});
-		
+
 		if (!classEntity) {
 			classEntity = new Classes(submission.classNumber, course);
 			await db.em.persist(classEntity);
@@ -178,32 +197,62 @@ export class SyncService {
 
 		// Process vaccination card
 		for (const url of documentation.vaccinationCard) {
-			await this.createDocumentFromUrl(url, student, DocumentType.VACCINATION_CARD, result);
+			await this.createDocumentFromUrl(
+				url,
+				student,
+				DocumentType.VACCINATION_CARD,
+				result
+			);
 		}
 
 		// Process professional identity front
 		for (const url of documentation.professionalIdentityFront) {
-			await this.createDocumentFromUrl(url, student, DocumentType.PROFESSIONAL_ID, result);
+			await this.createDocumentFromUrl(
+				url,
+				student,
+				DocumentType.PROFESSIONAL_ID,
+				result
+			);
 		}
 
 		// Process professional identity back
 		for (const url of documentation.professionalIdentityBack) {
-			await this.createDocumentFromUrl(url, student, DocumentType.PROFESSIONAL_ID, result);
+			await this.createDocumentFromUrl(
+				url,
+				student,
+				DocumentType.PROFESSIONAL_ID,
+				result
+			);
 		}
 
 		// Process internship commitment term
 		for (const url of documentation.internshipCommitmentTerm) {
-			await this.createDocumentFromUrl(url, student, DocumentType.COMMITMENT_CONTRACT, result);
+			await this.createDocumentFromUrl(
+				url,
+				student,
+				DocumentType.COMMITMENT_CONTRACT,
+				result
+			);
 		}
 
 		// Process city hospital form
 		for (const url of documentation.cityHospitalForm) {
-			await this.createDocumentFromUrl(url, student, DocumentType.ADMISSION_FORM, result);
+			await this.createDocumentFromUrl(
+				url,
+				student,
+				DocumentType.ADMISSION_FORM,
+				result
+			);
 		}
 
 		// Process badge picture
 		if (documentation.badgePicture) {
-			await this.createDocumentFromUrl(documentation.badgePicture, student, DocumentType.BADGE_PICTURE, result);
+			await this.createDocumentFromUrl(
+				documentation.badgePicture,
+				student,
+				DocumentType.BADGE_PICTURE,
+				result
+			);
 		}
 	}
 
@@ -218,9 +267,9 @@ export class SyncService {
 			const fileId = this.googleSheets.extractFileId(url);
 
 			// Check if document already exists by Google Drive ID
-			const existingDoc = await db.document.findOne({ 
+			const existingDoc = await db.document.findOne({
 				googleDriveId: fileId,
-				student: student.id 
+				student: student.id,
 			});
 
 			if (existingDoc) {
@@ -235,15 +284,14 @@ export class SyncService {
 				student,
 				`Auto-imported from Google Sheets on ${new Date().toISOString()}`
 			);
-			
+
 			// Set Google Drive ID for reference
 			document.googleDriveId = fileId;
 
 			await db.em.persist(document);
 			result.stats.newDocuments++;
-
 		} catch (error) {
-			const errorMsg = `Error creating document from URL ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+			const errorMsg = `Error creating document from URL ${url}: ${error instanceof Error ? error.message : "Unknown error"}`;
 			console.error(errorMsg);
 			result.stats.errors.push(errorMsg);
 		}
@@ -251,6 +299,9 @@ export class SyncService {
 
 	private generateTemporaryPassword(): string {
 		// Generate a random temporary password
-		return Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+		return (
+			Math.random().toString(36).slice(-8) +
+			Math.random().toString(36).slice(-8)
+		);
 	}
-} 
+}

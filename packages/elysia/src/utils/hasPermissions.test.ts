@@ -173,7 +173,9 @@ describe("hasPermission", () => {
 				);
 
 				expect(result).toBe(true);
-				expect(mockDb.student.findOne).toHaveBeenCalledWith({ id: "student-1" });
+				expect(mockDb.student.findOne).toHaveBeenCalledWith({
+					id: "student-1",
+				});
 			});
 
 			it("should return false when student has no shifts in manager's hospital", async () => {
@@ -849,4 +851,4 @@ describe("hasPermission", () => {
 			expect(result).toBe(false);
 		});
 	});
-}); 
+});

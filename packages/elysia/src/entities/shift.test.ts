@@ -3,209 +3,209 @@ import { Shift } from "./shift.entity";
 import { Collection } from "@mikro-orm/postgresql";
 
 describe("Shift Entity", () => {
-  let mockHospital: any;
-  let mockPreceptor: any;
+	let mockHospital: any;
+	let mockPreceptor: any;
 
-  beforeEach(() => {
-    // Create simple mock objects to avoid circular dependencies
-    mockHospital = {
-      id: "hospital-1",
-      name: "Test Hospital",
-      address: "Test Address",
-      email: "hospital@test.com",
-      phone: "+5511777777777"
-    };
+	beforeEach(() => {
+		// Create simple mock objects to avoid circular dependencies
+		mockHospital = {
+			id: "hospital-1",
+			name: "Test Hospital",
+			address: "Test Address",
+			email: "hospital@test.com",
+			phone: "+5511777777777",
+		};
 
-    mockPreceptor = {
-      id: "preceptor-1",
-      user: {
-        id: "user-1",
-        name: "Test User",
-        email: "test@example.com",
-        phoneNumber: "+5511999999999"
-      },
-      hospital: mockHospital
-    };
-  });
+		mockPreceptor = {
+			id: "preceptor-1",
+			user: {
+				id: "user-1",
+				name: "Test User",
+				email: "test@example.com",
+				phoneNumber: "+5511999999999",
+			},
+			hospital: mockHospital,
+		};
+	});
 
-  describe("Constructor", () => {
-    it("should create a shift with required fields", () => {
-      const date = new Date("2024-01-01");
-      const startTime = new Date("2024-01-01T08:00:00Z");
-      const endTime = new Date("2024-01-01T16:00:00Z");
-      
-      const shift = new Shift(
-        date,
-        startTime,
-        endTime,
-        "Emergency Room",
-        mockHospital,
-        mockPreceptor
-      );
+	describe("Constructor", () => {
+		it("should create a shift with required fields", () => {
+			const date = new Date("2024-01-01");
+			const startTime = new Date("2024-01-01T08:00:00Z");
+			const endTime = new Date("2024-01-01T16:00:00Z");
 
-      expect(shift.date).toBe(date);
-      expect(shift.startTime).toBe(startTime);
-      expect(shift.endTime).toBe(endTime);
-      expect(shift.location).toBe("Emergency Room");
-      expect(shift.hospital).toBe(mockHospital);
-      expect(shift.preceptor).toBe(mockPreceptor);
-    });
+			const shift = new Shift(
+				date,
+				startTime,
+				endTime,
+				"Emergency Room",
+				mockHospital,
+				mockPreceptor
+			);
 
-    it("should inherit from BaseEntity", () => {
-      const date = new Date("2024-01-01");
-      const startTime = new Date("2024-01-01T08:00:00Z");
-      const endTime = new Date("2024-01-01T16:00:00Z");
-      
-      const shift = new Shift(
-        date,
-        startTime,
-        endTime,
-        "Emergency Room",
-        mockHospital,
-        mockPreceptor
-      );
+			expect(shift.date).toBe(date);
+			expect(shift.startTime).toBe(startTime);
+			expect(shift.endTime).toBe(endTime);
+			expect(shift.location).toBe("Emergency Room");
+			expect(shift.hospital).toBe(mockHospital);
+			expect(shift.preceptor).toBe(mockPreceptor);
+		});
 
-      expect(shift.id).toBeDefined();
-      expect(shift.createdAt).toBeInstanceOf(Date);
-      expect(shift.updatedAt).toBeInstanceOf(Date);
-    });
-  });
+		it("should inherit from BaseEntity", () => {
+			const date = new Date("2024-01-01");
+			const startTime = new Date("2024-01-01T08:00:00Z");
+			const endTime = new Date("2024-01-01T16:00:00Z");
 
-  describe("Properties", () => {
-    it("should have all required properties", () => {
-      const date = new Date("2024-01-01");
-      const startTime = new Date("2024-01-01T08:00:00Z");
-      const endTime = new Date("2024-01-01T16:00:00Z");
-      
-      const shift = new Shift(
-        date,
-        startTime,
-        endTime,
-        "Emergency Room",
-        mockHospital,
-        mockPreceptor
-      );
+			const shift = new Shift(
+				date,
+				startTime,
+				endTime,
+				"Emergency Room",
+				mockHospital,
+				mockPreceptor
+			);
 
-      expect(shift.date).toBeDefined();
-      expect(shift.startTime).toBeDefined();
-      expect(shift.endTime).toBeDefined();
-      expect(shift.location).toBeDefined();
-      expect(shift.hospital).toBeDefined();
-      expect(shift.preceptor).toBeDefined();
-      expect(shift.students).toBeDefined();
-    });
+			expect(shift.id).toBeDefined();
+			expect(shift.createdAt).toBeInstanceOf(Date);
+			expect(shift.updatedAt).toBeInstanceOf(Date);
+		});
+	});
 
-    it("should allow property modification", () => {
-      const date = new Date("2024-01-01");
-      const startTime = new Date("2024-01-01T08:00:00Z");
-      const endTime = new Date("2024-01-01T16:00:00Z");
-      
-      const shift = new Shift(
-        date,
-        startTime,
-        endTime,
-        "Emergency Room",
-        mockHospital,
-        mockPreceptor
-      );
+	describe("Properties", () => {
+		it("should have all required properties", () => {
+			const date = new Date("2024-01-01");
+			const startTime = new Date("2024-01-01T08:00:00Z");
+			const endTime = new Date("2024-01-01T16:00:00Z");
 
-      shift.location = "Updated Location";
+			const shift = new Shift(
+				date,
+				startTime,
+				endTime,
+				"Emergency Room",
+				mockHospital,
+				mockPreceptor
+			);
 
-      expect(shift.location).toBe("Updated Location");
-    });
+			expect(shift.date).toBeDefined();
+			expect(shift.startTime).toBeDefined();
+			expect(shift.endTime).toBeDefined();
+			expect(shift.location).toBeDefined();
+			expect(shift.hospital).toBeDefined();
+			expect(shift.preceptor).toBeDefined();
+			expect(shift.students).toBeDefined();
+		});
 
-    it("should initialize students collection", () => {
-      const date = new Date("2024-01-01");
-      const startTime = new Date("2024-01-01T08:00:00Z");
-      const endTime = new Date("2024-01-01T16:00:00Z");
-      
-      const shift = new Shift(
-        date,
-        startTime,
-        endTime,
-        "Emergency Room",
-        mockHospital,
-        mockPreceptor
-      );
+		it("should allow property modification", () => {
+			const date = new Date("2024-01-01");
+			const startTime = new Date("2024-01-01T08:00:00Z");
+			const endTime = new Date("2024-01-01T16:00:00Z");
 
-      expect(shift.students).toBeDefined();
-      expect(shift.students.length).toBe(0);
-    });
-  });
+			const shift = new Shift(
+				date,
+				startTime,
+				endTime,
+				"Emergency Room",
+				mockHospital,
+				mockPreceptor
+			);
 
-  describe("Relationships", () => {
-    it("should have a hospital relationship", () => {
-      const date = new Date("2024-01-01");
-      const startTime = new Date("2024-01-01T08:00:00Z");
-      const endTime = new Date("2024-01-01T16:00:00Z");
-      
-      const shift = new Shift(
-        date,
-        startTime,
-        endTime,
-        "Emergency Room",
-        mockHospital,
-        mockPreceptor
-      );
+			shift.location = "Updated Location";
 
-      expect(shift.hospital).toBe(mockHospital);
-      expect(shift.hospital.name).toBe("Test Hospital");
-    });
+			expect(shift.location).toBe("Updated Location");
+		});
 
-    it("should have a preceptor relationship", () => {
-      const date = new Date("2024-01-01");
-      const startTime = new Date("2024-01-01T08:00:00Z");
-      const endTime = new Date("2024-01-01T16:00:00Z");
-      
-      const shift = new Shift(
-        date,
-        startTime,
-        endTime,
-        "Emergency Room",
-        mockHospital,
-        mockPreceptor
-      );
+		it("should initialize students collection", () => {
+			const date = new Date("2024-01-01");
+			const startTime = new Date("2024-01-01T08:00:00Z");
+			const endTime = new Date("2024-01-01T16:00:00Z");
 
-      expect(shift.preceptor).toBe(mockPreceptor);
-      expect(shift.preceptor.user).toBe(mockPreceptor.user);
-    });
+			const shift = new Shift(
+				date,
+				startTime,
+				endTime,
+				"Emergency Room",
+				mockHospital,
+				mockPreceptor
+			);
 
-    it("should have students collection", () => {
-      const date = new Date("2024-01-01");
-      const startTime = new Date("2024-01-01T08:00:00Z");
-      const endTime = new Date("2024-01-01T16:00:00Z");
-      
-      const shift = new Shift(
-        date,
-        startTime,
-        endTime,
-        "Emergency Room",
-        mockHospital,
-        mockPreceptor
-      );
+			expect(shift.students).toBeDefined();
+			expect(shift.students.length).toBe(0);
+		});
+	});
 
-      expect(shift.students).toBeDefined();
-      expect(shift.students).toBeInstanceOf(Collection);
-      expect(shift.students.length).toBe(0);
-    });
-  });
+	describe("Relationships", () => {
+		it("should have a hospital relationship", () => {
+			const date = new Date("2024-01-01");
+			const startTime = new Date("2024-01-01T08:00:00Z");
+			const endTime = new Date("2024-01-01T16:00:00Z");
 
-  describe("Time Management", () => {
-    it("should handle valid time ranges", () => {
-      const date = new Date("2024-01-01");
-      const startTime = new Date("2024-01-01T08:00:00Z");
-      const endTime = new Date("2024-01-01T16:00:00Z");
-      
-      const shift = new Shift(
-        date,
-        startTime,
-        endTime,
-        "Emergency Room",
-        mockHospital,
-        mockPreceptor
-      );
+			const shift = new Shift(
+				date,
+				startTime,
+				endTime,
+				"Emergency Room",
+				mockHospital,
+				mockPreceptor
+			);
 
-      expect(shift.startTime.getTime()).toBeLessThan(shift.endTime.getTime());
-    });
-  });
-}); 
+			expect(shift.hospital).toBe(mockHospital);
+			expect(shift.hospital.name).toBe("Test Hospital");
+		});
+
+		it("should have a preceptor relationship", () => {
+			const date = new Date("2024-01-01");
+			const startTime = new Date("2024-01-01T08:00:00Z");
+			const endTime = new Date("2024-01-01T16:00:00Z");
+
+			const shift = new Shift(
+				date,
+				startTime,
+				endTime,
+				"Emergency Room",
+				mockHospital,
+				mockPreceptor
+			);
+
+			expect(shift.preceptor).toBe(mockPreceptor);
+			expect(shift.preceptor.user).toBe(mockPreceptor.user);
+		});
+
+		it("should have students collection", () => {
+			const date = new Date("2024-01-01");
+			const startTime = new Date("2024-01-01T08:00:00Z");
+			const endTime = new Date("2024-01-01T16:00:00Z");
+
+			const shift = new Shift(
+				date,
+				startTime,
+				endTime,
+				"Emergency Room",
+				mockHospital,
+				mockPreceptor
+			);
+
+			expect(shift.students).toBeDefined();
+			expect(shift.students).toBeInstanceOf(Collection);
+			expect(shift.students.length).toBe(0);
+		});
+	});
+
+	describe("Time Management", () => {
+		it("should handle valid time ranges", () => {
+			const date = new Date("2024-01-01");
+			const startTime = new Date("2024-01-01T08:00:00Z");
+			const endTime = new Date("2024-01-01T16:00:00Z");
+
+			const shift = new Shift(
+				date,
+				startTime,
+				endTime,
+				"Emergency Room",
+				mockHospital,
+				mockPreceptor
+			);
+
+			expect(shift.startTime.getTime()).toBeLessThan(shift.endTime.getTime());
+		});
+	});
+});

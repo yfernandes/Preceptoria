@@ -8,305 +8,325 @@ import { School } from "./school.entity";
 import { Supervisor } from "./supervisor.entity";
 
 describe("Document Entity", () => {
-  let mockUser: User;
-  let mockStudent: Student;
-  let mockClasses: Classes;
-  let mockCourse: Course;
-  let mockSchool: School;
-  let mockSupervisor: Supervisor;
+	let mockUser: User;
+	let mockStudent: Student;
+	let mockClasses: Classes;
+	let mockCourse: Course;
+	let mockSchool: School;
+	let mockSupervisor: Supervisor;
 
-  beforeEach(async () => {
-    // Create a minimal mock user for testing
-    mockUser = await User.create("Test User", "test@example.com", "+5511999999999", "password123");
-    
-    // Create minimal mock objects for relationships
-    mockSchool = new School("Test School", "Test Address", "school@test.com", "+5511888888888");
-    mockSupervisor = new Supervisor(mockUser, mockSchool);
-    mockCourse = new Course("Test Course", mockSchool, mockSupervisor);
-    mockClasses = new Classes("Test Class", mockCourse);
-    mockStudent = new Student(mockUser, mockClasses);
-  });
+	beforeEach(async () => {
+		// Create a minimal mock user for testing
+		mockUser = await User.create(
+			"Test User",
+			"test@example.com",
+			"+5511999999999",
+			"password123"
+		);
 
-  describe("Constructor", () => {
-    it("should create a document with required fields", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent
-      );
+		// Create minimal mock objects for relationships
+		mockSchool = new School(
+			"Test School",
+			"Test Address",
+			"school@test.com",
+			"+5511888888888"
+		);
+		mockSupervisor = new Supervisor(mockUser, mockSchool);
+		mockCourse = new Course("Test Course", mockSchool, mockSupervisor);
+		mockClasses = new Classes("Test Class", mockCourse);
+		mockStudent = new Student(mockUser, mockClasses);
+	});
 
-      expect(document.name).toBe("Test Document");
-      expect(document.type).toBe(DocumentType.PROFESSIONAL_ID);
-      expect(document.url).toBe("https://example.com/document.pdf");
-      expect(document.student).toBe(mockStudent);
-      expect(document.status).toBe(DocumentStatus.PENDING);
-      expect(document.isRequired).toBe(true);
-      expect(document.isPublic).toBe(false);
-    });
+	describe("Constructor", () => {
+		it("should create a document with required fields", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent
+			);
 
-    it("should create a document with optional fields", () => {
-      const expiresAt = new Date("2025-12-31");
-      const document = new Document(
-        "Test Document",
-        DocumentType.VACCINATION_CARD,
-        "https://example.com/vaccine.pdf",
-        mockStudent,
-        "Vaccination record",
-        expiresAt,
-        false
-      );
+			expect(document.name).toBe("Test Document");
+			expect(document.type).toBe(DocumentType.PROFESSIONAL_ID);
+			expect(document.url).toBe("https://example.com/document.pdf");
+			expect(document.student).toBe(mockStudent);
+			expect(document.status).toBe(DocumentStatus.PENDING);
+			expect(document.isRequired).toBe(true);
+			expect(document.isPublic).toBe(false);
+		});
 
-      expect(document.description).toBe("Vaccination record");
-      expect(document.expiresAt).toEqual(expiresAt);
-      expect(document.isRequired).toBe(false);
-    });
-  });
+		it("should create a document with optional fields", () => {
+			const expiresAt = new Date("2025-12-31");
+			const document = new Document(
+				"Test Document",
+				DocumentType.VACCINATION_CARD,
+				"https://example.com/vaccine.pdf",
+				mockStudent,
+				"Vaccination record",
+				expiresAt,
+				false
+			);
 
-  describe("isExpired()", () => {
-    it("should return false when no expiration date is set", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent
-      );
+			expect(document.description).toBe("Vaccination record");
+			expect(document.expiresAt).toEqual(expiresAt);
+			expect(document.isRequired).toBe(false);
+		});
+	});
 
-      expect(document.isExpired()).toBe(false);
-    });
+	describe("isExpired()", () => {
+		it("should return false when no expiration date is set", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent
+			);
 
-    it("should return false when expiration date is in the future", () => {
-      const futureDate = new Date();
-      futureDate.setFullYear(futureDate.getFullYear() + 1);
+			expect(document.isExpired()).toBe(false);
+		});
 
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent,
-        undefined,
-        futureDate
-      );
+		it("should return false when expiration date is in the future", () => {
+			const futureDate = new Date();
+			futureDate.setFullYear(futureDate.getFullYear() + 1);
 
-      expect(document.isExpired()).toBe(false);
-    });
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent,
+				undefined,
+				futureDate
+			);
 
-    it("should return true when expiration date is in the past", () => {
-      const pastDate = new Date();
-      pastDate.setFullYear(pastDate.getFullYear() - 1);
+			expect(document.isExpired()).toBe(false);
+		});
 
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent,
-        undefined,
-        pastDate
-      );
+		it("should return true when expiration date is in the past", () => {
+			const pastDate = new Date();
+			pastDate.setFullYear(pastDate.getFullYear() - 1);
 
-      expect(document.isExpired()).toBe(true);
-    });
-  });
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent,
+				undefined,
+				pastDate
+			);
 
-  describe("isValid()", () => {
-    it("should return true for approved document that is not expired", () => {
-      const futureDate = new Date();
-      futureDate.setFullYear(futureDate.getFullYear() + 1);
+			expect(document.isExpired()).toBe(true);
+		});
+	});
 
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent,
-        undefined,
-        futureDate
-      );
-      document.approve(mockUser);
+	describe("isValid()", () => {
+		it("should return true for approved document that is not expired", () => {
+			const futureDate = new Date();
+			futureDate.setFullYear(futureDate.getFullYear() + 1);
 
-      expect(document.isValid()).toBe(true);
-    });
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent,
+				undefined,
+				futureDate
+			);
+			document.approve(mockUser);
 
-    it("should return false for approved document that is expired", () => {
-      const pastDate = new Date();
-      pastDate.setFullYear(pastDate.getFullYear() - 1);
+			expect(document.isValid()).toBe(true);
+		});
 
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent,
-        undefined,
-        pastDate
-      );
-      document.approve(mockUser);
+		it("should return false for approved document that is expired", () => {
+			const pastDate = new Date();
+			pastDate.setFullYear(pastDate.getFullYear() - 1);
 
-      expect(document.isValid()).toBe(false);
-    });
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent,
+				undefined,
+				pastDate
+			);
+			document.approve(mockUser);
 
-    it("should return false for pending document", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent
-      );
+			expect(document.isValid()).toBe(false);
+		});
 
-      expect(document.isValid()).toBe(false);
-    });
+		it("should return false for pending document", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent
+			);
 
-    it("should return false for rejected document", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent
-      );
-      document.reject(mockUser, "Invalid document");
+			expect(document.isValid()).toBe(false);
+		});
 
-      expect(document.isValid()).toBe(false);
-    });
-  });
+		it("should return false for rejected document", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent
+			);
+			document.reject(mockUser, "Invalid document");
 
-  describe("canBeVerified()", () => {
-    it("should return true for pending document", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent
-      );
+			expect(document.isValid()).toBe(false);
+		});
+	});
 
-      expect(document.canBeVerified()).toBe(true);
-    });
+	describe("canBeVerified()", () => {
+		it("should return true for pending document", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent
+			);
 
-    it("should return false for approved document", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent
-      );
-      document.approve(mockUser);
+			expect(document.canBeVerified()).toBe(true);
+		});
 
-      expect(document.canBeVerified()).toBe(false);
-    });
+		it("should return false for approved document", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent
+			);
+			document.approve(mockUser);
 
-    it("should return false for rejected document", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent
-      );
-      document.reject(mockUser, "Invalid document");
+			expect(document.canBeVerified()).toBe(false);
+		});
 
-      expect(document.canBeVerified()).toBe(false);
-    });
-  });
+		it("should return false for rejected document", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent
+			);
+			document.reject(mockUser, "Invalid document");
 
-  describe("approve()", () => {
-    it("should approve a pending document", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent
-      );
+			expect(document.canBeVerified()).toBe(false);
+		});
+	});
 
-      document.approve(mockUser, "Document looks good");
+	describe("approve()", () => {
+		it("should approve a pending document", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent
+			);
 
-      expect(document.status).toBe(DocumentStatus.APPROVED);
-      expect(document.verifiedBy).toBe(mockUser);
-      expect(document.verifiedAt).toBeInstanceOf(Date);
-      expect(document.validationNotes).toBe("Document looks good");
-    });
+			document.approve(mockUser, "Document looks good");
 
-    it("should approve without notes", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent
-      );
+			expect(document.status).toBe(DocumentStatus.APPROVED);
+			expect(document.verifiedBy).toBe(mockUser);
+			expect(document.verifiedAt).toBeInstanceOf(Date);
+			expect(document.validationNotes).toBe("Document looks good");
+		});
 
-      document.approve(mockUser);
+		it("should approve without notes", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent
+			);
 
-      expect(document.status).toBe(DocumentStatus.APPROVED);
-      expect(document.verifiedBy).toBe(mockUser);
-      expect(document.verifiedAt).toBeInstanceOf(Date);
-      expect(document.validationNotes).toBeUndefined();
-    });
-  });
+			document.approve(mockUser);
 
-  describe("reject()", () => {
-    it("should reject a pending document", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent
-      );
+			expect(document.status).toBe(DocumentStatus.APPROVED);
+			expect(document.verifiedBy).toBe(mockUser);
+			expect(document.verifiedAt).toBeInstanceOf(Date);
+			expect(document.validationNotes).toBeUndefined();
+		});
+	});
 
-      document.reject(mockUser, "Document is incomplete", "Please provide all pages");
+	describe("reject()", () => {
+		it("should reject a pending document", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent
+			);
 
-      expect(document.status).toBe(DocumentStatus.REJECTED);
-      expect(document.verifiedBy).toBe(mockUser);
-      expect(document.verifiedAt).toBeInstanceOf(Date);
-      expect(document.rejectionReason).toBe("Document is incomplete");
-      expect(document.validationNotes).toBe("Please provide all pages");
-    });
+			document.reject(
+				mockUser,
+				"Document is incomplete",
+				"Please provide all pages"
+			);
 
-    it("should reject without notes", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.PROFESSIONAL_ID,
-        "https://example.com/document.pdf",
-        mockStudent
-      );
+			expect(document.status).toBe(DocumentStatus.REJECTED);
+			expect(document.verifiedBy).toBe(mockUser);
+			expect(document.verifiedAt).toBeInstanceOf(Date);
+			expect(document.rejectionReason).toBe("Document is incomplete");
+			expect(document.validationNotes).toBe("Please provide all pages");
+		});
 
-      document.reject(mockUser, "Document is incomplete");
+		it("should reject without notes", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.PROFESSIONAL_ID,
+				"https://example.com/document.pdf",
+				mockStudent
+			);
 
-      expect(document.status).toBe(DocumentStatus.REJECTED);
-      expect(document.verifiedBy).toBe(mockUser);
-      expect(document.verifiedAt).toBeInstanceOf(Date);
-      expect(document.rejectionReason).toBe("Document is incomplete");
-      expect(document.validationNotes).toBeUndefined();
-    });
-  });
+			document.reject(mockUser, "Document is incomplete");
 
-  describe("updateValidationChecks()", () => {
-    it("should update validation checks", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.VACCINATION_CARD,
-        "https://example.com/vaccine.pdf",
-        mockStudent
-      );
+			expect(document.status).toBe(DocumentStatus.REJECTED);
+			expect(document.verifiedBy).toBe(mockUser);
+			expect(document.verifiedAt).toBeInstanceOf(Date);
+			expect(document.rejectionReason).toBe("Document is incomplete");
+			expect(document.validationNotes).toBeUndefined();
+		});
+	});
 
-      document.updateValidationChecks({ "hasVaccineA": true, "hasVaccineB": false });
+	describe("updateValidationChecks()", () => {
+		it("should update validation checks", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.VACCINATION_CARD,
+				"https://example.com/vaccine.pdf",
+				mockStudent
+			);
 
-      expect(document.validationChecks).toEqual({
-        "hasVaccineA": true,
-        "hasVaccineB": false
-      });
-    });
+			document.updateValidationChecks({
+				hasVaccineA: true,
+				hasVaccineB: false,
+			});
 
-    it("should merge with existing validation checks", () => {
-      const document = new Document(
-        "Test Document",
-        DocumentType.VACCINATION_CARD,
-        "https://example.com/vaccine.pdf",
-        mockStudent
-      );
+			expect(document.validationChecks).toEqual({
+				hasVaccineA: true,
+				hasVaccineB: false,
+			});
+		});
 
-      document.updateValidationChecks({ "hasVaccineA": true });
-      document.updateValidationChecks({ "hasVaccineB": false, "hasVaccineC": true });
+		it("should merge with existing validation checks", () => {
+			const document = new Document(
+				"Test Document",
+				DocumentType.VACCINATION_CARD,
+				"https://example.com/vaccine.pdf",
+				mockStudent
+			);
 
-      expect(document.validationChecks).toEqual({
-        "hasVaccineA": true,
-        "hasVaccineB": false,
-        "hasVaccineC": true
-      });
-    });
-  });
-}); 
+			document.updateValidationChecks({ hasVaccineA: true });
+			document.updateValidationChecks({
+				hasVaccineB: false,
+				hasVaccineC: true,
+			});
+
+			expect(document.validationChecks).toEqual({
+				hasVaccineA: true,
+				hasVaccineB: false,
+				hasVaccineC: true,
+			});
+		});
+	});
+});

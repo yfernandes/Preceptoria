@@ -26,7 +26,7 @@ const baseConfig = {
 	metadataProvider: TsMorphMetadataProvider,
 	driver: PostgreSqlDriver,
 	strict: true,
-	
+
 	entities: [
 		BaseEntity,
 		User,
@@ -82,7 +82,7 @@ const baseConfig = {
 	debug: false,
 	verbose: false,
 	colors: true,
-	
+
 	// Schema validation
 	validateRequired: true,
 	validate: true,
@@ -96,10 +96,10 @@ export const devConfig = defineConfig({
 	user: Bun.env.DB_USER || "postgres",
 	password: Bun.env.DB_PASS || "postgres",
 	dbName: Bun.env.DB_NAME || "preceptoria_dev",
-	
+
 	debug: true,
 	verbose: true,
-	
+
 	// Development-specific settings
 	discovery: {
 		...baseConfig.discovery,
@@ -115,18 +115,18 @@ export const prodConfig = defineConfig({
 	user: Bun.env.DB_USER,
 	password: Bun.env.DB_PASS,
 	dbName: Bun.env.DB_NAME,
-	
+
 	// Production-specific settings
 	debug: false,
 	verbose: false,
-	
+
 	// Enhanced connection pooling for production
 	pool: {
 		...baseConfig.pool,
 		min: 5,
 		max: 20,
 	},
-	
+
 	// Disable schema validation in production for performance
 	validate: false,
 });
@@ -139,25 +139,25 @@ export const testConfig = defineConfig({
 	user: Bun.env.TEST_DB_USER || "postgres",
 	password: Bun.env.TEST_DB_PASS || "postgres",
 	dbName: Bun.env.TEST_DB_NAME || "preceptoria_test",
-	
+
 	// Test-specific settings
 	debug: false,
 	verbose: false,
-	
+
 	// Minimal pooling for tests
 	pool: {
 		...baseConfig.pool,
 		min: 1,
 		max: 5,
 	},
-	
+
 	// Allow dropping tables in test environment
 	migrations: {
 		...baseConfig.migrations,
 		dropTables: true,
 		safe: false,
 	},
-	
+
 	// Disable validation in tests for speed
 	validate: false,
 	validateRequired: false,
@@ -166,7 +166,7 @@ export const testConfig = defineConfig({
 // Default configuration based on environment
 const getConfig = () => {
 	const nodeEnv = Bun.env.NODE_ENV || "development";
-	
+
 	switch (nodeEnv) {
 		case "production":
 			return prodConfig;

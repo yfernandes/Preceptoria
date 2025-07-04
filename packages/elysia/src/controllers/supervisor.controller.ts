@@ -25,7 +25,7 @@ const updateSupervisorDto = {
 
 export const supervisorController = new Elysia({ prefix: "/supervisors" })
 	.use(authMiddleware)
-	
+
 	// Create a new supervisor
 	.post(
 		"/",
@@ -38,23 +38,23 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 					Actions.Create,
 					""
 				);
-				
+
 				if (!hasAccess) {
-					return error(403, { 
-						success: false, 
-						message: "You don't have permission to create supervisors" 
+					return error(403, {
+						success: false,
+						message: "You don't have permission to create supervisors",
 					});
 				}
-				
+
 				// Validate user exists and user has access to them
 				const user = await db.user.findOne({ id: userId });
 				if (!user) {
-					return error(404, { 
-						success: false, 
-						message: "User not found" 
+					return error(404, {
+						success: false,
+						message: "User not found",
 					});
 				}
-				
+
 				// Check if user has access to this user
 				const hasUserAccess = await hasPermission(
 					requester,
@@ -62,23 +62,24 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 					Actions.Read,
 					userId
 				);
-				
+
 				if (!hasUserAccess) {
-					return error(403, { 
-						success: false, 
-						message: "You don't have permission to assign this user as a supervisor" 
+					return error(403, {
+						success: false,
+						message:
+							"You don't have permission to assign this user as a supervisor",
 					});
 				}
-				
+
 				// Validate school exists and user has access to it
 				const school = await db.school.findOne({ id: schoolId });
 				if (!school) {
-					return error(404, { 
-						success: false, 
-						message: "School not found" 
+					return error(404, {
+						success: false,
+						message: "School not found",
 					});
 				}
-				
+
 				// Check if user has access to this school
 				const hasSchoolAccess = await hasPermission(
 					requester,
@@ -86,38 +87,41 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 					Actions.Read,
 					schoolId
 				);
-				
+
 				if (!hasSchoolAccess) {
-					return error(403, { 
-						success: false, 
-						message: "You don't have permission to assign supervisors to this school" 
+					return error(403, {
+						success: false,
+						message:
+							"You don't have permission to assign supervisors to this school",
 					});
 				}
-				
+
 				// Check if user is already a supervisor
-				const existingSupervisor = await db.supervisor.findOne({ user: { id: userId } });
+				const existingSupervisor = await db.supervisor.findOne({
+					user: { id: userId },
+				});
 				if (existingSupervisor) {
-					return error(400, { 
-						success: false, 
-						message: "User is already a supervisor" 
+					return error(400, {
+						success: false,
+						message: "User is already a supervisor",
 					});
 				}
-				
+
 				// Create new supervisor
 				const newSupervisor = new Supervisor(user, school);
-				
+
 				await db.em.persistAndFlush(newSupervisor);
-				
+
 				// Return created supervisor with populated relationships
 				const createdSupervisor = await db.supervisor.findOne(
 					{ id: newSupervisor.id },
-					{ populate: ['user', 'school', 'school.orgAdmin'] }
+					{ populate: ["user", "school", "school.orgAdmin"] }
 				);
-				
+
 				return {
 					success: true,
 					data: createdSupervisor,
-					message: "Supervisor created successfully"
+					message: "Supervisor created successfully",
 				};
 			} catch (err) {
 				console.error("Error creating supervisor:", err);
@@ -126,24 +130,24 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 		},
 		createSupervisorDto
 	)
-	
+
 	// Get all supervisors (with optional filtering)
 	.get("/", async ({ requester, query }) => {
 		try {
 			const { schoolId, department, limit = 10, offset = 0 } = query;
-			
+
 			// Build filter based on user permissions and role
 			let filter: any = {};
-			
+
 			// Apply query filters
 			if (schoolId) {
 				filter.school = { id: schoolId };
 			}
-			
+
 			if (department) {
 				filter.department = { $ilike: `%${department}%` };
 			}
-			
+
 			// Apply role-based filtering for data isolation
 			if (requester.roles.includes(UserRoles.Student)) {
 				// Students can only see supervisors of their courses
@@ -158,15 +162,15 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 				// OrgAdmins can see all supervisors within their organization
 				// This requires filtering by organization
 			}
-			
+
 			// Get supervisors with pagination
 			const supervisors = await db.supervisor.find(filter, {
-				populate: ['user', 'school', 'courses'],
+				populate: ["user", "school", "courses"],
 				limit: parseInt(limit as string),
 				offset: parseInt(offset as string),
-				orderBy: { createdAt: 'DESC' }
+				orderBy: { createdAt: "DESC" },
 			});
-			
+
 			// Filter supervisors based on permissions
 			const accessibleSupervisors = [];
 			for (const supervisor of supervisors) {
@@ -176,12 +180,12 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 					Actions.Read,
 					supervisor.id
 				);
-				
+
 				if (hasAccess) {
 					accessibleSupervisors.push(supervisor);
 				}
 			}
-			
+
 			return {
 				success: true,
 				data: accessibleSupervisors,
@@ -189,15 +193,15 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 					total: accessibleSupervisors.length,
 					limit: parseInt(limit as string),
 					offset: parseInt(offset as string),
-					hasMore: accessibleSupervisors.length === parseInt(limit as string)
-				}
+					hasMore: accessibleSupervisors.length === parseInt(limit as string),
+				},
 			};
 		} catch (err) {
 			console.error("Error fetching supervisors:", err);
 			return error(500, { success: false, message: "Internal server error" });
 		}
 	})
-	
+
 	// Get a specific supervisor by ID
 	.get("/:id", async ({ params: { id }, requester }) => {
 		try {
@@ -208,46 +212,46 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 				Actions.Read,
 				id
 			);
-			
+
 			if (!hasAccess) {
-				return error(403, { 
-					success: false, 
-					message: "You don't have permission to view this supervisor" 
+				return error(403, {
+					success: false,
+					message: "You don't have permission to view this supervisor",
 				});
 			}
-			
+
 			// Find supervisor by ID with populated relationships
 			const supervisor = await db.supervisor.findOne(
 				{ id },
-				{ 
+				{
 					populate: [
-						'user', 
-						'school', 
-						'courses',
-						'courses.classes',
-						'courses.classes.students',
-						'school.orgAdmin'
-					] 
+						"user",
+						"school",
+						"courses",
+						"courses.classes",
+						"courses.classes.students",
+						"school.orgAdmin",
+					],
 				}
 			);
-			
+
 			if (!supervisor) {
-				return error(404, { 
-					success: false, 
-					message: "Supervisor not found" 
+				return error(404, {
+					success: false,
+					message: "Supervisor not found",
 				});
 			}
-			
+
 			return {
 				success: true,
-				data: supervisor
+				data: supervisor,
 			};
 		} catch (err) {
 			console.error("Error fetching supervisor:", err);
 			return error(500, { success: false, message: "Internal server error" });
 		}
 	})
-	
+
 	// Update a supervisor
 	.patch(
 		"/:id",
@@ -260,39 +264,39 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 					Actions.Update,
 					id
 				);
-				
+
 				if (!hasAccess) {
-					return error(403, { 
-						success: false, 
-						message: "You don't have permission to update this supervisor" 
+					return error(403, {
+						success: false,
+						message: "You don't have permission to update this supervisor",
 					});
 				}
-				
+
 				// Find supervisor by ID
 				const supervisor = await db.supervisor.findOne({ id });
 				if (!supervisor) {
-					return error(404, { 
-						success: false, 
-						message: "Supervisor not found" 
+					return error(404, {
+						success: false,
+						message: "Supervisor not found",
 					});
 				}
-				
+
 				// Update supervisor properties (if they exist in the entity)
 				// Note: department and academicTitle are not currently part of the entity
 				// They would need to be added to the Supervisor entity if required
-				
+
 				await db.em.persistAndFlush(supervisor);
-				
+
 				// Return updated supervisor with populated relationships
 				const updatedSupervisor = await db.supervisor.findOne(
 					{ id },
-					{ populate: ['user', 'school', 'courses', 'school.orgAdmin'] }
+					{ populate: ["user", "school", "courses", "school.orgAdmin"] }
 				);
-				
+
 				return {
 					success: true,
 					data: updatedSupervisor,
-					message: "Supervisor updated successfully"
+					message: "Supervisor updated successfully",
 				};
 			} catch (err) {
 				console.error("Error updating supervisor:", err);
@@ -301,7 +305,7 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 		},
 		updateSupervisorDto
 	)
-	
+
 	// Delete a supervisor
 	.delete("/:id", async ({ params: { id }, requester }) => {
 		try {
@@ -312,41 +316,42 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 				Actions.Delete,
 				id
 			);
-			
+
 			if (!hasAccess) {
-				return error(403, { 
-					success: false, 
-					message: "You don't have permission to delete this supervisor" 
+				return error(403, {
+					success: false,
+					message: "You don't have permission to delete this supervisor",
 				});
 			}
-			
+
 			// Find supervisor by ID with courses
 			const supervisor = await db.supervisor.findOne(
 				{ id },
-				{ populate: ['courses'] }
+				{ populate: ["courses"] }
 			);
-			
+
 			if (!supervisor) {
-				return error(404, { 
-					success: false, 
-					message: "Supervisor not found" 
+				return error(404, {
+					success: false,
+					message: "Supervisor not found",
 				});
 			}
-			
+
 			// Check if supervisor has courses (prevent deletion if occupied)
 			if (supervisor.courses.length > 0) {
-				return error(400, { 
-					success: false, 
-					message: "Cannot delete supervisor that has courses. Please reassign or remove courses first." 
+				return error(400, {
+					success: false,
+					message:
+						"Cannot delete supervisor that has courses. Please reassign or remove courses first.",
 				});
 			}
-			
+
 			// Delete supervisor
 			await db.em.removeAndFlush(supervisor);
-			
+
 			return {
 				success: true,
-				message: "Supervisor deleted successfully"
+				message: "Supervisor deleted successfully",
 			};
 		} catch (err) {
 			console.error("Error deleting supervisor:", err);
