@@ -10,6 +10,7 @@ export enum Resource {
 	Supervisor = "Supervisor",
 	HospitalManager = "HospitalManager",
 	Preceptor = "Preceptor",
+	User = "User",
 	Audit = "Audit",
 }
 export enum Actions {
@@ -54,6 +55,9 @@ const readUpdate = (resource: Resource, modifier: Modifiers): Perm => [
 export const rolesPermissions: Record<keyof typeof UserRoles, Perm> = {
 	SysAdmin: ["*:*:*"],
 	OrgAdmin: [
+		// User management
+		...crud(Resource.User, Modifiers.Managed),
+		
 		// Organization-wide management (prevents cross-organization access)
 		...readUpdate(Resource.Hospital, Modifiers.Managed),
 		...readUpdate(Resource.School, Modifiers.Managed),
@@ -73,6 +77,9 @@ export const rolesPermissions: Record<keyof typeof UserRoles, Perm> = {
 		`${Resource.Audit}:Delete_${Modifiers.Managed}`,
 	],
 	Supervisor: [
+		// User management (for students in their classes)
+		...readOnly(Resource.User, Modifiers.Managed),
+		
 		// School operations (prevents cross-supervisor access)
 		...crud(Resource.Course, Modifiers.Own),
 		...crud(Resource.Classes, Modifiers.Own),
