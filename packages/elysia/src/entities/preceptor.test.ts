@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach } from "bun:test";
 import { Preceptor } from "./preceptor.entity";
 import { User } from "./user.entity";
 import { Hospital } from "./hospital.entity";
-import { Shift } from "./shift.entity";
 import { Collection } from "@mikro-orm/postgresql";
 
 describe("Preceptor Entity", () => {

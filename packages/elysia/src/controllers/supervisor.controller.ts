@@ -1,4 +1,4 @@
-import Elysia, { error, t } from "elysia";
+import Elysia, { status as error, t } from "elysia";
 import { Supervisor } from "../entities";
 import { db } from "../db";
 import { authMiddleware } from "../middlewares/auth";
@@ -29,7 +29,7 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 	// Create a new supervisor
 	.post(
 		"/",
-		async ({ body: { userId, schoolId, department, academicTitle }, requester }) => {
+		async ({ body: { userId, schoolId }, requester }) => {
 			try {
 				// Check permissions for creating supervisors
 				const hasAccess = await hasPermission(
@@ -251,7 +251,7 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 	// Update a supervisor
 	.patch(
 		"/:id",
-		async ({ params: { id }, body, requester }) => {
+		async ({ params: { id }, requester }) => {
 			try {
 				// Check permissions for updating this supervisor
 				const hasAccess = await hasPermission(

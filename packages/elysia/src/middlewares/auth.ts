@@ -110,5 +110,8 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 			set.status = 401;
 			return { message: "Authentication failed" };
 		}
+		// Return a default error response for other errors
+		set.status = 500;
+		return { message: "Internal server error" };
 	})
 	.as('scoped');

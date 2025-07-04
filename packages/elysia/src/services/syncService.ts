@@ -1,7 +1,7 @@
 import { db } from "../db";
 import { Student, Document, User, School, Classes, Course, Supervisor } from "../entities";
 import { GoogleSheetsService, GoogleSheetsSubmission } from "./googleSheets";
-import { DocumentStatus, DocumentType } from "../entities/document.entity";
+import {  DocumentType } from "../entities/document.entity";
 
 export interface SyncResult {
 	success: boolean;

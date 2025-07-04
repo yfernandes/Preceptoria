@@ -5,8 +5,6 @@ import { Classes } from "./classes.entity";
 import { Course } from "./course.entity";
 import { School } from "./school.entity";
 import { Supervisor } from "./supervisor.entity";
-import { Shift } from "./shift.entity";
-import { Document } from "./document.entity";
 import { Collection } from "@mikro-orm/postgresql";
 
 describe("Student Entity", () => {

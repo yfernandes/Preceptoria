@@ -1,22 +1,9 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { School } from "./school.entity";
 import { User } from "./user.entity";
-import { OrgAdmin } from "./OrgAdmin.entity";
-import { Course } from "./course.entity";
-import { Supervisor } from "./supervisor.entity";
 import { Collection } from "@mikro-orm/postgresql";
 
 describe("School Entity", () => {
-  let mockUser: User;
-
-  beforeEach(async () => {
-    mockUser = await User.create(
-      "Test User",
-      "test@example.com",
-      "+5511999999999",
-      "password123"
-    );
-  });
 
   describe("Constructor", () => {
     it("should create a school with required fields", () => {

@@ -4,6 +4,7 @@ import {
 	Entity,
 	ManyToOne,
 	OneToMany,
+	Property,
 } from "@mikro-orm/postgresql";
 
 import { Hospital } from "./hospital.entity";
@@ -18,6 +19,12 @@ export class Preceptor extends Role {
 
 	@OneToMany(() => Shift, (e) => e.preceptor)
 	shifts = new Collection<Shift>(this);
+
+	@Property()
+	specialty!: string;
+
+	@Property()
+	licenseNumber!: string;
 
 	constructor(user: Rel<User>, hospital: Rel<Hospital>) {
 		super(user);

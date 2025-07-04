@@ -1,9 +1,9 @@
 import Elysia, { t } from "elysia";
-import { Hospital, HospitalManager } from "../entities";
+import { Hospital } from "../entities";
 import { db } from "../db";
 import { authMiddleware } from "../middlewares/auth";
 import { hasPermission } from "../utils/hasPermissions";
-import { Actions, Resource, Modifiers } from "../utils/permissions";
+import { Actions, Resource } from "../utils/permissions";
 
 // DTOs for request validation
 const createHospitalDto = {

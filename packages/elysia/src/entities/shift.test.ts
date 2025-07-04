@@ -18,7 +18,6 @@ describe("Shift Entity", () => {
   let mockSupervisor: Supervisor;
   let mockCourse: Course;
   let mockClasses: Classes;
-  let mockStudent: Student;
 
   beforeEach(async () => {
     mockUser = await User.create(
@@ -33,7 +32,6 @@ describe("Shift Entity", () => {
     mockSupervisor = new Supervisor(mockUser, mockSchool);
     mockCourse = new Course("Test Course", mockSchool, mockSupervisor);
     mockClasses = new Classes("Test Class", mockCourse);
-    mockStudent = new Student(mockUser, mockClasses);
   });
 
   describe("Constructor", () => {
