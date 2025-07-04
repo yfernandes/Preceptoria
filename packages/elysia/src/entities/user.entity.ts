@@ -5,7 +5,7 @@ import {
 	Property,
 	type Rel,
 } from "@mikro-orm/postgresql";
-import { IsEmail, IsPhoneNumber, validateOrReject, IsNotEmpty, MinLength } from "class-validator";
+import { IsEmail, IsPhoneNumber, validateOrReject, IsNotEmpty } from "class-validator";
 
 import { HospitalManager } from "./hospitalManager.entity";
 import { OrgAdmin } from "./OrgAdmin.entity";
@@ -34,10 +34,6 @@ export class User extends BaseEntity {
 
 	@Property({ hidden: true, lazy: true })
 	passwordHash: string;
-
-	@IsNotEmpty()
-	@MinLength(6)
-	private _password: string;
 
 	@Enum({ default: [] })
 	roles: UserRoles[] = [];
@@ -72,7 +68,6 @@ export class User extends BaseEntity {
 		this.name = username;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
-		this._password = password;
 		this.passwordHash = Bun.password.hashSync(password);
 	}
 
@@ -82,8 +77,17 @@ export class User extends BaseEntity {
 		phoneNumber: string,
 		password: string
 	) {
+		// Validate password before creating user
+		if (!password || password.length < 6) {
+			throw new Error("Password must be at least 6 characters long");
+		}
+		
 		const user = new User(username, email, phoneNumber, password);
 		await validateOrReject(user);
 		return user;
+	}
+
+	verifyPassword(password: string): boolean {
+		return Bun.password.verifySync(password, this.passwordHash);
 	}
 }

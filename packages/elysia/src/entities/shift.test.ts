@@ -1,37 +1,31 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Shift } from "./shift.entity";
-import { Hospital } from "./hospital.entity";
-import { Preceptor } from "./preceptor.entity";
-import { User } from "./user.entity";
-import { Student } from "./student.entity";
-import { Classes } from "./classes.entity";
-import { Course } from "./course.entity";
-import { School } from "./school.entity";
-import { Supervisor } from "./supervisor.entity";
 import { Collection } from "@mikro-orm/postgresql";
 
 describe("Shift Entity", () => {
-  let mockUser: User;
-  let mockHospital: Hospital;
-  let mockPreceptor: Preceptor;
-  let mockSchool: School;
-  let mockSupervisor: Supervisor;
-  let mockCourse: Course;
-  let mockClasses: Classes;
+  let mockHospital: any;
+  let mockPreceptor: any;
 
-  beforeEach(async () => {
-    mockUser = await User.create(
-      "Test User",
-      "test@example.com",
-      "+5511999999999",
-      "password123"
-    );
-    mockHospital = new Hospital("Test Hospital", "Test Address", "hospital@test.com", "+5511777777777");
-    mockPreceptor = new Preceptor(mockUser, mockHospital);
-    mockSchool = new School("Test School", "Test Address", "school@test.com", "+5511888888888");
-    mockSupervisor = new Supervisor(mockUser, mockSchool);
-    mockCourse = new Course("Test Course", mockSchool, mockSupervisor);
-    mockClasses = new Classes("Test Class", mockCourse);
+  beforeEach(() => {
+    // Create simple mock objects to avoid circular dependencies
+    mockHospital = {
+      id: "hospital-1",
+      name: "Test Hospital",
+      address: "Test Address",
+      email: "hospital@test.com",
+      phone: "+5511777777777"
+    };
+
+    mockPreceptor = {
+      id: "preceptor-1",
+      user: {
+        id: "user-1",
+        name: "Test User",
+        email: "test@example.com",
+        phoneNumber: "+5511999999999"
+      },
+      hospital: mockHospital
+    };
   });
 
   describe("Constructor", () => {
@@ -173,7 +167,7 @@ describe("Shift Entity", () => {
       );
 
       expect(shift.preceptor).toBe(mockPreceptor);
-      expect(shift.preceptor.user).toBe(mockUser);
+      expect(shift.preceptor.user).toBe(mockPreceptor.user);
     });
 
     it("should have students collection", () => {

@@ -272,4 +272,4 @@ export const userController = new Elysia({ prefix: "/users" })
 			console.error("Error deleting user:", err);
 			return error(500, { success: false, message: "Internal server error" });
 		}
-	});
+	}) as any
