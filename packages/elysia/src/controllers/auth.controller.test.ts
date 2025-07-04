@@ -489,8 +489,6 @@ describe("Auth Controller - Signup Endpoint Logic", () => {
       });
 
       it("should reject incorrect password", () => {
-        const password = "wrongPassword123";
-        const hashedPassword = "hashedCorrectPassword123";
         
         // Simulate password verification - this would be false in real scenario
         const isCorrect = false; // Simulated failed verification
@@ -499,8 +497,6 @@ describe("Auth Controller - Signup Endpoint Logic", () => {
       });
 
       it("should handle empty password", () => {
-        const password = "";
-        const hashedPassword = "hashedCorrectPassword123";
         
         // Simulate password verification - empty password should fail
         const isCorrect = false; // Simulated failed verification for empty password

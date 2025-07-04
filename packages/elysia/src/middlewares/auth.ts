@@ -69,17 +69,26 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 		})
 	) // Maybe use LRU-cache to avoid memory leak
 	.guard(tCookie)
-	.resolve(async ({ status, cookie, jwt, store: { users } }) => {
+	.derive(async ({  cookie, jwt, store: { users } }) => {
 		try {
+			// Check if session cookie exists
+			if (!cookie.session?.value?.CookieValue) {
+				throw new Error("No session cookie found");
+			}
+
 			const token = (await jwt.verify(
 				cookie.session.value.CookieValue
 			)) as TJwtPayload;
+
+			if (!token || !token.id) {
+				throw new Error("Invalid token");
+			}
 
 			let user = users.get(token.id);
 			if (!user) {
 				const foundUser = await findUserById(token.id);
 				if (!foundUser) {
-					return status(401);
+					throw new Error("User not found");
 				}
 				user = foundUser;
 				users.set(user.id, user);
@@ -87,7 +96,19 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 
 			return { requester: user };
 		} catch (err) {
-			console.error(err);
-			return status(401);
+			console.error("Auth middleware error:", err);
+			throw new Error("Authentication failed");
 		}
-	});
+	})
+	.onError(({ error, set }) => {
+		if (error instanceof Error && (
+			error.message === "Authentication failed" || 
+			error.message === "No session cookie found" || 
+			error.message === "Invalid token" || 
+			error.message === "User not found"
+		)) {
+			set.status = 401;
+			return { message: "Authentication failed" };
+		}
+	})
+	.as('scoped');
