@@ -80,7 +80,7 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 				cookie.session.value.CookieValue
 			)) as TJwtPayload;
 
-			if (!token || !token.id) {
+			if (!token?.id) {
 				throw new Error("Invalid token");
 			}
 

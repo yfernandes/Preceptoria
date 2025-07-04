@@ -57,7 +57,7 @@ console.log(
 export const db = await initORM();
 
 // --- App Setup ---
-const SPREADSHEET_ID = Bun.env.GOOGLE_SPREADSHEET_ID!;
+const SPREADSHEET_ID = Bun.env.GOOGLE_SPREADSHEET_ID;
 const syncService = new SyncService();
 
 try {

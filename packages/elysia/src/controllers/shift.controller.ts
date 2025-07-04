@@ -238,7 +238,7 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 			} = query;
 
 			// Build filter based on user permissions and role
-			let filter: any = {};
+			const filter: any = {};
 
 			// Apply query filters
 			if (hospitalId) {
@@ -254,7 +254,7 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 			}
 
 			if (date) {
-				filter.date = new Date(date as string);
+				filter.date = new Date(date);
 			}
 
 			// Apply role-based filtering for data isolation

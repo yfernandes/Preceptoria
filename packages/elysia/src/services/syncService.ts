@@ -31,7 +31,7 @@ export class SyncService {
 
 	async syncFromGoogleSheets(
 		spreadsheetId: string,
-		range: string = "JoinedForm"
+		range = "JoinedForm"
 	): Promise<SyncResult> {
 		const result: SyncResult = {
 			success: true,

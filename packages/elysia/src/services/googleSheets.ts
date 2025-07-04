@@ -47,7 +47,7 @@ export class GoogleSheetsService {
 
 	async getSubmissions(
 		spreadsheetId: string,
-		range: string = "JoinedForm"
+		range = "JoinedForm"
 	): Promise<GoogleSheetsSubmission[]> {
 		try {
 			const raw = await this.sheets.spreadsheets.values.get({
@@ -106,7 +106,7 @@ export class GoogleSheetsService {
 
 	extractFileId(url: string): string {
 		const regex = /[-\w]{25,}/;
-		const match = url.match(regex);
+		const match = regex.exec(url);
 		if (!match) {
 			throw new Error(`Invalid Google Drive URL: ${url}`);
 		}

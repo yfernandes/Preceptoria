@@ -11,7 +11,7 @@ describe("Example Test Suite", () => {
 	});
 
 	it("should work with TypeScript", () => {
-		const message: string = "Hello, TypeScript!";
+		const message = "Hello, TypeScript!";
 		expect(message).toContain("TypeScript");
 	});
 });

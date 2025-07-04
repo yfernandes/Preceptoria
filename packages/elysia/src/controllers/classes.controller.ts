@@ -99,7 +99,7 @@ export const classesController = new Elysia({ prefix: "/classes" })
 			const { courseId, supervisorId, limit = 10, offset = 0 } = query;
 
 			// Build filter based on user permissions and role
-			let filter: any = {};
+			const filter: any = {};
 
 			// Apply query filters
 			if (courseId) {

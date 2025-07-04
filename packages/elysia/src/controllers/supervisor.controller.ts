@@ -137,7 +137,7 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 			const { schoolId, department, limit = 10, offset = 0 } = query;
 
 			// Build filter based on user permissions and role
-			let filter: any = {};
+			const filter: any = {};
 
 			// Apply query filters
 			if (schoolId) {

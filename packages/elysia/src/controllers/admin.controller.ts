@@ -37,7 +37,7 @@ export const adminController = new Elysia({ prefix: "admin" })
 	.post("/sync-google-sheets", async ({ requester, status }) => {
 		if (!requester.sysAdminId) return status(401, { error: "Unauthorized" });
 		const result = await syncService.syncFromGoogleSheets(
-			Bun.env.GOOGLE_SPREADSHEET_ID!
+			Bun.env.GOOGLE_SPREADSHEET_ID
 		);
 		return result;
 	})
