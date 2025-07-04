@@ -45,6 +45,7 @@
 		"@mikro-orm/postgresql": "^6.4.16",
 		"@mikro-orm/reflection": "^6.4.16",
 		"class-validator": "^0.14.2",
+		"dotenv": "^17.0.1",
 		"elysia": "^1.3.5",
 		"googleapis": "^150.0.1",
 		"jose": "^6.0.11",
