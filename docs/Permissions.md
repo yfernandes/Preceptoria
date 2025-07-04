@@ -2,99 +2,110 @@
 
 ## Overview
 
-The Preceptoria RBAC system implements a sophisticated permission model that enforces access control based on user roles and resource ownership. The system uses a hierarchical permission structure with ownership resolvers to determine access rights.
+The Preceptoria RBAC system implements a sophisticated permission model that enforces access control based on user roles and resource ownership. The system uses a hierarchical permission structure with ownership resolvers to determine access rights and prevent accidental cross-referencing of data.
 
 ## Permission Structure
 
 ### Format: `Resource:Action_Modifier`
 
-- **Resource**: The entity being accessed (Hospital, Student, School, Course, Classes, Document, Shift)
-- **Action**: The operation being performed (Create, Read, Update, Delete)
-- **Modifier**: The scope of access (Own, Managed, Students)
+- **Resource**: The entity being accessed (Hospital, Student, School, Course, Classes, Document, Shift, Supervisor, HospitalManager, Preceptor, Audit)
+- **Action**: The operation being performed (Create, Read, Update, Delete, Assign, Compile, Approve)
+- **Modifier**: The scope of access (Own, Managed, Students, Assigned, Basic, Class, Bundle)
 
 ### Modifiers Explained
 
-- **Own**: User has direct ownership of the resource
-- **Managed**: User manages the resource through organizational hierarchy
+- **Own**: User has direct ownership of the resource (prevents cross-user access)
+- **Managed**: User manages the resource through organizational hierarchy (prevents cross-organization access)
 - **Students**: User can act on behalf of students under their supervision
+- **Assigned**: Permission for resources assigned to the user (e.g., shifts for preceptors)
+- **Basic**: Limited read access to resource (for cross-organization navigation)
+- **Class**: Permission for resources within the same class (prevents cross-class access)
+- **Bundle**: Permission for document bundles (approval workflow)
+
+### Actions Explained
+
+- **Create**: Create new resources
+- **Read**: Read existing resources
+- **Update**: Modify existing resources
+- **Delete**: Remove resources
+- **Assign**: Assign students/preceptors to shifts
+- **Compile**: Compile student documents into bundles
+- **Approve**: Approve/reject document bundles
 
 ## Current Permission Matrix
 
 | Role | Resource | Permission | Description |
 |------|----------|------------|-------------|
 | **SysAdmin** | * | `*:*:*` | Full system access |
-| **OrgAdmin** | Hospital | `Read_Managed`, `Update_Managed` | Manage hospitals in their organization |
-| **OrgAdmin** | School | `Read_Managed`, `Update_Managed` | Manage schools in their organization |
-| **OrgAdmin** | Course | `Create_Managed`, `Read_Managed`, `Update_Managed`, `Delete_Managed` | Full course management |
-| **OrgAdmin** | Classes | `Create_Managed`, `Read_Managed`, `Update_Managed`, `Delete_Managed` | Full class management |
-| **Supervisor** | Classes | `Create_Own`, `Read_Own`, `Update_Own`, `Delete_Own` | Manage their assigned classes |
-| **Supervisor** | Student | `Create_Own`, `Read_Own`, `Update_Own`, `Delete_Own` | Manage students in their classes |
-| **Supervisor** | Document | `Create_Students`, `Read_Students`, `Update_Students`, `Delete_Students` | Manage documents on behalf of students |
-| **HospitalManager** | Student | `Read_Own` | Read students with shifts at their hospitals |
-| **HospitalManager** | Shift | `Read_Own` | Read shifts at their managed hospitals |
-| **HospitalManager** | Document | `Read_Managed` | Read access to relevant documents |
-| **HospitalManager** | Classes | `Read_Managed` | Read classes with students at their hospitals |
-| **Preceptor** | Student | `Read_Own` | Read students in their shifts |
-| **Preceptor** | Shift | `Read_Own` | Read their assigned shifts |
-| **Preceptor** | Hospital | `Read_Own` | Read hospitals where they work |
-| **Student** | Document | `Create_Own`, `Read_Own`, `Update_Own`, `Delete_Own` | Manage their own documents |
-| **Student** | Classes | `Read_Own` | Read their assigned class |
-| **Student** | Shift | `Read_Own` | Read their assigned shifts |
-| **Student** | Student | `Read_Own`, `Update_Own` | Read and update their own profile |
+| **OrgAdmin** | All Resources | `*_Managed` | Organization-wide management |
+| **OrgAdmin** | Operational Managers | `*_Managed` | Create/manage Supervisors, HospitalManagers, Preceptors |
+| **OrgAdmin** | Audit | `Read_Managed`, `Delete_Managed` | Access logs and delete historical data |
+| **Supervisor** | Academic Resources | `*_Own` | Manage courses, classes, students within their school |
+| **Supervisor** | Shifts | `*_Own` + `Assign_Own` | Create/manage shifts and assign participants |
+| **Supervisor** | Documents | `*_Students` + `Compile_Students` | Manage student documents and compile bundles |
+| **Supervisor** | Cross-Org Access | `Read_Basic` | Limited hospital info for shift creation |
+| **Supervisor** | Student Info | `Read_Class` | See other students in their classes |
+| **HospitalManager** | Hospital | `Read_Own`, `Update_Own` | Manage their hospital data |
+| **HospitalManager** | Shifts | `Read_Managed` | Read shifts at their hospital |
+| **HospitalManager** | Documents | `Read_Managed`, `Approve_Bundle` | Read and approve document bundles |
+| **HospitalManager** | Student/Class Info | `Read_Basic` | Basic info for shifts at their hospital |
+| **Preceptor** | Shifts | `Read_Assigned`, `Update_Assigned` | Manage assigned shifts |
+| **Preceptor** | Student Info | `Read_Basic` | Basic student info for teaching context |
+| **Preceptor** | Hospital Info | `Read_Basic` | Basic hospital info for shifts |
+| **Student** | Documents | `*_Own` | Manage their own documents |
+| **Student** | Academic Info | `Read_Own` | Read their classes and shifts |
+| **Student** | Cross-Org Access | `Read_Basic` | Basic hospital info for navigation |
+| **Student** | Classmates | `Read_Class` | See other students in their class |
 
-## Ownership Resolution
+## Data Isolation Examples
 
-### How Ownership is Determined
-
-The system uses sophisticated resolvers to determine resource ownership:
-
-#### Supervisor Ownership Examples
-
+### Supervisor Isolation
 ```typescript
-// Supervisor can read students in their classes
-Student: {
-  Own: async (requester, resourceId) => {
-    const student = await db.student.findOne({ id: resourceId });
-    return student?.class.course.supervisor.id === requester.supervisorId;
-  }
-}
+// Supervisor A can only see students in their own classes
+"Student:Read_Own" // Prevents cross-supervisor access
 
-// Supervisor can manage documents on behalf of their students
-Document: {
-  Students: async (requester, resourceId) => {
-    const document = await db.document.findOne({ id: resourceId });
-    return document?.student.class.course.supervisor.id === requester.supervisorId;
-  }
-}
+// Supervisor can only see classmates within their classes
+"Student:Read_Class" // Prevents cross-class access
 ```
 
-#### HospitalManager Ownership Examples
-
+### Organization Isolation
 ```typescript
-// HospitalManager can read shifts at their hospitals
-Shift: {
-  Own: async (requester, resourceId) => {
-    const shift = await db.shift.findOne({ id: resourceId });
-    return shift?.hospital.manager.exists(
-      (manager) => manager.id === requester.hospitalManagerId
-    ) ?? false;
-  }
-}
+// OrgAdmin can only manage resources within their organization
+"Hospital:Read_Managed" // Prevents cross-organization access
+"School:Read_Managed"   // Prevents cross-organization access
 ```
 
-#### Student Ownership Examples
-
+### Cross-Organization Limited Access
 ```typescript
-// Student can manage their own documents
-Document: {
-  Own: async (requester, resourceId) => {
-    const document = await db.document.findOne({ id: resourceId });
-    return document?.student.id === requester.studentId;
-  }
-}
+// Students can see basic hospital info for navigation
+"Hospital:Read_Basic" // Limited info for shift locations
+
+// Supervisors can see basic hospital info for shift creation
+"Hospital:Read_Basic" // Limited info for scheduling
 ```
 
 ## Implementation Details
+
+### Helper Functions for Clean Permissions
+
+```typescript
+// Helper functions to reduce repetition and improve readability
+const crud = (resource: Resource, modifier: Modifiers): Perm => [
+	`${resource}:Create_${modifier}`,
+	`${resource}:Read_${modifier}`,
+	`${resource}:Update_${modifier}`,
+	`${resource}:Delete_${modifier}`,
+];
+
+const readOnly = (resource: Resource, modifier: Modifiers): Perm => [
+	`${resource}:Read_${modifier}`,
+];
+
+const readUpdate = (resource: Resource, modifier: Modifiers): Perm => [
+	`${resource}:Read_${modifier}`,
+	`${resource}:Update_${modifier}`,
+];
+```
 
 ### Permission Check Function
 
@@ -115,6 +126,10 @@ export async function hasPermission(
     const permissionKey = `${resource}:${action}_Own`;
     const managedKey = `${resource}:${action}_Managed`;
     const studentsKey = `${resource}:${action}_Students`;
+    const assignedKey = `${resource}:${action}_Assigned`;
+    const basicKey = `${resource}:${action}_Basic`;
+    const classKey = `${resource}:${action}_Class`;
+    const bundleKey = `${resource}:${action}_Bundle`;
 
     // Check own resources
     if (permissions.includes(permissionKey)) {
@@ -136,6 +151,38 @@ export async function hasPermission(
     if (permissions.includes(studentsKey)) {
       const checkStudents = resolvers[role][resource]?.Students;
       if (checkStudents && await checkStudents(requester, resourceId)) {
+        return true;
+      }
+    }
+
+    // Check assigned resources
+    if (permissions.includes(assignedKey)) {
+      const checkAssigned = resolvers[role][resource]?.Assigned;
+      if (checkAssigned && await checkAssigned(requester, resourceId)) {
+        return true;
+      }
+    }
+
+    // Check basic access
+    if (permissions.includes(basicKey)) {
+      const checkBasic = resolvers[role][resource]?.Basic;
+      if (checkBasic && await checkBasic(requester, resourceId)) {
+        return true;
+      }
+    }
+
+    // Check class access
+    if (permissions.includes(classKey)) {
+      const checkClass = resolvers[role][resource]?.Class;
+      if (checkClass && await checkClass(requester, resourceId)) {
+        return true;
+      }
+    }
+
+    // Check bundle access
+    if (permissions.includes(bundleKey)) {
+      const checkBundle = resolvers[role][resource]?.Bundle;
+      if (checkBundle && await checkBundle(requester, resourceId)) {
         return true;
       }
     }
@@ -170,7 +217,7 @@ const studentsController = new Elysia({ prefix: "/students" })
   });
 ```
 
-## Role Hierarchy
+## Role Hierarchy & Responsibilities
 
 ### Administrative Hierarchy
 ```
@@ -178,19 +225,28 @@ SysAdmin (Full Access)
     ↓
 OrgAdmin (Organization Management)
     ↓
-Supervisor (Class & Student Management)
+Supervisor (School Operations)
     ↓
 Student (Self Management)
 ```
 
 ### Hospital Hierarchy
 ```
-HospitalManager (Hospital Management)
+OrgAdmin (Hospital Management)
+    ↓
+HospitalManager (Hospital Operations)
     ↓
 Preceptor (Shift Management)
     ↓
 Student (Shift Participation)
 ```
+
+### Operational Flow
+1. **OrgAdmin** creates operational managers (Supervisors, HospitalManagers, Preceptors)
+2. **Supervisor** creates courses, classes, students, and manages shifts across hospitals
+3. **HospitalManager** provides hospital data and approves document bundles
+4. **Preceptor** manages assigned shifts and teaches students
+5. **Student** submits documents and participates in shifts
 
 ## Security Considerations
 
@@ -198,6 +254,7 @@ Student (Shift Participation)
 - **Hospital Scoping**: HospitalManagers can only access data related to their hospitals
 - **School Scoping**: Supervisors can only access data related to their schools
 - **Class Scoping**: Students can only access data related to their classes
+- **Cross-Organization Access**: Limited to basic navigation info only
 
 ### Permission Inheritance
 - **SysAdmin**: Inherits all permissions
@@ -208,6 +265,21 @@ Student (Shift Participation)
 - All permission checks are logged for security monitoring
 - Failed access attempts are tracked
 - Resource access patterns are monitored
+- Only OrgAdmins can delete historical data (compliance requirement)
+
+## Document Workflow
+
+### Student-Supervisor Document Flow
+1. **Student** submits documents (`Document:Create_Own`)
+2. **Supervisor** manages student documents (`Document:*_Students`)
+3. **Supervisor** compiles documents into bundles (`Document:Compile_Students`)
+4. **HospitalManager** approves/rejects bundles (`Document:Approve_Bundle`)
+
+### Shift Management Flow
+1. **Supervisor** creates shifts at hospitals (`Shift:Create_Own`)
+2. **Supervisor** assigns students and preceptors (`Shift:Assign_Own`)
+3. **Preceptor** manages assigned shifts (`Shift:*_Assigned`)
+4. **Student** views their shifts (`Shift:Read_Own`)
 
 ## Testing Permissions
 
@@ -243,6 +315,21 @@ test("supervisor cannot read other students", async () => {
   
   expect(hasAccess).toBe(false);
 });
+
+// Test cross-class isolation
+test("student cannot see students from other classes", async () => {
+  const student = createTestUser({ role: "Student", classId: "class1" });
+  const otherStudent = createTestStudent({ classId: "class2" });
+  
+  const hasAccess = await hasPermission(
+    student,
+    Resource.Student,
+    Actions.Read,
+    otherStudent.id
+  );
+  
+  expect(hasAccess).toBe(false);
+});
 ```
 
 ## Future Enhancements
@@ -257,7 +344,8 @@ test("supervisor cannot read other students", async () => {
 - **Conditional Permissions**: Context-based access control
 - **Permission Delegation**: Temporary permission transfer
 - **Audit Reporting**: Comprehensive access logs and reports
+- **Emergency Access**: Temporary elevated permissions for urgent situations
 
 ---
 
-This permission system provides a robust foundation for secure, role-based access control while maintaining flexibility for future enhancements and organizational changes.
+This permission system provides a robust foundation for secure, role-based access control while maintaining flexibility for future enhancements and organizational changes. The granular approach ensures data isolation and prevents accidental cross-referencing while supporting the complex operational workflows of the internship management system.

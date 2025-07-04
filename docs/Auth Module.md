@@ -15,39 +15,44 @@ The Preceptoria Auth Module provides comprehensive user authentication and autho
 
 ### User Roles & Permissions
 
-The system implements six distinct user roles with hierarchical permissions:
+The system implements six distinct user roles with hierarchical permissions designed to prevent accidental cross-referencing of data:
 
 #### SysAdmin
 - **Full System Access**: `*:*:*` permission (all resources, all actions)
 - **Administrative Control**: Complete system management capabilities
 
 #### OrgAdmin
-- **Managed Resources**: Access to hospitals, schools, courses, and classes under their organization
-- **Document Management**: Full document management capabilities
-- **Administrative Oversight**: System-wide administrative functions
+- **Organization-Wide Management**: Access to all resources within their organization using `*_Managed` permissions
+- **Operational Manager Creation**: Can create and manage Supervisors, HospitalManagers, and Preceptors
+- **Audit Access**: Can access logs and delete historical data (compliance requirement)
+- **Data Isolation**: Cannot access resources from other organizations
 
 #### Supervisor (MVP Focus)
-- **Own Classes**: Create, read, update, delete their assigned classes
-- **Own Students**: Manage students within their assigned classes
-- **Student Documents**: Upload, read, update, delete documents on behalf of students
-- **Hospital Access**: View hospitals where their students have shifts
+- **Academic Resources**: Manage courses, classes, students within their school using `*_Own` permissions
+- **Cross-Hospital Shift Management**: Create and manage shifts across hospitals, assign students and preceptors
+- **Student Document Management**: Upload, read, update, delete documents on behalf of students using `*_Students` permissions
+- **Document Compilation**: Compile student documents into bundles for hospital approval
+- **Limited Cross-Organization Access**: Basic hospital info for shift creation using `Read_Basic` permissions
+- **Class-Level Data Access**: Can see other students in their classes using `Read_Class` permissions
 
 #### HospitalManager
-- **Own Shifts**: Read shifts at their managed hospitals
-- **Own Students**: Read student information for their hospital shifts
-- **Document Access**: Read access to relevant documents
-- **Class Access**: Read access to classes with students at their hospitals
+- **Hospital Operations**: Manage their hospital data using `*_Own` permissions
+- **Shift Oversight**: Read shifts assigned to their hospital using `Read_Managed` permissions
+- **Document Approval**: Read and approve/reject document bundles using `Approve_Bundle` permissions
+- **Student/Class Info**: Basic access to student and class information for shifts at their hospital
+- **Data Isolation**: Cannot access data from other hospitals
 
 #### Preceptor
-- **Own Shifts**: Read shifts they are assigned to
-- **Own Students**: Read student information for their shifts
-- **Hospital Access**: Read access to hospitals where they work
+- **Assigned Shift Management**: Read and update shifts they're assigned to using `*_Assigned` permissions
+- **Teaching Context**: Basic access to student and hospital information for their teaching context
+- **Data Isolation**: Cannot access shifts they're not assigned to
 
 #### Student
-- **Own Documents**: Create, read, update, delete their own documents
-- **Own Classes**: Read access to their assigned class
-- **Own Shifts**: Read access to their assigned shifts
-- **Own Profile**: Read and update their own information
+- **Personal Document Management**: Create, read, update, delete their own documents using `*_Own` permissions
+- **Academic Access**: Read access to their classes and shifts using `Read_Own` permissions
+- **Cross-Organization Navigation**: Basic hospital info for navigation using `Read_Basic` permissions
+- **Classmate Visibility**: Can see other students in their class using `Read_Class` permissions
+- **Data Isolation**: Cannot access documents or data from other students
 
 ## Permission System
 
@@ -55,30 +60,49 @@ The system implements six distinct user roles with hierarchical permissions:
 
 Permissions follow the pattern: `Resource:Action_Modifier`
 
-- **Resources**: Hospital, Student, School, Course, Classes, Document, Shift
-- **Actions**: Create, Read, Update, Delete
-- **Modifiers**: Own, Managed, Students
+- **Resources**: Hospital, Student, School, Course, Classes, Document, Shift, Supervisor, HospitalManager, Preceptor, Audit
+- **Actions**: Create, Read, Update, Delete, Assign, Compile, Approve
+- **Modifiers**: Own, Managed, Students, Assigned, Basic, Class, Bundle
 
 ### Permission Examples
 
 ```typescript
-// Supervisor can read their own classes
+// Supervisor can read their own classes (prevents cross-supervisor access)
 "Classes:Read_Own"
 
-// OrgAdmin can manage all hospitals
+// OrgAdmin can manage all hospitals in their organization (prevents cross-organization access)
 "Hospital:Read_Managed"
 
 // Supervisor can manage documents on behalf of students
 "Document:Create_Students"
+
+// Supervisor can assign students to shifts
+"Shift:Assign_Own"
+
+// Supervisor can compile student documents into bundles
+"Document:Compile_Students"
+
+// HospitalManager can approve document bundles
+"Document:Approve_Bundle"
+
+// Student can see classmates (prevents cross-class access)
+"Student:Read_Class"
+
+// Preceptor can manage assigned shifts
+"Shift:Read_Assigned"
 ```
 
 ### Ownership Resolution
 
 The system includes sophisticated ownership resolvers that determine access based on:
 
-- **Direct Ownership**: User owns the resource directly
-- **Managed Access**: User manages the resource through organizational hierarchy
+- **Direct Ownership**: User owns the resource directly (prevents cross-user access)
+- **Managed Access**: User manages the resource through organizational hierarchy (prevents cross-organization access)
 - **Student Representation**: User can act on behalf of students under their supervision
+- **Assigned Access**: User has access to resources assigned to them (e.g., shifts for preceptors)
+- **Basic Access**: Limited read access for cross-organization navigation
+- **Class Access**: Access to resources within the same class (prevents cross-class access)
+- **Bundle Access**: Access to document bundles for approval workflow
 
 ## Security Features
 

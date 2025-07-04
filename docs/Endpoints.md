@@ -37,12 +37,12 @@ Shift (involves Student, Preceptor, Hospital)
 
 ### Role Hierarchy
 
-- **SysAdmin**: Full system access
-- **OrgAdmin**: Organization-level management
-- **Supervisor**: Course and class management
-- **HospitalManager**: Hospital-specific access
-- **Preceptor**: Shift-specific access
-- **Student**: Self-management
+- **SysAdmin**: Full system access (`*:*:*`)
+- **OrgAdmin**: Organization-level management with operational manager creation
+- **Supervisor**: School operations with cross-hospital shift management
+- **HospitalManager**: Hospital operations with document approval capabilities
+- **Preceptor**: Assigned shift management with teaching context access
+- **Student**: Self-management with class-level data access
 
 ## API Endpoints
 

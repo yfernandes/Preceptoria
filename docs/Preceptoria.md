@@ -67,37 +67,44 @@ Preceptoria provides a structured, cloud-based solution that enables:
 
 ### Current User Roles & Permissions
 
+The system implements granular permissions designed to prevent accidental cross-referencing of data:
+
 #### SysAdmin
 - Full system access (`*:*:*`)
 - Complete administrative control
 
 #### OrgAdmin
-- Managed access to hospitals, schools, courses, and classes
-- Document management capabilities
-- Administrative oversight functions
+- **Organization-Wide Management**: Access to all resources within their organization using `*_Managed` permissions
+- **Operational Manager Creation**: Can create and manage Supervisors, HospitalManagers, and Preceptors
+- **Audit Access**: Can access logs and delete historical data (compliance requirement)
+- **Data Isolation**: Cannot access resources from other organizations
 
 #### Supervisor (MVP Focus)
-- **Own Classes**: Create, read, update, delete their assigned classes
-- **Own Students**: Manage students within their assigned classes
-- **Student Documents**: Upload, read, update, delete documents on behalf of students
-- **Hospital Access**: View hospitals where their students have shifts
+- **Academic Resources**: Manage courses, classes, students within their school using `*_Own` permissions
+- **Cross-Hospital Shift Management**: Create and manage shifts across hospitals, assign students and preceptors
+- **Student Document Management**: Upload, read, update, delete documents on behalf of students using `*_Students` permissions
+- **Document Compilation**: Compile student documents into bundles for hospital approval
+- **Limited Cross-Organization Access**: Basic hospital info for shift creation using `Read_Basic` permissions
+- **Class-Level Data Access**: Can see other students in their classes using `Read_Class` permissions
 
 #### HospitalManager
-- **Own Shifts**: Read shifts at their managed hospitals
-- **Own Students**: Read student information for their hospital shifts
-- **Document Access**: Read access to relevant documents
-- **Class Access**: Read access to classes with students at their hospitals
+- **Hospital Operations**: Manage their hospital data using `*_Own` permissions
+- **Shift Oversight**: Read shifts assigned to their hospital using `Read_Managed` permissions
+- **Document Approval**: Read and approve/reject document bundles using `Approve_Bundle` permissions
+- **Student/Class Info**: Basic access to student and class information for shifts at their hospital
+- **Data Isolation**: Cannot access data from other hospitals
 
 #### Preceptor
-- **Own Shifts**: Read shifts they are assigned to
-- **Own Students**: Read student information for their shifts
-- **Hospital Access**: Read access to hospitals where they work
+- **Assigned Shift Management**: Read and update shifts they're assigned to using `*_Assigned` permissions
+- **Teaching Context**: Basic access to student and hospital information for their teaching context
+- **Data Isolation**: Cannot access shifts they're not assigned to
 
 #### Student
-- **Own Documents**: Create, read, update, delete their own documents
-- **Own Classes**: Read access to their assigned class
-- **Own Shifts**: Read access to their assigned shifts
-- **Own Profile**: Read and update their own information
+- **Personal Document Management**: Create, read, update, delete their own documents using `*_Own` permissions
+- **Academic Access**: Read access to their classes and shifts using `Read_Own` permissions
+- **Cross-Organization Navigation**: Basic hospital info for navigation using `Read_Basic` permissions
+- **Classmate Visibility**: Can see other students in their class using `Read_Class` permissions
+- **Data Isolation**: Cannot access documents or data from other students
 
 ## MVP Roadmap (Current Focus)
 
@@ -168,9 +175,12 @@ Preceptoria provides a structured, cloud-based solution that enables:
 
 ### Security Features
 - **JWT Authentication**: Secure token-based authentication
-- **Role-Based Access Control**: Granular permissions per role
+- **Role-Based Access Control**: Granular permissions per role with data isolation
 - **Hospital/School Scoping**: Data isolation based on organizational structure
+- **Cross-Organization Access Control**: Limited access to prevent accidental data cross-referencing
+- **Class-Level Isolation**: Students can only access data within their class
 - **Input Validation**: Comprehensive data validation and sanitization
+- **Audit Logging**: Hierarchical log access with compliance requirements
 
 ## Development Setup
 
