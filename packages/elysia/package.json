@@ -8,8 +8,24 @@
 		"tsNode": true
 	},
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "bun run --watch src/index.ts"
+		"test": "bun test",
+		"test:watch": "bun test --watch",
+		"test:coverage": "bun test --coverage",
+		"dev": "bun run --watch src/index.ts",
+		"lint": "eslint . --ext .ts,.tsx,.js,.jsx,.mjs",
+		"lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx,.mjs --fix",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"type-check": "tsc --noEmit",
+		"db:studio": "drizzle-kit studio",
+		"db:migration:create": "mikro-orm migration:create",
+		"db:migration:up": "mikro-orm migration:up",
+		"db:migration:down": "mikro-orm migration:down",
+		"db:migration:list": "mikro-orm migration:list",
+		"db:schema:update": "mikro-orm schema:update",
+		"db:schema:drop": "mikro-orm schema:drop",
+		"db:seed": "mikro-orm seeder:run",
+		"db:seed:create": "mikro-orm seeder:create"
 	},
 	"dependencies": {
 		"@elysiajs/bearer": "^1.3.0",
