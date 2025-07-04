@@ -25,7 +25,8 @@
 		"db:schema:update": "mikro-orm schema:update",
 		"db:schema:drop": "mikro-orm schema:drop",
 		"db:seed": "mikro-orm seeder:run",
-		"db:seed:create": "mikro-orm seeder:create"
+		"db:seed:create": "mikro-orm seeder:create",
+		"sync:google-sheets": "bun scripts/syncGoogleSheets.ts"
 	},
 	"dependencies": {
 		"@elysiajs/bearer": "^1.3.0",
@@ -35,6 +36,8 @@
 		"@elysiajs/opentelemetry": "^1.3.0",
 		"@elysiajs/server-timing": "^1.3.0",
 		"@elysiajs/swagger": "^1.3.1",
+		"@googleapis/drive": "^13.0.1",
+		"@googleapis/sheets": "^10.0.1",
 		"@mikro-orm/cli": "^6.4.16",
 		"@mikro-orm/core": "^6.4.16",
 		"@mikro-orm/migrations": "^6.4.16",
@@ -42,6 +45,7 @@
 		"@mikro-orm/reflection": "^6.4.16",
 		"class-validator": "^0.14.2",
 		"elysia": "^1.3.5",
+		"googleapis": "^150.0.1",
 		"jose": "^6.0.11",
 		"lru-cache": "^11.1.0"
 	},
