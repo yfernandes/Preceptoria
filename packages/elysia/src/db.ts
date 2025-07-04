@@ -64,4 +64,5 @@ export async function initORM(): Promise<Services> {
 	});
 }
 
+// Export a lazy db object that initializes on first access
 export const db = await initORM();

@@ -17,7 +17,6 @@ export async function hasPermission(
 
 		// Own Resources
 		if (permissions.includes(`${resource}:${action}_Own`)) {
-			// Assuming Managed follows the same ownership pattern
 			const checkOwnership = resolvers[role][resource]?.Own;
 			if (!checkOwnership) {
 				return false;
@@ -29,12 +28,22 @@ export async function hasPermission(
 
 		// Scoped permission: Check management
 		if (permissions.includes(`${resource}:${action}_Managed`)) {
-			// Assuming Managed follows the same ownership pattern
 			const checkOwnership = resolvers[role][resource]?.Managed;
 			if (!checkOwnership) {
 				return false;
 			}
 			if (await checkOwnership(requester, resourceId)) {
+				return true;
+			}
+		}
+
+		// Students modifier: Permission to act on behalf of students
+		if (permissions.includes(`${resource}:${action}_Students`)) {
+			const checkStudentsAccess = resolvers[role][resource]?.Students;
+			if (!checkStudentsAccess) {
+				return false;
+			}
+			if (await checkStudentsAccess(requester, resourceId)) {
 				return true;
 			}
 		}
@@ -55,29 +64,154 @@ type Resolvers = Record<
 
 const resolvers: Resolvers = {
 	SysAdmin: {}, // Needs no impl since it's allowed everything
-	OrgAdmin: { Document: { Managed: () => true } },
-	HospitalManager: {},
-	Preceptor: {},
-	Student: {
-		Document: {
-			Own: async (requester, resourceId) =>
-				(await db.document.findOne({ id: resourceId }))?.student.id ==
-				requester.studentId,
-		},
-		Classes: {
+	OrgAdmin: { 
+		Document: { Managed: () => true },
+		Student: { Managed: () => true },
+		Hospital: { Managed: () => true },
+		School: { Managed: () => true },
+		Course: { Managed: () => true },
+		Classes: { Managed: () => true },
+	},
+	HospitalManager: {
+		Student: {
 			Own: async (requester, resourceId) => {
-				const student = await db.student.findOne({ id: requester.studentId });
-				return student?.class.id == resourceId;
+				try {
+					const student = await db.student.findOne({ id: resourceId });
+					return student?.shifts.exists((shift) => 
+						shift.hospital.manager.exists((manager) => manager.id === requester.hospitalManagerId)
+					) ?? false;
+				} catch (error) {
+					console.error("Error checking HospitalManager student ownership:", error);
+					return false;
+				}
 			},
 		},
 		Shift: {
 			Own: async (requester, resourceId) => {
-				const student = await db.student.findOne({ id: requester.studentId });
-				return (
-					student?.shifts.exists((shift) => shift.id === resourceId) ?? false
-				);
+				try {
+					const shift = await db.shift.findOne({ id: resourceId });
+					return shift?.hospital.manager.exists((manager) => manager.id === requester.hospitalManagerId) ?? false;
+				} catch (error) {
+					console.error("Error checking HospitalManager shift ownership:", error);
+					return false;
+				}
+			},
+		},
+		Document: { Managed: () => true },
+		Classes: { Managed: () => true },
+	},
+	Preceptor: {
+		Student: {
+			Own: async (requester, resourceId) => {
+				try {
+					const student = await db.student.findOne({ id: resourceId });
+					return student?.shifts.exists((shift) => 
+						shift.preceptor.id === requester.preceptorId
+					) ?? false;
+				} catch (error) {
+					console.error("Error checking Preceptor student ownership:", error);
+					return false;
+				}
+			},
+		},
+		Shift: {
+			Own: async (requester, resourceId) => {
+				try {
+					const shift = await db.shift.findOne({ id: resourceId });
+					return shift?.preceptor.id === requester.preceptorId;
+				} catch (error) {
+					console.error("Error checking Preceptor shift ownership:", error);
+					return false;
+				}
+			},
+		},
+		Hospital: {
+			Own: async (requester, resourceId) => {
+				try {
+					const hospital = await db.hospital.findOne({ id: resourceId });
+					return hospital?.shifts.exists((shift) => 
+						shift.preceptor.id === requester.preceptorId
+					) ?? false;
+				} catch (error) {
+					console.error("Error checking Preceptor hospital ownership:", error);
+					return false;
+				}
 			},
 		},
 	},
-	Supervisor: {},
+	Student: {
+		Document: {
+			Own: async (requester, resourceId) => {
+				try {
+					const document = await db.document.findOne({ id: resourceId });
+					return document?.student.id === requester.studentId;
+				} catch (error) {
+					console.error("Error checking Student document ownership:", error);
+					return false;
+				}
+			},
+		},
+		Classes: {
+			Own: async (requester, resourceId) => {
+				try {
+					const student = await db.student.findOne({ id: requester.studentId });
+					return student?.class.id === resourceId;
+				} catch (error) {
+					console.error("Error checking Student class ownership:", error);
+					return false;
+				}
+			},
+		},
+		Shift: {
+			Own: async (requester, resourceId) => {
+				try {
+					const student = await db.student.findOne({ id: requester.studentId });
+					return student?.shifts.exists((shift) => shift.id === resourceId) ?? false;
+				} catch (error) {
+					console.error("Error checking Student shift ownership:", error);
+					return false;
+				}
+			},
+		},
+		Student: {
+			Own: async (requester, resourceId) => {
+				return requester.studentId === resourceId;
+			},
+		},
+	},
+	Supervisor: {
+		Student: {
+			Own: async (requester, resourceId) => {
+				try {
+					const student = await db.student.findOne({ id: resourceId });
+					return student?.class.course.supervisor.id === requester.supervisorId;
+				} catch (error) {
+					console.error("Error checking Supervisor student ownership:", error);
+					return false;
+				}
+			},
+		},
+		Classes: {
+			Own: async (requester, resourceId) => {
+				try {
+					const classEntity = await db.classes.findOne({ id: resourceId });
+					return classEntity?.course.supervisor.id === requester.supervisorId;
+				} catch (error) {
+					console.error("Error checking Supervisor class ownership:", error);
+					return false;
+				}
+			},
+		},
+		Document: {
+			Students: async (requester, resourceId) => {
+				try {
+					const document = await db.document.findOne({ id: resourceId });
+					return document?.student.class.course.supervisor.id === requester.supervisorId;
+				} catch (error) {
+					console.error("Error checking Supervisor document students access:", error);
+					return false;
+				}
+			},
+		},
+	},
 };
