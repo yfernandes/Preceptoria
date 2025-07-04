@@ -5,7 +5,9 @@ import {
 	jwtVerify,
 	type JWTPayload,
 	type JWSHeaderParameters,
-	type KeyLike,
+	importPKCS8,
+	importSPKI,
+	errors as joseErrors,
 } from "jose";
 
 import { Type as t } from "@sinclair/typebox";
@@ -51,9 +53,9 @@ export interface JWTOption<
 	 */
 	name?: Name;
 	/**
-	 * JWT Secret
+	 * JWT Secret (string, Uint8Array, or PEM key)
 	 */
-	secret: string | Uint8Array | KeyLike;
+	secret: string | Uint8Array;
 	/**
 	 * Type strict validation for JWT payload
 	 */
@@ -64,7 +66,6 @@ export interface JWTOption<
 	 *
 	 * @see [RFC7519#section-4.1.5](https://www.rfc-editor.org/rfc/rfc7519#section-4.1.5)
 	 */
-
 	nbf?: string | number;
 	/**
 	 * JWT Expiration Time
@@ -72,6 +73,65 @@ export interface JWTOption<
 	 * @see [RFC7519#section-4.1.4](https://www.rfc-editor.org/rfc/rfc7519#section-4.1.4)
 	 */
 	exp?: string | number;
+}
+
+// Supported algorithms for HMAC
+const HMAC_ALGORITHMS = ["HS256", "HS384", "HS512"] as const;
+type HMACAlgorithm = typeof HMAC_ALGORITHMS[number];
+
+// Supported algorithms for RSA/EC
+const ASYMMETRIC_ALGORITHMS = [
+	"RS256", "RS384", "RS512",
+	"PS256", "PS384", "PS512",
+	"ES256", "ES384", "ES512",
+	"EdDSA"
+] as const;
+type AsymmetricAlgorithm = typeof ASYMMETRIC_ALGORITHMS[number];
+
+type SupportedAlgorithm = HMACAlgorithm | AsymmetricAlgorithm;
+
+/**
+ * Validates if the algorithm is supported for the given secret type
+ */
+function validateAlgorithm(alg: string, secret: string | Uint8Array): alg is SupportedAlgorithm {
+	if (HMAC_ALGORITHMS.includes(alg as HMACAlgorithm)) {
+		return true; // HMAC algorithms work with any secret
+	}
+	
+	if (ASYMMETRIC_ALGORITHMS.includes(alg as AsymmetricAlgorithm)) {
+		return typeof secret === "string" && (
+			secret.includes("-----BEGIN PRIVATE KEY-----") ||
+			secret.includes("-----BEGIN RSA PRIVATE KEY-----") ||
+			secret.includes("-----BEGIN EC PRIVATE KEY-----")
+		);
+	}
+	
+	return false;
+}
+
+/**
+ * Prepares the key based on the secret type and algorithm
+ */
+async function prepareKey(secret: string | Uint8Array, alg: string): Promise<Uint8Array | CryptoKey> {
+	if (typeof secret === "string") {
+		// Check if it's a PEM key
+		if (secret.includes("-----BEGIN")) {
+			try {
+				if (secret.includes("PRIVATE KEY")) {
+					return await importPKCS8(secret, alg);
+				} else if (secret.includes("PUBLIC KEY")) {
+					return await importSPKI(secret, alg);
+				}
+			} catch (error) {
+				throw new Error(`Invalid PEM key format: ${error instanceof Error ? error.message : 'Unknown error'}`);
+			}
+		}
+		// Treat as HMAC secret
+		return new TextEncoder().encode(secret);
+	}
+	
+	// Uint8Array - treat as HMAC secret
+	return secret;
 }
 
 export const jwt = <
@@ -91,10 +151,13 @@ export const jwt = <
 	...payload
 }: // End JWT Payload
 JWTOption<Name, Schema>) => {
-	if (!secret) throw new Error("Secret can't be empty");
+	if (!secret) {
+		throw new Error("JWT secret cannot be empty");
+	}
 
-	const key =
-		typeof secret === "string" ? new TextEncoder().encode(secret) : secret;
+	if (!validateAlgorithm(alg, secret)) {
+		throw new Error(`Algorithm '${alg}' is not supported for the provided secret type`);
+	}
 
 	const validator = schema
 		? getSchemaValidator(
@@ -107,7 +170,7 @@ JWTOption<Name, Schema>) => {
 						jti: t.Optional(t.String()),
 						nbf: t.Optional(t.Union([t.String(), t.Number()])),
 						exp: t.Optional(t.Union([t.String(), t.Number()])),
-						iat: t.Optional(t.String()),
+						iat: t.Optional(t.Number()),
 					}),
 				]),
 				{}
@@ -127,28 +190,36 @@ JWTOption<Name, Schema>) => {
 			...payload,
 		},
 	}).decorate(name as Name extends string ? Name : "jwt", {
-		sign(
+		async sign(
 			morePayload: UnwrapSchema<Schema, Record<string, string | number>> &
 				JWTPayloadSpec
-		) {
-			let jwt = new SignJWT({
-				...payload,
-				...morePayload,
-				exp: undefined,
-				nbf: undefined,
-			}).setProtectedHeader({
-				alg,
-				crit,
-			});
+		): Promise<string> {
+			try {
+				const key = await prepareKey(secret, alg);
+				
+				let jwt = new SignJWT({
+					...payload,
+					...morePayload,
+					exp: undefined,
+					nbf: undefined,
+				}).setProtectedHeader({
+					alg,
+					...(crit && { crit }),
+				});
 
-			if (nbf) jwt = jwt.setNotBefore(nbf);
-			if (exp) jwt = jwt.setExpirationTime(exp);
-			jwt.setIssuedAt();
+				// Set default expiration if not provided
+				if (nbf) jwt = jwt.setNotBefore(nbf);
+				if (exp) jwt = jwt.setExpirationTime(exp);
+				jwt.setIssuedAt();
 
-			if (morePayload.exp) jwt = jwt.setExpirationTime(morePayload.exp);
-			if (morePayload.nbf) jwt = jwt.setNotBefore(morePayload.nbf);
+				// Override with payload-specific values
+				if (morePayload.exp) jwt = jwt.setExpirationTime(morePayload.exp);
+				if (morePayload.nbf) jwt = jwt.setNotBefore(morePayload.nbf);
 
-			return jwt.sign(key);
+				return await jwt.sign(key);
+			} catch (error) {
+				throw new Error(`JWT signing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+			}
 		},
 		async verify(
 			jwt?: string
@@ -159,15 +230,26 @@ JWTOption<Name, Schema>) => {
 			if (!jwt) return false;
 
 			try {
-				const data = (await jwtVerify(jwt, key)).payload;
+				const key = await prepareKey(secret, alg);
+				const { payload: data } = await jwtVerify(jwt, key, {
+					algorithms: [alg],
+				});
 
-				if (validator && !validator.Check(data))
+				if (validator && !validator.Check(data)) {
 					throw new ValidationError("JWT", validator, data);
+				}
 
-				return data;
-			} catch (err) {
-				// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-				return new Error(`Jwt validation error,\n Error: ${err}`);
+				return data as UnwrapSchema<Schema, Record<string, string | number>> & JWTPayloadSpec;
+			} catch (error) {
+				// Handle specific JWT errors
+				if (error instanceof joseErrors.JWTExpired) {
+					console.error("JWT expired:", error.message);
+				} else if (error instanceof joseErrors.JWSSignatureVerificationFailed) {
+					console.error("JWT signature verification failed:", error.message);
+				} else {
+					console.error("JWT verification error:", error instanceof Error ? error.message : 'Unknown error');
+				}
+				return false;
 			}
 		},
 	});
