@@ -33,7 +33,7 @@ export class GoogleSheetsService {
 	constructor() {
 		this.credentialsFile = path.join(
 			__dirname,
-			"../../../secrets/service_account.json"
+			"../../secrets/service_account.json"
 		);
 
 		const auth = new google.auth.GoogleAuth({

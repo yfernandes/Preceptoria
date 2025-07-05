@@ -18,6 +18,7 @@
         "@mikro-orm/migrations": "^6.4.16",
         "@mikro-orm/postgresql": "^6.4.16",
         "@mikro-orm/reflection": "^6.4.16",
+        "@mikro-orm/seeder": "^6.4.16",
         "class-validator": "^0.14.2",
         "dotenv": "^17.0.1",
         "elysia": "^1.3.5",
@@ -184,6 +185,8 @@
     "@mikro-orm/postgresql": ["@mikro-orm/postgresql@6.4.16", "", { "dependencies": { "@mikro-orm/knex": "6.4.16", "pg": "8.16.0", "postgres-array": "3.0.4", "postgres-date": "2.1.0", "postgres-interval": "4.0.2" }, "peerDependencies": { "@mikro-orm/core": "^6.0.0" } }, "sha512-i14CvyLrtMhQJMk/X3xTT2Mgc8j0VtSWPqhKBN+euiPxbee4u5k39TlJAly72k3luknFBCzpKCh3ZNSGDZ+j4Q=="],
 
     "@mikro-orm/reflection": ["@mikro-orm/reflection@6.4.16", "", { "dependencies": { "globby": "11.1.0", "ts-morph": "26.0.0" }, "peerDependencies": { "@mikro-orm/core": "^6.0.0" } }, "sha512-waPaDZwOlwNUUuD00rj8HrByhs1y5hvTEFIc14LX0mgtP+OHkarM7+JTJ68RB2UaDVyZ/Bmof9uhH7TOH2awVw=="],
+
+    "@mikro-orm/seeder": ["@mikro-orm/seeder@6.4.16", "", { "dependencies": { "fs-extra": "11.3.0", "globby": "11.1.0" }, "peerDependencies": { "@mikro-orm/core": "^6.0.0" } }, "sha512-5wE8gvZZYhD7N9eGsgGfK+/oe74mCgixZaE4ClSo7xUSL6fJTpzctAU6sr4NTHo3QclNTxtiI5syJD2VByWQhg=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 

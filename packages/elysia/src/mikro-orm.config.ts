@@ -1,6 +1,7 @@
 import { defineConfig, PostgreSqlDriver } from "@mikro-orm/postgresql";
 import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
 import { Migrator } from "@mikro-orm/migrations";
+import { SeedManager } from "@mikro-orm/seeder";
 
 import {
 	BaseEntity,
@@ -46,7 +47,7 @@ const baseConfig = {
 		Organization,
 	],
 
-	extensions: [Migrator],
+	extensions: [Migrator, SeedManager],
 	migrations: {
 		path: "dist/migrations",
 		pathTs: "src/migrations",
@@ -57,6 +58,14 @@ const baseConfig = {
 		dropTables: false,
 		safe: true,
 		emit: "ts" as const,
+	},
+	seeder: {
+		path: "dist/seeders",
+		pathTs: "src/seeders",
+		defaultSeeder: "DatabaseSeeder",
+		glob: "!(*.d).{js,ts}",
+		emit: "ts" as const,
+		fileName: (className: string) => className,
 	},
 
 	// Connection pooling configuration
