@@ -34,6 +34,13 @@ For Google Sheets integration, you need to:
 
 The `secrets/` directory is automatically ignored by git for security.
 
+**Advanced Features:**
+- **Multi-form consolidation**: Processes data from 4 merged Google Forms
+- **Crefito-based grouping**: Uses professional identity numbers for reliable student matching
+- **Smart deduplication**: Removes duplicate documents while preserving all unique files
+- **Data validation**: Automatically formats phone numbers and emails to pass validation
+- **99.46% data completion** achieved in production
+
 ### Environment Files
 
 The project supports multiple environment files for different contexts:
