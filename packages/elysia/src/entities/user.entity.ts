@@ -37,6 +37,9 @@ export class User extends BaseEntity {
 	@IsNotEmpty()
 	phoneNumber: string;
 
+	@Property({ nullable: true })
+	professionalIdentityNumber?: string;
+
 	@Property({ hidden: true, lazy: true })
 	passwordHash: string;
 
@@ -67,12 +70,14 @@ export class User extends BaseEntity {
 		username: string,
 		email: string,
 		phoneNumber: string,
-		password: string
+		password: string,
+		professionalIdentityNumber?: string
 	) {
 		super();
 		this.name = username;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
+		this.professionalIdentityNumber = professionalIdentityNumber;
 		this.passwordHash = Bun.password.hashSync(password);
 	}
 
@@ -80,14 +85,15 @@ export class User extends BaseEntity {
 		username: string,
 		email: string,
 		phoneNumber: string,
-		password: string
+		password: string,
+		professionalIdentityNumber?: string
 	) {
 		// Validate password before creating user
 		if (!password || password.length < 6) {
 			throw new Error("Password must be at least 6 characters long");
 		}
 
-		const user = new User(username, email, phoneNumber, password);
+		const user = new User(username, email, phoneNumber, password, professionalIdentityNumber);
 		await validateOrReject(user);
 		return user;
 	}

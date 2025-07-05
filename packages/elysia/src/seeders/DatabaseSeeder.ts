@@ -14,7 +14,7 @@ import {
 	HospitalManager
 } from "../entities";
 import { DocumentType } from "../entities/document.entity";
-import { GoogleSheetsService } from "../services/googleSheets";
+import { GoogleSheetsService, ConsolidatedSubmission } from "../services/googleSheets";
 import { UserRoles } from "../entities/role.abstract";
 
 export class DatabaseSeeder extends Seeder {
@@ -251,9 +251,10 @@ export class ClassesSeeder extends Seeder {
 
 			if (Bun.env.GOOGLE_SPREADSHEET_ID) {
 				const googleSheets = new GoogleSheetsService();
-				const submissions = await googleSheets.getSubmissions(Bun.env.GOOGLE_SPREADSHEET_ID);
+				const rawSubmissions = await googleSheets.getSubmissions(Bun.env.GOOGLE_SPREADSHEET_ID);
+				const consolidatedSubmissions = googleSheets.consolidateSubmissionsByCrefito(rawSubmissions);
 				
-				const classNumbers = [...new Set(submissions.map(s => s.classNumber).filter(Boolean))];
+				const classNumbers = [...new Set(consolidatedSubmissions.map(s => s.classNumber).filter(Boolean))];
 				
 				console.log(`📊 Found ${classNumbers.length} unique class numbers: ${classNumbers.join(', ')}`);
 
@@ -266,6 +267,7 @@ export class ClassesSeeder extends Seeder {
 					if (!existingClass) {
 						const classEntity = new Classes(classNumber, course);
 						em.persist(classEntity);
+						console.log(`✅ Created class: ${classNumber}`);
 					}
 				}
 
@@ -291,59 +293,104 @@ export class StudentsSeeder extends Seeder {
 
 		try {
 			const googleSheets = new GoogleSheetsService();
-			const submissions = await googleSheets.getSubmissions(Bun.env.GOOGLE_SPREADSHEET_ID);
+			const rawSubmissions = await googleSheets.getSubmissions(Bun.env.GOOGLE_SPREADSHEET_ID);
+			const consolidatedSubmissions = googleSheets.consolidateSubmissionsByCrefito(rawSubmissions);
 			
-			console.log(`📊 Processing ${submissions.length} student submissions...`);
+			console.log(`📊 Processing ${consolidatedSubmissions.length} consolidated students...`);
 
 			let createdCount = 0;
-			for (const submission of submissions) {
+			let updatedCount = 0;
+			
+			for (const submission of consolidatedSubmissions) {
 				try {
+					// Process ALL entries - even incomplete ones
+					console.log(`📝 Processing student (Crefito: ${submission.crefito}): ${submission.fullName} (${submission.entryCount} entries)`);
+
+					// Check if student already exists by email
 					const existingStudent = await em.findOne(Student, {
 						user: { email: submission.email }
 					});
 
-					if (!existingStudent) {
-						let user = await em.findOne(User, { email: submission.email });
-						if (!user) {
-							user = await User.create(
-								submission.fullName,
-								submission.email,
-								submission.phone,
-								this.generateTemporaryPassword()
-							);
-							user.roles = [UserRoles.Student];
-							em.persist(user);
+					if (existingStudent) {
+						console.log(`ℹ️ Student already exists: ${submission.fullName} (${submission.email})`);
+						continue;
+					}
+
+					// Create or find user (try by email first, then by Crefito)
+					let user = await em.findOne(User, { email: submission.email });
+					if (!user && submission.crefito) {
+						user = await em.findOne(User, { professionalIdentityNumber: submission.crefito });
+					}
+					
+					if (!user) {
+						// Create new user with all available data
+						user = await User.create(
+							submission.fullName,
+							submission.email,
+							submission.phone,
+							this.generateTemporaryPassword(),
+							submission.crefito
+						);
+						user.roles = [UserRoles.Student];
+						em.persist(user);
+						console.log(`✅ Created new user: ${submission.fullName} (Crefito: ${submission.crefito})`);
+					} else {
+						// Smart update: only update fields that are empty or contain placeholder values
+						let updated = false;
+						
+						if ((!user.professionalIdentityNumber || user.professionalIdentityNumber === "Not submitted") && submission.crefito !== "Not submitted") {
+							user.professionalIdentityNumber = submission.crefito;
+							updated = true;
 						}
-
-						let school = await em.findOne(School, { name: submission.studentsSchoolId });
-						if (!school) {
-							school = await em.findOne(School, { name: "Faculdade Santa Casa" });
+						if ((!user.email || GoogleSheetsService.isPlaceholder(user.email, 'email')) && !GoogleSheetsService.isPlaceholder(submission.email, 'email')) {
+							user.email = submission.email;
+							updated = true;
 						}
-
-						let supervisor = await em.findOne(Supervisor, {
-							user: { email: "ayala.fernandes@faculdadesantacasa.edu.br" }
-						});
-
-						let course = await em.findOne(Course, { name: "Fisioterapia em Neonatologia e Pediatria" });
-
-						let classEntity = await em.findOne(Classes, {
-							course: course?.id,
-							name: submission.classNumber
-						});
-
-						if (user && classEntity) {
-							const student = new Student(user, classEntity);
-							em.persist(student);
-							createdCount++;
+						if ((!user.phoneNumber || GoogleSheetsService.isPlaceholder(user.phoneNumber, 'phone')) && !GoogleSheetsService.isPlaceholder(submission.phone, 'phone')) {
+							user.phoneNumber = submission.phone;
+							updated = true;
+						}
+						if ((!user.name || GoogleSheetsService.isPlaceholder(user.name, 'name')) && !GoogleSheetsService.isPlaceholder(submission.fullName, 'name')) {
+							user.name = submission.fullName;
+							updated = true;
+						}
+						
+						if (updated) {
+							console.log(`🔄 Updated user: ${submission.fullName} (Crefito: ${submission.crefito})`);
+							updatedCount++;
+						} else {
+							console.log(`ℹ️ No updates needed for: ${submission.fullName} (Crefito: ${submission.crefito})`);
 						}
 					}
+
+					// Find class
+					let classEntity = await em.findOne(Classes, {
+						name: submission.classNumber
+					});
+
+					if (!classEntity) {
+						console.log(`⚠️ Class not found: ${submission.classNumber}, creating default class`);
+						const course = await em.findOne(Course, { name: "Fisioterapia em Neonatologia e Pediatria" });
+						if (course) {
+							classEntity = new Classes(submission.classNumber, course);
+							em.persist(classEntity);
+						}
+					}
+
+					if (user && classEntity) {
+						const student = new Student(user, classEntity);
+						em.persist(student);
+						createdCount++;
+						console.log(`✅ Created student: ${submission.fullName} (Crefito: ${submission.crefito}, ${submission.entryCount} entries)`);
+					}
 				} catch (error) {
-					console.error(`Error processing student ${submission.fullName}:`, error);
+					console.error(`Error processing student ${submission.fullName} (Crefito: ${submission.crefito}):`, error);
 				}
 			}
 
 			await em.flush();
 			console.log(`✅ Created ${createdCount} new students`);
+			console.log(`🔄 Updated ${updatedCount} existing students`);
 		} catch (error) {
 			console.error("Error seeding students:", error);
 		}
@@ -365,18 +412,64 @@ export class DocumentsSeeder extends Seeder {
 
 		try {
 			const googleSheets = new GoogleSheetsService();
-			const submissions = await googleSheets.getSubmissions(Bun.env.GOOGLE_SPREADSHEET_ID);
+			const rawSubmissions = await googleSheets.getSubmissions(Bun.env.GOOGLE_SPREADSHEET_ID);
+			const consolidatedSubmissions = googleSheets.consolidateSubmissionsByCrefito(rawSubmissions);
 			
-			console.log(`📊 Processing documents for ${submissions.length} students...`);
+			console.log(`📊 Processing documents for ${consolidatedSubmissions.length} consolidated students...`);
+
+			// Debug: Count total documents by type
+			let totalVaccinationCards = 0;
+			let totalIdentityFront = 0;
+			let totalIdentityBack = 0;
+			let totalHSICommitments = 0;
+			let totalHMSCommitments = 0;
+			let totalHospitalForms = 0;
+			let totalBadgePictures = 0;
+
+			for (const submission of consolidatedSubmissions) {
+				totalVaccinationCards += submission.documentation.vaccinationCard.length;
+				totalIdentityFront += submission.documentation.professionalIdentityFront.length;
+				totalIdentityBack += submission.documentation.professionalIdentityBack.length;
+				totalHSICommitments += submission.documentation.internshipCommitmentTermHSI.length;
+				totalHMSCommitments += submission.documentation.internshipCommitmentTermHMS.length;
+				totalHospitalForms += submission.documentation.cityHospitalForm.length;
+				totalBadgePictures += submission.documentation.badgePicture.length;
+			}
+
+			console.log(`📊 Document counts by type:`);
+			console.log(`  - Vaccination Cards: ${totalVaccinationCards}`);
+			console.log(`  - Identity Front: ${totalIdentityFront}`);
+			console.log(`  - Identity Back: ${totalIdentityBack}`);
+			console.log(`  - HSI Commitments: ${totalHSICommitments}`);
+			console.log(`  - HMS Commitments: ${totalHMSCommitments}`);
+			console.log(`  - Hospital Forms: ${totalHospitalForms}`);
+			console.log(`  - Badge Pictures: ${totalBadgePictures}`);
+			console.log(`  - Total: ${totalVaccinationCards + totalIdentityFront + totalIdentityBack + totalHSICommitments + totalHMSCommitments + totalHospitalForms + totalBadgePictures}`);
 
 			let createdCount = 0;
-			for (const submission of submissions) {
+			let processedCount = 0;
+			
+			for (const submission of consolidatedSubmissions) {
 				try {
-					const student = await em.findOne(Student, {
-						user: { email: submission.email }
-					}, { populate: ['user'] });
+					// Process ALL entries - even incomplete ones
+					console.log(`📄 Processing documents for student (Crefito: ${submission.crefito}): ${submission.fullName} (${submission.entryCount} entries)`);
+
+					// Find student by email or by Crefito if email is placeholder
+					let student = null;
+					if (!GoogleSheetsService.isPlaceholder(submission.email, 'email')) {
+						student = await em.findOne(Student, {
+							user: { email: submission.email }
+						}, { populate: ['user'] });
+					}
+					
+					if (!student && submission.crefito) {
+						student = await em.findOne(Student, {
+							user: { professionalIdentityNumber: submission.crefito }
+						}, { populate: ['user'] });
+					}
 
 					if (!student) {
+						console.log(`⚠️ Student not found for Crefito: ${submission.crefito} (${submission.fullName})`);
 						continue;
 					}
 
@@ -397,7 +490,14 @@ export class DocumentsSeeder extends Seeder {
 						createdCount++;
 					}
 
-					for (const url of documentation.internshipCommitmentTerm) {
+					// Handle HSI internship commitment terms
+					for (const url of documentation.internshipCommitmentTermHSI) {
+						await this.createDocumentFromUrl(url, student, DocumentType.COMMITMENT_CONTRACT, em);
+						createdCount++;
+					}
+
+					// Handle HMS internship commitment terms
+					for (const url of documentation.internshipCommitmentTermHMS) {
 						await this.createDocumentFromUrl(url, student, DocumentType.COMMITMENT_CONTRACT, em);
 						createdCount++;
 					}
@@ -407,18 +507,22 @@ export class DocumentsSeeder extends Seeder {
 						createdCount++;
 					}
 
-					if (documentation.badgePicture) {
-						await this.createDocumentFromUrl(documentation.badgePicture, student, DocumentType.BADGE_PICTURE, em);
+					// Handle badge pictures (now an array)
+					for (const url of documentation.badgePicture) {
+						await this.createDocumentFromUrl(url, student, DocumentType.BADGE_PICTURE, em);
 						createdCount++;
 					}
 
+					processedCount++;
+					console.log(`✅ Processed documents for ${submission.fullName} (Crefito: ${submission.crefito}, ${submission.entryCount} entries, ${Object.values(documentation).flat().length} total docs)`);
+
 				} catch (error) {
-					console.error(`Error processing documents for ${submission.fullName}:`, error);
+					console.error(`Error processing documents for ${submission.fullName} (Crefito: ${submission.crefito}):`, error);
 				}
 			}
 
 			await em.flush();
-			console.log(`✅ Created ${createdCount} documents`);
+			console.log(`✅ Created ${createdCount} documents for ${processedCount} students`);
 		} catch (error) {
 			console.error("Error seeding documents:", error);
 		}

@@ -245,6 +245,16 @@
           "length": 255,
           "mappedType": "string"
         },
+        "professional_identity_number": {
+          "name": "professional_identity_number",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
         "password_hash": {
           "name": "password_hash",
           "type": "varchar(255)",
