@@ -411,6 +411,49 @@ export function useAdmin() {
 // ========================================
 
 export function useHealth() {
-  // The health API returns a plain object, not ApiResponse
-  return healthApi.check;
+  const [state, setState] = useState<{
+    data: { status: string; timestamp: string; uptime: number; environment: string } | null;
+    loading: boolean;
+    error: string | null;
+  }>({
+    data: null,
+    loading: false,
+    error: null,
+  });
+
+  const execute = useCallback(async () => {
+    setState(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      const data = await healthApi.check();
+      setState({
+        data,
+        loading: false,
+        error: null,
+      });
+      return data;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Health check failed';
+      setState({
+        data: null,
+        loading: false,
+        error: errorMessage,
+      });
+      return null;
+    }
+  }, []);
+
+  const reset = useCallback(() => {
+    setState({
+      data: null,
+      loading: false,
+      error: null,
+    });
+  }, []);
+
+  return {
+    ...state,
+    execute,
+    reset,
+  };
 } 

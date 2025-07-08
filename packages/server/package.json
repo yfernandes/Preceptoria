@@ -1,5 +1,5 @@
 {
-	"name": "elysia",
+	"name": "server",
 	"version": "1.0.50",
 	"type": "module",
 	"module": "src/index.ts",

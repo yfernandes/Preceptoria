@@ -1,12 +1,10 @@
 import { treaty } from '@elysiajs/eden';
 
-// Import the app type from the backend for full type safety
-import type { App } from '../../elysia/src/server';
-
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
-// Create a properly typed treaty client
-export const treatise = treaty<App>(API_BASE_URL);
+// Create a basic treaty client for now
+// TODO: Once we resolve the monorepo type issues, we can use: treaty<App>(API_BASE_URL)
+export const treatise = treaty(API_BASE_URL);
 
 // Type definitions for API responses based on our endpoints.yaml
 export interface ApiResponse<T = any> {
@@ -134,7 +132,7 @@ export interface Document {
   updatedAt: string;
 }
 
-const response = treatise.api.health.get();
+
 
 // // Auth API using Eden Treaty
 // export const authApi = {
@@ -492,13 +490,13 @@ const response = treatise.api.health.get();
 //   },
 // };
 
-// // Health check
-// export const healthApi = {
-//   check: async (): Promise<{ status: string; timestamp: string; uptime: number; environment: string }> => {
-//     const response = await treatise.health.get();
-//     return response.data;
-//   },
-// };
+// Health check
+export const healthApi = {
+  check: async (): Promise<{ status: string; timestamp: string; uptime: number; environment: string }> => {
+    const response = await treatise.health.;
+    return response.data;
+  },
+};
 
 // // Utility functions
 // export async function handleApiResponse<T>(response: Promise<ApiResponse<T>>): Promise<T> {

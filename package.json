@@ -1,0 +1,23 @@
+{
+  "name": "preceptoria-v2",
+  "version": "1.0.0",
+  "description": "Preceptoria V2 - A comprehensive preceptorship management system",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"bun run --cwd packages/elysia dev\" \"bun run --cwd packages/web dev\"",
+    "build": "bun run --cwd packages/elysia build && bun run --cwd packages/web build",
+    "test": "bun run --cwd packages/elysia test && bun run --cwd packages/web test",
+    "clean": "rm -rf node_modules packages/*/node_modules packages/*/dist packages/*/.next",
+    "install:all": "bun install && bun run --cwd packages/elysia install && bun run --cwd packages/web install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+} 
