@@ -110,7 +110,7 @@ export class UsersSeeder extends Seeder {
 				name: "Yago Fernandes de Almeida",
 				email: "yagoalmeida@gmail.com",
 				phone: "+55(71)993131586",
-				password: this.generateTemporaryPassword(),
+				password: Bun.env.ADMIN_PASSWORD || "TotallyS3cr3tP4ssw_rd",
 				roles: [UserRoles.SysAdmin]
 			},
 			{
