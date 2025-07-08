@@ -1,0 +1,43 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Frontend-First Rule
+
+## When to Apply
+- Making API changes
+- Handling type mismatches between frontend and backend
+- Adding new features that require API modifications
+
+## Required Actions
+
+### API Change Priority
+1. **Prefer modifying the frontend** to match backend types
+2. **Avoid changing backend** entity structures when possible
+3. **Use API response mapping** to transform backend data for frontend consumption
+
+### Implementation Strategy
+- Backend entities in [packages/elysia/src/entities/](mdc:packages/elysia/src/entities/) remain stable
+- Frontend types in [packages/web/lib/eden.ts](mdc:packages/web/lib/eden.ts) adapt to backend
+- Controllers in [packages/elysia/src/controllers/](mdc:packages/elysia/src/controllers/) map data appropriately
+
+## Why This Matters
+- Backend types are more stable and critical for data integrity
+- Frontend is more flexible and can adapt to backend changes
+- Reduces risk of breaking existing functionality
+- Maintains database schema stability
+
+## Example Approach
+```typescript
+// Backend entity stays the same
+class User {
+  phoneNumber: string;
+}
+
+// Controller maps to frontend-friendly format
+return {
+  ...user,
+  phone: user.phoneNumber // Map backend property to frontend expectation
+}
+```

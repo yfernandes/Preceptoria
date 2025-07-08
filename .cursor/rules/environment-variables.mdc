@@ -1,0 +1,47 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Environment Variable Rule
+
+## When to Apply
+- Adding new environment variables
+- Modifying existing environment configuration
+- Setting up new services or integrations
+
+## Required Actions
+
+### For New Environment Variables
+1. Update [packages/elysia/env.example](mdc:packages/elysia/env.example) with the new variable
+2. Update validation in [packages/elysia/src/index.ts](mdc:packages/elysia/src/index.ts)
+3. Document the variable's purpose and required format
+4. Update README if the variable affects setup process
+
+### Validation Pattern
+```typescript
+// In packages/elysia/src/index.ts
+const requiredEnvVars = [
+  'DATABASE_URL',
+  'JWT_SECRET',
+  'PORT',
+  // Add new variables here
+];
+
+for (const envVar of requiredEnvVars) {
+  if (!Bun.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
+```
+
+## Why This Matters
+- Prevents missing environment variables at runtime
+- Ensures proper documentation for setup
+- Maintains consistent development environment
+- Reduces deployment issues
+
+## File Locations
+- Environment template: [packages/elysia/env.example](mdc:packages/elysia/env.example)
+- Validation logic: [packages/elysia/src/index.ts](mdc:packages/elysia/src/index.ts)
+- Documentation: [packages/elysia/README.md](mdc:packages/elysia/README.md)

@@ -1,0 +1,41 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Cookie Security Rule
+
+## When to Apply
+- Working with authentication/sessions
+- Setting cookies in controllers
+- Configuring session management
+
+## Required Actions
+
+### Cookie Configuration
+Always use these settings when setting cookies:
+
+```typescript
+{
+  secure: Bun.env.NODE_ENV === 'production',
+  sameSite: "lax",
+  httpOnly: true,
+  path: "/"
+}
+```
+
+### Implementation Locations
+- [packages/elysia/src/controllers/auth.controller.ts](mdc:packages/elysia/src/controllers/auth.controller.ts) - Login/logout cookies
+- [packages/elysia/src/middlewares/auth.ts](mdc:packages/elysia/src/middlewares/auth.ts) - Session validation
+- Any other controller that sets cookies
+
+## Why This Matters
+- Prevents cookie issues in development (secure: false in dev)
+- Maintains security in production (secure: true in prod)
+- Ensures proper cross-site request handling with sameSite: "lax"
+- Prevents XSS attacks with httpOnly: true
+
+## Environment Handling
+- Development: `secure: false` allows HTTP cookies
+- Production: `secure: true` requires HTTPS
+- Both environments: `sameSite: "lax"` for proper CSRF protection

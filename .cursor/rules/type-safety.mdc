@@ -1,0 +1,34 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Type Safety Rule
+
+## When to Apply
+- Adding new entities in [packages/elysia/src/entities/](mdc:packages/elysia/src/entities/)
+- Changing entity properties
+- Modifying backend data structures
+
+## Required Actions
+
+### For Entity Changes
+1. Update backend entity in [packages/elysia/src/entities/](mdc:packages/elysia/src/entities/)
+2. Update frontend type definitions in [packages/web/lib/eden.ts](mdc:packages/web/lib/eden.ts)
+3. Ensure property names match exactly between backend and frontend
+4. Update [packages/elysia/endpoints.jsonl](mdc:packages/elysia/endpoints.jsonl) if API responses change
+
+### Property Name Consistency
+- Backend entity properties drive frontend type names
+- Example: Backend `phoneNumber` → Frontend `phone` (with mapping in API response)
+- Avoid mismatches like `phone` vs `phoneNumber` confusion
+
+## Why This Matters
+- Prevents property name mismatches between frontend and backend
+- Ensures type safety across the full stack
+- Reduces runtime errors and debugging time
+
+## Common Patterns
+- Backend entities use camelCase (e.g., `phoneNumber`)
+- Frontend types match API response structure
+- API responses map backend properties to frontend-friendly names

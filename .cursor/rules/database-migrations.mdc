@@ -1,0 +1,43 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Database Migration Rule
+
+## When to Apply
+- Changing entity schemas in [packages/elysia/src/entities/](mdc:packages/elysia/src/entities/)
+- Adding new database tables or columns
+- Modifying existing database structures
+
+## Required Actions
+
+### For Schema Changes
+1. **Create migration** in [packages/elysia/src/migrations/](mdc:packages/elysia/src/migrations/)
+2. **Update seeder data** in [packages/elysia/src/seeders/](mdc:packages/elysia/src/seeders/)
+3. **Test migration** with existing data
+4. **Update entity definitions** if needed
+
+### Migration Naming Convention
+```
+MigrationYYYYMMDDHHMMSS_DescriptiveName.ts
+```
+Example: `Migration20250705002602_AddProfessionalIdentityNumber.ts`
+
+### Seeder Updates
+- Update [packages/elysia/src/seeders/DatabaseSeeder.ts](mdc:packages/elysia/src/seeders/DatabaseSeeder.ts)
+- Ensure new fields have appropriate default values
+- Test seeder with fresh database
+
+## Why This Matters
+- Keeps development environment in sync
+- Prevents data inconsistencies
+- Ensures reproducible database state
+- Maintains data integrity across environments
+
+## Testing Checklist
+- [ ] Migration runs successfully on fresh database
+- [ ] Migration runs successfully on existing database with data
+- [ ] Seeder creates appropriate test data
+- [ ] Entity relationships remain intact
+- [ ] API endpoints work with new schema

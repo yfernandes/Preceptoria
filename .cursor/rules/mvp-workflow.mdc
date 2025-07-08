@@ -1,0 +1,43 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# MVP Workflow Rule
+
+## Current Phase: MVP Development
+
+### Focus Areas
+- **Implementation over perfection** - Get features working first
+- **Core functionality** - Essential user flows and data management
+- **Basic error handling** - Prevent crashes, detailed logging later
+- **Simple UI/UX** - Functional over beautiful
+
+### Post-MVP Rules (Future)
+When MVP is declared complete, implement:
+- Error handling consistency rules
+- Logging pattern rules  
+- Testing coverage rules
+- API versioning rules
+- Performance optimization rules
+
+## Why This Approach
+- **Speed to market** - Validate core concept quickly
+- **Iterative improvement** - Build quality incrementally
+- **Resource efficiency** - Focus on what matters most
+- **User feedback** - Learn from real usage before over-engineering
+
+## Current Priorities
+1. **Authentication flow** - ✅ Complete
+2. **User management** - In progress
+3. **Document management** - Planned
+4. **Role-based access** - Planned
+5. **Basic dashboard** - In progress
+
+## Quality Standards (Post-MVP)
+- Comprehensive error handling
+- Structured logging
+- Unit and integration tests
+- API documentation
+- Performance monitoring
+- Security audits
