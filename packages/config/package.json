@@ -1,0 +1,25 @@
+{
+	"name": "config",
+	"type": "module",
+	"private": true,
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"@eslint/js": "^9.25.1",
+		"@next/eslint-plugin-next": "^15.3.1",
+		"@typescript-eslint/eslint-plugin": "^8.31.1",
+		"@typescript-eslint/parser": "^8.31.1",
+		"@typescript-eslint/utils": "^8.31.1",
+		"@vercel/style-guide": "^6.0.0",
+		"eslint": "^9.25.1",
+		"eslint-config-prettier": "^10.1.2",
+		"eslint-config-turbo": "^2.5.2",
+		"eslint-plugin-only-warn": "^1.1.0",
+		"eslint-plugin-prettier": "^5.2.6",
+		"eslint-plugin-react": "^7.37.5",
+		"typescript": "^5.8.3",
+		"typescript-eslint": "^8.31.1"
+	}
+}
