@@ -14,8 +14,14 @@ import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
-  password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
+  email: z.string().refine((val) => {
+    // Allow 'admin' in development or valid email
+    if (process.env.NODE_ENV === 'development' && val === 'admin') {
+      return true;
+    }
+    return z.string().email().safeParse(val).success;
+  }, 'Email inválido'),
+  password: z.string().min(1, 'Senha é obrigatória'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -71,6 +77,11 @@ export function LoginForm() {
             {errors.email && (
               <p className="text-sm text-red-500">{errors.email.message}</p>
             )}
+            {process.env.NODE_ENV === 'development' && (
+              <p className="text-xs text-gray-500">
+                💡 Dev tip: Use "admin" as email and "admin" as password for quick access
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -99,6 +110,11 @@ export function LoginForm() {
             </div>
             {errors.password && (
               <p className="text-sm text-red-500">{errors.password.message}</p>
+            )}
+            {process.env.NODE_ENV === 'development' && (
+              <p className="text-xs text-gray-500">
+                💡 Dev tip: Use "admin" as password for quick access
+              </p>
             )}
           </div>
 

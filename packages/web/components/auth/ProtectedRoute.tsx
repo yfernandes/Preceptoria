@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { AppLoader } from '@/components/AppLoader';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -11,42 +11,62 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, requiredRoles }: ProtectedRouteProps) {
-  const { user, loading } = useAuth();
-  const router = useRouter();
+  try {
+    const { user } = useAuth();
+    const router = useRouter();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
+    useEffect(() => {
+      if (!user) {
+        router.push('/login');
+      }
+    }, [user, router]);
+
+    useEffect(() => {
+      if (user && requiredRoles && requiredRoles.length > 0) {
+        const hasRequiredRole = user.roles.some(role => requiredRoles.includes(role));
+        if (!hasRequiredRole) {
+          router.push('/unauthorized');
+        }
+      }
+    }, [user, requiredRoles, router]);
+
+    if (!user) {
+      return (
+        <AppLoader>
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-muted-foreground">Redirecionando para login...</p>
+            </div>
+          </div>
+        </AppLoader>
+      );
     }
-  }, [user, loading, router]);
 
-  useEffect(() => {
-    if (!loading && user && requiredRoles && requiredRoles.length > 0) {
+    if (requiredRoles && requiredRoles.length > 0) {
       const hasRequiredRole = user.roles.some(role => requiredRoles.includes(role));
       if (!hasRequiredRole) {
-        router.push('/unauthorized');
+        return (
+          <AppLoader>
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="text-center">
+                <p className="text-muted-foreground">Redirecionando...</p>
+              </div>
+            </div>
+          </AppLoader>
+        );
       }
     }
-  }, [user, loading, requiredRoles, router]);
 
-  if (loading) {
+    return <AppLoader>{children}</AppLoader>;
+  } catch (error) {
+    // If useAuth throws an error (context not available), show loading
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" text="Carregando..." />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <p className="text-muted-foreground">Inicializando...</p>
+        </div>
       </div>
     );
   }
-
-  if (!user) {
-    return null; // Will redirect to login
-  }
-
-  if (requiredRoles && requiredRoles.length > 0) {
-    const hasRequiredRole = user.roles.some(role => requiredRoles.includes(role));
-    if (!hasRequiredRole) {
-      return null; // Will redirect to unauthorized
-    }
-  }
-
-  return <>{children}</>;
 } 

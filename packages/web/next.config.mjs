@@ -9,6 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Development server configuration
+  experimental: {
+    // This will be used by the dev script
+  },
 }
 
 export default nextConfig

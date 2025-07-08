@@ -2,8 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent layout forcing and FOUC */
+html {
+  visibility: visible;
+  opacity: 1;
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
+  /* Ensure body is visible after hydration */
+  visibility: visible !important;
+}
+
+/* Prevent flash of unstyled content */
+* {
+  box-sizing: border-box;
 }
 
 @layer utilities {

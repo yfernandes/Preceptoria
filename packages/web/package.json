@@ -4,13 +4,13 @@
   "private": true,
   "scripts": {
     "build": "bunx next build",
-    "dev": "bunx next dev",
+    "dev": "bunx next dev -p 4123",
     "lint": "bunx next lint",
     "lint:fix": "bunx next lint --fix",
     "format": "bunx prettier --write .",
     "format:check": "bunx prettier --check .",
     "type-check": "bunx tsc --noEmit",
-    "start": "bunx next start",
+    "start": "bunx next start -p 4123",
     "clean": "rm -rf .next out dist"
   },
   "dependencies": {
@@ -49,6 +49,7 @@
     "cmdk": "1.0.4",
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.1",
+    "eslint-config-next": "^15.3.5",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
@@ -56,7 +57,7 @@
     "react": "^19",
     "react-day-picker": "8.10.1",
     "react-dom": "^19",
-    "react-hook-form": "^7.54.1",
+    "react-hook-form": "^7.60.0",
     "react-resizable-panels": "^2.1.7",
     "recharts": "2.15.0",
     "sonner": "^1.7.1",
