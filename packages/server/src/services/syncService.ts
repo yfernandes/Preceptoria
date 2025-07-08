@@ -226,7 +226,16 @@ export class SyncService {
 		}
 
 		// Process internship commitment term
-		for (const url of documentation.internshipCommitmentTerm) {
+		// Process both types of internship commitment terms
+		for (const url of documentation.internshipCommitmentTermHSI) {
+			await this.createDocumentFromUrl(
+				url,
+				student,
+				DocumentType.COMMITMENT_CONTRACT,
+				result
+			);
+		}
+		for (const url of documentation.internshipCommitmentTermHMS) {
 			await this.createDocumentFromUrl(
 				url,
 				student,
@@ -246,9 +255,9 @@ export class SyncService {
 		}
 
 		// Process badge picture
-		if (documentation.badgePicture) {
+		for (const url of documentation.badgePicture) {
 			await this.createDocumentFromUrl(
-				documentation.badgePicture,
+				url,
 				student,
 				DocumentType.BADGE_PICTURE,
 				result

@@ -16,7 +16,7 @@ import {
 import { DocumentType } from "../entities/document.entity";
 import {
 	GoogleSheetsService,
-	ConsolidatedSubmission,
+	// ConsolidatedSubmission,
 } from "../services/googleSheets";
 import { UserRoles } from "../entities/role.abstract";
 

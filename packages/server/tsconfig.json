@@ -29,7 +29,11 @@
 		"sourceMap": true /* If debugging with Bun, sourcemaps are useful */,
 
 		/* Others */
-		"forceConsistentCasingInFileNames": true /* Ensure consistent file name casing */
+		"forceConsistentCasingInFileNames": true /* Ensure consistent file name casing */,
+
+		"outDir": "dist",
+		"emitDeclarationOnly": true,
+		"composite": true
 	},
 	"include": [
 		"src",
