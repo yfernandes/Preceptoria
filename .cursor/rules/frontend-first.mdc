@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Frontend-First Rule
@@ -18,9 +18,9 @@ alwaysApply: false
 3. **Use API response mapping** to transform backend data for frontend consumption
 
 ### Implementation Strategy
-- Backend entities in [packages/elysia/src/entities/](mdc:packages/elysia/src/entities/) remain stable
+- Backend entities in [packages/elysia/src/entities/](mdc:packages/elysia/src/entities) remain stable
 - Frontend types in [packages/web/lib/eden.ts](mdc:packages/web/lib/eden.ts) adapt to backend
-- Controllers in [packages/elysia/src/controllers/](mdc:packages/elysia/src/controllers/) map data appropriately
+- Controllers in [packages/elysia/src/controllers/](mdc:packages/elysia/src/controllers) map data appropriately
 
 ## Why This Matters
 - Backend types are more stable and critical for data integrity

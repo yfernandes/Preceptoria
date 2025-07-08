@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Endpoint Documentation Rule
@@ -12,12 +12,13 @@ alwaysApply: false
 ## Required Actions
 
 ### For Controller Changes
-1. Update [packages/elysia/endpoints.jsonl](mdc:packages/elysia/endpoints.jsonl) with request/response shapes
+1. Update [packages/elysia/endpoints.yaml](mdc:packages/elysia/endpoints.yaml) with request/response shapes
 2. Include method, path, description, request body/query/params, and response structure
-3. Use JSONL format for easy parsing and diffing
+3. Use YAML format for better readability and maintainability
+4. Add section headers for organization (e.g., # AUTHENTICATION ENDPOINTS)
 
 ### For Frontend API Changes
-1. Read [packages/elysia/endpoints.jsonl](mdc:packages/elysia/endpoints.jsonl) first to understand the contract
+1. Read [packages/elysia/endpoints.yaml](mdc:packages/elysia/endpoints.yaml) first to understand the contract
 2. Ensure frontend types match the documented response shapes
 3. Update frontend API client in [packages/web/lib/eden.ts](mdc:packages/web/lib/eden.ts)
 
@@ -25,8 +26,28 @@ alwaysApply: false
 - Prevents source code combing for API contracts
 - Ensures type consistency between frontend and backend
 - Provides single source of truth for API documentation
+- YAML format is much more readable than JSON/JSONL
 
 ## Example Format
-```json
-{"method": "POST", "path": "/auth/signup", "description": "Register a new user", "request": {"body": {"name": "string", "email": "string", "phone": "string", "password": "string"}}, "response": {"success": "boolean", "message": "string", "user": {"id": "string", "name": "string", "email": "string", "phone": "string", "roles": "string[]", "createdAt": "string", "updatedAt": "string"}}}}
+```yaml
+- method: POST
+  path: /auth/signup
+  description: Register a new user
+  request:
+    body:
+      name: string
+      email: string
+      phone: string
+      password: string
+  response:
+    success: boolean
+    message: string
+    user:
+      id: string
+      name: string
+      email: string
+      phone: string
+      roles: string[]
+      createdAt: string
+      updatedAt: string
 ```

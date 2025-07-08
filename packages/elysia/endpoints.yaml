@@ -1,0 +1,1354 @@
+# API Endpoints Documentation
+# Format: YAML - Clean, readable, maintainable
+# Total: 67 endpoints across 12 resource types
+
+endpoints:
+  # ========================================
+  # AUTHENTICATION ENDPOINTS (4)
+  # ========================================
+  - method: POST
+    path: /auth/signup
+    description: Register a new user
+    request:
+      body:
+        name: string
+        email: string
+        phone: string
+        password: string
+    response:
+      success: boolean
+      message: string
+      user:
+        id: string
+        name: string
+        email: string
+        phone: string
+        roles: string[]
+        createdAt: string
+        updatedAt: string
+
+  - method: POST
+    path: /auth/signin
+    description: Login user
+    request:
+      body:
+        email: string
+        password: string
+    response:
+      success: boolean
+      message: string
+      user:
+        id: string
+        name: string
+        email: string
+        phone: string
+        roles: string[]
+        createdAt: string
+        updatedAt: string
+
+  - method: POST
+    path: /auth/logout
+    description: Logout user
+    request: {}
+    response:
+      success: boolean
+      message: string
+
+  - method: POST
+    path: /auth/refresh
+    description: Refresh JWT token
+    request: {}
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # HEALTH CHECK (1)
+  # ========================================
+  - method: GET
+    path: /health
+    description: Health check
+    request: {}
+    response:
+      status: string
+      timestamp: string
+      uptime: number
+      environment: string
+
+  # ========================================
+  # USER MANAGEMENT (5)
+  # ========================================
+  - method: GET
+    path: /users
+    description: List users
+    request:
+      query:
+        role: string?
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          name: string
+          email: string
+          phone: string
+          roles: string[]
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /users/:id
+    description: Get user by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        name: string
+        email: string
+        phone: string
+        roles: string[]
+        createdAt: string
+        updatedAt: string
+
+  - method: POST
+    path: /users
+    description: Create a new user
+    request:
+      body:
+        name: string
+        email: string
+        phone: string
+        password: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        email: string
+        phone: string
+        roles: string[]
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /users/:id
+    description: Update a user
+    request:
+      params:
+        id: string
+      body:
+        name: string?
+        email: string?
+        phone: string?
+        password: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        email: string
+        phone: string
+        roles: string[]
+        createdAt: string
+        updatedAt: string
+
+  - method: DELETE
+    path: /users/:id
+    description: Delete a user
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # ADMIN MANAGEMENT (4)
+  # ========================================
+  - method: POST
+    path: /admin
+    description: Create a system admin
+    request:
+      body:
+        userId: string
+    response:
+      success: boolean
+      data:
+        id: string
+        user: object
+
+  - method: POST
+    path: /admin/sync-google-sheets
+    description: Sync data from Google Sheets
+    request: {}
+    response:
+      success: boolean
+      message: string
+      data: object
+
+  - method: GET
+    path: /admin/:id
+    description: Get system admin by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        user: object
+
+  - method: DELETE
+    path: /admin/:id
+    description: Delete system admin
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # CLASS MANAGEMENT (5)
+  # ========================================
+  - method: POST
+    path: /classes
+    description: Create a new class
+    request:
+      body:
+        name: string
+        courseId: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        course: object
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /classes
+    description: List classes
+    request:
+      query:
+        courseId: string?
+        supervisorId: string?
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          name: string
+          course: object
+          students: array
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /classes/:id
+    description: Get class by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        name: string
+        course: object
+        students: array
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /classes/:id
+    description: Update a class
+    request:
+      params:
+        id: string
+      body:
+        name: string?
+        courseId: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        course: object
+        createdAt: string
+        updatedAt: string
+
+  - method: DELETE
+    path: /classes/:id
+    description: Delete a class
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # COURSE MANAGEMENT (5)
+  # ========================================
+  - method: POST
+    path: /courses
+    description: Create a new course
+    request:
+      body:
+        name: string
+        description: string
+        schoolId: string
+        supervisorId: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        description: string
+        school: object
+        supervisor: object
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /courses
+    description: List courses
+    request:
+      query:
+        schoolId: string?
+        supervisorId: string?
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          name: string
+          description: string
+          school: object
+          supervisor: object
+          classes: array
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /courses/:id
+    description: Get course by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        name: string
+        description: string
+        school: object
+        supervisor: object
+        classes: array
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /courses/:id
+    description: Update a course
+    request:
+      params:
+        id: string
+      body:
+        name: string?
+        description: string?
+        schoolId: string?
+        supervisorId: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        description: string
+        school: object
+        supervisor: object
+        createdAt: string
+        updatedAt: string
+
+  - method: DELETE
+    path: /courses/:id
+    description: Delete a course
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # SCHOOL MANAGEMENT (5)
+  # ========================================
+  - method: POST
+    path: /schools
+    description: Create a new school
+    request:
+      body:
+        name: string
+        address: string
+        orgAdminId: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        address: string
+        orgAdmin: object
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /schools
+    description: List schools
+    request:
+      query:
+        orgAdminId: string?
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          name: string
+          address: string
+          orgAdmin: object
+          courses: array
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /schools/:id
+    description: Get school by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        name: string
+        address: string
+        orgAdmin: object
+        courses: array
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /schools/:id
+    description: Update a school
+    request:
+      params:
+        id: string
+      body:
+        name: string?
+        address: string?
+        orgAdminId: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        address: string
+        orgAdmin: object
+        createdAt: string
+        updatedAt: string
+
+  - method: DELETE
+    path: /schools/:id
+    description: Delete a school
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # HOSPITAL MANAGEMENT (5)
+  # ========================================
+  - method: POST
+    path: /hospitals
+    description: Create a new hospital
+    request:
+      body:
+        name: string
+        address: string
+        orgAdminId: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        address: string
+        orgAdmin: object
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /hospitals
+    description: List hospitals
+    request:
+      query:
+        orgAdminId: string?
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          name: string
+          address: string
+          orgAdmin: object
+          shifts: array
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /hospitals/:id
+    description: Get hospital by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        name: string
+        address: string
+        orgAdmin: object
+        shifts: array
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /hospitals/:id
+    description: Update a hospital
+    request:
+      params:
+        id: string
+      body:
+        name: string?
+        address: string?
+        orgAdminId: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        address: string
+        orgAdmin: object
+        createdAt: string
+        updatedAt: string
+
+  - method: DELETE
+    path: /hospitals/:id
+    description: Delete a hospital
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # SHIFT MANAGEMENT (5)
+  # ========================================
+  - method: POST
+    path: /shifts
+    description: Create a new shift
+    request:
+      body:
+        name: string
+        startDate: string
+        endDate: string
+        hospitalId: string
+        studentId: string
+        preceptorId: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        startDate: string
+        endDate: string
+        hospital: object
+        student: object
+        preceptor: object
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /shifts
+    description: List shifts
+    request:
+      query:
+        hospitalId: string?
+        studentId: string?
+        preceptorId: string?
+        startDate: string?
+        endDate: string?
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          name: string
+          startDate: string
+          endDate: string
+          hospital: object
+          student: object
+          preceptor: object
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /shifts/:id
+    description: Get shift by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        name: string
+        startDate: string
+        endDate: string
+        hospital: object
+        student: object
+        preceptor: object
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /shifts/:id
+    description: Update a shift
+    request:
+      params:
+        id: string
+      body:
+        name: string?
+        startDate: string?
+        endDate: string?
+        hospitalId: string?
+        studentId: string?
+        preceptorId: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        startDate: string
+        endDate: string
+        hospital: object
+        student: object
+        preceptor: object
+        createdAt: string
+        updatedAt: string
+
+  - method: DELETE
+    path: /shifts/:id
+    description: Delete a shift
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # STUDENT MANAGEMENT (5)
+  # ========================================
+  - method: POST
+    path: /students
+    description: Create a new student
+    request:
+      body:
+        userId: string
+        enrollmentNumber: string
+        classId: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        enrollmentNumber: string
+        user: object
+        class: object
+        shifts: array
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /students
+    description: List students
+    request:
+      query:
+        classId: string?
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          enrollmentNumber: string
+          user: object
+          class: object
+          shifts: array
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /students/:id
+    description: Get student by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        enrollmentNumber: string
+        user: object
+        class: object
+        shifts: array
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /students/:id
+    description: Update a student
+    request:
+      params:
+        id: string
+      body:
+        enrollmentNumber: string?
+        classId: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        enrollmentNumber: string
+        user: object
+        class: object
+        createdAt: string
+        updatedAt: string
+
+  - method: DELETE
+    path: /students/:id
+    description: Delete a student
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # PRECEPTOR MANAGEMENT (5)
+  # ========================================
+  - method: POST
+    path: /preceptors
+    description: Create a new preceptor
+    request:
+      body:
+        userId: string
+        professionalIdentityNumber: string
+        hospitalId: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        professionalIdentityNumber: string
+        user: object
+        hospital: object
+        shifts: array
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /preceptors
+    description: List preceptors
+    request:
+      query:
+        hospitalId: string?
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          professionalIdentityNumber: string
+          user: object
+          hospital: object
+          shifts: array
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /preceptors/:id
+    description: Get preceptor by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        professionalIdentityNumber: string
+        user: object
+        hospital: object
+        shifts: array
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /preceptors/:id
+    description: Update a preceptor
+    request:
+      params:
+        id: string
+      body:
+        professionalIdentityNumber: string?
+        hospitalId: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        professionalIdentityNumber: string
+        user: object
+        hospital: object
+        createdAt: string
+        updatedAt: string
+
+  - method: DELETE
+    path: /preceptors/:id
+    description: Delete a preceptor
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # SUPERVISOR MANAGEMENT (5)
+  # ========================================
+  - method: POST
+    path: /supervisors
+    description: Create a new supervisor
+    request:
+      body:
+        userId: string
+        schoolId: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        user: object
+        school: object
+        courses: array
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /supervisors
+    description: List supervisors
+    request:
+      query:
+        schoolId: string?
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          user: object
+          school: object
+          courses: array
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /supervisors/:id
+    description: Get supervisor by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        user: object
+        school: object
+        courses: array
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /supervisors/:id
+    description: Update a supervisor
+    request:
+      params:
+        id: string
+      body:
+        schoolId: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        user: object
+        school: object
+        createdAt: string
+        updatedAt: string
+
+  - method: DELETE
+    path: /supervisors/:id
+    description: Delete a supervisor
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # ORGANIZATION ADMIN MANAGEMENT (5)
+  # ========================================
+  - method: POST
+    path: /org-admins
+    description: Create a new organization admin
+    request:
+      body:
+        userId: string
+        organizationName: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        organizationName: string
+        user: object
+        schools: array
+        hospitals: array
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /org-admins
+    description: List organization admins
+    request:
+      query:
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          organizationName: string
+          user: object
+          schools: array
+          hospitals: array
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /org-admins/:id
+    description: Get organization admin by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        organizationName: string
+        user: object
+        schools: array
+        hospitals: array
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /org-admins/:id
+    description: Update an organization admin
+    request:
+      params:
+        id: string
+      body:
+        organizationName: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        organizationName: string
+        user: object
+        createdAt: string
+        updatedAt: string
+
+  - method: DELETE
+    path: /org-admins/:id
+    description: Delete an organization admin
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # HOSPITAL MANAGER MANAGEMENT (5)
+  # ========================================
+  - method: POST
+    path: /hospital-managers
+    description: Create a new hospital manager
+    request:
+      body:
+        userId: string
+        hospitalId: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        user: object
+        hospital: object
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /hospital-managers
+    description: List hospital managers
+    request:
+      query:
+        hospitalId: string?
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          user: object
+          hospital: object
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /hospital-managers/:id
+    description: Get hospital manager by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        user: object
+        hospital: object
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /hospital-managers/:id
+    description: Update a hospital manager
+    request:
+      params:
+        id: string
+      body:
+        hospitalId: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        user: object
+        hospital: object
+        createdAt: string
+        updatedAt: string
+
+  - method: DELETE
+    path: /hospital-managers/:id
+    description: Delete a hospital manager
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      message: string
+
+  # ========================================
+  # DOCUMENT MANAGEMENT (9)
+  # ========================================
+  - method: POST
+    path: /documents
+    description: Create a new document
+    request:
+      body:
+        name: string
+        description: string
+        studentId: string
+        type: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        description: string
+        type: string
+        student: object
+        submissions: array
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /documents
+    description: List documents
+    request:
+      query:
+        studentId: string?
+        type: string?
+        limit: number?
+        offset: number?
+    response:
+      success: boolean
+      data:
+        - id: string
+          name: string
+          description: string
+          type: string
+          student: object
+          submissions: array
+          createdAt: string
+          updatedAt: string
+      pagination:
+        total: number
+        limit: number
+        offset: number
+        hasMore: boolean
+
+  - method: GET
+    path: /documents/:id
+    description: Get document by ID
+    request:
+      params:
+        id: string
+    response:
+      success: boolean
+      data:
+        id: string
+        name: string
+        description: string
+        type: string
+        student: object
+        submissions: array
+        createdAt: string
+        updatedAt: string
+
+  - method: PATCH
+    path: /documents/:id
+    description: Update a document
+    request:
+      params:
+        id: string
+      body:
+        name: string?
+        description: string?
+        type: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        name: string
+        description: string
+        type: string
+        student: object
+        createdAt: string
+        updatedAt: string
+
+  - method: POST
+    path: /documents/:id/submit
+    description: Submit a document
+    request:
+      params:
+        id: string
+      body:
+        file: File
+        notes: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        file: string
+        notes: string
+        status: string
+        submittedAt: string
+        createdAt: string
+        updatedAt: string
+
+  - method: POST
+    path: /documents/:id/approve
+    description: Approve a document submission
+    request:
+      params:
+        id: string
+      body:
+        submissionId: string
+        feedback: string?
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        status: string
+        feedback: string
+        approvedAt: string
+        createdAt: string
+        updatedAt: string
+
+  - method: POST
+    path: /documents/:id/reject
+    description: Reject a document submission
+    request:
+      params:
+        id: string
+      body:
+        submissionId: string
+        feedback: string
+    response:
+      success: boolean
+      message: string
+      data:
+        id: string
+        status: string
+        feedback: string
+        rejectedAt: string
+        createdAt: string
+        updatedAt: string
+
+  - method: GET
+    path: /documents/validation-templates
+    description: Get document validation templates
+    request: {}
+    response:
+      success: boolean
+      data:
+        - id: string
+          name: string
+          description: string
+          validationRules: object
+
+  - method: POST
+    path: /documents/:id/validate
+    description: Validate a document submission
+    request:
+      params:
+        id: string
+      body:
+        submissionId: string
+    response:
+      success: boolean
+      message: string
+      data:
+        isValid: boolean
+        errors: array
+        warnings: array
+
+  - method: GET
+    path: /documents/stats/pending
+    description: Get pending document statistics
+    request: {}
+    response:
+      success: boolean
+      data:
+        totalPending: number
+        byType: object
+        byStudent: array 
