@@ -29,6 +29,7 @@ import {
 	supervisorController,
 	userController,
 } from "./controllers";
+import { treaty } from "@elysiajs/eden";
 
 // --- App Setup ---
 const SPREADSHEET_ID = Bun.env.GOOGLE_SPREADSHEET_ID;
@@ -163,3 +164,6 @@ export const app = new Elysia()
 
 // Export the app type for Eden Treaty
 export type App = typeof app;
+
+const treatise = treaty<App>("http://localhost:3000");
+treatise.health.get();

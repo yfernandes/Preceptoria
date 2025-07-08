@@ -1,6 +1,6 @@
-import { treaty } from '@elysiajs/eden';
+import { treaty } from "@elysiajs/eden";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 // Create a basic treaty client for now
 // TODO: Once we resolve the monorepo type issues, we can use: treaty<App>(API_BASE_URL)
@@ -8,131 +8,129 @@ export const treatise = treaty(API_BASE_URL);
 
 // Type definitions for API responses based on our endpoints.yaml
 export interface ApiResponse<T = any> {
-  success: boolean;
-  message?: string;
-  data?: T;
-  user?: T;
-  errors?: Array<{
-    field: string;
-    constraints: Record<string, string>;
-  }>;
+	success: boolean;
+	message?: string;
+	data?: T;
+	user?: T;
+	errors?: Array<{
+		field: string;
+		constraints: Record<string, string>;
+	}>;
 }
 
 export interface PaginatedResponse<T> {
-  success: boolean;
-  data: T[];
-  pagination: {
-    total: number;
-    limit: number;
-    offset: number;
-    hasMore: boolean;
-  };
+	success: boolean;
+	data: T[];
+	pagination: {
+		total: number;
+		limit: number;
+		offset: number;
+		hasMore: boolean;
+	};
 }
 
 // User types based on our entities
 export interface User {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  roles: string[];
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	name: string;
+	email: string;
+	phone: string;
+	roles: string[];
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Student {
-  id: string;
-  enrollmentNumber: string;
-  user: User;
-  class: any;
-  shifts: any[];
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	enrollmentNumber: string;
+	user: User;
+	class: any;
+	shifts: any[];
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Class {
-  id: string;
-  name: string;
-  course: any;
-  students: any[];
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	name: string;
+	course: any;
+	students: any[];
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Course {
-  id: string;
-  name: string;
-  description: string;
-  school: any;
-  supervisor: any;
-  classes: any[];
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	name: string;
+	description: string;
+	school: any;
+	supervisor: any;
+	classes: any[];
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface School {
-  id: string;
-  name: string;
-  address: string;
-  orgAdmin: any;
-  courses: any[];
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	name: string;
+	address: string;
+	orgAdmin: any;
+	courses: any[];
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Hospital {
-  id: string;
-  name: string;
-  address: string;
-  orgAdmin: any;
-  shifts: any[];
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	name: string;
+	address: string;
+	orgAdmin: any;
+	shifts: any[];
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Shift {
-  id: string;
-  name: string;
-  startDate: string;
-  endDate: string;
-  hospital: any;
-  student: any;
-  preceptor: any;
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	name: string;
+	startDate: string;
+	endDate: string;
+	hospital: any;
+	student: any;
+	preceptor: any;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Preceptor {
-  id: string;
-  professionalIdentityNumber: string;
-  user: User;
-  hospital: any;
-  shifts: any[];
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	professionalIdentityNumber: string;
+	user: User;
+	hospital: any;
+	shifts: any[];
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Supervisor {
-  id: string;
-  user: User;
-  school: any;
-  courses: any[];
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	user: User;
+	school: any;
+	courses: any[];
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Document {
-  id: string;
-  name: string;
-  description: string;
-  type: string;
-  student: any;
-  submissions: any[];
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	name: string;
+	description: string;
+	type: string;
+	student: any;
+	submissions: any[];
+	createdAt: string;
+	updatedAt: string;
 }
-
-
 
 // // Auth API using Eden Treaty
 // export const authApi = {
@@ -140,12 +138,12 @@ export interface Document {
 //     // const response = await treatise.api.auth.signup.post(data);
 //     return response.data as ApiResponse<User>;
 //   },
-  
+
 //   signin: async (data: { email: string; password: string }): Promise<ApiResponse<User>> => {
 //     const response = await treatise.auth.signin.post(data);
 //     return response.data as ApiResponse<User>;
 //   },
-  
+
 //   signout: async (): Promise<ApiResponse<void>> => {
 //     const response = await treatise.auth.logout.post();
 //     return response.data as ApiResponse<void>;
@@ -163,7 +161,7 @@ export interface Document {
 //     const response = await treatise.users.get({ query: params });
 //     return response.data as PaginatedResponse<User>;
 //   },
-  
+
 //   get: async (id: string): Promise<ApiResponse<User>> => {
 //     const response = await treatise.users({ id }).get();
 //     return response.data as ApiResponse<User>;
@@ -191,7 +189,7 @@ export interface Document {
 //     const response = await treatise.students.get({ query: params });
 //     return response.data as PaginatedResponse<Student>;
 //   },
-  
+
 //   get: async (id: string): Promise<ApiResponse<Student>> => {
 //     const response = await treatise.students({ id }).get();
 //     return response.data as ApiResponse<Student>;
@@ -219,7 +217,7 @@ export interface Document {
 //     const response = await treatise.classes.get({ query: params });
 //     return response.data as PaginatedResponse<Class>;
 //   },
-  
+
 //   get: async (id: string): Promise<ApiResponse<Class>> => {
 //     const response = await treatise.classes({ id }).get();
 //     return response.data as ApiResponse<Class>;
@@ -247,7 +245,7 @@ export interface Document {
 //     const response = await treatise.courses.get({ query: params });
 //     return response.data as PaginatedResponse<Course>;
 //   },
-  
+
 //   get: async (id: string): Promise<ApiResponse<Course>> => {
 //     const response = await treatise.courses({ id }).get();
 //     return response.data as ApiResponse<Course>;
@@ -275,7 +273,7 @@ export interface Document {
 //     const response = await treatise.schools.get({ query: params });
 //     return response.data as PaginatedResponse<School>;
 //   },
-  
+
 //   get: async (id: string): Promise<ApiResponse<School>> => {
 //     const response = await treatise.schools({ id }).get();
 //     return response.data as ApiResponse<School>;
@@ -303,7 +301,7 @@ export interface Document {
 //     const response = await treatise.hospitals.get({ query: params });
 //     return response.data as PaginatedResponse<Hospital>;
 //   },
-  
+
 //   get: async (id: string): Promise<ApiResponse<Hospital>> => {
 //     const response = await treatise.hospitals({ id }).get();
 //     return response.data as ApiResponse<Hospital>;
@@ -331,7 +329,7 @@ export interface Document {
 //     const response = await treatise.shifts.get({ query: params });
 //     return response.data as PaginatedResponse<Shift>;
 //   },
-  
+
 //   get: async (id: string): Promise<ApiResponse<Shift>> => {
 //     const response = await treatise.shifts({ id }).get();
 //     return response.data as ApiResponse<Shift>;
@@ -359,7 +357,7 @@ export interface Document {
 //     const response = await treatise.preceptors.get({ query: params });
 //     return response.data as PaginatedResponse<Preceptor>;
 //   },
-  
+
 //   get: async (id: string): Promise<ApiResponse<Preceptor>> => {
 //     const response = await treatise.preceptors({ id }).get();
 //     return response.data as ApiResponse<Preceptor>;
@@ -387,7 +385,7 @@ export interface Document {
 //     const response = await treatise.supervisors.get({ query: params });
 //     return response.data as PaginatedResponse<Supervisor>;
 //   },
-  
+
 //   get: async (id: string): Promise<ApiResponse<Supervisor>> => {
 //     const response = await treatise.supervisors({ id }).get();
 //     return response.data as ApiResponse<Supervisor>;
@@ -415,7 +413,7 @@ export interface Document {
 //     const response = await treatise.documents.get({ query: params });
 //     return response.data as PaginatedResponse<Document>;
 //   },
-  
+
 //   get: async (id: string): Promise<ApiResponse<Document>> => {
 //     const response = await treatise.documents({ id }).get();
 //     return response.data as ApiResponse<Document>;
@@ -490,13 +488,13 @@ export interface Document {
 //   },
 // };
 
-// Health check
-export const healthApi = {
-  check: async (): Promise<{ status: string; timestamp: string; uptime: number; environment: string }> => {
-    const response = await treatise.health.;
-    return response.data;
-  },
-};
+// // Health check
+// export const healthApi = {
+//   check: async (): Promise<{ status: string; timestamp: string; uptime: number; environment: string }> => {
+//     const response = await treatise.health.;
+//     return response.data;
+//   },
+// };
 
 // // Utility functions
 // export async function handleApiResponse<T>(response: Promise<ApiResponse<T>>): Promise<T> {
@@ -510,7 +508,7 @@ export const healthApi = {
 // export async function uploadFile(file: File, endpoint: string, additionalData?: Record<string, any>): Promise<ApiResponse<any>> {
 //   const formData = new FormData();
 //   formData.append('file', file);
-  
+
 //   if (additionalData) {
 //     Object.entries(additionalData).forEach(([key, value]) => {
 //       formData.append(key, value);
@@ -524,4 +522,4 @@ export const healthApi = {
 //   });
 
 //   return response.json();
-// } 
+// }

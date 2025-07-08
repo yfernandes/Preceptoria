@@ -4,6 +4,7 @@
     "": {
       "name": "preceptoria-v2",
       "devDependencies": {
+        "@types/bun": "^1.2.11",
         "concurrently": "^9.2.0",
         "typescript": "^5.8.3",
       },
@@ -27,6 +28,7 @@
         "@mikro-orm/postgresql": "^6.4.16",
         "@mikro-orm/reflection": "^6.4.16",
         "@mikro-orm/seeder": "^6.4.16",
+        "@types/bun": "^1.2.18",
         "class-validator": "^0.14.2",
         "dotenv": "^17.1.0",
         "elysia": "^1.3.5",
@@ -62,7 +64,7 @@
       "name": "@preceptoria/web",
       "version": "0.3.0",
       "dependencies": {
-        "@elysiajs/eden": "^1.3.2",
+        "@elysiajs/eden": "1.3.2",
         "@hookform/resolvers": "^5.1.1",
         "@preceptoria/server": "workspace:*",
         "@radix-ui/react-accordion": "1.2.11",
@@ -116,11 +118,13 @@
         "zod": "^3.25.76",
       },
       "devDependencies": {
+        "@types/bun": "^1.2.18",
         "@types/node": "^24.0.11",
         "@types/react": "^19.1.8",
         "@types/react-dom": "^19.1.6",
         "@typescript-eslint/eslint-plugin": "^8.36.0",
         "@typescript-eslint/parser": "^8.36.0",
+        "elysia": "1.3.2",
         "eslint": "^9.30.1",
         "eslint-config-prettier": "^10.1.5",
         "postcss": "^8.5.6",
@@ -594,6 +598,8 @@
     "@tybys/wasm-util": ["@tybys/wasm-util@0.9.0", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw=="],
 
     "@types/argparse": ["@types/argparse@1.0.38", "", {}, "sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA=="],
+
+    "@types/bun": ["@types/bun@1.2.18", "", { "dependencies": { "bun-types": "1.2.18" } }, "sha512-Xf6RaWVheyemaThV0kUfaAUvCNokFr+bH8Jxp+tTZfx7dAPA8z9ePnP9S9+Vspzuxxx9JRAXhnyccRj3GyCMdQ=="],
 
     "@types/d3-array": ["@types/d3-array@3.2.1", "", {}, "sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg=="],
 
@@ -1654,6 +1660,8 @@
     "@mikro-orm/postgresql/pg": ["pg@8.16.0", "", { "dependencies": { "pg-connection-string": "^2.9.0", "pg-pool": "^3.10.0", "pg-protocol": "^1.10.0", "pg-types": "2.2.0", "pgpass": "1.0.5" }, "optionalDependencies": { "pg-cloudflare": "^1.2.5" }, "peerDependencies": { "pg-native": ">=3.0.1" }, "optionalPeers": ["pg-native"] }, "sha512-7SKfdvP8CTNXjMUzfcVTaI+TDzBEeaUnVwiVGZQD1Hh33Kpev7liQba9uLd4CfN8r9mCVsD0JIpq03+Unpz+kg=="],
 
     "@next/eslint-plugin-next/fast-glob": ["fast-glob@3.3.1", "", { "dependencies": { "@nodelib/fs.stat": "^2.0.2", "@nodelib/fs.walk": "^1.2.3", "glob-parent": "^5.1.2", "merge2": "^1.3.0", "micromatch": "^4.0.4" } }, "sha512-kNFPyjhh5cKjrUltxs+wFx+ZkbRaxxmZ+X0ZU31SOsxCEtP9VPgtq2teZw1DebupL5GmDaNQ6yKMMVcM41iqDg=="],
+
+    "@preceptoria/web/elysia": ["elysia@1.3.2", "", { "dependencies": { "cookie": "^1.0.2", "exact-mirror": "0.1.2", "fast-decode-uri-component": "^1.0.1" }, "optionalDependencies": { "@sinclair/typebox": "^0.34.33", "openapi-types": "^12.1.3" }, "peerDependencies": { "file-type": ">= 20.0.0", "typescript": ">= 5.0.0" } }, "sha512-oMmA7RA+0WLR8HBIp9zM2Lv7AE6F3DYmjUInknD5/fBkxTjIVmNG8ZC2+cCQ9++p/KuVYqECZ2y55pC9rB6Agg=="],
 
     "@rushstack/node-core-library/ajv": ["ajv@8.13.0", "", { "dependencies": { "fast-deep-equal": "^3.1.3", "json-schema-traverse": "^1.0.0", "require-from-string": "^2.0.2", "uri-js": "^4.4.1" } }, "sha512-PRA911Blj99jR5RMeTunVbNXMF6Lp4vZXnk5GQjcnUWUTsrXtekg/pnmFFI2u/I36Y/2bITGS30GZCXei6uNkA=="],
 
