@@ -1,5 +1,9 @@
 {
 	"extends": "../config/typescript/base.json",
+	"compilerOptions": {
+		"module": "preserve",
+		"moduleResolution": "Bundler"
+	},
 	"include": [
 		"src",
 		"test",

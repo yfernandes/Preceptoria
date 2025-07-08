@@ -1,1 +1,0 @@
-export { Doro } from './doro'

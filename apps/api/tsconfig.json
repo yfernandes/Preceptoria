@@ -12,7 +12,7 @@
 		"emitDecoratorMetadata": true,
 
 		/* Modules */
-		"types": ["bun-types" /* Bun-specific types for better compatibility */],
+		// "types": ["bun-types" /* Bun-specific types for better compatibility */],
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
 
@@ -49,11 +49,7 @@
 			"@api": ["src/index.ts"],
 			"@api/*": ["src/*"],
 			"@libs": ["../../packages/libs/src/index.ts"],
-			"@libs/*": ["../../packages/libs/src/*"],
-			"@ui": ["../../packages/ui/src/index.ts"],
-			"@ui/*": ["../../packages/ui/src/*"],
-			"@ui/components": ["../../packages/ui/src/components/index.ts"],
-			"@ui/layouts": ["../../packages/ui/src/layouts/index.ts"]
+			"@libs/*": ["../../packages/libs/src/*"]
 		}
 	},
 	"include": [
