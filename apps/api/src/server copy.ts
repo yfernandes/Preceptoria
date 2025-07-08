@@ -8,16 +8,17 @@ import serverTiming from "@elysiajs/server-timing";
 import { cron } from "@elysiajs/cron";
 import { RequestContext, Utils, wrap } from "@mikro-orm/core";
 
-// --- App Services ---
+// // --- App Services ---
 import { SyncService } from "./services/syncService";
 import { db } from "./db";
 
-// --- Controllers ---
+// // --- Controllers ---
 import {
 	adminController,
 	authController,
 	classesController,
 	coursesController,
+	documentsController,
 	hospitalController,
 	hospitalManagerController,
 	orgAdminController,
@@ -26,9 +27,9 @@ import {
 	shiftController,
 	studentsController,
 	supervisorController,
-	// documentsController,
-	// userController,
+	userController,
 } from "./controllers";
+import { treaty } from "@elysiajs/eden";
 
 // --- App Setup ---
 const SPREADSHEET_ID = Bun.env.GOOGLE_SPREADSHEET_ID;
@@ -52,7 +53,7 @@ export const app = new Elysia()
 			},
 		})
 	)
-	// --- Request/Response Logging ---
+	// // --- Request/Response Logging ---
 	.on("beforeHandle", () => {
 		RequestContext.enter(db.em);
 	})
@@ -71,7 +72,7 @@ export const app = new Elysia()
 			`${statusEmoji} ${new Date().toISOString()} - ${request.method} ${request.url} - ${statusCode}`
 		);
 	})
-	// --- Global Error Handler ---
+	// // --- Global Error Handler ---
 	.on("error", ({ error, set }) => {
 		console.error("Global error handler:", error);
 		if (error instanceof Error) {
@@ -138,14 +139,14 @@ export const app = new Elysia()
 			error: "INTERNAL_ERROR",
 		};
 	})
-	// --- Health Check ---
+	// // --- Health Check ---
 	.get("/health", () => ({
 		status: "ok",
 		timestamp: new Date().toISOString(),
 		uptime: process.uptime(),
 		environment: Bun.env.NODE_ENV || "development",
 	}))
-	// --- Controllers ---
+	// // --- Controllers ---
 	.use(authController)
 	.use(adminController)
 	.use(classesController)
@@ -158,8 +159,8 @@ export const app = new Elysia()
 	.use(shiftController)
 	.use(studentsController)
 	.use(supervisorController);
-// .use(documentsController)
 // .use(userController);
+// .use(documentsController)
 
 // Export the app type for Eden Treaty
 export type App = typeof app;
