@@ -1,13 +1,17 @@
 {
+	"extends": "config/typescript/base.json",
 	"compilerOptions": {
+		"jsx": "react",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"noEmit": true,
+		"baseUrl": ".",
 		/* Language and Environment */
 		"target": "ESNext" /* Bun works well with ESNext */,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 
 		/* Modules */
-		"module": "ES2022" /* Ensure compatibility with ES module syntax */,
-		"moduleResolution": "node" /* Use Bun's module resolution */,
 		"types": ["bun-types" /* Bun-specific types for better compatibility */],
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
@@ -33,14 +37,32 @@
 
 		"outDir": "dist",
 		"emitDeclarationOnly": true,
-		"composite": true
+		"composite": true,
+		"paths": {
+			"@web/*": ["../web/src/*"],
+			"@web/public/*": ["../web/public/*"],
+			"@web/components": ["../web/src/components/index.ts"],
+			"@web/layouts": ["../web/src/layouts/index.ts"],
+			"@web/stores": ["../web//stores/index.ts"],
+			"@web/libs": ["../web//libs/index.ts"],
+			"@api": ["src/index.ts"],
+			"@api/*": ["src/*"],
+			"@libs": ["../../packages/libs/src/index.ts"],
+			"@libs/*": ["../../packages/libs/src/*"],
+			"@ui": ["../../packages/ui/src/index.ts"],
+			"@ui/*": ["../../packages/ui/src/*"],
+			"@ui/components": ["../../packages/ui/src/components/index.ts"],
+			"@ui/layouts": ["../../packages/ui/src/layouts/index.ts"]
+		}
 	},
 	"include": [
 		"src",
+		"test",
+		"scripts",
 		"eslint.config.mjs",
 		"drizzle.config.ts",
 		"types/types.d.ts",
 		"lib"
 	],
-	"exclude": ["node_modules" /* Exclude node_modules from the compilation */]
+	"exclude": ["node_modules", "dist", "drizzle.config.ts", "coverage"]
 }

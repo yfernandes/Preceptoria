@@ -1,4 +1,4 @@
 import { treaty } from "@elysiajs/eden";
-import type { app } from "@server";
+import type { App } from "@api";
 
-export const api = treaty<app>("localhost:3001");
+export const api = treaty<App>("localhost:3001");
