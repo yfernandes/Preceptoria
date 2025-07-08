@@ -15,7 +15,7 @@ import {
 	Supervisor,
 	SysAdmin,
 	Document,
-} from "./entities/";
+} from "./entities/index.js";
 
 export interface Services {
 	orm: MikroORM;
