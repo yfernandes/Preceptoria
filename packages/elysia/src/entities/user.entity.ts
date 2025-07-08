@@ -93,7 +93,13 @@ export class User extends BaseEntity {
 			throw new Error("Password must be at least 6 characters long");
 		}
 
-		const user = new User(username, email, phoneNumber, password, professionalIdentityNumber);
+		const user = new User(
+			username,
+			email,
+			phoneNumber,
+			password,
+			professionalIdentityNumber
+		);
 		await validateOrReject(user);
 		return user;
 	}

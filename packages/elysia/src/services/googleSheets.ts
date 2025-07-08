@@ -124,13 +124,27 @@ export class GoogleSheetsService {
 				console.log(`  - Full Name: ${sample.fullName}`);
 				console.log(`  - Email: ${sample.email}`);
 				console.log(`  - Class: ${sample.classNumber}`);
-				console.log(`  - Vaccination Cards: ${sample.documentation.vaccinationCard.length} files`);
-				console.log(`  - Identity Front: ${sample.documentation.professionalIdentityFront.length} files`);
-				console.log(`  - Identity Back: ${sample.documentation.professionalIdentityBack.length} files`);
-				console.log(`  - HSI Commitments: ${sample.documentation.internshipCommitmentTermHSI.length} files`);
-				console.log(`  - HMS Commitments: ${sample.documentation.internshipCommitmentTermHMS.length} files`);
-				console.log(`  - Hospital Forms: ${sample.documentation.cityHospitalForm.length} files`);
-				console.log(`  - Badge Pictures: ${sample.documentation.badgePicture.length} files`);
+				console.log(
+					`  - Vaccination Cards: ${sample.documentation.vaccinationCard.length} files`
+				);
+				console.log(
+					`  - Identity Front: ${sample.documentation.professionalIdentityFront.length} files`
+				);
+				console.log(
+					`  - Identity Back: ${sample.documentation.professionalIdentityBack.length} files`
+				);
+				console.log(
+					`  - HSI Commitments: ${sample.documentation.internshipCommitmentTermHSI.length} files`
+				);
+				console.log(
+					`  - HMS Commitments: ${sample.documentation.internshipCommitmentTermHMS.length} files`
+				);
+				console.log(
+					`  - Hospital Forms: ${sample.documentation.cityHospitalForm.length} files`
+				);
+				console.log(
+					`  - Badge Pictures: ${sample.documentation.badgePicture.length} files`
+				);
 			}
 
 			return submissions;
@@ -142,28 +156,32 @@ export class GoogleSheetsService {
 		}
 	}
 
-	consolidateSubmissionsByCrefito(submissions: GoogleSheetsSubmission[]): ConsolidatedSubmission[] {
+	consolidateSubmissionsByCrefito(
+		submissions: GoogleSheetsSubmission[]
+	): ConsolidatedSubmission[] {
 		console.log("🔄 Consolidating submissions by Crefito...");
-		
+
 		// Group submissions by Crefito
 		const crefitoGroups = new Map<string, GoogleSheetsSubmission[]>();
-		
+
 		for (const submission of submissions) {
 			if (!submission.crefito) {
-				console.log(`⚠️ Skipping submission without Crefito: ${submission.fullName || 'Unknown'}`);
+				console.log(
+					`⚠️ Skipping submission without Crefito: ${submission.fullName || "Unknown"}`
+				);
 				continue;
 			}
-			
+
 			if (!crefitoGroups.has(submission.crefito)) {
 				crefitoGroups.set(submission.crefito, []);
 			}
 			crefitoGroups.get(submission.crefito)!.push(submission);
 		}
-		
+
 		console.log(`📊 Found ${crefitoGroups.size} unique Crefito numbers`);
-		
+
 		const consolidated: ConsolidatedSubmission[] = [];
-		
+
 		for (const [crefito, group] of crefitoGroups) {
 			// Sort group by completeness (most complete first)
 			group.sort((a, b) => {
@@ -171,15 +189,17 @@ export class GoogleSheetsService {
 				const bScore = this.getCompletenessScore(b);
 				return bScore - aScore; // Descending order
 			});
-			
+
 			const primaryEntry = this.fillMissingData(group[0]);
 			const hasCompleteBasicInfo = this.hasCompleteBasicInfo(primaryEntry);
 
-            // Runtime assertion: crefito must always be present
-            if (!crefito) {
-                throw new Error("[Consolidation Error] Missing crefito in consolidated entry. This should never happen.");
-            }
-			
+			// Runtime assertion: crefito must always be present
+			if (!crefito) {
+				throw new Error(
+					"[Consolidation Error] Missing crefito in consolidated entry. This should never happen."
+				);
+			}
+
 			// Consolidate documentation from all entries
 			const consolidatedDocs = {
 				vaccinationCard: [] as string[],
@@ -190,24 +210,36 @@ export class GoogleSheetsService {
 				cityHospitalForm: [] as string[],
 				badgePicture: [] as string[],
 			};
-			
+
 			// Merge all documentation from all entries
 			for (const entry of group) {
-				consolidatedDocs.vaccinationCard.push(...entry.documentation.vaccinationCard);
-				consolidatedDocs.professionalIdentityFront.push(...entry.documentation.professionalIdentityFront);
-				consolidatedDocs.professionalIdentityBack.push(...entry.documentation.professionalIdentityBack);
-				consolidatedDocs.internshipCommitmentTermHSI.push(...entry.documentation.internshipCommitmentTermHSI);
-				consolidatedDocs.internshipCommitmentTermHMS.push(...entry.documentation.internshipCommitmentTermHMS);
-				consolidatedDocs.cityHospitalForm.push(...entry.documentation.cityHospitalForm);
+				consolidatedDocs.vaccinationCard.push(
+					...entry.documentation.vaccinationCard
+				);
+				consolidatedDocs.professionalIdentityFront.push(
+					...entry.documentation.professionalIdentityFront
+				);
+				consolidatedDocs.professionalIdentityBack.push(
+					...entry.documentation.professionalIdentityBack
+				);
+				consolidatedDocs.internshipCommitmentTermHSI.push(
+					...entry.documentation.internshipCommitmentTermHSI
+				);
+				consolidatedDocs.internshipCommitmentTermHMS.push(
+					...entry.documentation.internshipCommitmentTermHMS
+				);
+				consolidatedDocs.cityHospitalForm.push(
+					...entry.documentation.cityHospitalForm
+				);
 				consolidatedDocs.badgePicture.push(...entry.documentation.badgePicture);
 			}
-			
+
 			// Remove duplicates from arrays
-			Object.keys(consolidatedDocs).forEach(key => {
+			Object.keys(consolidatedDocs).forEach((key) => {
 				const k = key as keyof typeof consolidatedDocs;
 				consolidatedDocs[k] = [...new Set(consolidatedDocs[k])];
 			});
-			
+
 			consolidated.push({
 				crefito,
 				fullName: primaryEntry.fullName,
@@ -221,16 +253,22 @@ export class GoogleSheetsService {
 				hasCompleteBasicInfo,
 			});
 		}
-		
+
 		console.log(`✅ Consolidated into ${consolidated.length} unique students`);
 		console.log(`📊 Consolidation stats:`);
-		console.log(`  - Students with complete info: ${consolidated.filter(c => c.hasCompleteBasicInfo).length}`);
-		console.log(`  - Students with incomplete info: ${consolidated.filter(c => !c.hasCompleteBasicInfo).length}`);
-		console.log(`  - Average entries per student: ${(submissions.length / consolidated.length).toFixed(1)}`);
-		
+		console.log(
+			`  - Students with complete info: ${consolidated.filter((c) => c.hasCompleteBasicInfo).length}`
+		);
+		console.log(
+			`  - Students with incomplete info: ${consolidated.filter((c) => !c.hasCompleteBasicInfo).length}`
+		);
+		console.log(
+			`  - Average entries per student: ${(submissions.length / consolidated.length).toFixed(1)}`
+		);
+
 		return consolidated;
 	}
-	
+
 	private getCompletenessScore(submission: GoogleSheetsSubmission): number {
 		let score = 0;
 		if (submission.fullName) score += 10;
@@ -239,9 +277,9 @@ export class GoogleSheetsService {
 		if (submission.cpf) score += 5;
 		if (submission.classNumber) score += 5;
 		if (submission.studentsSchoolId) score += 5;
-		
+
 		// Bonus for having documentation
-		const docCount = 
+		const docCount =
 			submission.documentation.vaccinationCard.length +
 			submission.documentation.professionalIdentityFront.length +
 			submission.documentation.professionalIdentityBack.length +
@@ -249,17 +287,19 @@ export class GoogleSheetsService {
 			submission.documentation.internshipCommitmentTermHMS.length +
 			submission.documentation.cityHospitalForm.length +
 			submission.documentation.badgePicture.length;
-		
+
 		score += Math.min(docCount * 2, 20); // Cap at 20 points for docs
-		
+
 		return score;
 	}
-	
+
 	private hasCompleteBasicInfo(submission: GoogleSheetsSubmission): boolean {
 		return !!(submission.fullName && submission.email && submission.phone);
 	}
 
-	private fillMissingData(submission: GoogleSheetsSubmission): GoogleSheetsSubmission {
+	private fillMissingData(
+		submission: GoogleSheetsSubmission
+	): GoogleSheetsSubmission {
 		return {
 			...submission,
 			fullName: submission.fullName || "Not submitted",
@@ -278,34 +318,38 @@ export class GoogleSheetsService {
 
 		// Remove all non-digit characters except +
 		let cleaned = phone.replace(/[^\d+]/g, "");
-		
+
 		// If it starts with 55, add the +
 		if (cleaned.startsWith("55") && !cleaned.startsWith("+55")) {
 			cleaned = "+" + cleaned;
 		}
-		
+
 		// If it doesn't start with +55, add it (assuming Brazilian numbers)
 		if (!cleaned.startsWith("+55")) {
 			cleaned = "+55" + cleaned;
 		}
-		
+
 		// Format as Brazilian phone number: +55 (XX) XXXXX-XXXX
-		if (cleaned.length === 13) { // +55 + 11 digits
+		if (cleaned.length === 13) {
+			// +55 + 11 digits
 			const ddd = cleaned.substring(3, 5);
 			const number = cleaned.substring(5);
 			return `+55 (${ddd}) ${number.substring(0, 5)}-${number.substring(5)}`;
 		}
-		
+
 		// If we can't format it properly, return the cleaned version
 		return cleaned;
 	}
 
-	static isPlaceholder(value: string, field: 'email' | 'phone' | 'name' | 'cpf'): boolean {
+	static isPlaceholder(
+		value: string,
+		field: "email" | "phone" | "name" | "cpf"
+	): boolean {
 		const placeholders = {
 			email: "not.submitted@placeholder.com",
 			phone: "+55 (99) 99999-9999",
 			name: "Not submitted",
-			cpf: "000.000.000-00"
+			cpf: "000.000.000-00",
 		};
 		return value === placeholders[field];
 	}
@@ -314,19 +358,19 @@ export class GoogleSheetsService {
 		if (!entry || entry === "") {
 			return [];
 		}
-		
+
 		// Handle multiple separators that might be used
 		const separators = [", ", "; ", "\n", " | "];
 		let urls = [entry];
-		
+
 		for (const separator of separators) {
-			urls = urls.flatMap(url => url.split(separator));
+			urls = urls.flatMap((url) => url.split(separator));
 		}
-		
+
 		// Clean up URLs and filter out empty ones
 		return urls
-			.map(url => url.trim())
-			.filter(url => url.length > 0 && url.includes("drive.google.com"));
+			.map((url) => url.trim())
+			.filter((url) => url.length > 0 && url.includes("drive.google.com"));
 	}
 
 	extractFileId(url: string): string {

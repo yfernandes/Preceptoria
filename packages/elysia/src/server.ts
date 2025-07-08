@@ -162,4 +162,4 @@ export const app = new Elysia()
 	.use(userController);
 
 // Export the app type for Eden Treaty
-export type App = typeof app; 
+export type App = typeof app;

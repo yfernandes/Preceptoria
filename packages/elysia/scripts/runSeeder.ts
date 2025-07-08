@@ -19,9 +19,9 @@ async function main() {
 		console.log("🌱 Running database seeder via MikroORM CLI...");
 
 		// Run the seeder using MikroORM CLI
-		execSync("bun run db:seed", { 
+		execSync("bun run db:seed", {
 			stdio: "inherit",
-			env: process.env 
+			env: process.env,
 		});
 
 		console.log("✅ Seeder completed successfully!");
@@ -32,4 +32,4 @@ async function main() {
 	}
 }
 
-main(); 
+main();

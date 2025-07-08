@@ -93,14 +93,14 @@ const authController = new Elysia({ prefix: "/auth" })
 				return {
 					success: true,
 					message: "User created successfully",
-					user: { 
-						id: user.id, 
-						name: user.name, 
+					user: {
+						id: user.id,
+						name: user.name,
 						email: user.email,
 						phone: user.phoneNumber,
 						roles: user.roles,
 						createdAt: user.createdAt.toISOString(),
-						updatedAt: user.updatedAt.toISOString()
+						updatedAt: user.updatedAt.toISOString(),
 					},
 				};
 			} catch (err) {
@@ -160,64 +160,6 @@ const authController = new Elysia({ prefix: "/auth" })
 			body: { email, password },
 		}) => {
 			try {
-				// DEVELOPMENT ONLY: Admin admin hack for quick development access
-				if (process.env.NODE_ENV === 'development' && email === 'admin' && password === 'admin') {
-					console.log('🔓 [DEV] Admin admin login detected - bypassing normal auth');
-					
-					// Create a temporary admin user object
-					const adminUser = {
-						id: 'dev-admin',
-						name: 'Development Admin',
-						email: 'admin@dev.local',
-						roles: [UserRoles.SysAdmin],
-					};
-
-					// Generate JWT Token for admin
-					const accessToken = jwt.sign({
-						id: adminUser.id,
-						roles: adminUser.roles.toString(),
-					});
-
-					// Generate Refresh Token for admin
-					const refreshToken = jwt.sign({
-						id: adminUser.id,
-						roles: adminUser.roles.toString(),
-						exp: "7d",
-					});
-
-					auth.set({
-						httpOnly: true,
-						secure: Bun.env.NODE_ENV === 'production',
-						sameSite: "lax",
-						maxAge: 15 * 60,
-						path: "/",
-						value: accessToken,
-					});
-
-					refreshCookie.set({
-						httpOnly: true,
-						secure: Bun.env.NODE_ENV === 'production',
-						sameSite: "lax",
-						maxAge: 7 * 24 * 60 * 60,
-						path: "/",
-						value: refreshToken,
-					});
-
-					return {
-						success: true,
-						message: "Development admin login successful",
-						user: { 
-							id: adminUser.id, 
-							name: adminUser.name, 
-							email: adminUser.email,
-							phone: undefined,
-							roles: adminUser.roles,
-							createdAt: new Date().toISOString(),
-							updatedAt: new Date().toISOString()
-						},
-					};
-				}
-
 				const user = await db.user.findOne(
 					{ email },
 					{ populate: ["passwordHash"] }
@@ -267,14 +209,14 @@ const authController = new Elysia({ prefix: "/auth" })
 				return {
 					success: true,
 					message: "User logged in successfully",
-					user: { 
-						id: user.id, 
-						name: user.name, 
+					user: {
+						id: user.id,
+						name: user.name,
 						email: user.email,
 						phone: user.phoneNumber,
 						roles: user.roles,
 						createdAt: user.createdAt.toISOString(),
-						updatedAt: user.updatedAt.toISOString()
+						updatedAt: user.updatedAt.toISOString(),
 					},
 				};
 			} catch (err) {

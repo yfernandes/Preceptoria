@@ -29,10 +29,10 @@ async function main() {
 		await seeder.run(em);
 
 		console.log("✅ Seeder test completed successfully!");
-		
+
 		// Close the connection
 		await services.orm.close();
-		
+
 		process.exit(0);
 	} catch (error) {
 		console.error("💥 Seeder test failed:", error);
@@ -40,4 +40,4 @@ async function main() {
 	}
 }
 
-main(); 
+main();
