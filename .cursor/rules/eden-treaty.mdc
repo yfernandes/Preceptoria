@@ -1,0 +1,172 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Eden Treaty Rule
+
+## When to Apply
+- Creating or modifying frontend API clients
+- Working with Elysia server types
+- Implementing end-to-end type safety
+- Making API calls from frontend to backend
+
+## Required Actions
+
+### Server Type Export
+1. **Always export the server type** from [packages/elysia/src/server.ts](mdc:packages/elysia/src/server.ts)
+2. **Use `export type App = typeof app`** at the end of server file
+3. **Ensure all routes have proper validation schemas** for type inference
+
+### Frontend Client Setup
+1. **Use Eden Treaty (not Eden Fetch)** for better developer experience
+2. **Import server type** in frontend client: `import type { App } from '../elysia/src/server'`
+3. **Create treaty instance** in [packages/web/lib/eden.ts](mdc:packages/web/lib/eden.ts)
+
+### API Call Patterns
+
+#### Basic GET Request
+```typescript
+// ✅ Correct - Tree-like syntax
+const { data, error } = await app.users.get()
+
+// ✅ Correct - With query parameters
+const { data, error } = await app.users.get({
+  query: { limit: 10, offset: 0 }
+})
+```
+
+#### Dynamic Path Parameters
+```typescript
+// ✅ Correct - Use function for dynamic paths
+const { data, error } = await app.users({ id: '123' }).get()
+
+// ❌ Wrong - Don't use bracket notation
+const { data, error } = await app.users['123'].get()
+```
+
+#### POST/PATCH Requests
+```typescript
+// ✅ Correct - Body in first parameter
+const { data, error } = await app.users.post({
+  name: 'John',
+  email: 'john@example.com'
+})
+
+// ✅ Correct - Body + additional parameters
+const { data, error } = await app.users.post({
+  name: 'John',
+  email: 'john@example.com'
+}, {
+  headers: { authorization: 'Bearer token' },
+  query: { role: 'admin' }
+})
+```
+
+#### File Uploads
+```typescript
+// ✅ Correct - File upload with multipart/form-data
+const { data, error } = await app.documents({ id: '123' }).submit.post({
+  file: fileInput.files!,
+  notes: 'Document submission'
+})
+```
+
+### Error Handling
+1. **Always destructure `{ data, error }`** from treaty responses
+2. **Check for errors before using data** - data is nullable if error exists
+3. **Use type narrowing** for proper error handling
+
+```typescript
+const { data, error } = await app.users.post(userData)
+
+if (error) {
+  switch (error.status) {
+    case 400:
+      throw new Error(`Validation error: ${error.value}`)
+    case 401:
+      throw new Error('Unauthorized')
+    default:
+      throw new Error(`Server error: ${error.value}`)
+  }
+}
+
+// Type is now unwrapped - data is not null
+return data
+```
+
+### Response Types
+- **data**: Response value (2xx status) - nullable if error exists
+- **error**: Error value (>= 3xx status) - contains status and value
+- **response**: Web Standard Response class
+- **status**: HTTP status code
+- **headers**: Response headers
+
+### Configuration
+1. **Set base URL** in treaty instance
+2. **Configure fetch options** when needed
+3. **Handle authentication** through headers
+
+```typescript
+const app = treaty<App>('http://localhost:3000', {
+  fetch: {
+    credentials: 'include', // For cookies
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+})
+```
+
+## Why This Matters
+- **End-to-end type safety** without code generation
+- **Auto-completion** and type inference
+- **Error handling** with type narrowing
+- **Consistent API patterns** across the application
+- **Better developer experience** than manual fetch calls
+
+## File Locations
+- Server type: [packages/elysia/src/server.ts](mdc:packages/elysia/src/server.ts)
+- Frontend client: [packages/web/lib/eden.ts](mdc:packages/web/lib/eden.ts)
+- API documentation: [packages/elysia/endpoints.yaml](mdc:packages/elysia/endpoints.yaml)
+
+## Common Patterns
+
+### Authentication
+```typescript
+// Add auth header to all requests
+const app = treaty<App>('http://localhost:3000', {
+  fetch: {
+    headers: {
+      authorization: `Bearer ${token}`
+    }
+  }
+})
+```
+
+### Abort Controller
+```typescript
+const controller = new AbortController()
+const { data, error } = await app.users.get({
+  fetch: {
+    signal: controller.signal
+  }
+})
+```
+
+### Stream Responses
+```typescript
+const { data, error } = await app.stream.get()
+if (error) throw error
+
+for await (const chunk of data) {
+  console.log(chunk)
+}
+```
+
+## Integration with Endpoints Documentation
+1. **Reference [packages/elysia/endpoints.yaml](mdc:packages/elysia/endpoints.yaml)** for API contracts
+2. **Match frontend types** with documented response shapes
+3. **Update endpoints.yaml** when adding new routes
+4. **Use documented request/response shapes** for type safety
+

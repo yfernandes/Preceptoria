@@ -1,15 +1,14 @@
 import { treaty } from '@elysiajs/eden';
 
+// Import the app type from the backend for full type safety
+import type { App } from '../../elysia/src/server';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
-// Import the app type from the backend
-// import type { App } from '../../../elysia/src/server';
+// Create a properly typed treaty client
+export const treatise = treaty<App>(API_BASE_URL);
 
-// Create a basic treaty client for now
-// TODO: Once backend is built, uncomment the App import and use: treaty<App>(API_BASE_URL)
-export const api = treaty(API_BASE_URL);
-
-// Type definitions for API responses
+// Type definitions for API responses based on our endpoints.yaml
 export interface ApiResponse<T = any> {
   success: boolean;
   message?: string;
@@ -21,503 +20,510 @@ export interface ApiResponse<T = any> {
   }>;
 }
 
+export interface PaginatedResponse<T> {
+  success: boolean;
+  data: T[];
+  pagination: {
+    total: number;
+    limit: number;
+    offset: number;
+    hasMore: boolean;
+  };
+}
+
+// User types based on our entities
 export interface User {
   id: string;
   name: string;
   email: string;
-  phone?: string;
+  phone: string;
   roles: string[];
   createdAt: string;
   updatedAt: string;
 }
 
-// Auth API using fetch for now (will be replaced with Eden Treaty once types are available)
-export const authApi = {
-  signup: async (data: { name: string; email: string; phone: string; password: string }): Promise<ApiResponse<User>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<User>;
-    } catch (error: any) {
-      console.error('Signup error:', error);
-      return {
-        success: false,
-        message: error.message || 'Signup failed',
-      };
-    }
-  },
-  
-  signin: async (data: { email: string; password: string }): Promise<ApiResponse<User>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/signin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<User>;
-    } catch (error: any) {
-      console.error('Signin error:', error);
-      return {
-        success: false,
-        message: error.message || 'Signin failed',
-      };
-    }
-  },
-  
-  signout: async (): Promise<ApiResponse<void>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<void>;
-    } catch (error: any) {
-      console.error('Signout error:', error);
-      return {
-        success: false,
-        message: error.message || 'Signout failed',
-      };
-    }
-  },
-
-  refresh: async (): Promise<ApiResponse<void>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<void>;
-    } catch (error: any) {
-      console.error('Refresh error:', error);
-      return {
-        success: false,
-        message: error.message || 'Token refresh failed',
-      };
-    }
-  },
-};
-
-// Users API using fetch for now
-export const usersApi = {
-  list: async (params?: { role?: string; limit?: number; offset?: number }): Promise<ApiResponse<User[]>> => {
-    try {
-      const queryParams = new URLSearchParams();
-      if (params?.role) queryParams.append('role', params.role);
-      if (params?.limit) queryParams.append('limit', params.limit.toString());
-      if (params?.offset) queryParams.append('offset', params.offset.toString());
-      
-      const response = await fetch(`${API_BASE_URL}/users?${queryParams.toString()}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<User[]>;
-    } catch (error: any) {
-      console.error('Get users error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch users',
-      };
-    }
-  },
-  
-  get: async (id: string): Promise<ApiResponse<User>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/users/${id}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<User>;
-    } catch (error: any) {
-      console.error('Get user error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch user',
-      };
-    }
-  },
-};
-
-// Students API using fetch for now
-export const studentsApi = {
-  list: async (params?: { classId?: string; supervisorId?: string; limit?: number; offset?: number }): Promise<ApiResponse<any[]>> => {
-    try {
-      const queryParams = new URLSearchParams();
-      if (params?.classId) queryParams.append('classId', params.classId);
-      if (params?.supervisorId) queryParams.append('supervisorId', params.supervisorId);
-      if (params?.limit) queryParams.append('limit', params.limit.toString());
-      if (params?.offset) queryParams.append('offset', params.offset.toString());
-      
-      const response = await fetch(`${API_BASE_URL}/students?${queryParams.toString()}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any[]>;
-    } catch (error: any) {
-      console.error('Get students error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch students',
-      };
-    }
-  },
-  
-  get: async (id: string): Promise<ApiResponse<any>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/students/${id}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any>;
-    } catch (error: any) {
-      console.error('Get student error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch student',
-      };
-    }
-  },
-};
-
-// Documents API using fetch for now
-export const documentsApi = {
-  list: async (params?: { studentId?: string; type?: string; status?: string; limit?: number; offset?: number }): Promise<ApiResponse<any[]>> => {
-    try {
-      const queryParams = new URLSearchParams();
-      if (params?.studentId) queryParams.append('studentId', params.studentId);
-      if (params?.type) queryParams.append('type', params.type);
-      if (params?.status) queryParams.append('status', params.status);
-      if (params?.limit) queryParams.append('limit', params.limit.toString());
-      if (params?.offset) queryParams.append('offset', params.offset.toString());
-      
-      const response = await fetch(`${API_BASE_URL}/documents?${queryParams.toString()}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any[]>;
-    } catch (error: any) {
-      console.error('Get documents error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch documents',
-      };
-    }
-  },
-  
-  get: async (id: string): Promise<ApiResponse<any>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/documents/${id}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any>;
-    } catch (error: any) {
-      console.error('Get document error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch document',
-      };
-    }
-  },
-};
-
-// Shifts API using fetch for now
-export const shiftsApi = {
-  list: async (params?: { hospitalId?: string; preceptorId?: string; studentId?: string; date?: string; limit?: number; offset?: number }): Promise<ApiResponse<any[]>> => {
-    try {
-      const queryParams = new URLSearchParams();
-      if (params?.hospitalId) queryParams.append('hospitalId', params.hospitalId);
-      if (params?.preceptorId) queryParams.append('preceptorId', params.preceptorId);
-      if (params?.studentId) queryParams.append('studentId', params.studentId);
-      if (params?.date) queryParams.append('date', params.date);
-      if (params?.limit) queryParams.append('limit', params.limit.toString());
-      if (params?.offset) queryParams.append('offset', params.offset.toString());
-      
-      const response = await fetch(`${API_BASE_URL}/shifts?${queryParams.toString()}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any[]>;
-    } catch (error: any) {
-      console.error('Get shifts error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch shifts',
-      };
-    }
-  },
-  
-  get: async (id: string): Promise<ApiResponse<any>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/shifts/${id}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any>;
-    } catch (error: any) {
-      console.error('Get shift error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch shift',
-      };
-    }
-  },
-};
-
-// Classes API using fetch for now
-export const classesApi = {
-  list: async (params?: { courseId?: string; supervisorId?: string; limit?: number; offset?: number }): Promise<ApiResponse<any[]>> => {
-    try {
-      const queryParams = new URLSearchParams();
-      if (params?.courseId) queryParams.append('courseId', params.courseId);
-      if (params?.supervisorId) queryParams.append('supervisorId', params.supervisorId);
-      if (params?.limit) queryParams.append('limit', params.limit.toString());
-      if (params?.offset) queryParams.append('offset', params.offset.toString());
-      
-      const response = await fetch(`${API_BASE_URL}/classes?${queryParams.toString()}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any[]>;
-    } catch (error: any) {
-      console.error('Get classes error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch classes',
-      };
-    }
-  },
-  
-  get: async (id: string): Promise<ApiResponse<any>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/classes/${id}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any>;
-    } catch (error: any) {
-      console.error('Get class error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch class',
-      };
-    }
-  },
-};
-
-// Courses API using fetch for now
-export const coursesApi = {
-  list: async (params?: { limit?: number; offset?: number }): Promise<ApiResponse<any[]>> => {
-    try {
-      const queryParams = new URLSearchParams();
-      if (params?.limit) queryParams.append('limit', params.limit.toString());
-      if (params?.offset) queryParams.append('offset', params.offset.toString());
-      
-      const response = await fetch(`${API_BASE_URL}/courses?${queryParams.toString()}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any[]>;
-    } catch (error: any) {
-      console.error('Get courses error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch courses',
-      };
-    }
-  },
-  
-  get: async (id: string): Promise<ApiResponse<any>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/courses/${id}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any>;
-    } catch (error: any) {
-      console.error('Get course error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch course',
-      };
-    }
-  },
-};
-
-// Hospitals API using fetch for now
-export const hospitalsApi = {
-  list: async (params?: { limit?: number; offset?: number }): Promise<ApiResponse<any[]>> => {
-    try {
-      const queryParams = new URLSearchParams();
-      if (params?.limit) queryParams.append('limit', params.limit.toString());
-      if (params?.offset) queryParams.append('offset', params.offset.toString());
-      
-      const response = await fetch(`${API_BASE_URL}/hospitals?${queryParams.toString()}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any[]>;
-    } catch (error: any) {
-      console.error('Get hospitals error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch hospitals',
-      };
-    }
-  },
-  
-  get: async (id: string): Promise<ApiResponse<any>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/hospitals/${id}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any>;
-    } catch (error: any) {
-      console.error('Get hospital error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch hospital',
-      };
-    }
-  },
-};
-
-// Admin API using fetch for now
-export const adminApi = {
-  stats: async (): Promise<ApiResponse<any>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/stats`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any>;
-    } catch (error: any) {
-      console.error('Get admin stats error:', error);
-      return {
-        success: false,
-        message: error.message || 'Failed to fetch admin stats',
-      };
-    }
-  },
-};
-
-// Health check using fetch for now
-export const healthApi = {
-  check: async (): Promise<ApiResponse<any>> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/health`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      return result as ApiResponse<any>;
-    } catch (error: any) {
-      console.error('Health check error:', error);
-      return {
-        success: false,
-        message: error.message || 'Health check failed',
-      };
-    }
-  },
-};
-
-// Export all APIs
-export const edenApi = {
-  auth: authApi,
-  users: usersApi,
-  students: studentsApi,
-  documents: documentsApi,
-  shifts: shiftsApi,
-  classes: classesApi,
-  courses: coursesApi,
-  hospitals: hospitalsApi,
-  admin: adminApi,
-  health: healthApi,
-};
-
-// Helper function to handle API responses
-export async function handleApiResponse<T>(response: Promise<ApiResponse<T>>): Promise<T> {
-  try {
-    const result = await response;
-    if (!result.success) {
-      throw new Error(result.message || 'API request failed');
-    }
-    return (result.data || result.user) as T;
-  } catch (error) {
-    console.error('API Error:', error);
-    throw error;
-  }
+export interface Student {
+  id: string;
+  enrollmentNumber: string;
+  user: User;
+  class: any;
+  shifts: any[];
+  createdAt: string;
+  updatedAt: string;
 }
 
-// Helper function to handle file uploads
-export async function uploadFile(file: File, endpoint: string, additionalData?: Record<string, any>): Promise<ApiResponse<any>> {
-  const formData = new FormData();
-  formData.append('file', file);
+export interface Class {
+  id: string;
+  name: string;
+  course: any;
+  students: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Course {
+  id: string;
+  name: string;
+  description: string;
+  school: any;
+  supervisor: any;
+  classes: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface School {
+  id: string;
+  name: string;
+  address: string;
+  orgAdmin: any;
+  courses: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Hospital {
+  id: string;
+  name: string;
+  address: string;
+  orgAdmin: any;
+  shifts: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Shift {
+  id: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  hospital: any;
+  student: any;
+  preceptor: any;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Preceptor {
+  id: string;
+  professionalIdentityNumber: string;
+  user: User;
+  hospital: any;
+  shifts: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Supervisor {
+  id: string;
+  user: User;
+  school: any;
+  courses: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Document {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  student: any;
+  submissions: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+const response = treatise.api.health.get();
+
+// // Auth API using Eden Treaty
+// export const authApi = {
+//   signup: async (data: { name: string; email: string; phone: string; password: string }): Promise<ApiResponse<User>> => {
+//     // const response = await treatise.api.auth.signup.post(data);
+//     return response.data as ApiResponse<User>;
+//   },
   
-  if (additionalData) {
-    Object.entries(additionalData).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-  }
+//   signin: async (data: { email: string; password: string }): Promise<ApiResponse<User>> => {
+//     const response = await treatise.auth.signin.post(data);
+//     return response.data as ApiResponse<User>;
+//   },
   
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'POST',
-      body: formData,
-      credentials: 'include',
-    });
-    
-    const data = await response.json();
-    return data as ApiResponse<any>;
-  } catch (error: any) {
-    console.error('File upload error:', error);
-    return {
-      success: false,
-      message: error.message || 'File upload failed',
-    };
-  }
-} 
+//   signout: async (): Promise<ApiResponse<void>> => {
+//     const response = await treatise.auth.logout.post();
+//     return response.data as ApiResponse<void>;
+//   },
+
+//   refresh: async (): Promise<ApiResponse<void>> => {
+//     const response = await treatise.auth.refresh.post();
+//     return response.data as ApiResponse<void>;
+//   },
+// };
+
+// // Users API using Eden Treaty
+// export const usersApi = {
+//   list: async (params?: { role?: string; limit?: number; offset?: number }): Promise<PaginatedResponse<User>> => {
+//     const response = await treatise.users.get({ query: params });
+//     return response.data as PaginatedResponse<User>;
+//   },
+  
+//   get: async (id: string): Promise<ApiResponse<User>> => {
+//     const response = await treatise.users({ id }).get();
+//     return response.data as ApiResponse<User>;
+//   },
+
+//   create: async (data: { name: string; email: string; phone: string; password: string }): Promise<ApiResponse<User>> => {
+//     const response = await treatise.users.post(data);
+//     return response.data as ApiResponse<User>;
+//   },
+
+//   update: async (id: string, data: Partial<{ name: string; email: string; phone: string; password: string }>): Promise<ApiResponse<User>> => {
+//     const response = await treatise.users({ id }).patch(data);
+//     return response.data as ApiResponse<User>;
+//   },
+
+//   delete: async (id: string): Promise<ApiResponse<void>> => {
+//     const response = await treatise.users({ id }).delete();
+//     return response.data as ApiResponse<void>;
+//   },
+// };
+
+// // Students API using Eden Treaty
+// export const studentsApi = {
+//   list: async (params?: { classId?: string; limit?: number; offset?: number }): Promise<PaginatedResponse<Student>> => {
+//     const response = await treatise.students.get({ query: params });
+//     return response.data as PaginatedResponse<Student>;
+//   },
+  
+//   get: async (id: string): Promise<ApiResponse<Student>> => {
+//     const response = await treatise.students({ id }).get();
+//     return response.data as ApiResponse<Student>;
+//   },
+
+//   create: async (data: { userId: string; enrollmentNumber: string; classId: string }): Promise<ApiResponse<Student>> => {
+//     const response = await treatise.students.post(data);
+//     return response.data as ApiResponse<Student>;
+//   },
+
+//   update: async (id: string, data: Partial<{ enrollmentNumber: string; classId: string }>): Promise<ApiResponse<Student>> => {
+//     const response = await treatise.students({ id }).patch(data);
+//     return response.data as ApiResponse<Student>;
+//   },
+
+//   delete: async (id: string): Promise<ApiResponse<void>> => {
+//     const response = await treatise.students({ id }).delete();
+//     return response.data as ApiResponse<void>;
+//   },
+// };
+
+// // Classes API using Eden Treaty
+// export const classesApi = {
+//   list: async (params?: { courseId?: string; supervisorId?: string; limit?: number; offset?: number }): Promise<PaginatedResponse<Class>> => {
+//     const response = await treatise.classes.get({ query: params });
+//     return response.data as PaginatedResponse<Class>;
+//   },
+  
+//   get: async (id: string): Promise<ApiResponse<Class>> => {
+//     const response = await treatise.classes({ id }).get();
+//     return response.data as ApiResponse<Class>;
+//   },
+
+//   create: async (data: { name: string; courseId: string }): Promise<ApiResponse<Class>> => {
+//     const response = await treatise.classes.post(data);
+//     return response.data as ApiResponse<Class>;
+//   },
+
+//   update: async (id: string, data: Partial<{ name: string; courseId: string }>): Promise<ApiResponse<Class>> => {
+//     const response = await treatise.classes({ id }).patch(data);
+//     return response.data as ApiResponse<Class>;
+//   },
+
+//   delete: async (id: string): Promise<ApiResponse<void>> => {
+//     const response = await treatise.classes({ id }).delete();
+//     return response.data as ApiResponse<void>;
+//   },
+// };
+
+// // Courses API using Eden Treaty
+// export const coursesApi = {
+//   list: async (params?: { schoolId?: string; supervisorId?: string; limit?: number; offset?: number }): Promise<PaginatedResponse<Course>> => {
+//     const response = await treatise.courses.get({ query: params });
+//     return response.data as PaginatedResponse<Course>;
+//   },
+  
+//   get: async (id: string): Promise<ApiResponse<Course>> => {
+//     const response = await treatise.courses({ id }).get();
+//     return response.data as ApiResponse<Course>;
+//   },
+
+//   create: async (data: { name: string; description: string; schoolId: string; supervisorId: string }): Promise<ApiResponse<Course>> => {
+//     const response = await treatise.courses.post(data);
+//     return response.data as ApiResponse<Course>;
+//   },
+
+//   update: async (id: string, data: Partial<{ name: string; description: string; schoolId: string; supervisorId: string }>): Promise<ApiResponse<Course>> => {
+//     const response = await treatise.courses({ id }).patch(data);
+//     return response.data as ApiResponse<Course>;
+//   },
+
+//   delete: async (id: string): Promise<ApiResponse<void>> => {
+//     const response = await treatise.courses({ id }).delete();
+//     return response.data as ApiResponse<void>;
+//   },
+// };
+
+// // Schools API using Eden Treaty
+// export const schoolsApi = {
+//   list: async (params?: { orgAdminId?: string; limit?: number; offset?: number }): Promise<PaginatedResponse<School>> => {
+//     const response = await treatise.schools.get({ query: params });
+//     return response.data as PaginatedResponse<School>;
+//   },
+  
+//   get: async (id: string): Promise<ApiResponse<School>> => {
+//     const response = await treatise.schools({ id }).get();
+//     return response.data as ApiResponse<School>;
+//   },
+
+//   create: async (data: { name: string; address: string; orgAdminId: string }): Promise<ApiResponse<School>> => {
+//     const response = await treatise.schools.post(data);
+//     return response.data as ApiResponse<School>;
+//   },
+
+//   update: async (id: string, data: Partial<{ name: string; address: string; orgAdminId: string }>): Promise<ApiResponse<School>> => {
+//     const response = await treatise.schools({ id }).patch(data);
+//     return response.data as ApiResponse<School>;
+//   },
+
+//   delete: async (id: string): Promise<ApiResponse<void>> => {
+//     const response = await treatise.schools({ id }).delete();
+//     return response.data as ApiResponse<void>;
+//   },
+// };
+
+// // Hospitals API using Eden Treaty
+// export const hospitalsApi = {
+//   list: async (params?: { orgAdminId?: string; limit?: number; offset?: number }): Promise<PaginatedResponse<Hospital>> => {
+//     const response = await treatise.hospitals.get({ query: params });
+//     return response.data as PaginatedResponse<Hospital>;
+//   },
+  
+//   get: async (id: string): Promise<ApiResponse<Hospital>> => {
+//     const response = await treatise.hospitals({ id }).get();
+//     return response.data as ApiResponse<Hospital>;
+//   },
+
+//   create: async (data: { name: string; address: string; orgAdminId: string }): Promise<ApiResponse<Hospital>> => {
+//     const response = await treatise.hospitals.post(data);
+//     return response.data as ApiResponse<Hospital>;
+//   },
+
+//   update: async (id: string, data: Partial<{ name: string; address: string; orgAdminId: string }>): Promise<ApiResponse<Hospital>> => {
+//     const response = await treatise.hospitals({ id }).patch(data);
+//     return response.data as ApiResponse<Hospital>;
+//   },
+
+//   delete: async (id: string): Promise<ApiResponse<void>> => {
+//     const response = await treatise.hospitals({ id }).delete();
+//     return response.data as ApiResponse<void>;
+//   },
+// };
+
+// // Shifts API using Eden Treaty
+// export const shiftsApi = {
+//   list: async (params?: { hospitalId?: string; studentId?: string; preceptorId?: string; startDate?: string; endDate?: string; limit?: number; offset?: number }): Promise<PaginatedResponse<Shift>> => {
+//     const response = await treatise.shifts.get({ query: params });
+//     return response.data as PaginatedResponse<Shift>;
+//   },
+  
+//   get: async (id: string): Promise<ApiResponse<Shift>> => {
+//     const response = await treatise.shifts({ id }).get();
+//     return response.data as ApiResponse<Shift>;
+//   },
+
+//   create: async (data: { name: string; startDate: string; endDate: string; hospitalId: string; studentId: string; preceptorId: string }): Promise<ApiResponse<Shift>> => {
+//     const response = await treatise.shifts.post(data);
+//     return response.data as ApiResponse<Shift>;
+//   },
+
+//   update: async (id: string, data: Partial<{ name: string; startDate: string; endDate: string; hospitalId: string; studentId: string; preceptorId: string }>): Promise<ApiResponse<Shift>> => {
+//     const response = await treatise.shifts({ id }).patch(data);
+//     return response.data as ApiResponse<Shift>;
+//   },
+
+//   delete: async (id: string): Promise<ApiResponse<void>> => {
+//     const response = await treatise.shifts({ id }).delete();
+//     return response.data as ApiResponse<void>;
+//   },
+// };
+
+// // Preceptors API using Eden Treaty
+// export const preceptorsApi = {
+//   list: async (params?: { hospitalId?: string; limit?: number; offset?: number }): Promise<PaginatedResponse<Preceptor>> => {
+//     const response = await treatise.preceptors.get({ query: params });
+//     return response.data as PaginatedResponse<Preceptor>;
+//   },
+  
+//   get: async (id: string): Promise<ApiResponse<Preceptor>> => {
+//     const response = await treatise.preceptors({ id }).get();
+//     return response.data as ApiResponse<Preceptor>;
+//   },
+
+//   create: async (data: { userId: string; professionalIdentityNumber: string; hospitalId: string }): Promise<ApiResponse<Preceptor>> => {
+//     const response = await treatise.preceptors.post(data);
+//     return response.data as ApiResponse<Preceptor>;
+//   },
+
+//   update: async (id: string, data: Partial<{ professionalIdentityNumber: string; hospitalId: string }>): Promise<ApiResponse<Preceptor>> => {
+//     const response = await treatise.preceptors({ id }).patch(data);
+//     return response.data as ApiResponse<Preceptor>;
+//   },
+
+//   delete: async (id: string): Promise<ApiResponse<void>> => {
+//     const response = await treatise.preceptors({ id }).delete();
+//     return response.data as ApiResponse<void>;
+//   },
+// };
+
+// // Supervisors API using Eden Treaty
+// export const supervisorsApi = {
+//   list: async (params?: { schoolId?: string; limit?: number; offset?: number }): Promise<PaginatedResponse<Supervisor>> => {
+//     const response = await treatise.supervisors.get({ query: params });
+//     return response.data as PaginatedResponse<Supervisor>;
+//   },
+  
+//   get: async (id: string): Promise<ApiResponse<Supervisor>> => {
+//     const response = await treatise.supervisors({ id }).get();
+//     return response.data as ApiResponse<Supervisor>;
+//   },
+
+//   create: async (data: { userId: string; schoolId: string }): Promise<ApiResponse<Supervisor>> => {
+//     const response = await treatise.supervisors.post(data);
+//     return response.data as ApiResponse<Supervisor>;
+//   },
+
+//   update: async (id: string, data: Partial<{ schoolId: string }>): Promise<ApiResponse<Supervisor>> => {
+//     const response = await treatise.supervisors({ id }).patch(data);
+//     return response.data as ApiResponse<Supervisor>;
+//   },
+
+//   delete: async (id: string): Promise<ApiResponse<void>> => {
+//     const response = await treatise.supervisors({ id }).delete();
+//     return response.data as ApiResponse<void>;
+//   },
+// };
+
+// // Documents API using Eden Treaty
+// export const documentsApi = {
+//   list: async (params?: { studentId?: string; type?: string; limit?: number; offset?: number }): Promise<PaginatedResponse<Document>> => {
+//     const response = await treatise.documents.get({ query: params });
+//     return response.data as PaginatedResponse<Document>;
+//   },
+  
+//   get: async (id: string): Promise<ApiResponse<Document>> => {
+//     const response = await treatise.documents({ id }).get();
+//     return response.data as ApiResponse<Document>;
+//   },
+
+//   create: async (data: { name: string; description: string; studentId: string; type: string }): Promise<ApiResponse<Document>> => {
+//     const response = await treatise.documents.post(data);
+//     return response.data as ApiResponse<Document>;
+//   },
+
+//   update: async (id: string, data: Partial<{ name: string; description: string; type: string }>): Promise<ApiResponse<Document>> => {
+//     const response = await treatise.documents({ id }).patch(data);
+//     return response.data as ApiResponse<Document>;
+//   },
+
+//   delete: async (id: string): Promise<ApiResponse<void>> => {
+//     const response = await treatise.documents({ id }).delete();
+//     return response.data as ApiResponse<void>;
+//   },
+
+//   submit: async (id: string, data: { file: File; notes?: string }): Promise<ApiResponse<any>> => {
+//     const response = await treatise.documents({ id }).submit.post(data);
+//     return response.data as ApiResponse<any>;
+//   },
+
+//   approve: async (id: string, data: { submissionId: string; feedback?: string }): Promise<ApiResponse<any>> => {
+//     const response = await treatise.documents({ id }).approve.post(data);
+//     return response.data as ApiResponse<any>;
+//   },
+
+//   reject: async (id: string, data: { submissionId: string; feedback: string }): Promise<ApiResponse<any>> => {
+//     const response = await treatise.documents({ id }).reject.post(data);
+//     return response.data as ApiResponse<any>;
+//   },
+
+//   getValidationTemplates: async (): Promise<ApiResponse<any[]>> => {
+//     const response = await treatise.documents['validation-templates'].get();
+//     return response.data as ApiResponse<any[]>;
+//   },
+
+//   validate: async (id: string, data: { submissionId: string }): Promise<ApiResponse<any>> => {
+//     const response = await treatise.documents({ id }).validate.post(data);
+//     return response.data as ApiResponse<any>;
+//   },
+
+//   getPendingStats: async (): Promise<ApiResponse<any>> => {
+//     const response = await treatise.documents.stats.pending.get();
+//     return response.data as ApiResponse<any>;
+//   },
+// };
+
+// // Admin API using Eden Treaty
+// export const adminApi = {
+//   create: async (data: { userId: string }): Promise<ApiResponse<any>> => {
+//     const response = await treatise.admin.post(data);
+//     return response.data as ApiResponse<any>;
+//   },
+
+//   syncGoogleSheets: async (): Promise<ApiResponse<any>> => {
+//     const response = await treatise.admin['sync-google-sheets'].post();
+//     return response.data as ApiResponse<any>;
+//   },
+
+//   get: async (id: string): Promise<ApiResponse<any>> => {
+//     const response = await treatise.admin({ id }).get();
+//     return response.data as ApiResponse<any>;
+//   },
+
+//   delete: async (id: string): Promise<ApiResponse<void>> => {
+//     const response = await treatise.admin({ id }).delete();
+//     return response.data as ApiResponse<void>;
+//   },
+// };
+
+// // Health check
+// export const healthApi = {
+//   check: async (): Promise<{ status: string; timestamp: string; uptime: number; environment: string }> => {
+//     const response = await treatise.health.get();
+//     return response.data;
+//   },
+// };
+
+// // Utility functions
+// export async function handleApiResponse<T>(response: Promise<ApiResponse<T>>): Promise<T> {
+//   const result = await response;
+//   if (!result.success) {
+//     throw new Error(result.message || 'API request failed');
+//   }
+//   return result.data || result.user as T;
+// }
+
+// export async function uploadFile(file: File, endpoint: string, additionalData?: Record<string, any>): Promise<ApiResponse<any>> {
+//   const formData = new FormData();
+//   formData.append('file', file);
+  
+//   if (additionalData) {
+//     Object.entries(additionalData).forEach(([key, value]) => {
+//       formData.append(key, value);
+//     });
+//   }
+
+//   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+//     method: 'POST',
+//     body: formData,
+//     credentials: 'include',
+//   });
+
+//   return response.json();
+// } 
