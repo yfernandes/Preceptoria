@@ -28,6 +28,8 @@ export const db = await initORM();
 // --- Import and start server ---
 import { app } from "./server";
 
+export type { App } from "./server";
+
 try {
 	app.listen(3000);
 
