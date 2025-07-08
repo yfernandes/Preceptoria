@@ -1,7 +1,18 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { apiClient, User } from '@/lib/api';
+import { authApi } from '@/lib/eden';
+
+// Define User type based on your backend response
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  roles: string[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface AuthContextType {
   user: User | null;
@@ -29,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Try to get current user info
       // This assumes you have a /auth/me endpoint
-      const response = await apiClient.getUser('me');
+      const response = await authApi.me();
       if (response.success && response.data) {
         setUser(response.data);
       }
@@ -46,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       setError(null);
       
-      const response = await apiClient.signin({ email, password });
+      const response = await authApi.signin({ email, password });
       
       if (response.success && response.data) {
         setUser(response.data);
@@ -66,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       setError(null);
       
-      const response = await apiClient.signup(userData);
+      const response = await authApi.signup(userData);
       
       if (response.success && response.data) {
         setUser(response.data);
@@ -83,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signout = async () => {
     try {
-      await apiClient.signout();
+      await authApi.signout();
       setUser(null);
     } catch (error) {
       console.error('Logout error:', error);

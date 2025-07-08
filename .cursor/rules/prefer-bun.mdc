@@ -1,0 +1,15 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Bun as the Preferred Package Manager
+
+Wherever possible, prefer to use **Bun** for package management, scripts, and development tasks instead of npm, yarn, or pnpm.
+
+- Use `bun install` instead of `npm install`, `yarn install`, or `pnpm install`.
+- Use `bun run` for running scripts and development servers.
+- If a script or command is referenced in documentation or code comments, prefer the Bun equivalent.
+- Only use npm, yarn, or pnpm if Bun is not supported for a specific tool or workflow.
+
+This applies to all packages and sub-packages in the monorepo, unless otherwise specified.
