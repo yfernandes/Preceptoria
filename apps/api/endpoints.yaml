@@ -1351,4 +1351,4 @@ endpoints:
       data:
         totalPending: number
         byType: object
-        byStudent: array 
+        byStudent: array

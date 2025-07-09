@@ -2,7 +2,7 @@
 
 ## 🚀 Bun-First Project
 
-This project uses [Bun](https://bun.sh/) as the preferred package manager and script runner. All scripts in `package.json` are intended to be run with Bun. 
+This project uses [Bun](https://bun.sh/) as the preferred package manager and script runner. All scripts in `package.json` are intended to be run with Bun.
 
 **Common commands:**
 
@@ -16,6 +16,7 @@ bun run type-check    # Type check the codebase
 ```
 
 **Port Configuration:**
+
 - **Frontend (Next.js)**: http://localhost:4123
 - **Backend (Elysia)**: http://localhost:3000
 
@@ -23,4 +24,4 @@ bun run type-check    # Type check the codebase
 
 ---
 
-# (rest of your README...) 
+# (rest of your README...)
