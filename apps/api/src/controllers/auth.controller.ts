@@ -74,7 +74,7 @@ const authController = new Elysia({ prefix: "/auth" })
 				auth.set({
 					httpOnly: false, // Allow JS access for debugging
 					secure: false, // Allow HTTP in development
-					sameSite: "none", // Allow cross-origin
+					sameSite: "lax", // Allow cross-origin in development
 					maxAge: 15 * 60,
 					path: "/",
 					value: accessToken,
@@ -83,7 +83,7 @@ const authController = new Elysia({ prefix: "/auth" })
 				refreshCookie.set({
 					httpOnly: false, // Allow JS access for debugging
 					secure: false, // Allow HTTP in development
-					sameSite: "none", // Allow cross-origin
+					sameSite: "lax", // Allow cross-origin in development
 					maxAge: 7 * 24 * 60 * 60,
 					path: "/",
 					value: refreshToken,
@@ -191,7 +191,7 @@ const authController = new Elysia({ prefix: "/auth" })
 				auth.set({
 					httpOnly: false, // Allow JS access for debugging
 					secure: false, // Allow HTTP in development
-					sameSite: "none", // Allow cross-origin
+					sameSite: "lax", // Allow cross-origin in development
 					maxAge: 15 * 60,
 					path: "/",
 					value: accessToken,
@@ -200,7 +200,7 @@ const authController = new Elysia({ prefix: "/auth" })
 				refreshCookie.set({
 					httpOnly: false, // Allow JS access for debugging
 					secure: false, // Allow HTTP in development
-					sameSite: "none", // Allow cross-origin
+					sameSite: "lax", // Allow cross-origin in development
 					maxAge: 7 * 24 * 60 * 60,
 					path: "/",
 					value: refreshToken,

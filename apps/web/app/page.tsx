@@ -1,30 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../contexts/AuthContext";
-import { AppLoader } from "../components/AppLoader";
-
-export default function HomePage() {
-	const { user } = useAuth();
-	const router = useRouter();
-
-	useEffect(() => {
-		if (user) {
-			router.push("/dashboard");
-		} else {
-			router.push("/login");
-		}
-	}, [user, router]);
-
+export default function Home() {
 	return (
-		<AppLoader>
-			<div className="flex min-h-screen items-center justify-center">
-				<div className="text-center">
-					<h1 className="mb-4 text-2xl font-bold">Preceptoria</h1>
-					<p className="text-muted-foreground">Redirecionando...</p>
-				</div>
-			</div>
-		</AppLoader>
+		<main className="flex min-h-screen flex-col items-center justify-center p-24">
+			<h1 className="mb-4 text-3xl font-bold">Welcome to Preceptoria</h1>
+			<a href="/login" className="text-blue-600 underline">
+				Login
+			</a>
+		</main>
 	);
 }

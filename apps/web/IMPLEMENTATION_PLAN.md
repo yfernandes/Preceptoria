@@ -1,322 +1,257 @@
-# Preceptoria UI Implementation Plan
+# Preceptoria UI Implementation Plan - Testing First Approach
 
-## 🎯 Current Status
+## 🎯 Current Status & Strategy
 
-### ✅ Completed (Phase 1 - Foundation)
+### ✅ What We Know Works (API Endpoints)
 
-- **Authentication System**
-  - API client with JWT token management
-  - Authentication context and hooks
-  - Login and signup forms with validation
-  - Protected route wrapper
-  - Role-based access control
+- **Health Check** (`GET /health`) - ✅ Tested and working
+- **Sign In** (`POST /auth/signin`) - ✅ Tested and working
+- **Classes** (`GET /classes`) - ✅ Tested and working
 
-- **Core Infrastructure**
-  - Next.js 15 with App Router
-  - TypeScript configuration
-  - Tailwind CSS + shadcn/ui components
-  - Theme provider (light/dark mode support)
-  - Error boundaries and loading states
+### 🧪 Testing-First Development
 
-- **Basic Pages**
-  - Login page (`/login`)
-  - Signup page (`/signup`)
-  - Dashboard layout with authentication protection
-  - Home page with automatic redirects
+- **Playwright** for end-to-end testing
+- **No fancy UI libraries** - Pure HTML/CSS for now
+- **Prove functionality first**, add polish later
+- **Focus on core user flows** that actually work
 
-### 🔄 In Progress
+## 🚀 Phase 1: Testing Foundation (Week 1)
 
-- **Dashboard Integration**
-  - Connecting existing dashboard to real API data
-  - Implementing role-specific views
-  - Adding real-time stats
+### 1.1 Setup Testing Infrastructure
 
-## 🚀 Next Steps (Priority Order)
+- [ ] Install Playwright
+- [ ] Configure test environment
+- [ ] Set up test data and fixtures
+- [ ] Create basic test structure
 
-### Phase 2: Core Pages Implementation (Week 2-3)
+### 1.2 Core User Flow Tests
 
-#### 2.1 Dashboard Enhancement
+- [ ] **Health Check Test**
+  - Verify API is reachable
+  - Check response format
+- [ ] **Authentication Flow Test**
+  - Login with valid credentials
+  - Verify session management
+  - Test protected route access
+- [ ] **Classes Data Test**
+  - Fetch classes data
+  - Display in simple table/list
+  - Verify data integrity
 
-- [ ] Connect dashboard stats to real API
-- [ ] Implement role-specific dashboard views
-- [ ] Add quick action buttons
-- [ ] Create real-time data updates
-- [ ] Add notification system
+### 1.3 Basic UI Implementation (Minimal)
 
-#### 2.2 Document Management
+- [ ] **Simple Login Page**
+  - Basic form with email/password
+  - Error handling
+  - Success redirect
+- [ ] **Classes Display Page**
+  - Simple table or list view
+  - No fancy styling, just functional
+- [ ] **Basic Navigation**
+  - Login → Dashboard → Classes
+  - Logout functionality
 
-- [ ] Complete document upload functionality
-- [ ] Add document validation workflow
-- [ ] Implement document status tracking
-- [ ] Add bulk operations
-- [ ] Create document templates
+## 🎯 Success Criteria (Phase 1)
 
-#### 2.3 User Management
+### Technical Requirements
 
-- [ ] Create user list page (`/users`)
-- [ ] Add user creation/editing forms
-- [ ] Implement role assignment interface
-- [ ] Add user search and filtering
-- [ ] Create user profile pages
+- [ ] All tests pass consistently
+- [ ] API integration works reliably
+- [ ] Basic user flows functional
+- [ ] No external UI dependencies
 
-### Phase 3: Advanced Features (Week 4-5)
+### User Experience (Minimal)
 
-#### 3.1 Shift Management
+- [ ] Can log in successfully
+- [ ] Can view classes data
+- [ ] Can navigate between pages
+- [ ] Can log out
 
-- [ ] Create shift calendar interface (`/shifts`)
-- [ ] Add shift creation/editing forms
-- [ ] Implement shift assignment
-- [ ] Add shift conflict detection
-- [ ] Create shift reporting
+## 🛠 Technical Implementation
 
-#### 3.2 Class & Course Management
+### Testing Strategy
 
-- [ ] Create class/course CRUD interfaces
-- [ ] Add student enrollment system
-- [ ] Implement progress tracking
-- [ ] Add reporting features
-- [ ] Create class schedules
+```typescript
+// Example test structure
+describe("Authentication Flow", () => {
+	test("should login and access protected routes", async ({ page }) => {
+		await page.goto("/login");
+		await page.fill('[data-testid="email"]', "yagoalmeida@gmail.com");
+		await page.fill('[data-testid="password"]', "TotallyS3cr3tP4ssw_rd");
+		await page.click('[data-testid="login-button"]');
 
-#### 3.3 Search & Filtering
+		// Should redirect to dashboard
+		await expect(page).toHaveURL("/dashboard");
 
-- [ ] Implement global search
-- [ ] Add advanced filtering
-- [ ] Create saved searches
-- [ ] Add export functionality
-- [ ] Implement search history
-
-### Phase 4: Polish & Optimization (Week 6)
-
-#### 4.1 UI/UX Improvements
-
-- [ ] Add loading skeletons
-- [ ] Implement error boundaries
-- [ ] Add toast notifications
-- [ ] Improve responsive design
-- [ ] Add keyboard shortcuts
-
-#### 4.2 Performance Optimization
-
-- [ ] Add data caching
-- [ ] Implement pagination
-- [ ] Add lazy loading
-- [ ] Optimize bundle size
-- [ ] Add service worker
-
-#### 4.3 Testing & Documentation
-
-- [ ] Add unit tests
-- [ ] Create integration tests
-- [ ] Add user documentation
-- [ ] Create admin guide
-- [ ] Add accessibility tests
-
-## 🛠 Technical Implementation Details
-
-### Authentication Flow
-
-```
-User visits app → Check auth state → Redirect to login/dashboard
-Login form → API call → Store JWT → Update context → Redirect to dashboard
-Protected routes → Check JWT → Validate permissions → Render content
+		// Should be able to access classes
+		await page.click('[data-testid="classes-link"]');
+		await expect(page).toHaveURL("/classes");
+	});
+});
 ```
 
-### API Integration
+### API Integration (Proven Endpoints Only)
 
-- **Base URL**: `http://localhost:3000` (development)
-- **Authentication**: JWT Bearer tokens
-- **Error Handling**: Centralized error handling with user-friendly messages
-- **Loading States**: Consistent loading indicators across all API calls
-
-### Role-Based Access Control
-
-- **SysAdmin**: Full system access
-- **OrgAdmin**: Organization-level management
-- **Supervisor**: School operations + cross-hospital shifts
-- **HospitalManager**: Hospital operations + document approval
-- **Preceptor**: Assigned shift management
-- **Student**: Self-management + class-level access
-
-### Component Architecture
-
-```
-App Layout
-├── AuthProvider (Context)
-├── ThemeProvider
-└── Protected Routes
-    ├── Dashboard Layout
-    │   ├── Sidebar (Navigation)
-    │   ├── Header (User info + notifications)
-    │   └── Main Content
-    └── Public Routes
-        ├── Login Page
-        └── Signup Page
+```typescript
+// Only these endpoints are tested and working
+const API_ENDPOINTS = {
+	health: "GET /health",
+	signin: "POST /auth/signin",
+	classes: "GET /classes",
+};
 ```
 
-## 📁 File Structure
+### Simple UI Structure
+
+```html
+<!-- No fancy components, just functional HTML -->
+<div class="container">
+	<h1>Classes</h1>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			{classes.map(class => (
+			<tr key="{class.id}">
+				<td>{class.name}</td>
+				<td>{class.status}</td>
+			</tr>
+			))}
+		</tbody>
+	</table>
+</div>
+```
+
+## 📁 Simplified File Structure
 
 ```
-packages/web/
+apps/web/
 ├── app/                    # Next.js App Router
-│   ├── login/             # Authentication pages
-│   ├── signup/
-│   ├── dashboard/         # Protected dashboard
-│   ├── documents/         # Document management
-│   ├── users/             # User management
-│   ├── shifts/            # Shift management
-│   ├── classes/           # Class management
+│   ├── login/page.tsx     # Simple login form
+│   ├── dashboard/page.tsx # Basic dashboard
+│   ├── classes/page.tsx   # Classes display
 │   └── layout.tsx         # Root layout
-├── components/
-│   ├── auth/              # Authentication components
-│   ├── ui/                # shadcn/ui components
-│   ├── layout/            # Layout components
-│   └── dashboard/         # Dashboard components
-├── contexts/              # React contexts
-├── hooks/                 # Custom hooks
-├── lib/                   # Utilities and API client
-├── types/                 # TypeScript types
-└── utils/                 # Helper functions
+├── lib/
+│   └── eden.ts           # API client (existing)
+├── tests/                # Playwright tests
+│   ├── auth.spec.ts      # Authentication tests
+│   ├── classes.spec.ts   # Classes tests
+│   └── health.spec.ts    # Health check tests
+└── package.json
 ```
 
-## 🎨 Design System
+## 🎨 Design Philosophy (Phase 1)
 
-### Colors
+### Minimal Viable UI
 
-- **Primary**: Blue (#3B82F6)
-- **Success**: Green (#10B981)
-- **Warning**: Yellow (#F59E0B)
-- **Error**: Red (#EF4444)
-- **Neutral**: Gray scale
+- **No CSS frameworks** - Pure CSS only
+- **No component libraries** - Native HTML elements
+- **Functional over beautiful** - Prove it works first
+- **Accessible by default** - Semantic HTML
 
-### Typography
+### Simple Styling Approach
 
-- **Headings**: Inter font family
-- **Body**: System font stack
-- **Code**: JetBrains Mono
+```css
+/* Basic, functional CSS only */
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+}
+.table {
+	width: 100%;
+	border-collapse: collapse;
+}
+.table th,
+.table td {
+	padding: 8px;
+	border: 1px solid #ddd;
+}
+.button {
+	padding: 8px 16px;
+	background: #007bff;
+	color: white;
+}
+```
 
-### Components
+## 🔧 Development Workflow
 
-- **Buttons**: Multiple variants (primary, secondary, outline, ghost)
-- **Forms**: Consistent validation and error states
-- **Cards**: Clean, modern card design
-- **Tables**: Sortable, filterable data tables
-- **Modals**: Accessible modal dialogs
-
-## 🔧 Development Setup
-
-### Prerequisites
+### 1. Write Test First
 
 ```bash
-# Install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env.local
-# Add NEXT_PUBLIC_API_URL=http://localhost:3000
+# Create test for new feature
+npx playwright test --grep "login flow"
 ```
 
-### Development Commands
+### 2. Implement Minimal UI
 
 ```bash
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Run linting
-npm run lint
-
-# Run tests (when implemented)
-npm run test
+# Build the simplest thing that could work
+# Focus on functionality, not aesthetics
 ```
 
-### Backend Integration
+### 3. Verify with Tests
 
-- Ensure Elysia.js backend is running on port 3000
-- Verify all API endpoints are working
-- Test authentication flow
-- Check CORS configuration
+```bash
+# Ensure tests pass
+npx playwright test
+```
 
-## 🚀 Deployment Strategy
+### 4. Manual Testing
 
-### Development
+```bash
+# Start dev server and test manually
+bun run dev
+```
 
-- Local development with hot reload
-- API calls to local backend
-- Environment-specific configuration
+## 📊 Success Metrics (Phase 1)
 
-### Staging
+### Technical Metrics
 
-- Vercel preview deployments
-- Staging backend environment
-- Full testing before production
+- [ ] 100% test coverage for core flows
+- [ ] 0 external UI dependencies
+- [ ] < 2 second page load times
+- [ ] 100% API endpoint success rate
 
-### Production
+### User Flow Metrics
 
-- Vercel production deployment
-- Production backend environment
-- CDN and performance optimization
+- [ ] Login success rate > 95%
+- [ ] Classes data loads successfully
+- [ ] Navigation works reliably
+- [ ] No broken links or 404s
 
-## 📊 Success Metrics
+## 🚀 Phase 2: Polish & Enhancement (Future)
 
-### User Experience
+### Only After Phase 1 is Complete
 
-- [ ] Page load times < 2 seconds
-- [ ] Form submission success rate > 95%
-- [ ] Mobile responsiveness score > 90
-- [ ] Accessibility compliance (WCAG 2.1 AA)
+- [ ] Add proper CSS framework (Tailwind/shadcn)
+- [ ] Implement component library
+- [ ] Add advanced UI features
+- [ ] Enhance user experience
+- [ ] Add more endpoints as they're tested
 
-### Technical Performance
+## 📝 Development Rules
 
-- [ ] Lighthouse score > 90
-- [ ] Bundle size < 500KB
-- [ ] API response times < 200ms
-- [ ] Error rate < 1%
+### ✅ Do's
 
-### Business Metrics
+- Write tests first
+- Keep UI simple and functional
+- Use only tested API endpoints
+- Focus on user flows that work
+- Document what works
 
-- [ ] User adoption rate
-- [ ] Feature usage statistics
-- [ ] Support ticket reduction
-- [ ] User satisfaction scores
+### ❌ Don'ts
 
-## 🔄 Iteration Plan
-
-### Week 1: Foundation ✅
-
-- Authentication system
-- Basic routing
-- Core components
-
-### Week 2: Core Features
-
-- Dashboard integration
-- Document management
-- User management
-
-### Week 3: Advanced Features
-
-- Shift management
-- Class/course management
-- Search and filtering
-
-### Week 4: Polish
-
-- UI/UX improvements
-- Performance optimization
-- Testing and documentation
-
-## 📝 Notes
-
-- Focus on supervisor workflow first (MVP approach)
-- Ensure mobile-first responsive design
-- Implement proper error handling and user feedback
-- Maintain consistent design patterns
-- Follow accessibility best practices
-- Document all components and APIs
-- Regular code reviews and testing
+- Add fancy UI libraries yet
+- Implement untested endpoints
+- Over-engineer the solution
+- Skip testing
+- Assume API endpoints work
 
 ---
 
-This plan provides a clear roadmap for implementing a modern, user-friendly interface for the Preceptoria system. The phased approach ensures steady progress while maintaining code quality and user experience.
+This approach ensures we build a solid, tested foundation before adding complexity. We'll prove the core functionality works before making it beautiful.

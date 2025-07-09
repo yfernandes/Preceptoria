@@ -1,27 +1,65 @@
-# Preceptoria Web (Frontend)
+# Preceptoria Web App
 
-## 🚀 Bun-First Project
+A simplified Next.js web application for the Preceptoria internship management system.
 
-This project uses [Bun](https://bun.sh/) as the preferred package manager and script runner. All scripts in `package.json` are intended to be run with Bun.
+## Features
 
-**Common commands:**
+- **Simple Landing Page** - Clean welcome page with login link
+- **Basic Login Form** - Ready for API integration
+- **Dashboard** - Simple overview with mock data
+- **Documents Page** - Basic document management interface
 
-```sh
-bun install           # Install dependencies
-bun run dev           # Start development server (port 4123)
-bun run build         # Build for production
-bun run lint          # Lint the codebase
-bun run format        # Format the codebase
-bun run type-check    # Type check the codebase
+## Tech Stack
+
+- **Next.js 15** - React framework
+- **React 19** - UI library
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **Bun** - Package manager and runtime
+
+## Getting Started
+
+1. Install dependencies:
+
+   ```bash
+   bun install
+   ```
+
+2. Start the development server:
+
+   ```bash
+   bun run dev
+   ```
+
+3. Open [http://localhost:4123](http://localhost:4123) in your browser.
+
+## Project Structure
+
+```
+app/
+├── layout.tsx          # Root layout
+├── page.tsx           # Landing page
+├── globals.css        # Global styles
+├── login/
+│   └── page.tsx       # Login form
+├── dashboard/
+│   ├── layout.tsx     # Dashboard layout
+│   └── page.tsx       # Dashboard content
+└── documents/
+    └── page.tsx       # Documents page
 ```
 
-**Port Configuration:**
+## Next Steps
 
-- **Frontend (Next.js)**: http://localhost:4123
-- **Backend (Elysia)**: http://localhost:3000
+This is a simplified version ready for:
 
-> If you need to use npm/yarn/pnpm for any reason, please check with the team first.
+1. API integration with the backend
+2. Authentication implementation
+3. Real data fetching
+4. Additional features as needed
 
----
+## Development
 
-# (rest of your README...)
+- **Build**: `bun run build`
+- **Start**: `bun run start`
+- **Lint**: `bun run lint`

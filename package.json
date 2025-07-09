@@ -1,12 +1,15 @@
 {
 	"name": "PreceptoriaV2",
 	"version": "1.0.0",
-	"description": "Preceptoria V2 - A comprehensive preceptorship management system",
+	"description": "A comprehensive preceptorship management system",
 	"private": true,
 	"scripts": {
 		"dev": "bun scripts/run dev",
 		"build": "bun scripts/run build",
 		"test": "bun scripts/run test",
+		"typecheck": "bun scripts/run typecheck",
+		"test:ui": "cd apps/web && bun run test",
+		"test:e2e": "bun scripts/run test:e2e",
 		"test:unit": "bun scripts/run test:unit",
 		"lint": "bun scripts/run lint",
 		"format": "bun scripts/run format",

@@ -38,7 +38,14 @@ export const app = new Elysia()
 	// --- Middleware ---
 	.use(swagger())
 	.use(bearer())
-	.use(cors())
+	.use(
+		cors({
+			origin: ["http://localhost:4123", "http://localhost:3000"],
+			credentials: true,
+			allowedHeaders: ["Content-Type", "Authorization"],
+			methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+		})
+	)
 	.use(opentelemetry())
 	.use(serverTiming())
 	.use(
