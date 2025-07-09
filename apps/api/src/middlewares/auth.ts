@@ -5,6 +5,7 @@ import { User } from "../entities";
 import { LRUCache } from "lru-cache";
 import { db } from "../db";
 import { jwt } from "@elysiajs/jwt";
+import { RequestContext } from "@mikro-orm/core";
 
 // Interface for database operations - makes it easier to mock
 export interface IUserRepository {
@@ -25,7 +26,16 @@ export async function findUserById(
 	userId: string,
 	userRepository: IUserRepository = {
 		findOneById: async (id: string) => {
-			return await db.user.findOne(
+			// Try to use the EntityManager from the current request context first
+			let em = RequestContext.getEntityManager();
+
+			// If no context, fall back to global EntityManager (for testing)
+			if (!em) {
+				em = db.em;
+			}
+
+			return await em.findOne(
+				User,
 				{ id },
 				{
 					populate: [

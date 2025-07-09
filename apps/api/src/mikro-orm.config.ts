@@ -109,6 +109,8 @@ export const devConfig = defineConfig({
 	debug: true,
 	verbose: true,
 
+	allowGlobalContext: true, // <--- Added for local/dev
+
 	// Development-specific settings
 	discovery: {
 		...baseConfig.discovery,
@@ -152,6 +154,8 @@ export const testConfig = defineConfig({
 	// Test-specific settings
 	debug: false,
 	verbose: false,
+
+	allowGlobalContext: true, // <--- Added for tests
 
 	// Minimal pooling for tests
 	pool: {

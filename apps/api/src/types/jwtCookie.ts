@@ -13,5 +13,8 @@ export const authCookie = t.Cookie({
 	CookieValue: t.String(),
 });
 export const tCookie = {
-	cookie: t.Object({ session: authCookie, refresh: authCookie }),
+	cookie: t.Object({
+		session: t.Union([authCookie, t.String()]),
+		refresh: t.Union([authCookie, t.String()]),
+	}),
 };
