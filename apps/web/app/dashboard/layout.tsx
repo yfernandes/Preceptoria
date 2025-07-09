@@ -1,13 +1,9 @@
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { ProtectedRoute } from "../../components/auth/ProtectedRoute";
 
 export default function DashboardLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <ProtectedRoute>
-      {children}
-    </ProtectedRoute>
-  );
-} 
+	return <ProtectedRoute>{children}</ProtectedRoute>;
+}
