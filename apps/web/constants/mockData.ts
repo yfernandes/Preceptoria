@@ -1,4 +1,4 @@
-import type { ClassData, ShiftData, SearchResult } from "../../types";
+import type { ClassData, ShiftData, SearchResult } from "../types";
 
 export const MOCK_CLASSES: ClassData[] = [
 	{

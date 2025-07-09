@@ -1,18 +1,11 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { authApi } from "../lib/eden";
+import { treatise } from "../lib/eden";
 
-// Define User type based on your backend response
-interface User {
-	id: string;
-	name: string;
-	email: string;
-	phone?: string;
-	roles: string[];
-	createdAt: string;
-	updatedAt: string;
-}
+type User = NonNullable<
+	Awaited<ReturnType<typeof treatise.auth.signin.post>>["data"]
+>["user"];
 
 interface AuthContextType {
 	user: User | null;
@@ -89,14 +82,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			setLoading(true);
 			setError(null);
 
-			const response = await authApi.signin({ email, password });
+			const response = await treatise.auth.signin.post({ email, password });
 
-			if (response.success && response.user) {
+			if (response.data?.success && response.data.user) {
 				// Store user data in localStorage for persistence
-				localStorage.setItem("user_data", JSON.stringify(response.user));
-				setUser(response.user);
+				localStorage.setItem("user_data", JSON.stringify(response.data.user));
+				setUser(response.data.user);
 			} else {
-				throw new Error(response.message || "Login failed");
+				throw new Error(response.data?.message || "Login failed");
 			}
 		} catch (error) {
 			setError(error instanceof Error ? error.message : "Login failed");
@@ -116,14 +109,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			setLoading(true);
 			setError(null);
 
-			const response = await authApi.signup(userData);
+			const response = await treatise.auth.signup.post(userData);
 
-			if (response.success && response.user) {
+			if (response.data?.success && response.data.user) {
 				// Store user data in localStorage for persistence
-				localStorage.setItem("user_data", JSON.stringify(response.user));
-				setUser(response.user);
+				localStorage.setItem("user_data", JSON.stringify(response.data.user));
+				setUser(response.data.user);
 			} else {
-				throw new Error(response.message || "Registration failed");
+				throw new Error(response.data?.message || "Registration failed");
 			}
 		} catch (error) {
 			setError(error instanceof Error ? error.message : "Registration failed");
@@ -135,7 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	const signout = async () => {
 		try {
-			await authApi.signout();
+			await treatise.auth.logout.post();
 			// Clear local storage
 			localStorage.removeItem("user_data");
 			localStorage.removeItem("auth_token");
