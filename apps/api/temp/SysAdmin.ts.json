@@ -1,1 +1,24 @@
-{"data":{"_id":14000,"properties":{},"primaryKeys":[],"filters":{},"hooks":{},"indexes":[],"uniques":[],"className":"SysAdmin","path":"./src/entities/SysAdmin.entity.ts","name":"SysAdmin","abstract":false,"internal":true,"constructorParams":[],"toJsonParams":[],"extends":"Role","useCache":true,"collection":"sys_admin"},"origin":"./src/entities/SysAdmin.entity.ts","hash":"dafae94d7b3bb21545695399ac9f9549","version":"6.4.16"}
+{
+	"data": {
+		"_id": 14000,
+		"properties": {},
+		"primaryKeys": [],
+		"filters": {},
+		"hooks": {},
+		"indexes": [],
+		"uniques": [],
+		"className": "SysAdmin",
+		"path": "./src/entities/SysAdmin.entity.ts",
+		"name": "SysAdmin",
+		"abstract": false,
+		"internal": true,
+		"constructorParams": [],
+		"toJsonParams": [],
+		"extends": "Role",
+		"useCache": true,
+		"collection": "sys_admin"
+	},
+	"origin": "./src/entities/SysAdmin.entity.ts",
+	"hash": "dafae94d7b3bb21545695399ac9f9549",
+	"version": "6.4.16"
+}

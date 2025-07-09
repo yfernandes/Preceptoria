@@ -1,1 +1,59 @@
-{"data":{"_id":3000,"properties":{"name":{"name":"name","kind":"scalar","getter":false,"setter":false,"type":"string","array":false,"runtimeType":"string"},"address":{"name":"address","kind":"scalar","getter":false,"setter":false,"type":"string","array":false,"runtimeType":"string"},"email":{"name":"email","kind":"scalar","getter":false,"setter":false,"type":"string","array":false,"runtimeType":"string"},"phone":{"name":"phone","kind":"scalar","getter":false,"setter":false,"type":"string","array":false,"runtimeType":"string"}},"primaryKeys":[],"filters":{},"hooks":{},"indexes":[],"uniques":[],"className":"Organization","path":"./src/entities/organization.abstract.ts","abstract":true,"internal":true,"constructorParams":["name","address","mail","phone"],"toJsonParams":[],"extends":"BaseEntity","useCache":true},"origin":"./src/entities/organization.abstract.ts","hash":"dfe7274ac63ce9d4371a6d6df2a08c40","version":"6.4.16"}
+{
+	"data": {
+		"_id": 3000,
+		"properties": {
+			"name": {
+				"name": "name",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string"
+			},
+			"address": {
+				"name": "address",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string"
+			},
+			"email": {
+				"name": "email",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string"
+			},
+			"phone": {
+				"name": "phone",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string"
+			}
+		},
+		"primaryKeys": [],
+		"filters": {},
+		"hooks": {},
+		"indexes": [],
+		"uniques": [],
+		"className": "Organization",
+		"path": "./src/entities/organization.abstract.ts",
+		"abstract": true,
+		"internal": true,
+		"constructorParams": ["name", "address", "mail", "phone"],
+		"toJsonParams": [],
+		"extends": "BaseEntity",
+		"useCache": true
+	},
+	"origin": "./src/entities/organization.abstract.ts",
+	"hash": "dfe7274ac63ce9d4371a6d6df2a08c40",
+	"version": "6.4.16"
+}

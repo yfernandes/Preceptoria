@@ -298,41 +298,6 @@ const authController = new Elysia({ prefix: "/auth" })
 			}
 		},
 		tCookie
-	)
-	.get("/me", async ({ requester }) => {
-		try {
-			// Get full user data from database
-			const user = await db.user.findOne(
-				{ id: requester.id },
-				{ populate: ["passwordHash"] }
-			);
-
-			if (!user) {
-				return status(404, {
-					success: false,
-					message: "User not found",
-				});
-			}
-
-			return {
-				success: true,
-				user: {
-					id: user.id,
-					name: user.name,
-					email: user.email,
-					phone: user.phoneNumber,
-					roles: user.roles,
-					createdAt: user.createdAt.toISOString(),
-					updatedAt: user.updatedAt.toISOString(),
-				},
-			};
-		} catch (err) {
-			console.error("Get user error:", err);
-			return status(500, {
-				success: false,
-				message: "Internal Server Error",
-			});
-		}
-	});
+	);
 
 export { authController };

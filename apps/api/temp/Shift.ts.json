@@ -1,1 +1,96 @@
-{"data":{"_id":4000,"properties":{"date":{"name":"date","kind":"scalar","getter":false,"setter":false,"type":"Date","array":false,"runtimeType":"Date"},"startTime":{"name":"startTime","kind":"scalar","getter":false,"setter":false,"type":"Date","array":false,"runtimeType":"Date"},"endTime":{"name":"endTime","kind":"scalar","getter":false,"setter":false,"type":"Date","array":false,"runtimeType":"Date"},"location":{"name":"location","kind":"scalar","getter":false,"setter":false,"type":"string","array":false,"runtimeType":"string"},"hospital":{"name":"hospital","kind":"m:1","cascade":["persist"],"owner":true,"type":"Hospital","array":false,"runtimeType":"Hospital"},"preceptor":{"name":"preceptor","kind":"m:1","cascade":["persist"],"owner":true,"type":"Preceptor","array":false,"runtimeType":"Preceptor"},"students":{"name":"students","kind":"m:n","cascade":["persist"],"fixedOrder":false,"owner":true,"type":"Student","array":false,"runtimeType":"Collection<Student, object>"}},"primaryKeys":[],"filters":{},"hooks":{},"indexes":[],"uniques":[],"className":"Shift","path":"./src/entities/shift.entity.ts","name":"Shift","abstract":false,"internal":true,"constructorParams":["date","startTime","endTime","location","hospital","preceptor"],"toJsonParams":[],"extends":"BaseEntity","useCache":true,"collection":"shift"},"origin":"./src/entities/shift.entity.ts","hash":"3b667bbc9cfac4c5f44c92f3b5c61804","version":"6.4.16"}
+{
+	"data": {
+		"_id": 4000,
+		"properties": {
+			"date": {
+				"name": "date",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "Date",
+				"array": false,
+				"runtimeType": "Date"
+			},
+			"startTime": {
+				"name": "startTime",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "Date",
+				"array": false,
+				"runtimeType": "Date"
+			},
+			"endTime": {
+				"name": "endTime",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "Date",
+				"array": false,
+				"runtimeType": "Date"
+			},
+			"location": {
+				"name": "location",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string"
+			},
+			"hospital": {
+				"name": "hospital",
+				"kind": "m:1",
+				"cascade": ["persist"],
+				"owner": true,
+				"type": "Hospital",
+				"array": false,
+				"runtimeType": "Hospital"
+			},
+			"preceptor": {
+				"name": "preceptor",
+				"kind": "m:1",
+				"cascade": ["persist"],
+				"owner": true,
+				"type": "Preceptor",
+				"array": false,
+				"runtimeType": "Preceptor"
+			},
+			"students": {
+				"name": "students",
+				"kind": "m:n",
+				"cascade": ["persist"],
+				"fixedOrder": false,
+				"owner": true,
+				"type": "Student",
+				"array": false,
+				"runtimeType": "Collection<Student, object>"
+			}
+		},
+		"primaryKeys": [],
+		"filters": {},
+		"hooks": {},
+		"indexes": [],
+		"uniques": [],
+		"className": "Shift",
+		"path": "./src/entities/shift.entity.ts",
+		"name": "Shift",
+		"abstract": false,
+		"internal": true,
+		"constructorParams": [
+			"date",
+			"startTime",
+			"endTime",
+			"location",
+			"hospital",
+			"preceptor"
+		],
+		"toJsonParams": [],
+		"extends": "BaseEntity",
+		"useCache": true,
+		"collection": "shift"
+	},
+	"origin": "./src/entities/shift.entity.ts",
+	"hash": "3b667bbc9cfac4c5f44c92f3b5c61804",
+	"version": "6.4.16"
+}

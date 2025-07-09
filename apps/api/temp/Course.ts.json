@@ -1,1 +1,58 @@
-{"data":{"_id":9000,"properties":{"name":{"name":"name","kind":"scalar","getter":false,"setter":false,"type":"string","array":false,"runtimeType":"string"},"school":{"name":"school","kind":"m:1","cascade":["persist"],"owner":true,"type":"School","array":false,"runtimeType":"School"},"classes":{"name":"classes","kind":"1:m","cascade":["persist"],"type":"Classes"},"supervisor":{"name":"supervisor","kind":"m:1","cascade":["persist"],"owner":true,"type":"Supervisor","array":false,"runtimeType":"Supervisor"}},"primaryKeys":[],"filters":{},"hooks":{},"indexes":[],"uniques":[],"className":"Course","path":"./src/entities/course.entity.ts","name":"Course","abstract":false,"internal":true,"constructorParams":["name","school","supervisor"],"toJsonParams":[],"extends":"BaseEntity","useCache":true,"collection":"course"},"origin":"./src/entities/course.entity.ts","hash":"47cb752cf3bb41dba1e85572238d285d","version":"6.4.16"}
+{
+	"data": {
+		"_id": 9000,
+		"properties": {
+			"name": {
+				"name": "name",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string"
+			},
+			"school": {
+				"name": "school",
+				"kind": "m:1",
+				"cascade": ["persist"],
+				"owner": true,
+				"type": "School",
+				"array": false,
+				"runtimeType": "School"
+			},
+			"classes": {
+				"name": "classes",
+				"kind": "1:m",
+				"cascade": ["persist"],
+				"type": "Classes"
+			},
+			"supervisor": {
+				"name": "supervisor",
+				"kind": "m:1",
+				"cascade": ["persist"],
+				"owner": true,
+				"type": "Supervisor",
+				"array": false,
+				"runtimeType": "Supervisor"
+			}
+		},
+		"primaryKeys": [],
+		"filters": {},
+		"hooks": {},
+		"indexes": [],
+		"uniques": [],
+		"className": "Course",
+		"path": "./src/entities/course.entity.ts",
+		"name": "Course",
+		"abstract": false,
+		"internal": true,
+		"constructorParams": ["name", "school", "supervisor"],
+		"toJsonParams": [],
+		"extends": "BaseEntity",
+		"useCache": true,
+		"collection": "course"
+	},
+	"origin": "./src/entities/course.entity.ts",
+	"hash": "47cb752cf3bb41dba1e85572238d285d",
+	"version": "6.4.16"
+}

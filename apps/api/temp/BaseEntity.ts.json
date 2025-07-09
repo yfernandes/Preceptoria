@@ -1,1 +1,41 @@
-{"data":{"_id":0,"properties":{"id":{"name":"id","kind":"scalar","primary":true,"type":"uuid"},"createdAt":{"name":"createdAt","kind":"scalar","getter":false,"setter":false,"type":"Date","runtimeType":"Date"},"updatedAt":{"name":"updatedAt","kind":"scalar","getter":false,"setter":false,"type":"Date","runtimeType":"Date"}},"primaryKeys":["id"],"filters":{},"hooks":{},"indexes":[],"uniques":[],"className":"BaseEntity","path":"./src/entities/baseEntity.ts","abstract":true,"internal":true,"constructorParams":[],"toJsonParams":[],"useCache":true,"compositePK":false,"simplePK":true},"origin":"./src/entities/baseEntity.ts","hash":"e8f00c077aff2345b64474332ac28fc2","version":"6.4.16"}
+{
+	"data": {
+		"_id": 0,
+		"properties": {
+			"id": { "name": "id", "kind": "scalar", "primary": true, "type": "uuid" },
+			"createdAt": {
+				"name": "createdAt",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "Date",
+				"runtimeType": "Date"
+			},
+			"updatedAt": {
+				"name": "updatedAt",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "Date",
+				"runtimeType": "Date"
+			}
+		},
+		"primaryKeys": ["id"],
+		"filters": {},
+		"hooks": {},
+		"indexes": [],
+		"uniques": [],
+		"className": "BaseEntity",
+		"path": "./src/entities/baseEntity.ts",
+		"abstract": true,
+		"internal": true,
+		"constructorParams": [],
+		"toJsonParams": [],
+		"useCache": true,
+		"compositePK": false,
+		"simplePK": true
+	},
+	"origin": "./src/entities/baseEntity.ts",
+	"hash": "e8f00c077aff2345b64474332ac28fc2",
+	"version": "6.4.16"
+}
