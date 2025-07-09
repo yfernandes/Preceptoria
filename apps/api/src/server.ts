@@ -26,8 +26,8 @@ import {
 	shiftController,
 	studentsController,
 	supervisorController,
-	// documentsController,
-	// userController,
+	documentsController,
+	userController,
 } from "./controllers";
 
 // --- App Setup ---
@@ -157,9 +157,9 @@ export const app = new Elysia()
 	.use(schoolController)
 	.use(shiftController)
 	.use(studentsController)
-	.use(supervisorController);
-// .use(documentsController)
-// .use(userController);
+	.use(supervisorController)
+	.use(documentsController)
+	.use(userController);
 
 // Export the app type for Eden Treaty
 export type App = typeof app;

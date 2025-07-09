@@ -143,11 +143,11 @@ export const prodConfig = defineConfig({
 // Test configuration
 export const testConfig = defineConfig({
 	...baseConfig,
-	host: Bun.env.TEST_DB_HOST || "localhost",
-	port: Bun.env.TEST_DB_PORT ? parseInt(Bun.env.TEST_DB_PORT) : 5432,
-	user: Bun.env.TEST_DB_USER || "postgres",
-	password: Bun.env.TEST_DB_PASS || "postgres",
-	dbName: Bun.env.TEST_DB_NAME || "preceptoria_test",
+	host: Bun.env.DB_HOST || "localhost",
+	port: Bun.env.DB_PORT ? parseInt(Bun.env.DB_PORT) : 5432,
+	user: Bun.env.DB_USER || "postgres",
+	password: Bun.env.DB_PASS || "postgres",
+	dbName: Bun.env.DB_NAME || "preceptoria_test",
 
 	// Test-specific settings
 	debug: false,
