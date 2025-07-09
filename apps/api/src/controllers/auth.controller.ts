@@ -72,18 +72,18 @@ const authController = new Elysia({ prefix: "/auth" })
 				});
 
 				auth.set({
-					httpOnly: true,
-					secure: Bun.env.NODE_ENV === "production", // Only secure in production
-					sameSite: "lax", // Allow cross-site requests for localhost
+					httpOnly: false, // Allow JS access for debugging
+					secure: false, // Allow HTTP in development
+					sameSite: "none", // Allow cross-origin
 					maxAge: 15 * 60,
 					path: "/",
 					value: accessToken,
 				});
 
 				refreshCookie.set({
-					httpOnly: true,
-					secure: Bun.env.NODE_ENV === "production", // Only secure in production
-					sameSite: "lax", // Allow cross-site requests for localhost
+					httpOnly: false, // Allow JS access for debugging
+					secure: false, // Allow HTTP in development
+					sameSite: "none", // Allow cross-origin
 					maxAge: 7 * 24 * 60 * 60,
 					path: "/",
 					value: refreshToken,
@@ -189,18 +189,18 @@ const authController = new Elysia({ prefix: "/auth" })
 				});
 
 				auth.set({
-					httpOnly: true,
-					secure: Bun.env.NODE_ENV === "production", // Only secure in production
-					sameSite: "lax", // Allow cross-site requests for localhost
+					httpOnly: false, // Allow JS access for debugging
+					secure: false, // Allow HTTP in development
+					sameSite: "none", // Allow cross-origin
 					maxAge: 15 * 60,
 					path: "/",
 					value: accessToken,
 				});
 
 				refreshCookie.set({
-					httpOnly: true,
-					secure: Bun.env.NODE_ENV === "production", // Only secure in production
-					sameSite: "lax", // Allow cross-site requests for localhost
+					httpOnly: false, // Allow JS access for debugging
+					secure: false, // Allow HTTP in development
+					sameSite: "none", // Allow cross-origin
 					maxAge: 7 * 24 * 60 * 60,
 					path: "/",
 					value: refreshToken,
