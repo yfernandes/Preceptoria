@@ -1,5 +1,7 @@
 import { describe, it, expect } from "bun:test";
 import { app } from "../server";
+import { RequestContext } from "@mikro-orm/core";
+import { db } from "../db";
 
 const defaultSysAdminUser = {
 	email: "yagoalmeida@gmail.com",
@@ -92,21 +94,42 @@ describe("Auth Integration Tests", () => {
 				})
 			);
 
+			// Debug: Check login response
+			console.log("Login response status:", loginResponse.status);
+			const loginData = await loginResponse.json();
+			console.log("Login response data:", JSON.stringify(loginData, null, 2));
+
+			expect(loginResponse.status).toBe(200);
+			expect(loginData.success).toBe(true);
+
 			// Get the session cookie from the response
-			const sessionCookie = loginResponse.headers
-				.get("set-cookie")
-				?.split(";")[0];
+			const setCookieHeader = loginResponse.headers.get("set-cookie");
+			// Extract both session and refresh cookies
+			const sessionMatch = setCookieHeader?.match(/session=([^;]+)/);
+			const refreshMatch = setCookieHeader?.match(/refresh=([^;]+)/);
+			const sessionValue = sessionMatch?.[1];
+			const refreshValue = refreshMatch?.[1];
+			expect(sessionValue).toBeDefined();
+			expect(refreshValue).toBeDefined();
 
-			// Now try to access the protected route
-			const response = await app.handle(
-				new Request("http://localhost/users", {
-					headers: {
-						Cookie: `session=${sessionCookie}`,
-					},
-				})
-			);
-
-			expect(response.status).toBe(200);
+			// Wrap the protected route call in a MikroORM RequestContext
+			await new Promise((resolve, reject) => {
+				RequestContext.create(db.orm.em, async () => {
+					try {
+						const response = await app.handle(
+							new Request("http://localhost/users", {
+								headers: {
+									Cookie: `session=${JSON.stringify({ CookieValue: sessionValue })}; refresh=${JSON.stringify({ CookieValue: refreshValue })}`,
+								},
+							})
+						);
+						expect(response.status).toBe(200);
+						resolve(undefined);
+					} catch (err) {
+						reject(err);
+					}
+				});
+			});
 		});
 	});
 });

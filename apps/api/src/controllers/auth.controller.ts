@@ -73,8 +73,8 @@ const authController = new Elysia({ prefix: "/auth" })
 
 				auth.set({
 					httpOnly: true,
-					secure: true,
-					sameSite: "strict",
+					secure: Bun.env.NODE_ENV === "production", // Only secure in production
+					sameSite: "lax", // Allow cross-site requests for localhost
 					maxAge: 15 * 60,
 					path: "/",
 					value: accessToken,
@@ -82,8 +82,8 @@ const authController = new Elysia({ prefix: "/auth" })
 
 				refreshCookie.set({
 					httpOnly: true,
-					secure: true,
-					sameSite: "strict",
+					secure: Bun.env.NODE_ENV === "production", // Only secure in production
+					sameSite: "lax", // Allow cross-site requests for localhost
 					maxAge: 7 * 24 * 60 * 60,
 					path: "/",
 					value: refreshToken,
@@ -176,13 +176,13 @@ const authController = new Elysia({ prefix: "/auth" })
 				}
 
 				// Generate JWT Token
-				const accessToken = jwt.sign({
+				const accessToken = await jwt.sign({
 					id: user.id,
 					roles: user.roles.toString(),
 				});
 
 				// Generate Refresh Token
-				const refreshToken = jwt.sign({
+				const refreshToken = await jwt.sign({
 					id: user.id,
 					roles: user.roles.toString(),
 					exp: "7d",
@@ -190,8 +190,8 @@ const authController = new Elysia({ prefix: "/auth" })
 
 				auth.set({
 					httpOnly: true,
-					secure: true,
-					sameSite: "strict",
+					secure: Bun.env.NODE_ENV === "production", // Only secure in production
+					sameSite: "lax", // Allow cross-site requests for localhost
 					maxAge: 15 * 60,
 					path: "/",
 					value: accessToken,
@@ -199,8 +199,8 @@ const authController = new Elysia({ prefix: "/auth" })
 
 				refreshCookie.set({
 					httpOnly: true,
-					secure: true,
-					sameSite: "strict",
+					secure: Bun.env.NODE_ENV === "production", // Only secure in production
+					sameSite: "lax", // Allow cross-site requests for localhost
 					maxAge: 7 * 24 * 60 * 60,
 					path: "/",
 					value: refreshToken,
@@ -298,6 +298,41 @@ const authController = new Elysia({ prefix: "/auth" })
 			}
 		},
 		tCookie
-	);
+	)
+	.get("/me", async ({ requester }) => {
+		try {
+			// Get full user data from database
+			const user = await db.user.findOne(
+				{ id: requester.id },
+				{ populate: ["passwordHash"] }
+			);
+
+			if (!user) {
+				return status(404, {
+					success: false,
+					message: "User not found",
+				});
+			}
+
+			return {
+				success: true,
+				user: {
+					id: user.id,
+					name: user.name,
+					email: user.email,
+					phone: user.phoneNumber,
+					roles: user.roles,
+					createdAt: user.createdAt.toISOString(),
+					updatedAt: user.updatedAt.toISOString(),
+				},
+			};
+		} catch (err) {
+			console.error("Get user error:", err);
+			return status(500, {
+				success: false,
+				message: "Internal Server Error",
+			});
+		}
+	});
 
 export { authController };

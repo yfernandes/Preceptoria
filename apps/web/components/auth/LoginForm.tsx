@@ -120,7 +120,8 @@ export function LoginForm() {
 						)}
 						{process.env.NODE_ENV === "development" && (
 							<p className="text-xs text-gray-500">
-								💡 Dev tip: Use "admin" as password for quick access
+								💡 Dev tip: Use "TotallyS3cr3tP4ssw_rd" as password for quick
+								access
 							</p>
 						)}
 					</div>

@@ -26,14 +26,18 @@ export const useDashboardData = () => {
 					console.log("Classes API structure:", api.classes);
 
 					// Try accessing the root endpoint
-					const classesResponse = await api.classes.get();
+					const classesResponse = await api.classes.get({
+						credentials: "include",
+					});
 					console.log("Classes response:", classesResponse);
 				} catch (err) {
 					console.error("Classes API error:", err);
 				}
 
 				try {
-					const shiftsResponse = await api.shifts.get();
+					const shiftsResponse = await api.shifts.get({
+						credentials: "include",
+					});
 					console.log("Shifts response:", shiftsResponse);
 				} catch (err) {
 					console.error("Shifts API error:", err);

@@ -72,13 +72,29 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 	.derive(async ({ cookie, jwt, store: { users } }) => {
 		try {
 			// Check if session cookie exists
-			if (!cookie.session?.value?.CookieValue) {
+			let sessionToken: string | undefined;
+			// For real HTTP requests (parsed cookie object)
+			if (cookie.session?.value?.CookieValue) {
+				sessionToken = cookie.session.value.CookieValue;
+			} else if (typeof cookie.session?.value === "string") {
+				// For unit tests (raw string)
+				sessionToken = cookie.session.value;
+			} else if (typeof cookie.session === "string") {
+				// For unit tests (raw string directly)
+				sessionToken = cookie.session;
+			}
+			// If the value is a stringified object, parse it
+			if (sessionToken && sessionToken.startsWith("{")) {
+				try {
+					const parsed = JSON.parse(sessionToken);
+					if (parsed.CookieValue) sessionToken = parsed.CookieValue;
+				} catch {}
+			}
+			if (!sessionToken) {
 				throw new Error("No session cookie found");
 			}
 
-			const token = (await jwt.verify(
-				cookie.session.value.CookieValue
-			)) as TJwtPayload;
+			const token = (await jwt.verify(sessionToken)) as TJwtPayload;
 
 			if (!token?.id) {
 				throw new Error("Invalid token");

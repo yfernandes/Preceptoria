@@ -81,7 +81,8 @@ export default function DocumentsPage() {
 	const fetchDocuments = async () => {
 		try {
 			const response = await fetch(
-				`/api/documents?status=${statusFilter}&limit=50`
+				`/api/documents?status=${statusFilter}&limit=50`,
+				{ credentials: "include" }
 			);
 			const data = await response.json();
 			if (data.success) {
@@ -96,7 +97,9 @@ export default function DocumentsPage() {
 
 	const fetchDocument = async (id: string) => {
 		try {
-			const response = await fetch(`/api/documents/${id}`);
+			const response = await fetch(`/api/documents/${id}`, {
+				credentials: "include",
+			});
 			const data = await response.json();
 			if (data.success) {
 				setSelectedDocument(data.data);
@@ -118,6 +121,7 @@ export default function DocumentsPage() {
 					method: "PATCH",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ validationChecks, notes }),
+					credentials: "include",
 				}
 			);
 
@@ -140,6 +144,7 @@ export default function DocumentsPage() {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ notes }),
+					credentials: "include",
 				}
 			);
 
@@ -162,6 +167,7 @@ export default function DocumentsPage() {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ reason: rejectionReason, notes }),
+					credentials: "include",
 				}
 			);
 

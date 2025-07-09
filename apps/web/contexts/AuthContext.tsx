@@ -61,17 +61,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	const checkAuth = async () => {
 		try {
-			// Check if we have user data in localStorage
-			const userData = localStorage.getItem("user_data");
-			if (userData) {
-				const user = JSON.parse(userData);
-				console.log("User data found, user appears to be authenticated");
-				setUser(user);
+			// Try to get current user from server using session cookie
+			const response = await treatise.auth.me.get();
+
+			if (response.data?.success && response.data.user) {
+				console.log("Session is valid, user authenticated");
+				// Update localStorage with fresh user data
+				localStorage.setItem("user_data", JSON.stringify(response.data.user));
+				setUser(response.data.user);
 			} else {
-				console.log("No user data found, user not authenticated");
+				console.log("Session invalid or expired");
+				// Clear any stale data
+				localStorage.removeItem("user_data");
+				setUser(null);
 			}
 		} catch (error) {
 			console.log("Error checking auth:", error);
+			// Clear any stale data on error
+			localStorage.removeItem("user_data");
+			setUser(null);
 		} finally {
 			setLoading(false);
 		}
@@ -85,7 +93,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			const response = await treatise.auth.signin.post({ email, password });
 
 			if (response.data?.success && response.data.user) {
-				// Store user data in localStorage for persistence
+				// Session cookie is automatically set by the server
+				// Store user data in localStorage for UI persistence
 				localStorage.setItem("user_data", JSON.stringify(response.data.user));
 				setUser(response.data.user);
 			} else {
@@ -112,7 +121,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			const response = await treatise.auth.signup.post(userData);
 
 			if (response.data?.success && response.data.user) {
-				// Store user data in localStorage for persistence
+				// Session cookie is automatically set by the server
+				// Store user data in localStorage for UI persistence
 				localStorage.setItem("user_data", JSON.stringify(response.data.user));
 				setUser(response.data.user);
 			} else {
@@ -131,13 +141,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			await treatise.auth.logout.post();
 			// Clear local storage
 			localStorage.removeItem("user_data");
-			localStorage.removeItem("auth_token");
 			setUser(null);
 		} catch (error) {
 			console.error("Logout error:", error);
 			// Still clear user even if logout request fails
 			localStorage.removeItem("user_data");
-			localStorage.removeItem("auth_token");
 			setUser(null);
 		}
 	};
