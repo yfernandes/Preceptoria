@@ -387,7 +387,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 	)
 
 	// Get validation templates
-	.get("/validation-templates", async () => {
+	.get("/validation-templates", () => {
 		try {
 			const templates = Object.values(DocumentType).map((type) => ({
 				type,
@@ -446,7 +446,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 
 				// Create bundle metadata (in a real implementation, this would create a zip file)
 				const bundle = {
-					id: `bundle-${Date.now()}`,
+					id: `bundle-${Date.now().toString()}`,
 					name: bundleName,
 					notes,
 					createdAt: new Date(),
@@ -457,7 +457,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 						id: doc.id,
 						name: doc.name,
 						type: doc.type,
-						studentName: (doc.student as any).name || "Unknown Student",
+						studentName: doc.student.user.name,
 					})),
 				};
 
