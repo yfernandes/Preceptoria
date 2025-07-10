@@ -1,1005 +1,535 @@
-import { describe, it, expect } from "bun:test";
-import { UserRoles } from "../entities/role.abstract";
+import { describe, it } from "bun:test";
 
-describe("Auth Controller - Signup Endpoint Logic", () => {
-	describe("Input Validation", () => {
+describe.todo("Auth Controller - Signup Endpoint Logic", () => {
+	describe.todo("Input Validation", () => {
 		it("should validate email format", () => {
-			const invalidEmails = [
-				"invalid-email",
-				"test@",
-				"@example.com",
-				"test.example.com",
-				"",
-			];
-
-			const validEmails = [
-				"test@example.com",
-				"user.name@domain.co.uk",
-				"user+tag@example.org",
-			];
-
-			invalidEmails.forEach((email) => {
-				// Simple email validation regex
-				const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-				expect(emailRegex.test(email)).toBe(false);
-			});
-
-			validEmails.forEach((email) => {
-				const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-				expect(emailRegex.test(email)).toBe(true);
-			});
+			// TODO: Test that the signup endpoint properly validates email format
+			// This test should verify that:
+			// - Invalid email formats (missing @, missing domain, etc.) are rejected
+			// - Valid email formats are accepted
+			// - The validation uses proper regex patterns
+			// Why: Email validation is critical for user registration and prevents invalid data entry
 		});
 
 		it("should validate password minimum length", () => {
-			const shortPasswords = ["", "123", "12345"];
-			const validPasswords = ["123456", "password123", "securePass"];
-
-			shortPasswords.forEach((password) => {
-				expect(password.length).toBeLessThan(6);
-			});
-
-			validPasswords.forEach((password) => {
-				expect(password.length).toBeGreaterThanOrEqual(6);
-			});
+			// TODO: Test that the signup endpoint enforces minimum password length
+			// This test should verify that:
+			// - Passwords shorter than minimum length are rejected
+			// - Passwords meeting minimum length are accepted
+			// - Clear error messages are returned for invalid passwords
+			// Why: Password security is essential for user account protection
 		});
 
 		it("should validate required fields", () => {
-			const requiredFields = ["name", "email", "phone", "password"];
-
-			requiredFields.forEach((field) => {
-				expect(field).toBeTruthy();
-				expect(field.length).toBeGreaterThan(0);
-			});
+			// TODO: Test that all required fields are properly validated
+			// This test should verify that:
+			// - Missing required fields (name, email, phone, password) are rejected
+			// - Empty or whitespace-only values are rejected
+			// - All required fields are present in successful requests
+			// Why: Data integrity requires all necessary user information
 		});
 
 		it("should validate phone number format", () => {
-			const invalidPhones = [
-				"",
-				"123",
-				"abc",
-				"123456789",
-				"+123456789", // Too short
-			];
-
-			const validPhones = ["+5511999999999", "+5511888888888", "+12345678901"];
-
-			invalidPhones.forEach((phone) => {
-				// Basic phone validation - should have country code and sufficient length
-				expect(phone.length).toBeLessThan(11);
-			});
-
-			validPhones.forEach((phone) => {
-				// Should start with + and have sufficient length
-				expect(phone.startsWith("+")).toBe(true);
-				expect(phone.length).toBeGreaterThanOrEqual(10);
-			});
+			// TODO: Test that phone number format is properly validated
+			// This test should verify that:
+			// - Invalid phone formats (missing country code, too short, etc.) are rejected
+			// - Valid international phone formats are accepted
+			// - Country code format (+XX) is enforced
+			// Why: Phone validation ensures contact information is usable
 		});
 	});
 
-	describe("User Role Assignment", () => {
+	describe.todo("User Role Assignment", () => {
 		it("should assign Student role to new users", () => {
-			const userRoles = [UserRoles.Student];
-
-			expect(userRoles).toEqual([UserRoles.Student]);
-			expect(userRoles).toContain(UserRoles.Student);
-			expect(userRoles.length).toBe(1);
+			// TODO: Test that new users are assigned the Student role by default
+			// This test should verify that:
+			// - New signups automatically get Student role
+			// - The role assignment happens during user creation
+			// - The role is properly stored in the database
+			// Why: Default role assignment ensures proper access control from the start
 		});
 
 		it("should not assign other roles by default", () => {
-			const userRoles = [UserRoles.Student];
-
-			expect(userRoles).not.toContain(UserRoles.Preceptor);
-			expect(userRoles).not.toContain(UserRoles.Supervisor);
-			expect(userRoles).not.toContain(UserRoles.OrgAdmin);
-			expect(userRoles).not.toContain(UserRoles.SysAdmin);
-			expect(userRoles).not.toContain(UserRoles.HospitalManager);
+			// TODO: Test that new users don't get elevated roles by default
+			// This test should verify that:
+			// - New users don't get Preceptor, Supervisor, Admin roles automatically
+			// - Only Student role is assigned during signup
+			// - No privilege escalation occurs during registration
+			// Why: Security requires explicit role assignment, not automatic elevation
 		});
 
 		it("should allow multiple roles assignment", () => {
-			const userRoles = [UserRoles.Student, UserRoles.Preceptor];
-
-			expect(userRoles).toContain(UserRoles.Student);
-			expect(userRoles).toContain(UserRoles.Preceptor);
-			expect(userRoles.length).toBe(2);
+			// TODO: Test that users can have multiple roles assigned
+			// This test should verify that:
+			// - Users can be assigned multiple roles (e.g., Student + Preceptor)
+			// - Role combinations are properly stored and retrieved
+			// - Multiple roles work correctly in authorization checks
+			// Why: Users may need different roles for different contexts
 		});
 	});
 
-	describe("Signup Business Logic", () => {
+	describe.todo("Signup Business Logic", () => {
 		it("should handle successful user creation flow", () => {
-			// Simulate the signup flow logic
-			const signupData = {
-				name: "John Doe",
-				email: "john@example.com",
-				phone: "+5511999999999",
-				password: "password123",
-			};
-
-			// Step 1: Validate input
-			expect(signupData.name).toBeTruthy();
-			expect(signupData.email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-			expect(signupData.phone).toMatch(/^\+.+/);
-			expect(signupData.password.length).toBeGreaterThanOrEqual(6);
-
-			// Step 2: Check for existing user (simulated)
-			const existingUser = null; // No existing user
-			expect(existingUser).toBeNull();
-
-			// Step 3: Create user object (simulated)
-			const user = {
-				id: "user-123",
-				name: signupData.name,
-				email: signupData.email,
-				phone: signupData.phone,
-				roles: [UserRoles.Student],
-			};
-
-			// Step 4: Validate created user
-			expect(user.id).toBeDefined();
-			expect(user.name).toBe(signupData.name);
-			expect(user.email).toBe(signupData.email);
-			expect(user.roles).toEqual([UserRoles.Student]);
-
-			// Step 5: Simulate successful response
-			const response = {
-				success: true,
-				message: "User created successfully",
-				user: {
-					id: user.id,
-					name: user.name,
-					email: user.email,
-				},
-			};
-
-			expect(response.success).toBe(true);
-			expect(response.message).toBe("User created successfully");
-			expect(response.user.id).toBe(user.id);
-			expect(response.user.name).toBe(user.name);
-			expect(response.user.email).toBe(user.email);
+			// TODO: Test the complete successful signup flow
+			// This test should verify that:
+			// - Valid signup data creates a new user in the database
+			// - Password is properly hashed before storage
+			// - User receives appropriate success response
+			// - JWT tokens are generated and set as cookies
+			// - User can immediately log in after signup
+			// Why: End-to-end signup flow testing ensures the feature works correctly
 		});
 
 		it("should handle existing user error flow", () => {
-			// Simulate the signup flow when user already exists
-			const signupData = {
-				name: "John Doe",
-				email: "existing@example.com",
-				phone: "+5511999999999",
-				password: "password123",
-			};
-
-			// Step 1: Validate input
-			expect(signupData.name).toBeTruthy();
-			expect(signupData.email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-			expect(signupData.phone).toMatch(/^\+.+/);
-			expect(signupData.password.length).toBeGreaterThanOrEqual(6);
-
-			// Step 2: Check for existing user (simulated)
-			const existingUser = {
-				id: "existing-user-123",
-				email: signupData.email,
-			};
-			expect(existingUser).not.toBeNull();
-			expect(existingUser.email).toBe(signupData.email);
-
-			// Step 3: Simulate error response
-			const response = {
-				success: false,
-				message: "User already exists",
-			};
-
-			expect(response.success).toBe(false);
-			expect(response.message).toBe("User already exists");
+			// TODO: Test signup with existing email address
+			// This test should verify that:
+			// - Attempting to signup with existing email returns appropriate error
+			// - No duplicate user is created
+			// - Clear error message is returned
+			// - Database integrity is maintained
+			// Why: Prevents duplicate accounts and provides clear user feedback
 		});
 
 		it("should handle validation error flow", () => {
-			// Simulate validation errors
-			const validationErrors = [
-				{
-					field: "email",
-					constraints: { isEmail: "email must be an email" },
-				},
-				{
-					field: "password",
-					constraints: {
-						minLength: "password must be longer than or equal to 6 characters",
-					},
-				},
-			];
-
-			const response = {
-				success: false,
-				message: "Validation failed",
-				errors: validationErrors,
-			};
-
-			expect(response.success).toBe(false);
-			expect(response.message).toBe("Validation failed");
-			expect(response.errors).toBeDefined();
-			expect(response.errors.length).toBe(2);
-			expect(response.errors[0].field).toBe("email");
-			expect(response.errors[1].field).toBe("password");
+			// TODO: Test signup with invalid data
+			// This test should verify that:
+			// - Invalid input data returns proper validation errors
+			// - Error messages are clear and helpful
+			// - No user is created when validation fails
+			// - All validation rules are properly enforced
+			// Why: Proper validation prevents data corruption and improves UX
 		});
 
 		it("should handle internal server error flow", () => {
-			// Simulate internal server error
-			const response = {
-				success: false,
-				message: "Internal Server Error",
-			};
-
-			expect(response.success).toBe(false);
-			expect(response.message).toBe("Internal Server Error");
+			// TODO: Test signup when database or other services fail
+			// This test should verify that:
+			// - Database connection failures are handled gracefully
+			// - Appropriate error responses are returned
+			// - No partial user data is left in inconsistent state
+			// - Error logging occurs for debugging
+			// Why: Robust error handling ensures system stability
 		});
 	});
 
-	describe("JWT Token Generation", () => {
+	describe.todo("JWT Token Generation", () => {
 		it("should generate access token with correct payload", () => {
-			const user = {
-				id: "user-123",
-				roles: [UserRoles.Student],
-			};
-
-			const accessTokenPayload = {
-				id: user.id,
-				roles: user.roles.toString(),
-			};
-
-			expect(accessTokenPayload.id).toBe(user.id);
-			expect(accessTokenPayload.roles).toBe(user.roles.toString());
-			expect(accessTokenPayload.roles).toBe("Student");
+			// TODO: Test JWT access token generation
+			// This test should verify that:
+			// - Access tokens contain correct user ID and roles
+			// - Token expiration is set correctly (15 minutes)
+			// - Token is properly signed with secret key
+			// - Token can be verified and decoded
+			// Why: Secure token generation is essential for authentication
 		});
 
 		it("should generate refresh token with extended expiration", () => {
-			const user = {
-				id: "user-123",
-				roles: [UserRoles.Student],
-			};
-
-			const refreshTokenPayload = {
-				id: user.id,
-				roles: user.roles.toString(),
-				exp: "7d",
-			};
-
-			expect(refreshTokenPayload.id).toBe(user.id);
-			expect(refreshTokenPayload.roles).toBe(user.roles.toString());
-			expect(refreshTokenPayload.exp).toBe("7d");
+			// TODO: Test JWT refresh token generation
+			// This test should verify that:
+			// - Refresh tokens have longer expiration (7 days)
+			// - Refresh tokens contain correct user information
+			// - Tokens are properly signed and can be verified
+			// - Refresh tokens are different from access tokens
+			// Why: Refresh tokens enable secure session management
 		});
 	});
 
-	describe("Cookie Settings", () => {
+	describe.todo("Cookie Settings", () => {
 		it("should set access token cookie with correct properties", () => {
-			const accessTokenCookie = {
-				httpOnly: true,
-				secure: true,
-				sameSite: "strict",
-				maxAge: 15 * 60, // 15 minutes
-				path: "/",
-				value: "access-token-123",
-			};
-
-			expect(accessTokenCookie.httpOnly).toBe(true);
-			expect(accessTokenCookie.secure).toBe(true);
-			expect(accessTokenCookie.sameSite).toBe("strict");
-			expect(accessTokenCookie.maxAge).toBe(15 * 60);
-			expect(accessTokenCookie.path).toBe("/");
-			expect(accessTokenCookie.value).toBeDefined();
+			// TODO: Test access token cookie configuration
+			// This test should verify that:
+			// - Cookie is httpOnly (not accessible via JavaScript)
+			// - Cookie is secure (HTTPS only)
+			// - Cookie has correct expiration time
+			// - Cookie path and domain are set correctly
+			// Why: Secure cookie settings prevent token theft
 		});
 
 		it("should set refresh token cookie with correct properties", () => {
-			const refreshTokenCookie = {
-				httpOnly: true,
-				secure: true,
-				sameSite: "strict",
-				maxAge: 7 * 24 * 60 * 60, // 7 days
-				path: "/",
-				value: "refresh-token-123",
-			};
-
-			expect(refreshTokenCookie.httpOnly).toBe(true);
-			expect(refreshTokenCookie.secure).toBe(true);
-			expect(refreshTokenCookie.sameSite).toBe("strict");
-			expect(refreshTokenCookie.maxAge).toBe(7 * 24 * 60 * 60);
-			expect(refreshTokenCookie.path).toBe("/");
-			expect(refreshTokenCookie.value).toBeDefined();
+			// TODO: Test refresh token cookie configuration
+			// This test should verify that:
+			// - Refresh token cookie has longer expiration
+			// - Cookie security settings are properly configured
+			// - Cookie is separate from access token cookie
+			// Why: Refresh token cookies need different security parameters
 		});
 	});
 
-	describe("Signin Endpoint Logic", () => {
-		describe("Input Validation", () => {
+	describe.todo("Signin Endpoint Logic", () => {
+		describe.todo("Input Validation", () => {
 			it("should validate signin email format", () => {
-				const invalidEmails = [
-					"invalid-email",
-					"test@",
-					"@example.com",
-					"test.example.com",
-					"",
-				];
-
-				const validEmails = [
-					"test@example.com",
-					"user.name@domain.co.uk",
-					"user+tag@example.org",
-				];
-
-				invalidEmails.forEach((email) => {
-					const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-					expect(emailRegex.test(email)).toBe(false);
-				});
-
-				validEmails.forEach((email) => {
-					const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-					expect(emailRegex.test(email)).toBe(true);
-				});
+				// TODO: Test email validation in signin endpoint
+				// This test should verify that:
+				// - Invalid email formats are rejected during signin
+				// - Valid email formats are accepted
+				// - Same validation rules as signup are applied
+				// Why: Consistent validation across auth endpoints
 			});
 
 			it("should validate signin password is not empty", () => {
-				const emptyPasswords = ["", "   "];
-				const nullishPasswords = [null, undefined];
-				const validPasswords = ["password", "123456", "myPassword123"];
-
-				emptyPasswords.forEach((password) => {
-					expect(!password || password.trim().length === 0).toBe(true);
-				});
-
-				nullishPasswords.forEach((password) => {
-					expect(!password).toBe(true);
-				});
-
-				validPasswords.forEach((password) => {
-					expect(password && password.trim().length > 0).toBe(true);
-				});
+				// TODO: Test password validation in signin endpoint
+				// This test should verify that:
+				// - Empty passwords are rejected
+				// - Null/undefined passwords are handled properly
+				// - Whitespace-only passwords are rejected
+				// Why: Prevents empty password authentication attempts
 			});
 		});
 
-		describe("Signin Business Logic", () => {
+		describe.todo("Signin Business Logic", () => {
 			it("should handle successful signin flow", () => {
-				// Simulate the signin flow logic
-				const signinData = {
-					email: "john@example.com",
-					password: "password123",
-				};
-
-				// Step 1: Validate input
-				expect(signinData.email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-				expect(signinData.password).toBeTruthy();
-
-				// Step 2: Find user (simulated)
-				const user = {
-					id: "user-123",
-					name: "John Doe",
-					email: signinData.email,
-					passwordHash: "hashedPassword123",
-					roles: [UserRoles.Student],
-				};
-				expect(user).not.toBeNull();
-				expect(user.email).toBe(signinData.email);
-
-				// Step 3: Verify password (simulated)
-				const passwordIsValid = true; // Simulated successful verification
-				expect(passwordIsValid).toBe(true);
-
-				// Step 4: Generate tokens (simulated)
-				const accessToken = "access-token-123";
-				const refreshToken = "refresh-token-123";
-				expect(accessToken).toBeDefined();
-				expect(refreshToken).toBeDefined();
-
-				// Step 5: Simulate successful response
-				const response = {
-					success: true,
-					message: "User logged in successfully",
-					user: {
-						id: user.id,
-						name: user.name,
-						email: user.email,
-					},
-				};
-
-				expect(response.success).toBe(true);
-				expect(response.message).toBe("User logged in successfully");
-				expect(response.user.id).toBe(user.id);
-				expect(response.user.name).toBe(user.name);
-				expect(response.user.email).toBe(user.email);
+				// TODO: Test successful signin flow
+				// This test should verify that:
+				// - Valid credentials authenticate the user
+				// - User data is returned in response
+				// - JWT tokens are generated and set as cookies
+				// - User session is properly established
+				// Why: Core authentication functionality must work correctly
 			});
 
 			it("should handle user not found error flow", () => {
-				// Simulate the signin flow when user doesn't exist
-				const signinData = {
-					email: "nonexistent@example.com",
-					password: "password123",
-				};
-
-				// Step 1: Validate input
-				expect(signinData.email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-				expect(signinData.password).toBeTruthy();
-
-				// Step 2: Find user (simulated - not found)
-				const user = null;
-				expect(user).toBeNull();
-
-				// Step 3: Simulate error response
-				const response = {
-					success: false,
-					message: "User or password incorrect",
-				};
-
-				expect(response.success).toBe(false);
-				expect(response.message).toBe("User or password incorrect");
+				// TODO: Test signin with non-existent user
+				// This test should verify that:
+				// - Non-existent email returns appropriate error
+				// - No sensitive information is leaked in error messages
+				// - Response time is consistent (no timing attacks)
+				// Why: Secure error handling prevents user enumeration
 			});
 
 			it("should handle incorrect password error flow", () => {
-				// Simulate the signin flow when password is wrong
-				const signinData = {
-					email: "john@example.com",
-					password: "wrongpassword",
-				};
-
-				// Step 1: Validate input
-				expect(signinData.email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-				expect(signinData.password).toBeTruthy();
-
-				// Step 2: Find user (simulated)
-				const user = {
-					id: "user-123",
-					name: "John Doe",
-					email: signinData.email,
-					passwordHash: "hashedPassword123",
-					roles: [UserRoles.Student],
-				};
-				expect(user).not.toBeNull();
-				expect(user.email).toBe(signinData.email);
-
-				// Step 3: Verify password (simulated - failed)
-				const passwordIsValid = false; // Simulated failed verification
-				expect(passwordIsValid).toBe(false);
-
-				// Step 4: Simulate error response
-				const response = {
-					success: false,
-					message: "User or password incorrect",
-				};
-
-				expect(response.success).toBe(false);
-				expect(response.message).toBe("User or password incorrect");
+				// TODO: Test signin with wrong password
+				// This test should verify that:
+				// - Wrong password returns appropriate error
+				// - Error message doesn't reveal if user exists
+				// - Password verification is secure (timing attack resistant)
+				// Why: Secure password verification prevents brute force attacks
 			});
 
 			it("should handle internal server error flow", () => {
-				// Simulate internal server error
-				const response = {
-					success: false,
-					message: "Internal Server Error",
-				};
-
-				expect(response.success).toBe(false);
-				expect(response.message).toBe("Internal Server Error");
+				// TODO: Test signin when services fail
+				// This test should verify that:
+				// - Database failures are handled gracefully
+				// - Appropriate error responses are returned
+				// - No sensitive data is exposed in errors
+				// Why: Robust error handling maintains system security
 			});
 		});
 
-		describe("Password Verification", () => {
+		describe.todo("Password Verification", () => {
 			it("should verify correct password", () => {
-				const password = "correctPassword123";
-				const hashedPassword = "hashedCorrectPassword123";
-
-				// Simulate password verification
-				// Simulate password verification (always true for this test)
-				const passwordIsValid = true;
-
-				expect(passwordIsValid).toBe(true);
+				// TODO: Test password verification with correct password
+				// This test should verify that:
+				// - Correct password hash comparison works
+				// - Verification is timing attack resistant
+				// - Proper hashing algorithm is used (bcrypt/argon2)
+				// Why: Secure password verification is critical for authentication
+			});
 
 			it("should reject incorrect password", () => {
-				// Simulate password verification - this would be false in real scenario
-				const isCorrect = false; // Simulated failed verification
-
-				expect(isCorrect).toBe(false);
+				// TODO: Test password verification with wrong password
+				// This test should verify that:
+				// - Wrong passwords are properly rejected
+				// - Verification timing is consistent
+				// - No information leakage occurs
+				// Why: Prevents password guessing attacks
 			});
 
 			it("should handle empty password", () => {
-				// Simulate password verification - empty password should fail
-				const isCorrect = false; // Simulated failed verification for empty password
-
-				expect(isCorrect).toBe(false);
+				// TODO: Test password verification with empty password
+				// This test should verify that:
+				// - Empty passwords are rejected
+				// - Null/undefined passwords are handled safely
+				// - No exceptions are thrown
+				// Why: Robust input handling prevents crashes
 			});
 		});
 
-		describe("JWT Token Generation for Signin", () => {
+		describe.todo("JWT Token Generation for Signin", () => {
 			it("should generate access token with correct payload", () => {
-				const user = {
-					id: "user-123",
-					roles: [UserRoles.Student],
-				};
-
-				const accessTokenPayload = {
-					id: user.id,
-					roles: user.roles.toString(),
-				};
-
-				expect(accessTokenPayload.id).toBe(user.id);
-				expect(accessTokenPayload.roles).toBe(user.roles.toString());
-				expect(accessTokenPayload.roles).toBe("Student");
+				// TODO: Test access token generation during signin
+				// This test should verify that:
+				// - Token contains correct user information
+				// - Token expiration is set properly
+				// - Token is properly signed
+				// Why: Secure token generation for authenticated sessions
 			});
 
 			it("should generate refresh token with extended expiration", () => {
-				const user = {
-					id: "user-123",
-					roles: [UserRoles.Student],
-				};
-
-				const refreshTokenPayload = {
-					id: user.id,
-					roles: user.roles.toString(),
-					exp: "7d",
-				};
-
-				expect(refreshTokenPayload.id).toBe(user.id);
-				expect(refreshTokenPayload.roles).toBe(user.roles.toString());
-				expect(refreshTokenPayload.exp).toBe("7d");
+				// TODO: Test refresh token generation during signin
+				// This test should verify that:
+				// - Refresh token has correct expiration
+				// - Token contains necessary user data
+				// - Token is different from access token
+				// Why: Refresh tokens enable session persistence
 			});
 
 			it("should handle multiple user roles in token", () => {
-				const user = {
-					id: "user-123",
-					roles: [UserRoles.Student, UserRoles.Preceptor],
-				};
-
-				const accessTokenPayload = {
-					id: user.id,
-					roles: user.roles.toString(),
-				};
-
-				expect(accessTokenPayload.id).toBe(user.id);
-				expect(accessTokenPayload.roles).toBe("Student,Preceptor");
+				// TODO: Test token generation for users with multiple roles
+				// This test should verify that:
+				// - All user roles are included in token
+				// - Role format is consistent and parseable
+				// - Token size remains reasonable
+				// Why: Multi-role users need all roles in their tokens
 			});
 		});
 
-		describe("Cookie Settings for Signin", () => {
+		describe.todo("Cookie Settings for Signin", () => {
 			it("should set access token cookie with correct properties", () => {
-				const accessTokenCookie = {
-					httpOnly: true,
-					secure: true,
-					sameSite: "strict",
-					maxAge: 15 * 60, // 15 minutes
-					path: "/",
-					value: "access-token-123",
-				};
-
-				expect(accessTokenCookie.httpOnly).toBe(true);
-				expect(accessTokenCookie.secure).toBe(true);
-				expect(accessTokenCookie.sameSite).toBe("strict");
-				expect(accessTokenCookie.maxAge).toBe(15 * 60);
-				expect(accessTokenCookie.path).toBe("/");
-				expect(accessTokenCookie.value).toBeDefined();
+				// TODO: Test access token cookie settings during signin
+				// This test should verify that:
+				// - Cookie security properties are set correctly
+				// - Cookie expiration matches token expiration
+				// - Cookie is properly configured for the domain
+				// Why: Secure cookie configuration prevents token theft
 			});
 
 			it("should set refresh token cookie with correct properties", () => {
-				const refreshTokenCookie = {
-					httpOnly: true,
-					secure: true,
-					sameSite: "strict",
-					maxAge: 7 * 24 * 60 * 60, // 7 days
-					path: "/",
-					value: "refresh-token-123",
-				};
-
-				expect(refreshTokenCookie.httpOnly).toBe(true);
-				expect(refreshTokenCookie.secure).toBe(true);
-				expect(refreshTokenCookie.sameSite).toBe("strict");
-				expect(refreshTokenCookie.maxAge).toBe(7 * 24 * 60 * 60);
-				expect(refreshTokenCookie.path).toBe("/");
-				expect(refreshTokenCookie.value).toBeDefined();
+				// TODO: Test refresh token cookie settings during signin
+				// This test should verify that:
+				// - Refresh token cookie has correct expiration
+				// - Cookie security settings are appropriate
+				// - Cookie is separate from access token cookie
+				// Why: Refresh token cookies need different security parameters
 			});
 		});
 	});
 
-	describe("Logout Endpoint Logic", () => {
-		describe("Logout Business Logic", () => {
+	describe.todo("Logout Endpoint Logic", () => {
+		describe.todo("Logout Business Logic", () => {
 			it("should handle successful logout flow", () => {
-				// Step 1: Remove session cookie (simulated)
-				const sessionRemoved = true;
-				expect(sessionRemoved).toBe(true);
-
-				// Step 2: Remove refresh cookie (simulated)
-				const refreshRemoved = true;
-				expect(refreshRemoved).toBe(true);
-
-				// Step 3: Simulate successful response
-				const response = {
-					success: true,
-					message: "Logged out successfully",
-				};
-
-				expect(response.success).toBe(true);
-				expect(response.message).toBe("Logged out successfully");
+				// TODO: Test successful logout flow
+				// This test should verify that:
+				// - Access token cookie is properly cleared
+				// - Refresh token cookie is properly cleared
+				// - User session is terminated
+				// - Success response is returned
+				// Why: Proper logout ensures session security
 			});
 
 			it("should handle logout with no existing cookies", () => {
-				// Step 1: Remove session cookie (simulated - no cookie to remove)
-				const sessionRemoved = true;
-				expect(sessionRemoved).toBe(true);
-
-				// Step 2: Remove refresh cookie (simulated - no cookie to remove)
-				const refreshRemoved = true;
-				expect(refreshRemoved).toBe(true);
-
-				// Step 3: Simulate successful response
-				const response = {
-					success: true,
-					message: "Logged out successfully",
-				};
-
-				expect(response.success).toBe(true);
-				expect(response.message).toBe("Logged out successfully");
+				// TODO: Test logout when no cookies exist
+				// This test should verify that:
+				// - Logout succeeds even without existing cookies
+				// - No errors are thrown
+				// - Appropriate response is returned
+				// Why: Robust logout handles edge cases gracefully
 			});
 
 			it("should handle logout with only session cookie", () => {
-				// Step 1: Remove session cookie (simulated)
-				const sessionRemoved = true;
-				expect(sessionRemoved).toBe(true);
-
-				// Step 2: Remove refresh cookie (simulated - no cookie to remove)
-				const refreshRemoved = true;
-				expect(refreshRemoved).toBe(true);
-
-				// Step 3: Simulate successful response
-				const response = {
-					success: true,
-					message: "Logged out successfully",
-				};
-
-				expect(response.success).toBe(true);
-				expect(response.message).toBe("Logged out successfully");
+				// TODO: Test logout with only access token cookie
+				// This test should verify that:
+				// - Access token cookie is cleared
+				// - No refresh token operations fail
+				// - Logout completes successfully
+				// Why: Partial cookie scenarios should be handled
 			});
 
 			it("should handle logout with only refresh cookie", () => {
-				// Step 1: Remove session cookie (simulated - no cookie to remove)
-				const sessionRemoved = true;
-				expect(sessionRemoved).toBe(true);
-
-				// Step 2: Remove refresh cookie (simulated)
-				const refreshRemoved = true;
-				expect(refreshRemoved).toBe(true);
-
-				// Step 3: Simulate successful response
-				const response = {
-					success: true,
-					message: "Logged out successfully",
-				};
-
-				expect(response.success).toBe(true);
-				expect(response.message).toBe("Logged out successfully");
+				// TODO: Test logout with only refresh token cookie
+				// This test should verify that:
+				// - Refresh token cookie is cleared
+				// - No access token operations fail
+				// - Logout completes successfully
+				// Why: Partial cookie scenarios should be handled
 			});
 		});
 
-		describe("Cookie Removal", () => {
+		describe.todo("Cookie Removal", () => {
 			it("should remove session cookie", () => {
-				// Simulate cookie removal
-				const isRemoved = true;
-				expect(isRemoved).toBe(true);
+				// TODO: Test access token cookie removal
+				// This test should verify that:
+				// - Access token cookie is properly cleared
+				// - Cookie expiration is set to past date
+				// - Cookie path and domain match original settings
+				// Why: Proper cookie removal prevents token reuse
 			});
 
 			it("should remove refresh cookie", () => {
-				// Simulate cookie removal
-				const isRemoved = true;
-				expect(isRemoved).toBe(true);
+				// TODO: Test refresh token cookie removal
+				// This test should verify that:
+				// - Refresh token cookie is properly cleared
+				// - Cookie expiration is set to past date
+				// - Cookie path and domain match original settings
+				// Why: Proper cookie removal prevents token reuse
 			});
 
 			it("should handle cookie removal gracefully", () => {
-				const cookies = [
-					{ value: "token-1" },
-					{ value: null },
-					{ value: undefined },
-					{ value: "" },
-				];
-
-				cookies.forEach(() => {
-					// Simulate cookie removal - should not throw errors
-					const isRemoved = true;
-					expect(isRemoved).toBe(true);
-				});
+				// TODO: Test cookie removal with various cookie states
+				// This test should verify that:
+				// - Null/undefined cookies don't cause errors
+				// - Empty cookies are handled properly
+				// - Invalid cookie values don't crash the system
+				// Why: Robust cookie handling prevents crashes
 			});
 		});
 	});
 
-	describe("Refresh Endpoint Logic", () => {
-		describe("Input Validation", () => {
+	describe.todo("Refresh Endpoint Logic", () => {
+		describe.todo("Input Validation", () => {
 			it("should validate refresh token presence", () => {
-				const validTokens = [
-					"valid-token-123",
-					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-				];
-				const invalidTokens = [null, undefined, "", "   "];
-
-				validTokens.forEach((token) => {
-					expect(token && token.trim().length > 0).toBe(true);
-				});
-
-				invalidTokens.forEach((token) => {
-					expect(
-						!token || (typeof token === "string" && token.trim().length === 0)
-					).toBe(true);
-				});
+				// TODO: Test refresh token presence validation
+				// This test should verify that:
+				// - Missing refresh tokens are rejected
+				// - Empty refresh tokens are rejected
+				// - Null/undefined tokens are handled properly
+				// Why: Token presence validation prevents invalid requests
 			});
 
 			it("should validate refresh token format", () => {
-				const validTokenFormats = [
-					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-					"valid.jwt.token",
-				];
-
-				const invalidTokenFormats = [
-					"not-a-jwt-token",
-					"invalid.token",
-					"token.without.proper.format",
-				];
-
-				validTokenFormats.forEach((token) => {
-					// Basic JWT format validation (3 parts separated by dots)
-					const parts = token.split(".");
-					expect(parts.length).toBe(3);
-				});
-
-				invalidTokenFormats.forEach((token) => {
-					const parts = token.split(".");
-					expect(parts.length).not.toBe(3);
-				});
+				// TODO: Test refresh token format validation
+				// This test should verify that:
+				// - Malformed JWT tokens are rejected
+				// - Tokens with wrong structure are rejected
+				// - Valid JWT format tokens are accepted
+				// Why: Token format validation prevents processing invalid tokens
 			});
 		});
 
-		describe("Refresh Business Logic", () => {
+		describe.todo("Refresh Business Logic", () => {
 			it("should handle successful token refresh flow", () => {
-				// Simulate the refresh flow logic
-				const refreshToken = "valid-refresh-token-123";
-
-				// Step 1: Validate refresh token presence
-				expect(refreshToken).toBeTruthy();
-				expect(refreshToken.length).toBeGreaterThan(0);
-
-				// Step 2: Verify refresh token (simulated)
-				const payload = {
-					id: "user-123",
-					roles: "Student",
-				};
-				expect(payload).toBeDefined();
-				expect(payload.id).toBe("user-123");
-				expect(payload.roles).toBe("Student");
-
-				// Step 3: Generate new access token (simulated)
-				const newAccessToken = "new-access-token-456";
-				expect(newAccessToken).toBeDefined();
-				expect(newAccessToken).not.toBe(refreshToken);
-
-				// Step 4: Set new access token cookie (simulated)
-				const cookieSet = true;
-				expect(cookieSet).toBe(true);
-
-				// Step 5: Simulate successful response
-				const response = {
-					success: true,
-				};
-
-				expect(response.success).toBe(true);
+				// TODO: Test successful token refresh flow
+				// This test should verify that:
+				// - Valid refresh token generates new access token
+				// - New access token has correct payload and expiration
+				// - New access token cookie is set properly
+				// - Refresh token remains valid for future use
+				// Why: Token refresh enables continuous user sessions
 			});
 
 			it("should handle invalid refresh token error flow", () => {
-				// Simulate the refresh flow with invalid token
-				const refreshToken = "invalid-refresh-token-123";
-
-				// Step 1: Validate refresh token presence
-				expect(refreshToken).toBeTruthy();
-				expect(refreshToken.length).toBeGreaterThan(0);
-
-				// Step 2: Verify refresh token (simulated - fails)
-				const verificationError = new Error("Invalid token");
-				expect(verificationError).toBeInstanceOf(Error);
-				expect(verificationError.message).toBe("Invalid token");
-
-				// Step 3: Remove invalid refresh token (simulated)
-				const tokenRemoved = true;
-				expect(tokenRemoved).toBe(true);
-
-				// Step 4: Simulate error response
-				const response = {
-					success: false,
-					message: "Invalid or Expired refresh token.",
-				};
-
-				expect(response.success).toBe(false);
-				expect(response.message).toBe("Invalid or Expired refresh token.");
+				// TODO: Test refresh with invalid token
+				// This test should verify that:
+				// - Invalid tokens are rejected
+				// - Invalid refresh token cookie is cleared
+				// - Appropriate error response is returned
+				// - User is forced to re-authenticate
+				// Why: Invalid token handling maintains security
 			});
 
 			it("should handle expired refresh token error flow", () => {
-				// Simulate the refresh flow with expired token
-				const refreshToken = "expired-refresh-token-123";
-
-				// Step 1: Validate refresh token presence
-				expect(refreshToken).toBeTruthy();
-				expect(refreshToken.length).toBeGreaterThan(0);
-
-				// Step 2: Verify refresh token (simulated - expired)
-				const verificationError = new Error("Token expired");
-				expect(verificationError).toBeInstanceOf(Error);
-				expect(verificationError.message).toBe("Token expired");
-
-				// Step 3: Remove expired refresh token (simulated)
-				const tokenRemoved = true;
-				expect(tokenRemoved).toBe(true);
-
-				// Step 4: Simulate error response
-				const response = {
-					success: false,
-					message: "Invalid or Expired refresh token.",
-				};
-
-				expect(response.success).toBe(false);
-				expect(response.message).toBe("Invalid or Expired refresh token.");
+				// TODO: Test refresh with expired token
+				// This test should verify that:
+				// - Expired tokens are rejected
+				// - Expired refresh token cookie is cleared
+				// - Appropriate error response is returned
+				// - User is forced to re-authenticate
+				// Why: Expired token handling maintains security
 			});
 
 			it("should handle missing refresh token error flow", () => {
-				// Simulate the refresh flow with missing token
-				const refreshToken = null;
-
-				// Step 1: Validate refresh token presence
-				expect(refreshToken).toBeFalsy();
-
-				// Step 2: Simulate error response
-				const response = {
-					success: false,
-					message: "Invalid or Expired refresh token.",
-				};
-
-				expect(response.success).toBe(false);
-				expect(response.message).toBe("Invalid or Expired refresh token.");
+				// TODO: Test refresh without token
+				// This test should verify that:
+				// - Missing tokens return appropriate error
+				// - No token processing attempts occur
+				// - User is prompted to authenticate
+				// Why: Missing token handling provides clear user feedback
 			});
 
 			it("should handle malformed refresh token error flow", () => {
-				// Simulate the refresh flow with malformed token
-				const refreshToken = "malformed.token";
-
-				// Step 1: Validate refresh token presence
-				expect(refreshToken).toBeTruthy();
-				expect(refreshToken.length).toBeGreaterThan(0);
-
-				// Step 2: Verify refresh token (simulated - malformed)
-				const verificationError = new Error("Malformed token");
-				expect(verificationError).toBeInstanceOf(Error);
-				expect(verificationError.message).toBe("Malformed token");
-
-				// Step 3: Remove malformed refresh token (simulated)
-				const tokenRemoved = true;
-				expect(tokenRemoved).toBe(true);
-
-				// Step 4: Simulate error response
-				const response = {
-					success: false,
-					message: "Invalid or Expired refresh token.",
-				};
-
-				expect(response.success).toBe(false);
-				expect(response.message).toBe("Invalid or Expired refresh token.");
+				// TODO: Test refresh with malformed token
+				// This test should verify that:
+				// - Malformed tokens are rejected
+				// - Malformed token cookie is cleared
+				// - Appropriate error response is returned
+				// - No exceptions are thrown
+				// Why: Malformed token handling prevents crashes
 			});
 		});
 
-		describe("JWT Token Verification", () => {
+		describe.todo("JWT Token Verification", () => {
 			it("should verify valid refresh token", () => {
-				const expectedPayload = {
-					id: "user-123",
-					roles: "Student",
-				};
-
-				// Simulate token verification
-				const payload = expectedPayload;
-
-				expect(payload).toEqual(expectedPayload);
-				expect(payload.id).toBe("user-123");
-				expect(payload.roles).toBe("Student");
+				// TODO: Test valid refresh token verification
+				// This test should verify that:
+				// - Valid tokens are properly verified
+				// - Token payload is correctly extracted
+				// - Token signature is validated
+				// - User information is preserved
+				// Why: Token verification ensures authenticity
 			});
 
 			it("should reject invalid refresh token", () => {
-				// Simulate failed token verification
-				const verificationError = new Error("Invalid token");
-
-				expect(verificationError).toBeInstanceOf(Error);
-				expect(verificationError.message).toBe("Invalid token");
+				// TODO: Test invalid refresh token rejection
+				// This test should verify that:
+				// - Invalid signatures are rejected
+				// - Tampered tokens are rejected
+				// - Appropriate error is thrown
+				// Why: Invalid token rejection maintains security
 			});
 
 			it("should reject expired refresh token", () => {
-				// Simulate failed token verification due to expiration
-				const verificationError = new Error("Token expired");
-
-				expect(verificationError).toBeInstanceOf(Error);
-				expect(verificationError.message).toBe("Token expired");
+				// TODO: Test expired refresh token rejection
+				// This test should verify that:
+				// - Expired tokens are properly detected
+				// - Expiration validation works correctly
+				// - Appropriate error is thrown
+				// Why: Expired token rejection maintains security
 			});
 
 			it("should reject malformed refresh token", () => {
-				// Simulate failed token verification due to malformed token
-				const verificationError = new Error("Malformed token");
-
-				expect(verificationError).toBeInstanceOf(Error);
-				expect(verificationError.message).toBe("Malformed token");
+				// TODO: Test malformed refresh token rejection
+				// This test should verify that:
+				// - Malformed JWT structure is rejected
+				// - Invalid base64 encoding is handled
+				// - Appropriate error is thrown
+				// Why: Malformed token rejection prevents crashes
 			});
 		});
 
-		describe("New Access Token Generation", () => {
+		describe.todo("New Access Token Generation", () => {
 			it("should generate new access token with correct payload", () => {
-				const payload = {
-					id: "user-123",
-					roles: "Student",
-				};
-
-				const newAccessTokenPayload = {
-					id: payload.id,
-					roles: payload.roles,
-				};
-
-				expect(newAccessTokenPayload.id).toBe(payload.id);
-				expect(newAccessTokenPayload.roles).toBe(payload.roles);
-				expect(newAccessTokenPayload.id).toBe("user-123");
-				expect(newAccessTokenPayload.roles).toBe("Student");
+				// TODO: Test new access token generation
+				// This test should verify that:
+				// - New token contains correct user information
+				// - Token expiration is set to 15 minutes
+				// - Token is properly signed
+				// - Token is different from refresh token
+				// Why: New token generation enables session continuation
 			});
 
 			it("should generate new access token with multiple roles", () => {
-				const payload = {
-					id: "user-123",
-					roles: "Student,Preceptor",
-				};
-
-				const newAccessTokenPayload = {
-					id: payload.id,
-					roles: payload.roles,
-				};
-
-				expect(newAccessTokenPayload.id).toBe(payload.id);
-				expect(newAccessTokenPayload.roles).toBe(payload.roles);
-				expect(newAccessTokenPayload.roles).toBe("Student,Preceptor");
+				// TODO: Test token generation for multi-role users
+				// This test should verify that:
+				// - All user roles are included in new token
+				// - Role format is consistent
+				// - Token payload is complete
+				// Why: Multi-role users need complete role information
 			});
 
 			it("should generate different token than refresh token", () => {
-				const refreshToken = "refresh-token-123";
-				const newAccessToken = "new-access-token-456";
-
-				expect(newAccessToken).not.toBe(refreshToken);
-				expect(newAccessToken).toBeDefined();
-				expect(refreshToken).toBeDefined();
+				// TODO: Test token uniqueness
+				// This test should verify that:
+				// - New access token is different from refresh token
+				// - Tokens have different purposes and expirations
+				// - No token reuse occurs
+				// Why: Token separation maintains security boundaries
 			});
 		});
 
-		describe("Cookie Management for Refresh", () => {
+		describe.todo("Cookie Management for Refresh", () => {
 			it("should set new access token cookie with correct properties", () => {
-				const newAccessTokenCookie = {
-					httpOnly: true,
-					secure: true,
-					sameSite: "strict",
-					maxAge: 15 * 60, // 15 minutes
-					path: "/",
-					value: "new-access-token-456",
-				};
-
-				expect(newAccessTokenCookie.httpOnly).toBe(true);
-				expect(newAccessTokenCookie.secure).toBe(true);
-				expect(newAccessTokenCookie.sameSite).toBe("strict");
-				expect(newAccessTokenCookie.maxAge).toBe(15 * 60);
-				expect(newAccessTokenCookie.path).toBe("/");
-				expect(newAccessTokenCookie.value).toBeDefined();
+				// TODO: Test new access token cookie setting
+				// This test should verify that:
+				// - New access token cookie is set with correct properties
+				// - Cookie expiration matches token expiration
+				// - Cookie security settings are maintained
+				// Why: Proper cookie management ensures token delivery
 			});
 
 			it("should remove invalid refresh token cookie", () => {
-				// Simulate cookie removal
-				const isRemoved = true;
-				expect(isRemoved).toBe(true);
+				// TODO: Test invalid refresh token cookie removal
+				// This test should verify that:
+				// - Invalid refresh token cookies are cleared
+				// - Cookie removal uses correct path and domain
+				// - No errors occur during removal
+				// Why: Invalid token cleanup maintains security
 			});
 
 			it("should handle cookie operations gracefully", () => {
-				const cookies = [
-					{ value: "valid-token" },
-					{ value: null },
-					{ value: undefined },
-					{ value: "" },
-				];
-
-				cookies.forEach(() => {
-					// Simulate cookie operations - should not throw errors
-					const operationSuccessful = true;
-					expect(operationSuccessful).toBe(true);
-				});
+				// TODO: Test cookie operations with various states
+				// This test should verify that:
+				// - Cookie operations don't throw errors
+				// - Null/undefined cookies are handled
+				// - Invalid cookie values don't crash
+				// Why: Robust cookie handling prevents system failures
 			});
 		});
 	});

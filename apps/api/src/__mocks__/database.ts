@@ -275,77 +275,82 @@ export const mockDb = new MockDatabase();
 // Mock the actual database module
 export const createDatabaseMock = () => {
 	const mockUserRepository = {
-		findOne: mock((query: any) => {
-			if (query.email) {
+		findOne: mock((query: { email?: string; id?: string }) => {
+			if (query.email !== undefined) {
 				return Promise.resolve(mockDb.findUserByEmail(query.email));
 			}
-			if (query.id) {
+			if (query.id !== undefined) {
 				return Promise.resolve(mockDb.findUserById(query.id));
 			}
 			return Promise.resolve(null);
 		}),
-		create: mock((userData: any) =>
+		create: mock((userData: Omit<MockUser, "id">) =>
 			Promise.resolve(mockDb.createUser(userData))
 		),
-		update: mock((id: string, updates: any) =>
+		update: mock((id: string, updates: Partial<MockUser>) =>
 			Promise.resolve(mockDb.updateUser(id, updates))
 		),
 		delete: mock((id: string) => Promise.resolve(mockDb.deleteUser(id))),
 	};
 
 	const mockDocumentRepository = {
-		findOne: mock((query: any) => {
-			if (query.id) {
+		findOne: mock((query: { id?: string }) => {
+			if (query.id !== undefined) {
 				return Promise.resolve(mockDb.findDocumentById(query.id));
 			}
 			return Promise.resolve(null);
 		}),
-		find: mock((query: any) => {
-			if (query.student?.id) {
+		find: mock((query: { student?: { id?: string } }) => {
+			if (query.student?.id !== undefined) {
 				return Promise.resolve(mockDb.findDocumentsByStudent(query.student.id));
 			}
 			return Promise.resolve([]);
 		}),
-		create: mock((documentData: any) =>
-			Promise.resolve(mockDb.createDocument(documentData))
+		create: mock(
+			(documentData: Omit<MockDocument, "id" | "createdAt" | "updatedAt">) =>
+				Promise.resolve(mockDb.createDocument(documentData))
 		),
 	};
 
 	const mockShiftRepository = {
-		findOne: mock((query: any) => {
-			if (query.id) {
+		findOne: mock((query: { id?: string }) => {
+			if (query.id !== undefined) {
 				return Promise.resolve(mockDb.findShiftById(query.id));
 			}
 			return Promise.resolve(null);
 		}),
-		find: mock((query: any) => {
-			if (query.hospital?.id) {
-				return Promise.resolve(mockDb.findShiftsByHospital(query.hospital.id));
+		find: mock(
+			(query: { hospital?: { id?: string }; preceptor?: { id?: string } }) => {
+				if (query.hospital?.id !== undefined) {
+					return Promise.resolve(
+						mockDb.findShiftsByHospital(query.hospital.id)
+					);
+				}
+				if (query.preceptor?.id !== undefined) {
+					return Promise.resolve(
+						mockDb.findShiftsByPreceptor(query.preceptor.id)
+					);
+				}
+				return Promise.resolve([]);
 			}
-			if (query.preceptor?.id) {
-				return Promise.resolve(
-					mockDb.findShiftsByPreceptor(query.preceptor.id)
-				);
-			}
-			return Promise.resolve([]);
-		}),
+		),
 	};
 
 	const mockHospitalRepository = {
-		findOne: mock((query: any) => {
-			if (query.id) {
+		findOne: mock((query: { id?: string }) => {
+			if (query.id !== undefined) {
 				return Promise.resolve(mockDb.findHospitalById(query.id));
 			}
 			return Promise.resolve(null);
 		}),
-		create: mock((hospitalData: any) =>
+		create: mock((hospitalData: Omit<MockHospital, "id">) =>
 			Promise.resolve(mockDb.createHospital(hospitalData))
 		),
 	};
 
 	const mockSchoolRepository = {
-		findOne: mock((query: any) => {
-			if (query.id) {
+		findOne: mock((query: { id?: string }) => {
+			if (query.id !== undefined) {
 				return Promise.resolve(mockDb.findSchoolById(query.id));
 			}
 			return Promise.resolve(null);
@@ -353,14 +358,14 @@ export const createDatabaseMock = () => {
 	};
 
 	const mockCourseRepository = {
-		findOne: mock((query: any) => {
-			if (query.id) {
+		findOne: mock((query: { id?: string }) => {
+			if (query.id !== undefined) {
 				return Promise.resolve(mockDb.findCourseById(query.id));
 			}
 			return Promise.resolve(null);
 		}),
-		find: mock((query: any) => {
-			if (query.supervisor?.id) {
+		find: mock((query: { supervisor?: { id?: string } }) => {
+			if (query.supervisor?.id !== undefined) {
 				return Promise.resolve(
 					mockDb.findCoursesBySupervisor(query.supervisor.id)
 				);
@@ -370,14 +375,14 @@ export const createDatabaseMock = () => {
 	};
 
 	const mockClassRepository = {
-		findOne: mock((query: any) => {
-			if (query.id) {
+		findOne: mock((query: { id?: string }) => {
+			if (query.id !== undefined) {
 				return Promise.resolve(mockDb.findClassById(query.id));
 			}
 			return Promise.resolve(null);
 		}),
-		find: mock((query: any) => {
-			if (query.course?.id) {
+		find: mock((query: { course?: { id?: string } }) => {
+			if (query.course?.id !== undefined) {
 				return Promise.resolve(mockDb.findClassesByCourse(query.course.id));
 			}
 			return Promise.resolve([]);
@@ -393,9 +398,9 @@ export const createDatabaseMock = () => {
 		course: mockCourseRepository,
 		classes: mockClassRepository,
 		em: {
-			persistAndFlush: mock(() => {}),
-			persist: mock(() => {}),
-			flush: mock(() => {}),
+			persistAndFlush: mock(async () => Promise.resolve()),
+			persist: mock(async () => Promise.resolve()),
+			flush: mock(async () => Promise.resolve()),
 		},
 	};
 };

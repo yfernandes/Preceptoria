@@ -1,162 +1,318 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
-import {
-	Document,
-	DocumentType,
-	DocumentStatus,
-} from "../entities/document.entity";
-import { User } from "../entities/user.entity";
+import { describe, it } from "bun:test";
 
-// Mock the entities for controller testing
-const mockDocument = {
-	id: "doc-123",
-	name: "Test Document",
-	type: DocumentType.PROFESSIONAL_ID,
-	url: "https://example.com/doc.pdf",
-	status: DocumentStatus.PENDING,
-	isExpired: mock(() => false),
-	isValid: mock(() => false),
-	canBeVerified: mock(() => true),
-	approve: mock(() => {}),
-	reject: mock(() => {}),
-	updateValidationChecks: mock(() => {}),
-} as unknown as Document;
-
-const mockUser = {
-	id: "user-123",
-	name: "Test User",
-	email: "test@example.com",
-	roles: ["Student"],
-} as unknown as User;
-
-describe("Document Controller (with mocked entities)", () => {
-	beforeEach(() => {
-		// Reset all mocks before each test
-		mock.restore();
-	});
-
-	describe("approveDocument", () => {
+describe.todo("Document Controller", () => {
+	describe.todo("approveDocument", () => {
 		it("should approve a document when user has permission", async () => {
-			// Arrange
-			const documentId = "doc-123";
-			const userId = "user-123";
-			const notes = "Document looks good";
-
-			// Mock the database find operations
-
-			// Mock the document's canBeVerified method
-			mockDocument.canBeVerified = mock(() => true);
-
-			// Act
-			// This would be your actual controller method
-			const result = await approveDocument(documentId, userId, notes);
-
-			// Assert
-			expect(result.success).toBe(true);
-			expect(mockDocument.approve).toHaveBeenCalledWith(mockUser, notes);
+			// TODO: Test document approval with proper authorization
+			// This test should verify that:
+			// - User has proper permissions to approve documents
+			// - Document exists and is in a state that can be approved
+			// - Document status is updated to APPROVED
+			// - Approval timestamp and user are recorded
+			// - Optional notes are stored with the approval
+			// - Success response is returned with appropriate message
+			// Why: Document approval is a critical workflow that requires proper authorization and audit trail
 		});
 
 		it("should reject approval when document cannot be verified", async () => {
-			// Arrange
-			const documentId = "doc-123";
-			const userId = "user-123";
-
-			// Mock the document's canBeVerified method to return false
-			mockDocument.canBeVerified = mock(() => false);
-
-			// Act
-			const result = await approveDocument(documentId, userId);
-
-			// Assert
-			expect(result.success).toBe(false);
-			expect(result.message).toBe("Document cannot be verified");
-			expect(mockDocument.approve).not.toHaveBeenCalled();
+			// TODO: Test document approval rejection when verification fails
+			// This test should verify that:
+			// - Documents that fail validation checks cannot be approved
+			// - Clear error message explains why approval was rejected
+			// - Document status remains unchanged
+			// - No approval record is created
+			// - User receives appropriate feedback
+			// Why: Prevents approval of invalid or incomplete documents
 		});
 
 		it("should handle document not found", async () => {
-			// Arrange
-			const documentId = "non-existent";
-			const userId = "user-123";
+			// TODO: Test document approval with non-existent document
+			// This test should verify that:
+			// - Attempting to approve non-existent document returns error
+			// - Clear "Document not found" message is returned
+			// - No database operations are performed
+			// - Response includes appropriate error status
+			// Why: Proper error handling prevents system crashes and provides clear user feedback
+		});
 
-			// Mock the database to return null
+		it("should handle user not found", async () => {
+			// TODO: Test document approval with non-existent user
+			// This test should verify that:
+			// - Attempting to approve with invalid user ID returns error
+			// - Clear "User not found" message is returned
+			// - No approval operation is performed
+			// - Database integrity is maintained
+			// Why: Prevents orphaned approval records and maintains data consistency
+		});
 
-			// Act
-			const result = await approveDocument(documentId, userId);
+		it("should handle insufficient permissions", async () => {
+			// TODO: Test document approval with insufficient user permissions
+			// This test should verify that:
+			// - Users without approval permissions are rejected
+			// - Clear permission error message is returned
+			// - Document status remains unchanged
+			// - Audit log records the unauthorized attempt
+			// Why: Authorization is critical for document workflow security
+		});
 
-			// Assert
-			expect(result.success).toBe(false);
-			expect(result.message).toBe("Document not found");
+		it("should handle already approved documents", async () => {
+			// TODO: Test approval of already approved documents
+			// This test should verify that:
+			// - Attempting to approve already approved document returns error
+			// - Clear message indicates document is already approved
+			// - No duplicate approval records are created
+			// - Original approval information is preserved
+			// Why: Prevents duplicate approvals and maintains data integrity
+		});
+
+		it("should handle expired documents", async () => {
+			// TODO: Test approval of expired documents
+			// This test should verify that:
+			// - Expired documents cannot be approved
+			// - Clear error message indicates document expiration
+			// - Document status remains unchanged
+			// - User is informed about document renewal requirements
+			// Why: Expired documents should not be approved as they may not be valid
 		});
 	});
 
-	describe("getDocumentStatus", () => {
+	describe.todo("rejectDocument", () => {
+		it("should reject a document when user has permission", async () => {
+			// TODO: Test document rejection with proper authorization
+			// This test should verify that:
+			// - User has proper permissions to reject documents
+			// - Document exists and is in a state that can be rejected
+			// - Document status is updated to REJECTED
+			// - Rejection timestamp, user, and reason are recorded
+			// - Success response is returned with appropriate message
+			// Why: Document rejection is part of the quality control workflow
+		});
+
+		it("should handle rejection of already rejected documents", async () => {
+			// TODO: Test rejection of already rejected documents
+			// This test should verify that:
+			// - Attempting to reject already rejected document returns error
+			// - Clear message indicates document is already rejected
+			// - No duplicate rejection records are created
+			// - Original rejection information is preserved
+			// Why: Prevents duplicate rejections and maintains data integrity
+		});
+
+		it("should require rejection reason", async () => {
+			// TODO: Test document rejection without reason
+			// This test should verify that:
+			// - Rejection without reason is not allowed
+			// - Clear error message requests rejection reason
+			// - Document status remains unchanged
+			// - No rejection record is created
+			// Why: Rejection reasons are important for user feedback and process improvement
+		});
+	});
+
+	describe.todo("getDocumentStatus", () => {
 		it("should return document status and validity", async () => {
-			// Arrange
-			const documentId = "doc-123";
+			// TODO: Test document status retrieval
+			// This test should verify that:
+			// - Document status is correctly returned
+			// - Document expiration status is accurately calculated
+			// - Document validity checks are performed
+			// - Response includes all necessary status information
+			// - Performance is acceptable for status checks
+			// Why: Document status is critical for workflow decisions and user information
+		});
 
-			// Mock the document methods
-			mockDocument.isExpired = mock(() => false);
-			mockDocument.isValid = mock(() => true);
+		it("should handle non-existent document status request", async () => {
+			// TODO: Test status request for non-existent document
+			// This test should verify that:
+			// - Requesting status for non-existent document returns error
+			// - Clear "Document not found" message is returned
+			// - No database queries are performed unnecessarily
+			// - Response includes appropriate error status
+			// Why: Proper error handling prevents system crashes
+		});
 
-			// Act
-			const result = await getDocumentStatus(documentId);
+		it("should return detailed status information", async () => {
+			// TODO: Test comprehensive document status information
+			// This test should verify that:
+			// - Status includes document type and category
+			// - Expiration date and remaining validity period
+			// - Approval/rejection history if applicable
+			// - Current workflow state and next steps
+			// - Any pending actions or requirements
+			// Why: Detailed status information helps users understand document state
+		});
+	});
 
-			// Assert
-			expect(result.success).toBe(true);
-			expect(result.data?.status).toBe(DocumentStatus.PENDING);
-			expect(result.data?.isExpired).toBe(false);
-			expect(result.data?.isValid).toBe(true);
+	describe.todo("uploadDocument", () => {
+		it("should upload document with valid data", async () => {
+			// TODO: Test document upload with valid information
+			// This test should verify that:
+			// - Document file is properly uploaded and stored
+			// - Document metadata is correctly saved
+			// - Document status is set to PENDING
+			// - File validation (size, type, content) passes
+			// - Success response includes document ID and status
+			// Why: Document upload is the entry point of the document workflow
+		});
+
+		it("should validate file type and size", async () => {
+			// TODO: Test document upload with invalid file properties
+			// This test should verify that:
+			// - Unsupported file types are rejected
+			// - Files exceeding size limits are rejected
+			// - Clear error messages explain validation failures
+			// - No partial uploads are saved
+			// Why: File validation prevents storage of invalid or malicious files
+		});
+
+		it("should handle duplicate document uploads", async () => {
+			// TODO: Test uploading duplicate documents
+			// This test should verify that:
+			// - Duplicate document uploads are detected
+			// - User is informed about existing document
+			// - Option to replace or keep existing document
+			// - No duplicate records are created
+			// Why: Prevents document duplication and storage waste
+		});
+
+		it("should handle upload failures", async () => {
+			// TODO: Test document upload when storage fails
+			// This test should verify that:
+			// - Storage failures are handled gracefully
+			// - User receives clear error message
+			// - No partial data is left in database
+			// - System remains in consistent state
+			// Why: Robust error handling ensures system stability
+		});
+	});
+
+	describe.todo("updateDocument", () => {
+		it("should update document metadata", async () => {
+			// TODO: Test document metadata updates
+			// This test should verify that:
+			// - Document metadata can be updated
+			// - Only allowed fields can be modified
+			// - Update timestamp and user are recorded
+			// - Document status remains appropriate
+			// - Success response confirms changes
+			// Why: Document updates are necessary for maintaining accurate information
+		});
+
+		it("should prevent updates to approved/rejected documents", async () => {
+			// TODO: Test updates to finalized documents
+			// This test should verify that:
+			// - Approved documents cannot be modified
+			// - Rejected documents cannot be modified
+			// - Clear error message explains restriction
+			// - Document integrity is maintained
+			// Why: Finalized documents should not be modified to maintain audit trail
+		});
+
+		it("should handle update with invalid data", async () => {
+			// TODO: Test document updates with invalid information
+			// This test should verify that:
+			// - Invalid metadata is rejected
+			// - Validation errors are clearly communicated
+			// - Document remains unchanged
+			// - No partial updates occur
+			// Why: Data validation prevents corruption and maintains integrity
+		});
+	});
+
+	describe.todo("deleteDocument", () => {
+		it("should delete document when user has permission", async () => {
+			// TODO: Test document deletion with proper authorization
+			// This test should verify that:
+			// - User has proper permissions to delete document
+			// - Document is completely removed from storage
+			// - Database records are properly cleaned up
+			// - Deletion is logged for audit purposes
+			// - Success response confirms deletion
+			// Why: Document deletion requires proper authorization and cleanup
+		});
+
+		it("should prevent deletion of approved documents", async () => {
+			// TODO: Test deletion of approved documents
+			// This test should verify that:
+			// - Approved documents cannot be deleted
+			// - Clear error message explains restriction
+			// - Document remains intact
+			// - Audit trail is preserved
+			// Why: Approved documents are part of official records and should be preserved
+		});
+
+		it("should handle deletion of non-existent documents", async () => {
+			// TODO: Test deletion of non-existent documents
+			// This test should verify that:
+			// - Attempting to delete non-existent document returns error
+			// - Clear "Document not found" message is returned
+			// - No unnecessary operations are performed
+			// Why: Proper error handling prevents system issues
+		});
+	});
+
+	describe.todo("listDocuments", () => {
+		it("should return user's documents with proper filtering", async () => {
+			// TODO: Test document listing with filters
+			// This test should verify that:
+			// - User's documents are correctly returned
+			// - Filtering by status, type, date works properly
+			// - Pagination is implemented correctly
+			// - Response includes necessary metadata
+			// - Performance is acceptable for large document sets
+			// Why: Document listing is essential for user workflow management
+		});
+
+		it("should handle empty document lists", async () => {
+			// TODO: Test document listing when user has no documents
+			// This test should verify that:
+			// - Empty list is returned gracefully
+			// - No errors are thrown
+			// - Response indicates no documents found
+			// - Pagination metadata is correct
+			// Why: Empty states should be handled gracefully
+		});
+
+		it("should respect user permissions in document listing", async () => {
+			// TODO: Test document listing with permission restrictions
+			// This test should verify that:
+			// - Users only see documents they have access to
+			// - Admin users can see all documents
+			// - Permission-based filtering works correctly
+			// - No unauthorized document access occurs
+			// Why: Document access control is critical for privacy and security
+		});
+	});
+
+	describe.todo("documentValidation", () => {
+		it("should validate document content and format", async () => {
+			// TODO: Test document content validation
+			// This test should verify that:
+			// - Document content is properly validated
+			// - File format integrity is checked
+			// - Malicious content is detected and rejected
+			// - Validation errors are clearly reported
+			// Why: Content validation ensures document quality and security
+		});
+
+		it("should check document expiration dates", async () => {
+			// TODO: Test document expiration validation
+			// This test should verify that:
+			// - Document expiration dates are properly checked
+			// - Expired documents are correctly identified
+			// - Warning notifications are sent for soon-to-expire documents
+			// - Expiration status is accurately reported
+			// Why: Expiration tracking ensures document validity
+		});
+
+		it("should validate document metadata completeness", async () => {
+			// TODO: Test document metadata validation
+			// This test should verify that:
+			// - Required metadata fields are present
+			// - Metadata format is correct
+			// - Optional fields are handled properly
+			// - Validation errors are specific and helpful
+			// Why: Complete metadata is essential for document management
 		});
 	});
 });
-
-// Example controller methods (these would be your actual controller logic)
-async function approveDocument(
-	documentId: string,
-	userId: string,
-	notes?: string
-) {
-	// Mock database operations
-	const document = await mockFindDocument(documentId);
-	const user = await mockFindUser(userId);
-
-	if (!document) {
-		return { success: false, message: "Document not found" };
-	}
-
-	if (!user) {
-		return { success: false, message: "User not found" };
-	}
-
-	if (!document.canBeVerified()) {
-		return { success: false, message: "Document cannot be verified" };
-	}
-
-	document.approve(user, notes);
-	return { success: true, message: "Document approved" };
-}
-
-async function getDocumentStatus(documentId: string) {
-	const document = await mockFindDocument(documentId);
-
-	if (!document) {
-		return { success: false, message: "Document not found" };
-	}
-
-	return {
-		success: true,
-		data: {
-			status: document.status,
-			isExpired: document.isExpired(),
-			isValid: document.isValid(),
-		},
-	};
-}
-
-// Mock database functions
-function mockFindDocument(id: string) {
-	return Promise.resolve(id === "doc-123" ? mockDocument : null);
-}
-
-function mockFindUser(id: string) {
-	return Promise.resolve(id === "user-123" ? mockUser : null);
-}

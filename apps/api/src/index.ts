@@ -30,8 +30,14 @@ import { app } from "./server";
 
 export type { App } from "./server";
 
+// Get port from CLI arg, env, or default
+const argPort = process.argv.find((arg) => arg.startsWith("--port="));
+const cliPort = argPort ? Number(argPort.split("=")[1]) : undefined;
+const envPort = Bun.env.PORT ? Number(Bun.env.PORT) : undefined;
+const PORT = cliPort ?? envPort ?? 3000;
+
 try {
-	app.listen(3000);
+	app.listen(PORT);
 
 	if (app.server) {
 		console.log(

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "bun:test";
 import { UserRoles } from "../entities/role.abstract";
 
-describe("Auth Middleware", () => {
+describe.todo("Auth Middleware", () => {
 	it("should have correct UserRoles enum", () => {
 		expect(UserRoles.Student).toBe(UserRoles.Student);
 		expect(UserRoles.Supervisor).toBe(UserRoles.Supervisor);

@@ -1,82 +1,164 @@
+import axios, { AxiosResponse } from "axios";
 import { describe, it, expect, beforeAll, afterAll } from "bun:test";
-import { app } from "../server";
+import { HealthResponse } from "./testTypes";
 
-// Test server setup
-let testServer: any;
-const TEST_PORT = 3002; // Different port to avoid conflicts with other tests
+// Test configuration
+const TEST_PORT = Math.floor(Math.random() * 10000) + 3001; // Random port between 3001-13000
+const API_BASE_URL = `http://localhost:${TEST_PORT.toString()}`;
+const TEST_TIMEOUT = 10000; // 10 seconds
 
-describe("Health Check Integration Tests", () => {
+// Configure axios for testing
+const testClient = axios.create({
+	baseURL: API_BASE_URL,
+	timeout: TEST_TIMEOUT,
+	validateStatus: (status) => status < 500, // Don't throw on 4xx errors
+});
+
+describe("Health Check", () => {
+	let serverProcess: ReturnType<typeof Bun.spawn> | undefined;
+
 	beforeAll(async () => {
-		// Start test server
-		testServer = app.listen(TEST_PORT);
-		console.log(`🧪 Test server started on port ${TEST_PORT}`);
+		// Start test server as separate process on random port
+		serverProcess = Bun.spawn(
+			["bun", "run", "src/index.ts", `--port=${TEST_PORT.toString()}`],
+			{
+				stdio: ["inherit", "inherit", "inherit"],
+				env: {
+					...process.env,
+					NODE_ENV: "test",
+				},
+			}
+		);
 
-		// Wait for server to be ready
-		await new Promise((resolve) => setTimeout(resolve, 100));
-	});
+		console.log(`🧪 Test server starting on port ${TEST_PORT.toString()}`);
 
-	afterAll(async () => {
-		// Clean up test server
-		if (testServer) {
-			testServer.stop();
-			console.log("🧪 Test server stopped");
+		// Wait for server to be ready by polling health endpoint
+		let attempts = 0;
+		const maxAttempts = 30; // 30 seconds max wait
+
+		while (attempts < maxAttempts) {
+			try {
+				const response = await axios.get(`${API_BASE_URL}/health`, {
+					timeout: 1000,
+				});
+				if (response.status === 200) {
+					console.log(`✅ Test server ready on port ${TEST_PORT.toString()}`);
+					break;
+				}
+			} catch {
+				// Server not ready yet, wait and retry
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+				attempts++;
+			}
+		}
+
+		if (attempts >= maxAttempts) {
+			throw new Error(
+				`Test server failed to start on port ${TEST_PORT.toString()}`
+			);
 		}
 	});
 
-	describe("Health Check", () => {
-		it("should return health status", async () => {
-			const response = await fetch(`http://localhost:${TEST_PORT}/health`);
+	afterAll(() => {
+		// Clean up test server process
+		if (serverProcess) {
+			serverProcess.kill();
+			console.log("🧪 Test server process terminated");
+		}
+	});
 
+	it("should return health status", async () => {
+		try {
+			const response: AxiosResponse<HealthResponse> =
+				await testClient.get("/health");
+
+			// Verify response status
 			expect(response.status).toBe(200);
 
-			const data = await response.json();
-			expect(data.status).toBe("ok");
-			expect(data.timestamp).toBeDefined();
-			expect(data.environment).toBeDefined();
-		});
+			// Verify response data structure
+			expect(response.data).toBeDefined();
+			expect(response.data.status).toBe("ok");
+			expect(response.data.timestamp).toBeDefined();
+			expect(response.data.uptime).toBeDefined();
+			expect(response.data.environment).toBeDefined();
 
-		it("should return proper JSON structure", async () => {
-			const response = await fetch(`http://localhost:${TEST_PORT}/health`);
+			// Verify data types
+			expect(typeof response.data.status).toBe("string");
+			expect(typeof response.data.timestamp).toBe("string");
+			expect(typeof response.data.uptime).toBe("number");
+			expect(typeof response.data.environment).toBe("string");
 
-			expect(response.headers.get("content-type")).toContain(
-				"application/json"
+			// Verify timestamp is valid ISO string
+			expect(() => new Date(response.data.timestamp)).not.toThrow();
+			expect(new Date(response.data.timestamp).toISOString()).toBe(
+				response.data.timestamp
 			);
 
-			const data = await response.json();
+			// Verify uptime is positive
+			expect(response.data.uptime).toBeGreaterThan(0);
 
-			// Check all expected fields
-			expect(data).toHaveProperty("status");
-			expect(data).toHaveProperty("timestamp");
-			expect(data).toHaveProperty("uptime");
-			expect(data).toHaveProperty("environment");
-
-			// Check data types
-			expect(typeof data.status).toBe("string");
-			expect(typeof data.timestamp).toBe("string");
-			expect(typeof data.uptime).toBe("number");
-			expect(typeof data.environment).toBe("string");
-		});
-
-		it("should handle multiple concurrent requests", async () => {
-			// Make multiple concurrent requests
-			const promises = Array.from({ length: 5 }, () =>
-				fetch(`http://localhost:${TEST_PORT}/health`)
+			// Verify environment is one of expected values
+			expect(["development", "production", "test"]).toContain(
+				response.data.environment
 			);
 
-			const responses = await Promise.all(promises);
+			// Verify content type
+			expect(response.headers["content-type"]).toContain("application/json");
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				if (error.code === "ECONNREFUSED") {
+					throw new Error(
+						`Server is not running at ${API_BASE_URL}. Please start the server before running integration tests.`
+					);
+				}
+				throw new Error(
+					`Health check failed: ${String(error.response?.status ?? "unknown")} - ${error.response?.statusText ?? "unknown error"}`
+				);
+			}
+			throw error;
+		}
+	});
 
-			// All should succeed
-			responses.forEach((response) => {
-				expect(response.status).toBe(200);
-			});
+	it("should handle health check timeout gracefully", async () => {
+		// Test that health check doesn't hang indefinitely
+		// This test verifies that:
+		// - Health check responds within reasonable time
+		// - Timeout errors are handled properly
+		// Why: Health checks should be fast and reliable
 
-			// All should return valid JSON
-			const dataPromises = responses.map((response) => response.json());
-			const dataArray = await Promise.all(dataPromises);
-
-			dataArray.forEach((data) => {
-				expect(data.status).toBe("ok");
-			});
+		const fastClient = axios.create({
+			baseURL: API_BASE_URL,
+			timeout: 1000, // 1 second timeout
 		});
+
+		try {
+			const response = await fastClient.get("/health");
+			expect(response.status).toBe(200);
+		} catch (error) {
+			if (axios.isAxiosError(error) && error.code === "ECONNABORTED") {
+				throw new Error("Health check timed out - server may be overloaded");
+			}
+			throw error;
+		}
+	});
+
+	it("should not require authentication for health check", async () => {
+		// Test that health check works without authentication
+		// This test verifies that:
+		// - Health check is publicly accessible
+		// - No authentication headers are required
+		// Why: Health checks should be accessible to monitoring systems
+
+		const response: AxiosResponse<HealthResponse> = await testClient.get(
+			"/health",
+			{
+				headers: {
+					// Explicitly no Authorization header
+				},
+			}
+		);
+
+		expect(response.status).toBe(200);
+		expect(response.data.status).toBe("ok");
 	});
 });

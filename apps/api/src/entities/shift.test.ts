@@ -1,31 +1,33 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Shift } from "./shift.entity";
 import { Collection } from "@mikro-orm/postgresql";
+import { Hospital } from "./hospital.entity";
+import { Preceptor } from "./preceptor.entity";
+import { User } from "./user.entity";
 
 describe("Shift Entity", () => {
-	let mockHospital: any;
-	let mockPreceptor: any;
-
+	let mockHospital: Hospital;
+	let mockPreceptor: Preceptor;
+	let mockUser: User;
 	beforeEach(() => {
 		// Create simple mock objects to avoid circular dependencies
-		mockHospital = {
-			id: "hospital-1",
-			name: "Test Hospital",
-			address: "Test Address",
-			email: "hospital@test.com",
-			phone: "+5511777777777",
-		};
+		mockHospital = new Hospital(
+			"Test Hospital",
+			"Test Address",
+			"hospital@test.com",
+			"+5511777777777"
+		);
 
-		mockPreceptor = {
-			id: "preceptor-1",
-			user: {
-				id: "user-1",
-				name: "Test User",
-				email: "test@example.com",
-				phoneNumber: "+5511999999999",
-			},
-			hospital: mockHospital,
-		};
+		// Since User's constructor is private, use a mock or a factory method if available.
+		// For this test, we'll use a simple mock object.
+		mockUser = {
+			name: "Test User",
+			email: "test@example.com",
+			phone: "+5511999999999",
+			password: "password123",
+		} as unknown as User;
+
+		mockPreceptor = new Preceptor(mockUser, mockHospital);
 	});
 
 	describe("Constructor", () => {

@@ -72,8 +72,8 @@ describe("OrgAdmin Entity", () => {
 			orgAdmin.school = mockSchool;
 
 			expect(orgAdmin.school).toBe(mockSchool);
-			expect(orgAdmin.school?.name).toBe("Test School");
-			expect(orgAdmin.school?.address).toBe("Test Address");
+			expect(orgAdmin.school.name).toBe("Test School");
+			expect(orgAdmin.school.address).toBe("Test Address");
 		});
 
 		it("should have optional hospital relationship", () => {
@@ -81,8 +81,8 @@ describe("OrgAdmin Entity", () => {
 			orgAdmin.hospital = mockHospital;
 
 			expect(orgAdmin.hospital).toBe(mockHospital);
-			expect(orgAdmin.hospital?.name).toBe("Test Hospital");
-			expect(orgAdmin.hospital?.address).toBe("Test Address");
+			expect(orgAdmin.hospital.name).toBe("Test Hospital");
+			expect(orgAdmin.hospital.address).toBe("Test Address");
 		});
 	});
 

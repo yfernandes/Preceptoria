@@ -5,6 +5,10 @@ import { Organization } from "./organization.abstract";
 class TestOrganization extends Organization {
 	constructor(name: string, address: string, email: string, phone: string) {
 		super(name, address, email, phone);
+		this.name = name;
+		this.address = address;
+		this.email = email;
+		this.phone = phone;
 	}
 }
 

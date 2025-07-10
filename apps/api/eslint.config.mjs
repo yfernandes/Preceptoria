@@ -9,6 +9,7 @@ export default tseslint.config(
 			"**/*.mjs",
 			"eslint.config.mjs",
 			"**/*.js",
+			"src/migrations/**/*.ts",
 		],
 	},
 	eslint.configs.recommended,

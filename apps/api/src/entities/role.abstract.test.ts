@@ -3,11 +3,7 @@ import { Role, UserRoles } from "./role.abstract";
 import { User } from "./user.entity";
 
 // Create a concrete implementation of Role for testing
-class TestRole extends Role {
-	constructor(user: User) {
-		super(user);
-	}
-}
+class TestRole extends Role {}
 
 describe("Role Abstract Class", () => {
 	let mockUser: User;

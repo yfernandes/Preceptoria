@@ -71,13 +71,16 @@ export const app = new Elysia()
 	.on("afterHandle", ({ response }) =>
 		Utils.isEntity(response) ? wrap(response).toObject() : response
 	)
-	.on("afterHandle", ({ request, set }) => {
-		const statusCode = set.status || 200;
-		const statusEmoji = statusCode >= 400 ? "❌" : "✅";
-		console.log(
-			`${statusEmoji} ${new Date().toISOString()} - ${request.method} ${request.url} - ${statusCode}`
-		);
-	})
+	.on(
+		"afterHandle",
+		({ request, set }: { request: Request; set: { status?: number } }) => {
+			const statusCode = set.status ?? 200;
+			const statusEmoji = statusCode >= 400 ? "❌" : "✅";
+			console.log(
+				`${statusEmoji} ${new Date().toISOString()} - ${request.method} ${request.url} - ${statusCode}`
+			);
+		}
+	)
 	// --- Global Error Handler ---
 	.on("error", ({ error, set }) => {
 		console.error("Global error handler:", error);

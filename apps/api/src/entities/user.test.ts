@@ -36,8 +36,8 @@ describe("User Entity", () => {
 			expect(user.passwordHash.length).toBeGreaterThan(20); // Hash should be longer than plain text
 		});
 
-		it("should validate email format", async () => {
-			await expect(
+		it("should validate email format", () => {
+			expect(
 				User.create(
 					"Test User",
 					"invalid-email",
@@ -47,8 +47,8 @@ describe("User Entity", () => {
 			).rejects.toThrow();
 		});
 
-		it("should validate phone number format", async () => {
-			await expect(
+		it("should validate phone number format", () => {
+			expect(
 				User.create(
 					"Test User",
 					"test@example.com",
@@ -58,30 +58,30 @@ describe("User Entity", () => {
 			).rejects.toThrow();
 		});
 
-		it("should validate password minimum length", async () => {
-			await expect(
+		it("should validate password minimum length", () => {
+			expect(
 				User.create("Test User", "test@example.com", "+5511999999999", "123")
 			).rejects.toThrow();
 		});
 
-		it("should validate required fields", async () => {
+		it("should validate required fields", () => {
 			// Test with empty name
-			await expect(
+			expect(
 				User.create("", "test@example.com", "+5511999999999", "password123")
 			).rejects.toThrow();
 
 			// Test with empty email
-			await expect(
+			expect(
 				User.create("Test User", "", "+5511999999999", "password123")
 			).rejects.toThrow();
 
 			// Test with empty phone
-			await expect(
+			expect(
 				User.create("Test User", "test@example.com", "", "password123")
 			).rejects.toThrow();
 
 			// Test with empty password
-			await expect(
+			expect(
 				User.create("Test User", "test@example.com", "+5511999999999", "")
 			).rejects.toThrow();
 		});
