@@ -18,7 +18,7 @@ if (missingEnvVars.length > 0) {
 }
 
 console.log(
-	`✅ Environment variables validated successfully (${Bun.env.NODE_ENV || "development"} mode)`
+	`✅ Environment variables validated successfully (${Bun.env.NODE_ENV ?? "development"} mode)`
 );
 
 // --- Database ---
@@ -35,7 +35,7 @@ try {
 
 	if (app.server) {
 		console.log(
-			`🦊 Elysia is running at ${app.server.hostname}:${app.server.port?.toString() || "3000"}`
+			`🦊 Elysia is running at ${app.server.hostname}:${app.server.port.toString()}`
 		);
 	}
 
@@ -43,10 +43,9 @@ try {
 	const gracefulShutdown = async (signal: string) => {
 		console.log(`\n🛑 Received ${signal}. Starting graceful shutdown...`);
 		try {
-			if (db.orm) {
-				await db.orm.close();
-				console.log("✅ Database connections closed");
-			}
+			await db.orm.close();
+			console.log("✅ Database connections closed");
+
 			if (app.server) {
 				app.server.stop();
 				console.log("✅ Server stopped");
@@ -59,8 +58,8 @@ try {
 		}
 	};
 
-	process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-	process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+	process.on("SIGINT", () => void gracefulShutdown("SIGINT"));
+	process.on("SIGTERM", () => void gracefulShutdown("SIGTERM"));
 } catch (error) {
 	console.error("Failed to start server:", error);
 	process.exit(1);

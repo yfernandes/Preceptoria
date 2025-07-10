@@ -14,7 +14,7 @@ if (missingEnvVars.length > 0) {
 	process.exit(1);
 }
 
-async function main() {
+function main() {
 	try {
 		console.log("🌱 Running database seeder via MikroORM CLI...");
 

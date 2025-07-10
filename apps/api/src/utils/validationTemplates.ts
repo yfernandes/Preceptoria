@@ -240,9 +240,13 @@ export function getValidationTemplateForDocument(
 	const template = getValidationTemplate(documentType);
 	if (!template) {
 		// Fallback to OTHER template
-		return validationTemplates.find(
+		const otherTemplate = validationTemplates.find(
 			(t) => t.documentType === DocumentType.OTHER
-		)!;
+		);
+		if (!otherTemplate) {
+			throw new Error("OTHER validation template is missing.");
+		}
+		return otherTemplate;
 	}
 	return template;
 }

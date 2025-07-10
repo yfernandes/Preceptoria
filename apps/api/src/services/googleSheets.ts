@@ -90,18 +90,18 @@ export class GoogleSheetsService {
 			// Header: Timestamp | Nome Completo | Crefito | Email | Telefone Celular | CPF | Turma | Número de Cadastro da Pós Graduação | Cartão de Vacinação | Carteira de Identidade Profissional - Frente | Carteira de Identidade Profissional - Verso | Termo de Compromisso de Estágio - HSI | | Termo de Compromisso de Estágio | Cadastro Hospital Municipal de Salvador | Foto Crachá
 			const submissions = raw.data.values
 				.slice(1)
-				.map((entry): GoogleSheetsSubmission => {
+				.map((entry: string[]): GoogleSheetsSubmission => {
 					return {
-						timestamp: entry[0] || "", // A - 0: Timestamp
-						fullName: entry[1] || "", // B - 1: Nome Completo
-						crefito: entry[2] || "", // C - 2: Crefito
-						email: entry[3] || "", // D - 3: Email
-						phone: entry[4] || "", // E - 4: Telefone Celular
-						cpf: entry[5] || "", // F - 5: CPF
-						classNumber: entry[6] || "", // G - 6: Turma
-						studentsSchoolId: entry[7] || "", // H - 7: Número de Cadastro da Pós Graduação
+						timestamp: entry[0] ?? "", // A - 0: Timestamp
+						fullName: entry[1] ?? "", // B - 1: Nome Completo
+						crefito: entry[2] ?? "", // C - 2: Crefito
+						email: entry[3] ?? "", // D - 3: Email
+						phone: entry[4] ?? "", // E - 4: Telefone Celular
+						cpf: entry[5] ?? "", // F - 5: CPF
+						classNumber: entry[6] ?? "", // G - 6: Turma
+						studentsSchoolId: entry[7] ?? "", // H - 7: Número de Cadastro da Pós Graduação
 						documentation: {
-							timestamp: entry[0] || "", // A - 0: Timestamp
+							timestamp: entry[0] ?? "", // A - 0: Timestamp
 							vaccinationCard: this.splitIfDefined(entry[8]), // I - 8: Cartão de Vacinação
 							professionalIdentityFront: this.splitIfDefined(entry[9]), // J - 9: Carteira de Identidade Profissional - Frente
 							professionalIdentityBack: this.splitIfDefined(entry[10]), // K - 10: Carteira de Identidade Profissional - Verso
@@ -114,7 +114,7 @@ export class GoogleSheetsService {
 				});
 
 			console.log(
-				`Fetched ${submissions.length} submissions from Google Sheets`
+				`Fetched ${submissions.length.toString()} submissions from Google Sheets`
 			);
 
 			// Debug: Show a sample submission structure
@@ -125,25 +125,25 @@ export class GoogleSheetsService {
 				console.log(`  - Email: ${sample.email}`);
 				console.log(`  - Class: ${sample.classNumber}`);
 				console.log(
-					`  - Vaccination Cards: ${sample.documentation.vaccinationCard.length} files`
+					`  - Vaccination Cards: ${sample.documentation.vaccinationCard.length.toString()} files`
 				);
 				console.log(
-					`  - Identity Front: ${sample.documentation.professionalIdentityFront.length} files`
+					`  - Identity Front: ${sample.documentation.professionalIdentityFront.length.toString()} files`
 				);
 				console.log(
-					`  - Identity Back: ${sample.documentation.professionalIdentityBack.length} files`
+					`  - Identity Back: ${sample.documentation.professionalIdentityBack.length.toString()} files`
 				);
 				console.log(
-					`  - HSI Commitments: ${sample.documentation.internshipCommitmentTermHSI.length} files`
+					`  - HSI Commitments: ${sample.documentation.internshipCommitmentTermHSI.length.toString()} files`
 				);
 				console.log(
-					`  - HMS Commitments: ${sample.documentation.internshipCommitmentTermHMS.length} files`
+					`  - HMS Commitments: ${sample.documentation.internshipCommitmentTermHMS.length.toString()} files`
 				);
 				console.log(
-					`  - Hospital Forms: ${sample.documentation.cityHospitalForm.length} files`
+					`  - Hospital Forms: ${sample.documentation.cityHospitalForm.length.toString()} files`
 				);
 				console.log(
-					`  - Badge Pictures: ${sample.documentation.badgePicture.length} files`
+					`  - Badge Pictures: ${sample.documentation.badgePicture.length.toString()} files`
 				);
 			}
 
@@ -175,10 +175,12 @@ export class GoogleSheetsService {
 			if (!crefitoGroups.has(submission.crefito)) {
 				crefitoGroups.set(submission.crefito, []);
 			}
-			crefitoGroups.get(submission.crefito)!.push(submission);
+			crefitoGroups.get(submission.crefito)?.push(submission);
 		}
 
-		console.log(`📊 Found ${crefitoGroups.size} unique Crefito numbers`);
+		console.log(
+			`📊 Found ${crefitoGroups.size.toString()} unique Crefito numbers`
+		);
 
 		const consolidated: ConsolidatedSubmission[] = [];
 
@@ -254,16 +256,18 @@ export class GoogleSheetsService {
 			});
 		}
 
-		console.log(`✅ Consolidated into ${consolidated.length} unique students`);
+		console.log(
+			`✅ Consolidated into ${consolidated.length.toString()} unique students`
+		);
 		console.log(`📊 Consolidation stats:`);
 		console.log(
-			`  - Students with complete info: ${consolidated.filter((c) => c.hasCompleteBasicInfo).length}`
+			`  - Students with complete info: ${consolidated.filter((c) => c.hasCompleteBasicInfo).length.toString()}`
 		);
 		console.log(
-			`  - Students with incomplete info: ${consolidated.filter((c) => !c.hasCompleteBasicInfo).length}`
+			`  - Students with incomplete info: ${consolidated.filter((c) => !c.hasCompleteBasicInfo).length.toString()}`
 		);
 		console.log(
-			`  - Average entries per student: ${(submissions.length / consolidated.length).toFixed(1)}`
+			`  - Average entries per student: ${(submissions.length / consolidated.length).toFixed(1).toString()}`
 		);
 
 		return consolidated;

@@ -194,7 +194,7 @@ const resolvers: Resolvers = {
 			},
 		},
 		Student: {
-			Own: async (requester, resourceId) => {
+			Own: (requester, resourceId) => {
 				return requester.studentId === resourceId;
 			},
 		},

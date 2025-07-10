@@ -30,9 +30,7 @@ export async function findUserById(
 			let em = RequestContext.getEntityManager();
 
 			// If no context, fall back to global EntityManager (for testing)
-			if (!em) {
-				em = db.em;
-			}
+			em ??= db.em;
 
 			return await em.findOne(
 				User,
@@ -84,9 +82,9 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 			// Check if session cookie exists
 			let sessionToken: string | undefined;
 			// For real HTTP requests (parsed cookie object)
-			if (cookie.session?.value?.CookieValue) {
+			if (cookie.session.value.CookieValue) {
 				sessionToken = cookie.session.value.CookieValue;
-			} else if (typeof cookie.session?.value === "string") {
+			} else if (typeof cookie.session.value === "string") {
 				// For unit tests (raw string)
 				sessionToken = cookie.session.value;
 			} else if (typeof cookie.session === "string") {
@@ -94,11 +92,13 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 				sessionToken = cookie.session;
 			}
 			// If the value is a stringified object, parse it
-			if (sessionToken && sessionToken.startsWith("{")) {
+			if (sessionToken?.startsWith("{")) {
 				try {
 					const parsed = JSON.parse(sessionToken);
 					if (parsed.CookieValue) sessionToken = parsed.CookieValue;
-				} catch {}
+				} catch {
+					/* empty */
+				}
 			}
 			if (!sessionToken) {
 				throw new Error("No session cookie found");
@@ -106,7 +106,7 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 
 			const token = (await jwt.verify(sessionToken)) as TJwtPayload;
 
-			if (!token?.id) {
+			if (!token.id) {
 				throw new Error("Invalid token");
 			}
 

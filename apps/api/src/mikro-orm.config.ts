@@ -178,7 +178,7 @@ export const testConfig = defineConfig({
 
 // Default configuration based on environment
 const getConfig = () => {
-	const nodeEnv = Bun.env.NODE_ENV || "development";
+	const nodeEnv = Bun.env.NODE_ENV ?? "development";
 
 	switch (nodeEnv) {
 		case "production":

@@ -19,14 +19,14 @@ async function main() {
 		console.log("🔄 Starting manual Google Sheets sync...");
 
 		const syncService = new SyncService();
-		const spreadsheetId = Bun.env.GOOGLE_SPREADSHEET_ID!;
+		const spreadsheetId = Bun.env.GOOGLE_SPREADSHEET_ID;
 
 		const result = await syncService.syncFromGoogleSheets(spreadsheetId);
 
 		if (result.success) {
 			console.log("✅ Sync completed successfully!");
 			console.log(
-				`📊 Stats: ${result.stats.newStudents} new students, ${result.stats.newDocuments} new documents`
+				`📊 Stats: ${result.stats.newStudents.toString()} new students, ${result.stats.newDocuments.toString()} new documents`
 			);
 		} else {
 			console.log("❌ Sync completed with errors:", result.message);
@@ -42,4 +42,4 @@ async function main() {
 	}
 }
 
-main();
+await main();

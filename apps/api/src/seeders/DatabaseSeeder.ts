@@ -102,7 +102,7 @@ export class HospitalsSeeder extends Seeder {
 		}
 
 		await em.flush();
-		console.log(`✅ Seeded ${hospitals.length} hospitals`);
+		console.log(`✅ Seeded ${hospitals.length.toString()} hospitals`);
 	}
 }
 
@@ -115,7 +115,7 @@ export class UsersSeeder extends Seeder {
 				name: "Yago Fernandes de Almeida",
 				email: "yagoalmeida@gmail.com",
 				phone: "+55(71)993131586",
-				password: Bun.env.ADMIN_PASSWORD || "TotallyS3cr3tP4ssw_rd",
+				password: Bun.env.ADMIN_PASSWORD ?? "TotallyS3cr3tP4ssw_rd",
 				roles: [UserRoles.SysAdmin],
 			},
 			{
@@ -156,7 +156,7 @@ export class UsersSeeder extends Seeder {
 		}
 
 		await em.flush();
-		console.log(`✅ Seeded ${users.length} users`);
+		console.log(`✅ Seeded ${users.length.toString()} users`);
 	}
 
 	private generateTemporaryPassword(): string {
@@ -316,7 +316,7 @@ export class ClassesSeeder extends Seeder {
 				];
 
 				console.log(
-					`📊 Found ${classNumbers.length} unique class numbers: ${classNumbers.join(", ")}`
+					`📊 Found ${classNumbers.length.toString()} unique class numbers: ${classNumbers.join(", ")}`
 				);
 
 				for (const classNumber of classNumbers) {
@@ -334,7 +334,7 @@ export class ClassesSeeder extends Seeder {
 
 				await em.flush();
 				console.log(
-					`✅ Seeded ${classNumbers.length} classes from Google Sheets`
+					`✅ Seeded ${classNumbers.length.toString()} classes from Google Sheets`
 				);
 			} else {
 				console.log(
@@ -367,7 +367,7 @@ export class StudentsSeeder extends Seeder {
 				googleSheets.consolidateSubmissionsByCrefito(rawSubmissions);
 
 			console.log(
-				`📊 Processing ${consolidatedSubmissions.length} consolidated students...`
+				`📊 Processing ${consolidatedSubmissions.length.toString()} consolidated students...`
 			);
 
 			let createdCount = 0;
@@ -377,7 +377,7 @@ export class StudentsSeeder extends Seeder {
 				try {
 					// Process ALL entries - even incomplete ones
 					console.log(
-						`📝 Processing student (Crefito: ${submission.crefito}): ${submission.fullName} (${submission.entryCount} entries)`
+						`📝 Processing student (Crefito: ${submission.crefito}): ${submission.fullName} (${submission.entryCount.toString()} entries)`
 					);
 
 					// Check if student already exists by email
@@ -481,12 +481,12 @@ export class StudentsSeeder extends Seeder {
 						}
 					}
 
-					if (user && classEntity) {
+					if (classEntity) {
 						const student = new Student(user, classEntity);
 						em.persist(student);
 						createdCount++;
 						console.log(
-							`✅ Created student: ${submission.fullName} (Crefito: ${submission.crefito}, ${submission.entryCount} entries)`
+							`✅ Created student: ${submission.fullName} (Crefito: ${submission.crefito}, ${submission.entryCount.toString()} entries)`
 						);
 					}
 				} catch (error) {
@@ -498,8 +498,8 @@ export class StudentsSeeder extends Seeder {
 			}
 
 			await em.flush();
-			console.log(`✅ Created ${createdCount} new students`);
-			console.log(`🔄 Updated ${updatedCount} existing students`);
+			console.log(`✅ Created ${createdCount.toString()} new students`);
+			console.log(`🔄 Updated ${updatedCount.toString()} existing students`);
 		} catch (error) {
 			console.error("Error seeding students:", error);
 		}
@@ -533,7 +533,7 @@ export class DocumentsSeeder extends Seeder {
 				googleSheets.consolidateSubmissionsByCrefito(rawSubmissions);
 
 			console.log(
-				`📊 Processing documents for ${consolidatedSubmissions.length} consolidated students...`
+				`📊 Processing documents for ${consolidatedSubmissions.length.toString()} consolidated students...`
 			);
 
 			// Debug: Count total documents by type
@@ -561,15 +561,15 @@ export class DocumentsSeeder extends Seeder {
 			}
 
 			console.log(`📊 Document counts by type:`);
-			console.log(`  - Vaccination Cards: ${totalVaccinationCards}`);
-			console.log(`  - Identity Front: ${totalIdentityFront}`);
-			console.log(`  - Identity Back: ${totalIdentityBack}`);
-			console.log(`  - HSI Commitments: ${totalHSICommitments}`);
-			console.log(`  - HMS Commitments: ${totalHMSCommitments}`);
-			console.log(`  - Hospital Forms: ${totalHospitalForms}`);
-			console.log(`  - Badge Pictures: ${totalBadgePictures}`);
+			console.log(`  - Vaccination Cards: ${totalVaccinationCards.toString()}`);
+			console.log(`  - Identity Front: ${totalIdentityFront.toString()}`);
+			console.log(`  - Identity Back: ${totalIdentityBack.toString()}`);
+			console.log(`  - HSI Commitments: ${totalHSICommitments.toString()}`);
+			console.log(`  - HMS Commitments: ${totalHMSCommitments.toString()}`);
+			console.log(`  - Hospital Forms: ${totalHospitalForms.toString()}`);
+			console.log(`  - Badge Pictures: ${totalBadgePictures.toString()}`);
 			console.log(
-				`  - Total: ${totalVaccinationCards + totalIdentityFront + totalIdentityBack + totalHSICommitments + totalHMSCommitments + totalHospitalForms + totalBadgePictures}`
+				`  - Total: ${(totalVaccinationCards + totalIdentityFront + totalIdentityBack + totalHSICommitments + totalHMSCommitments + totalHospitalForms + totalBadgePictures).toString()}`
 			);
 
 			let createdCount = 0;
@@ -579,7 +579,7 @@ export class DocumentsSeeder extends Seeder {
 				try {
 					// Process ALL entries - even incomplete ones
 					console.log(
-						`📄 Processing documents for student (Crefito: ${submission.crefito}): ${submission.fullName} (${submission.entryCount} entries)`
+						`📄 Processing documents for student (Crefito: ${submission.crefito}): ${submission.fullName} (${submission.entryCount.toString()} entries)`
 					);
 
 					// Find student by email or by Crefito if email is placeholder
@@ -688,7 +688,7 @@ export class DocumentsSeeder extends Seeder {
 
 					processedCount++;
 					console.log(
-						`✅ Processed documents for ${submission.fullName} (Crefito: ${submission.crefito}, ${submission.entryCount} entries, ${Object.values(documentation).flat().length} total docs)`
+						`✅ Processed documents for ${submission.fullName} (Crefito: ${submission.crefito}, ${submission.entryCount.toString()} entries, ${Object.values(documentation).flat().length.toString()} total docs)`
 					);
 				} catch (error) {
 					console.error(
@@ -700,7 +700,7 @@ export class DocumentsSeeder extends Seeder {
 
 			await em.flush();
 			console.log(
-				`✅ Created ${createdCount} documents for ${processedCount} students`
+				`✅ Created ${createdCount.toString()} documents for ${processedCount.toString()} students`
 			);
 		} catch (error) {
 			console.error("Error seeding documents:", error);

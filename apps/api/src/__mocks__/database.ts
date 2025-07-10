@@ -79,11 +79,11 @@ export class MockDatabase {
 	private classes = new Map<string, MockClass>();
 
 	// User operations
-	async findUserById(id: string): Promise<MockUser | null> {
-		return this.users.get(id) || null;
+	findUserById(id: string): MockUser | null {
+		return this.users.get(id) ?? null;
 	}
 
-	async findUserByEmail(email: string): Promise<MockUser | null> {
+	findUserByEmail(email: string): MockUser | null {
 		for (const user of this.users.values()) {
 			if (user.email === email) {
 				return user;
@@ -92,17 +92,14 @@ export class MockDatabase {
 		return null;
 	}
 
-	async createUser(userData: Omit<MockUser, "id">): Promise<MockUser> {
-		const id = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+	createUser(userData: Omit<MockUser, "id">): MockUser {
+		const id = `user-${Date.now().toString()}-${Math.random().toString(36).slice(2, 9)}`;
 		const user: MockUser = { ...userData, id };
 		this.users.set(id, user);
 		return user;
 	}
 
-	async updateUser(
-		id: string,
-		updates: Partial<MockUser>
-	): Promise<MockUser | null> {
+	updateUser(id: string, updates: Partial<MockUser>): MockUser | null {
 		const user = this.users.get(id);
 		if (!user) return null;
 
@@ -111,25 +108,25 @@ export class MockDatabase {
 		return updatedUser;
 	}
 
-	async deleteUser(id: string): Promise<boolean> {
+	deleteUser(id: string): boolean {
 		return this.users.delete(id);
 	}
 
 	// Document operations
-	async findDocumentById(id: string): Promise<MockDocument | null> {
-		return this.documents.get(id) || null;
+	findDocumentById(id: string): MockDocument | null {
+		return this.documents.get(id) ?? null;
 	}
 
-	async findDocumentsByStudent(studentId: string): Promise<MockDocument[]> {
+	findDocumentsByStudent(studentId: string): MockDocument[] {
 		return Array.from(this.documents.values()).filter(
 			(doc) => doc.student.id === studentId
 		);
 	}
 
-	async createDocument(
+	createDocument(
 		documentData: Omit<MockDocument, "id" | "createdAt" | "updatedAt">
-	): Promise<MockDocument> {
-		const id = `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+	): MockDocument {
+		const id = `doc-${Date.now().toString()}-${Math.random().toString(36).slice(2, 9)}`;
 		const now = new Date();
 		const document: MockDocument = {
 			...documentData,
@@ -142,64 +139,62 @@ export class MockDatabase {
 	}
 
 	// Shift operations
-	async findShiftById(id: string): Promise<MockShift | null> {
-		return this.shifts.get(id) || null;
+	findShiftById(id: string): MockShift | null {
+		return this.shifts.get(id) ?? null;
 	}
 
-	async findShiftsByHospital(hospitalId: string): Promise<MockShift[]> {
+	findShiftsByHospital(hospitalId: string): MockShift[] {
 		return Array.from(this.shifts.values()).filter(
 			(shift) => shift.hospital.id === hospitalId
 		);
 	}
 
-	async findShiftsByPreceptor(preceptorId: string): Promise<MockShift[]> {
+	findShiftsByPreceptor(preceptorId: string): MockShift[] {
 		return Array.from(this.shifts.values()).filter(
 			(shift) => shift.preceptor.id === preceptorId
 		);
 	}
 
-	async findShiftsByStudent(studentId: string): Promise<MockShift[]> {
+	findShiftsByStudent(studentId: string): MockShift[] {
 		return Array.from(this.shifts.values()).filter((shift) =>
 			shift.students.some((student) => student.id === studentId)
 		);
 	}
 
 	// Hospital operations
-	async findHospitalById(id: string): Promise<MockHospital | null> {
-		return this.hospitals.get(id) || null;
+	findHospitalById(id: string): MockHospital | null {
+		return this.hospitals.get(id) ?? null;
 	}
 
-	async createHospital(
-		hospitalData: Omit<MockHospital, "id">
-	): Promise<MockHospital> {
-		const id = `hospital-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+	createHospital(hospitalData: Omit<MockHospital, "id">): MockHospital {
+		const id = `hospital-${Date.now().toString()}-${Math.random().toString(36).slice(2, 9)}`;
 		const hospital: MockHospital = { ...hospitalData, id };
 		this.hospitals.set(id, hospital);
 		return hospital;
 	}
 
 	// School operations
-	async findSchoolById(id: string): Promise<MockSchool | null> {
-		return this.schools.get(id) || null;
+	findSchoolById(id: string): MockSchool | null {
+		return this.schools.get(id) ?? null;
 	}
 
 	// Course operations
-	async findCourseById(id: string): Promise<MockCourse | null> {
-		return this.courses.get(id) || null;
+	findCourseById(id: string): MockCourse | null {
+		return this.courses.get(id) ?? null;
 	}
 
-	async findCoursesBySupervisor(supervisorId: string): Promise<MockCourse[]> {
+	findCoursesBySupervisor(supervisorId: string): MockCourse[] {
 		return Array.from(this.courses.values()).filter(
 			(course) => course.supervisor.id === supervisorId
 		);
 	}
 
 	// Class operations
-	async findClassById(id: string): Promise<MockClass | null> {
-		return this.classes.get(id) || null;
+	findClassById(id: string): MockClass | null {
+		return this.classes.get(id) ?? null;
 	}
 
-	async findClassesByCourse(courseId: string): Promise<MockClass[]> {
+	findClassesByCourse(courseId: string): MockClass[] {
 		return Array.from(this.classes.values()).filter(
 			(cls) => cls.course.id === courseId
 		);
@@ -233,7 +228,7 @@ export class MockDatabase {
 export const createMockUser = (
 	overrides: Partial<MockUser> = {}
 ): MockUser => ({
-	id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+	id: `user-${Date.now().toString()}-${Math.random().toString(36).slice(2, 9)}`,
 	name: "Test User",
 	email: "test@example.com",
 	phoneNumber: "(99) 99999-9999",
@@ -244,14 +239,14 @@ export const createMockUser = (
 	supervisor: null,
 	hospitalManager: null,
 	preceptor: null,
-	student: { id: `student-${Date.now()}` },
+	student: { id: `student-${Date.now().toString()}` },
 	...overrides,
 });
 
 export const createMockDocument = (
 	overrides: Partial<MockDocument> = {}
 ): MockDocument => ({
-	id: `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+	id: `doc-${Date.now().toString()}-${Math.random().toString(36).slice(2, 9)}`,
 	name: "Test Document",
 	url: "https://example.com/document.pdf",
 	student: { id: "student-1" },
@@ -264,7 +259,7 @@ export const createMockDocument = (
 export const createMockShift = (
 	overrides: Partial<MockShift> = {}
 ): MockShift => ({
-	id: `shift-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+	id: `shift-${Date.now().toString()}-${Math.random().toString(36).slice(2, 9)}`,
 	date: new Date(),
 	startTime: "08:00",
 	endTime: "17:00",
@@ -398,9 +393,9 @@ export const createDatabaseMock = () => {
 		course: mockCourseRepository,
 		classes: mockClassRepository,
 		em: {
-			persistAndFlush: mock(() => Promise.resolve()),
-			persist: mock(() => Promise.resolve()),
-			flush: mock(() => Promise.resolve()),
+			persistAndFlush: mock(() => {}),
+			persist: mock(() => {}),
+			flush: mock(() => {}),
 		},
 	};
 };

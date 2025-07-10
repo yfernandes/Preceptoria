@@ -74,15 +74,15 @@ export class SyncService {
 			await db.em.flush();
 
 			console.log(
-				`Sync completed. Processed ${submissions.length} submissions.`
+				`Sync completed. Processed ${submissions.length.toString()} submissions.`
 			);
 			console.log(
-				`Created ${result.stats.newStudents} new students and ${result.stats.newDocuments} new documents.`
+				`Created ${result.stats.newStudents.toString()} new students and ${result.stats.newDocuments.toString()} new documents.`
 			);
 
 			if (result.stats.errors.length > 0) {
 				result.success = false;
-				result.message = `Sync completed with ${result.stats.errors.length} errors`;
+				result.message = `Sync completed with ${result.stats.errors.length.toString()} errors`;
 			}
 		} catch (error) {
 			result.success = false;
@@ -125,7 +125,7 @@ export class SyncService {
 				submission.phone,
 				this.generateTemporaryPassword() // Will need to be changed on first login
 			);
-			await db.em.persist(user);
+			db.em.persist(user);
 		}
 
 		// Find or create school (using studentsSchoolId as school name for now)
@@ -139,7 +139,7 @@ export class SyncService {
 				"school@example.com",
 				"+5500000000000"
 			);
-			await db.em.persist(school);
+			db.em.persist(school);
 		}
 
 		// Find or create supervisor (using a default supervisor for now)
@@ -155,10 +155,10 @@ export class SyncService {
 				"Phone to be updated",
 				this.generateTemporaryPassword()
 			);
-			await db.em.persist(supervisorUser);
+			db.em.persist(supervisorUser);
 
 			supervisor = new Supervisor(supervisorUser, school);
-			await db.em.persist(supervisor);
+			db.em.persist(supervisor);
 		}
 
 		// Find or create course (using classNumber as course name for now)
@@ -167,7 +167,7 @@ export class SyncService {
 		if (!course) {
 			// Create a default course if it doesn't exist
 			course = new Course(submission.classNumber, school, supervisor);
-			await db.em.persist(course);
+			db.em.persist(course);
 		}
 
 		// Find or create class
@@ -178,12 +178,12 @@ export class SyncService {
 
 		if (!classEntity) {
 			classEntity = new Classes(submission.classNumber, course);
-			await db.em.persist(classEntity);
+			db.em.persist(classEntity);
 		}
 
 		// Create student
 		const student = new Student(user, classEntity);
-		await db.em.persist(student);
+		db.em.persist(student);
 
 		return student;
 	}
@@ -297,7 +297,7 @@ export class SyncService {
 			// Set Google Drive ID for reference
 			document.googleDriveId = fileId;
 
-			await db.em.persist(document);
+			db.em.persist(document);
 			result.stats.newDocuments++;
 		} catch (error) {
 			const errorMsg = `Error creating document from URL ${url}: ${error instanceof Error ? error.message : "Unknown error"}`;
