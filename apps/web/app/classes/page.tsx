@@ -1,22 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-interface Class {
-	id: string;
-	name: string;
-	course: {
-		id: string;
-		name: string;
-	};
-	students: Array<{ id: string }>;
-	createdAt: string;
-	updatedAt: string;
-}
+import { Classes } from "@api/entities";
+import { treatise } from "lib/eden";
 
 interface ClassesResponse {
 	success: boolean;
-	data: Class[];
+	data: Classes[];
 	pagination: {
 		total: number;
 		limit: number;
@@ -36,12 +26,8 @@ export default function ClassesPage() {
 				setLoading(true);
 				setError(null);
 
-				const response = await fetch("http://localhost:3000/classes", {
-					credentials: "include", // Include cookies
-					headers: {
-						"Content-Type": "application/json",
-					},
-				});
+				const response = await treatise.classes.get();
+				console.log(response);
 
 				if (!response.ok) {
 					const errorText = await response.text();
