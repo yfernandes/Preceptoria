@@ -188,15 +188,14 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 			if (!document) {
 				return error(404, { success: false, message: "Document not found" });
 			}
-
-			// Check permissions using our comprehensive permission system
+			// Check permissions
 			const hasAccess = await hasPermission(
 				requester,
 				Resource.Document,
 				Actions.Read,
 				params.id
 			);
-
+			console.log(hasAccess);
 			if (!hasAccess) {
 				return error(403, {
 					success: false,
@@ -204,16 +203,14 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 						"Access denied. You don't have permission to view this document.",
 				});
 			}
-
 			// Get validation template for this document type
 			const validationTemplate = getValidationTemplateForDocument(
 				document.type
 			);
-
 			return {
 				success: true,
 				data: {
-					...document,
+					...document, // FIXME: THIS IS THE ERROR
 					validationTemplate,
 				},
 			};
@@ -221,7 +218,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 			console.error("Error fetching document:", err);
 			return error(500, { success: false, message: "Internal server error" });
 		}
-	})
+	}) // Throws error
 
 	// Update validation checks
 	.patch(
@@ -507,4 +504,4 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 			console.error("Error fetching document stats:", err);
 			return error(500, { success: false, message: "Internal server error" });
 		}
-	}) as any;
+	});
