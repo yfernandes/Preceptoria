@@ -24,7 +24,9 @@
 			"@web/libs": ["src/libs/index.ts"],
 			"@api": ["../api/src/index.ts"],
 			"@api/*": ["../api/src/*"]
-		}
+		},
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
 	"exclude": [
