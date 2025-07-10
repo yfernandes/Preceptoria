@@ -5,6 +5,7 @@ import { authMiddleware } from "../middlewares/auth";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 import { UserRoles } from "../entities/role.abstract";
+import { FilterQuery } from "@mikro-orm/postgresql";
 
 // DTOs for request validation
 const createSupervisorDto = {
@@ -134,18 +135,14 @@ export const supervisorController = new Elysia({ prefix: "/supervisors" })
 	// Get all supervisors (with optional filtering)
 	.get("/", async ({ requester, query }) => {
 		try {
-			const { schoolId, department, limit = 10, offset = 0 } = query;
+			const { schoolId, limit = 10, offset = 0 } = query;
 
 			// Build filter based on user permissions and role
-			const filter: any = {};
+			const filter: FilterQuery<Supervisor> = {};
 
 			// Apply query filters
 			if (schoolId) {
 				filter.school = { id: schoolId };
-			}
-
-			if (department) {
-				filter.department = { $ilike: `%${department}%` };
 			}
 
 			// Apply role-based filtering for data isolation

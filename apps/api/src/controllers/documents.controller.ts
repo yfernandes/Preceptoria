@@ -10,6 +10,7 @@ import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 import { getValidationTemplateForDocument } from "../utils/validationTemplates";
 import { UserRoles } from "../entities/role.abstract";
+import { FilterQuery } from "@mikro-orm/postgresql";
 
 const documentValidationDto = {
 	body: t.Object({
@@ -107,15 +108,15 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 			const { status, studentId, type, limit = 10, offset = 0 } = query;
 
 			// Build filter based on user permissions and role
-			const filter: any = {};
+			const filter: FilterQuery<Document> = {};
 
 			// Apply query filters
 			if (status) {
-				filter.status = status;
+				filter.status = status as DocumentStatus;
 			}
 
 			if (type) {
-				filter.type = type;
+				filter.type = type as DocumentType;
 			}
 
 			if (studentId) {

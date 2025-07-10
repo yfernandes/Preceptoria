@@ -5,6 +5,7 @@ import { authMiddleware } from "../middlewares/auth";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 import { UserRoles } from "../entities/role.abstract";
+import { FilterQuery } from "@mikro-orm/postgresql";
 
 // DTOs for request validation
 const createSchoolDto = {
@@ -105,7 +106,7 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 			const { name, limit = 10, offset = 0 } = query;
 
 			// Build filter based on user permissions and role
-			const filter: any = {};
+			const filter: FilterQuery<School> = {};
 
 			// Apply query filters
 			if (name) {

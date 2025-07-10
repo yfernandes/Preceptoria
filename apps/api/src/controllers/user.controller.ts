@@ -62,6 +62,7 @@ export const userController = new Elysia({ prefix: "/users" })
 
 				// Return created user (without password)
 				const { passwordHash, ...userWithoutPassword } = user.toPOJO();
+				void passwordHash;
 				return {
 					success: true,
 					message: "User created successfully",
@@ -235,6 +236,7 @@ export const userController = new Elysia({ prefix: "/users" })
 
 				// Return updated user (without password)
 				const { passwordHash, ...userWithoutPassword } = user.toPOJO();
+				void passwordHash;
 				return {
 					success: true,
 					message: "User updated successfully",

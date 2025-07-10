@@ -3,6 +3,7 @@ import { OrgAdmin } from "../entities";
 import { db } from "../db";
 import { authMiddleware } from "../middlewares/auth";
 import { UserRoles } from "../entities/role.abstract";
+import { FilterQuery } from "@mikro-orm/postgresql";
 
 // DTOs for request validation
 const createOrgAdminDto = {
@@ -133,7 +134,7 @@ export const orgAdminController = new Elysia({ prefix: "/org-admins" })
 			const { hospitalId, schoolId, limit = 10, offset = 0 } = query;
 
 			// Build filter based on user permissions and role
-			const filter: any = {};
+			const filter: FilterQuery<OrgAdmin> = {};
 
 			// Apply query filters
 			if (hospitalId) {

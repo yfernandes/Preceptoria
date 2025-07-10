@@ -62,7 +62,7 @@ export const hospitalController = new Elysia({ prefix: "/hospitals" })
 				}
 
 				// Check if manager is already assigned to another hospital
-				if (manager.hospital && manager.hospital.id) {
+				if (manager.hospital.id) {
 					return status(400, {
 						error: "Hospital manager is already assigned to another hospital",
 					});
@@ -77,7 +77,7 @@ export const hospitalController = new Elysia({ prefix: "/hospitals" })
 				}
 
 				// Create new hospital
-				const hospital = new Hospital(name, address, email || "", phone || "");
+				const hospital = new Hospital(name, address, email ?? "", phone ?? "");
 
 				await db.em.persistAndFlush(hospital);
 
@@ -212,7 +212,7 @@ export const hospitalController = new Elysia({ prefix: "/hospitals" })
 						if (!newManager) {
 							return status(400, { error: "Hospital manager not found" });
 						}
-						if (newManager.hospital && newManager.hospital.id !== id) {
+						if (newManager.hospital.id !== id) {
 							return status(400, {
 								error:
 									"Hospital manager is already assigned to another hospital",
@@ -275,7 +275,7 @@ export const hospitalController = new Elysia({ prefix: "/hospitals" })
 			}
 
 			// Check if hospital has active shifts
-			if (hospital.shifts && hospital.shifts.length > 0) {
+			if (hospital.shifts.length > 0) {
 				return status(400, {
 					error:
 						"Cannot delete hospital with active shifts. Please reassign or cancel all shifts first.",

@@ -5,6 +5,7 @@ import { authMiddleware } from "../middlewares/auth";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 import { UserRoles } from "../entities/role.abstract";
+import { FilterQuery } from "@mikro-orm/postgresql";
 
 const createStudentDto = {
 	body: t.Object({
@@ -85,7 +86,7 @@ export const studentsController = new Elysia({ prefix: "students" })
 			const { classId, supervisorId, limit = 10, offset = 0 } = query;
 
 			// Build filter based on user permissions and role
-			const filter: any = {};
+			const filter: FilterQuery<Student> = {};
 
 			// Apply query filters
 			if (classId) {
@@ -93,10 +94,13 @@ export const studentsController = new Elysia({ prefix: "students" })
 			}
 
 			if (supervisorId) {
-				filter.class = {
-					...filter.class,
-					course: { supervisor: { id: supervisorId } },
-				};
+				filter.class = Object.assign(
+					{},
+					typeof filter.class === "object" && !Array.isArray(filter.class)
+						? filter.class
+						: {},
+					{ course: { supervisor: { id: supervisorId } } }
+				);
 			}
 
 			// Apply role-based filtering for data isolation

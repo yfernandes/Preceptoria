@@ -5,6 +5,7 @@ import { authMiddleware } from "../middlewares/auth";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 import { UserRoles } from "../entities/role.abstract";
+import { FilterQuery } from "@mikro-orm/postgresql";
 
 // DTOs for request validation
 const createShiftDto = {
@@ -238,7 +239,7 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 			} = query;
 
 			// Build filter based on user permissions and role
-			const filter: any = {};
+			const filter: FilterQuery<Shift> = {};
 
 			// Apply query filters
 			if (hospitalId) {
