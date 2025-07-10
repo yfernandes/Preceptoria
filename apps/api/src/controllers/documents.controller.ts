@@ -83,7 +83,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				return {
 					success: true,
 					message: "Document created successfully",
-					data: document,
+					data: document.toPOJO(),
 				};
 			} catch (err) {
 				console.error("Error creating document:", err);
@@ -157,7 +157,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				);
 
 				if (hasAccess) {
-					accessibleDocuments.push(document);
+					accessibleDocuments.push(document.toPOJO());
 				}
 			}
 
@@ -207,10 +207,11 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 			const validationTemplate = getValidationTemplateForDocument(
 				document.type
 			);
+
 			return {
 				success: true,
 				data: {
-					...document, // FIXME: THIS IS THE ERROR
+					document: document.toPOJO() as unknown as Document,
 					validationTemplate,
 				},
 			};
@@ -258,7 +259,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				return {
 					success: true,
 					message: "Validation checks updated successfully",
-					data: document,
+					data: document.toPOJO(),
 				};
 			} catch (err) {
 				console.error("Error updating validation checks:", err);
@@ -316,7 +317,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				return {
 					success: true,
 					message: "Document approved successfully",
-					data: document,
+					data: document.toPOJO(),
 				};
 			} catch (err) {
 				console.error("Error approving document:", err);
@@ -374,7 +375,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				return {
 					success: true,
 					message: "Document rejected successfully",
-					data: document,
+					data: document.toPOJO(),
 				};
 			} catch (err) {
 				console.error("Error rejecting document:", err);

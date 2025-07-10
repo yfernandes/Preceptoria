@@ -1,4 +1,4 @@
-import Elysia, { error, t } from "elysia";
+import Elysia, { status as error, t } from "elysia";
 import { Shift } from "../entities";
 import { db } from "../db";
 import { authMiddleware } from "../middlewares/auth";
