@@ -25,7 +25,7 @@ describe.todo("Auth Middleware", () => {
 
 	it("should define IUserRepository interface", () => {
 		const repository = {
-			findOneById: async (id: string) => {
+			findOneById: (id: string) => {
 				return { id, roles: [UserRoles.Student] };
 			},
 		};
