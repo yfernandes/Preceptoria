@@ -1,7 +1,7 @@
 import { describe, it } from "bun:test";
 
-describe.todo("Auth Controller - Signup Endpoint Logic", () => {
-	describe.todo("Input Validation", () => {
+describe("Auth Controller - Signup Endpoint Logic", () => {
+	describe("Input Validation", () => {
 		it("should validate email format", () => {
 			// TODO: Test that the signup endpoint properly validates email format
 			// This test should verify that:
@@ -39,7 +39,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 		});
 	});
 
-	describe.todo("User Role Assignment", () => {
+	describe("User Role Assignment", () => {
 		it("should assign Student role to new users", () => {
 			// TODO: Test that new users are assigned the Student role by default
 			// This test should verify that:
@@ -68,7 +68,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 		});
 	});
 
-	describe.todo("Signup Business Logic", () => {
+	describe("Signup Business Logic", () => {
 		it("should handle successful user creation flow", () => {
 			// TODO: Test the complete successful signup flow
 			// This test should verify that:
@@ -111,7 +111,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 		});
 	});
 
-	describe.todo("JWT Token Generation", () => {
+	describe("JWT Token Generation", () => {
 		it("should generate access token with correct payload", () => {
 			// TODO: Test JWT access token generation
 			// This test should verify that:
@@ -133,7 +133,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 		});
 	});
 
-	describe.todo("Cookie Settings", () => {
+	describe("Cookie Settings", () => {
 		it("should set access token cookie with correct properties", () => {
 			// TODO: Test access token cookie configuration
 			// This test should verify that:
@@ -154,8 +154,8 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 		});
 	});
 
-	describe.todo("Signin Endpoint Logic", () => {
-		describe.todo("Input Validation", () => {
+	describe("Signin Endpoint Logic", () => {
+		describe("Input Validation", () => {
 			it("should validate signin email format", () => {
 				// TODO: Test email validation in signin endpoint
 				// This test should verify that:
@@ -175,7 +175,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 			});
 		});
 
-		describe.todo("Signin Business Logic", () => {
+		describe("Signin Business Logic", () => {
 			it("should handle successful signin flow", () => {
 				// TODO: Test successful signin flow
 				// This test should verify that:
@@ -214,7 +214,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 			});
 		});
 
-		describe.todo("Password Verification", () => {
+		describe("Password Verification", () => {
 			it("should verify correct password", () => {
 				// TODO: Test password verification with correct password
 				// This test should verify that:
@@ -243,7 +243,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 			});
 		});
 
-		describe.todo("JWT Token Generation for Signin", () => {
+		describe("JWT Token Generation for Signin", () => {
 			it("should generate access token with correct payload", () => {
 				// TODO: Test access token generation during signin
 				// This test should verify that:
@@ -272,7 +272,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 			});
 		});
 
-		describe.todo("Cookie Settings for Signin", () => {
+		describe("Cookie Settings for Signin", () => {
 			it("should set access token cookie with correct properties", () => {
 				// TODO: Test access token cookie settings during signin
 				// This test should verify that:
@@ -293,8 +293,8 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 		});
 	});
 
-	describe.todo("Logout Endpoint Logic", () => {
-		describe.todo("Logout Business Logic", () => {
+	describe("Logout Endpoint Logic", () => {
+		describe("Logout Business Logic", () => {
 			it("should handle successful logout flow", () => {
 				// TODO: Test successful logout flow
 				// This test should verify that:
@@ -333,7 +333,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 			});
 		});
 
-		describe.todo("Cookie Removal", () => {
+		describe("Cookie Removal", () => {
 			it("should remove session cookie", () => {
 				// TODO: Test access token cookie removal
 				// This test should verify that:
@@ -363,8 +363,8 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 		});
 	});
 
-	describe.todo("Refresh Endpoint Logic", () => {
-		describe.todo("Input Validation", () => {
+	describe("Refresh Endpoint Logic", () => {
+		describe("Input Validation", () => {
 			it("should validate refresh token presence", () => {
 				// TODO: Test refresh token presence validation
 				// This test should verify that:
@@ -384,7 +384,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 			});
 		});
 
-		describe.todo("Refresh Business Logic", () => {
+		describe("Refresh Business Logic", () => {
 			it("should handle successful token refresh flow", () => {
 				// TODO: Test successful token refresh flow
 				// This test should verify that:
@@ -435,7 +435,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 			});
 		});
 
-		describe.todo("JWT Token Verification", () => {
+		describe("JWT Token Verification", () => {
 			it("should verify valid refresh token", () => {
 				// TODO: Test valid refresh token verification
 				// This test should verify that:
@@ -474,7 +474,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 			});
 		});
 
-		describe.todo("New Access Token Generation", () => {
+		describe("New Access Token Generation", () => {
 			it("should generate new access token with correct payload", () => {
 				// TODO: Test new access token generation
 				// This test should verify that:
@@ -504,7 +504,7 @@ describe.todo("Auth Controller - Signup Endpoint Logic", () => {
 			});
 		});
 
-		describe.todo("Cookie Management for Refresh", () => {
+		describe("Cookie Management for Refresh", () => {
 			it("should set new access token cookie with correct properties", () => {
 				// TODO: Test new access token cookie setting
 				// This test should verify that:

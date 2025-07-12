@@ -1,295 +1,463 @@
-# Testing Basics: Mocks, Stubs, Spies, Fakes, and More
+# Testing Basics
 
-## 1. Mocking
+This document covers the fundamental testing approaches and patterns used in the Preceptoria project, with a focus on the new pure function architecture and JWT security testing.
 
-**Mocking** means creating a fake version of a function, object, or module so you can control its behavior in your tests.
+## Testing Philosophy
 
-- **Why?** To isolate the code you’re testing from its dependencies (like databases, APIs, or other modules), so your tests are fast, reliable, and only fail when your code is broken—not when a network or database is down.
-- **Example:**
-  ```js
-  // In your test, you can replace db.findUser with a mock:
-  db.findUser = () => ({ id: 2, name: "Bob" });
-  ```
+Our testing approach emphasizes:
 
-## 2. Stubbing
+- **Pure Functions**: All business logic is extracted into pure, testable functions
+- **Security First**: Comprehensive security testing for authentication and authorization
+- **Type Safety**: Leverage TypeScript for compile-time testing
+- **Real-world Scenarios**: Test actual use cases, not just happy paths
 
-**Stubbing** is a specific kind of mocking. A **stub** is a function that replaces a real function, but you control exactly what it returns (or what it does).
+## Pure Function Testing
 
-- **Why?** To make sure your code gets predictable responses from dependencies, or to simulate errors.
-- **Example:**
-  ```js
-  db.findUser = () => {
-  	throw new Error("Database down!");
-  };
-  ```
+### Why Pure Functions?
 
-## 3. Spying
+Pure functions make testing straightforward because they:
 
-A **spy** is a function that wraps a real function and records information about how it was called (arguments, how many times, etc.), but still lets the real function run (unless you override it).
+- Have no side effects
+- Always return the same output for the same input
+- Don't depend on external state
+- Are easy to mock and test in isolation
 
-- **Why?** To check if your code called a function, how many times, and with what arguments.
-- **Example:**
-  ```js
-  const spy = jest.spyOn(db, "findUser");
-  myFunction();
-  expect(spy).toHaveBeenCalledWith("alice@example.com");
-  ```
-
-## 4. Faking
-
-A **fake** is a lightweight implementation of something real, but simpler. For example, an in-memory database instead of a real one.
-
-- **Why?** To simulate more complex behavior than a stub, but without the overhead of the real thing.
-- **Example:**
-  An in-memory array that acts like a database for the duration of your test.
-
-## 5. Dependency Injection
-
-This is a design pattern where you pass dependencies (like a database or API client) into your code, rather than having your code create them itself. This makes it easy to swap in mocks or fakes for testing.
-
-- **Why?** To make your code more testable and flexible.
-- **Example:**
-  ```js
-  function getUserProfile(userRepo) {
-  	return userRepo.findUser();
-  }
-  // In production: getUserProfile(realDb)
-  // In tests: getUserProfile(mockDb)
-  ```
-
----
-
-## Types of Tests
-
-### Unit Tests
-
-- **What:** Test a single function or class in isolation (with all dependencies mocked or stubbed).
-- **Where:** Usually in the same folder as the code, or in a `tests` or `__tests__` folder.
-- **Helpers:** Use the `__mocks__` folder for reusable mocks.
-
-### Integration Tests
-
-- **What:** Test how multiple parts of your system work together (e.g., your API and your database, or several modules together).
-- **Where:** Often in a `tests/integration` or `integration` folder.
-- **Helpers:** You might have `__fixtures__` for sample data, or use a test database.
-
-### End-to-End (E2E) Tests
-
-- **What:** Test the whole system as a user would (e.g., using a browser automation tool to click through your app).
-- **Where:** Often in a `tests/e2e` or `e2e` folder.
-- **Helpers:** May use `__fixtures__` for test data, and sometimes their own mocks for external services.
-
----
-
-## Special Folders
-
-- `__mocks__`: For reusable mocks and fake implementations. Used by both unit and integration tests.
-- `__fixtures__`: (Optional) For static sample data used in tests, especially integration and E2E tests.
-- `__tests__`: (Optional) Some projects put all test files here, but you can also keep tests next to the code they test.
-
-**You do NOT need to use all these folders!** Use what makes sense for your project. The most important is `__mocks__` for reusable mocks.
-
----
-
-## Summary Table
-
-| Technique            | What it is                        | When to use it               |
-| -------------------- | --------------------------------- | ---------------------------- |
-| Mock                 | Fake version of a dependency      | Isolate code, control output |
-| Stub                 | Mock that returns specific output | Simulate responses/errors    |
-| Spy                  | Records calls to a function       | Check how a function is used |
-| Fake                 | Simple implementation             | Simulate complex behavior    |
-| Dependency Injection | Pass dependencies in              | Make code testable/flexible  |
-
-| Test Type   | What it tests                   | Where to put it           |
-| ----------- | ------------------------------- | ------------------------- |
-| Unit        | One function/class in isolation | Next to code or **tests** |
-| Integration | Multiple modules together       | tests/integration         |
-| E2E         | Whole system (user perspective) | tests/e2e                 |
-
----
-
-## Why are these important?
-
-- **Speed:** Tests run fast because they don’t use real databases or networks.
-- **Reliability:** Tests don’t fail because of external issues.
-- **Isolation:** You can test one piece of code at a time.
-- **Control:** You can simulate any scenario (success, error, edge cases).
-
----
-
-If you want concrete examples of any of these in your codebase, just ask!
-
----
-
-## Entity Testing Guidelines
-
-### Should You Test Entities? YES!
-
-Entities should be tested when they contain:
-
-- **Business Logic Methods** (e.g., `document.isExpired()`, `document.approve()`)
-- **Validation Logic** (e.g., `User.create()` with `validateOrReject()`)
-- **State Transitions** (e.g., document status changes)
-- **Complex Constructors** with validation
-
-### Should You Mock Entities? Generally NO!
-
-**Don't mock entities when:**
-
-- Testing the entity itself (unit tests)
-- Entities are lightweight with no external dependencies
-- Entities contain critical business rules
-
-**DO mock entities when:**
-
-- Testing controllers/services that use entities
-- Testing complex relationships that are expensive to create
-- Isolating components in integration tests
-
-### Entity Testing Best Practices
-
-1. **Test Business Logic Methods** - Focus on methods that contain business rules
-2. **Test Validation** - Ensure validation decorators work correctly
-3. **Test State Changes** - Verify methods that modify entity state
-4. **Use Real Entities** - Create actual entity instances, not mocks
-5. **Test Edge Cases** - Invalid data, boundary conditions, error states
-
-### Example: Testing Document Entity
+### Example: Testing Auth Functions
 
 ```typescript
-// ✅ GOOD: Test the actual entity behavior
-describe("Document Entity", () => {
-	it("should approve a pending document", () => {
-		const document = new Document(/* ... */);
-		const user = new User(/* ... */);
+// Pure function - easy to test
+export const handleSignUp = async (input: AuthInput): Promise<AuthResult> => {
+	// Business logic here
+	return result;
+};
 
-		document.approve(user, "Looks good");
+// Test the function directly
+describe("handleSignUp", () => {
+	test("should create user with default role", async () => {
+		const input = {
+			name: "Test User",
+			email: "test@example.com",
+			phone: "+1234567890",
+			password: "password123",
+		};
 
-		expect(document.status).toBe(DocumentStatus.APPROVED);
-		expect(document.verifiedBy).toBe(user);
-	});
-});
-```
-
-### Example: Testing Controller with Mocked Entities
-
-```typescript
-// ✅ GOOD: Mock entities when testing controllers
-describe("Document Controller", () => {
-	it("should approve document when user has permission", async () => {
-		const mockDocument = {
-			canBeVerified: mock(() => true),
-			approve: mock(() => {}),
-		} as unknown as Document;
-
-		const result = await approveDocument("doc-123", "user-123");
+		const result = await handleSignUp(input);
 
 		expect(result.success).toBe(true);
-		expect(mockDocument.approve).toHaveBeenCalled();
+		expect(result.user?.roles).toEqual([UserRoles.Student]);
+	});
+
+	test("should fail for existing email", async () => {
+		// Mock database to return existing user
+		jest.spyOn(db.user, "findOne").mockResolvedValue(mockUser);
+
+		const result = await handleSignUp(input);
+
+		expect(result.success).toBe(false);
+		expect(result.message).toBe("User already exists");
 	});
 });
 ```
 
-## JWT Testing Guidelines
+## JWT Security Testing
 
-### JWT Testing Best Practices
+### Core JWT Testing Areas
 
-JWT testing requires special attention to security and cryptographic validation. See our comprehensive [JWT Testing Guide](./JWT-Testing-Guide.md) for detailed patterns.
+Our JWT implementation includes comprehensive security testing:
 
-#### Key JWT Testing Principles
-
-1. **Test Security First** - Always test failure cases and edge cases
-2. **Validate Token Structure** - Ensure proper JWT format (header.payload.signature)
-3. **Test Algorithm Validation** - Verify only allowed algorithms are accepted
-4. **Check Expiry Handling** - Test both valid and expired tokens
-5. **Verify Signature Integrity** - Test tampering detection
-
-#### Code Hygiene for JWT Tests
-
-**✅ Use Helper Functions**
+#### 1. Algorithm Validation
 
 ```typescript
-// test-helpers.ts
-export const assertValidJwtPayload = (
-	result: CustomJwtPayload | false,
-	expectedId: string,
-	expectedRoles: UserRoles[]
-) => {
-	expect(result).not.toBe(false);
-	if (result !== false) {
-		expect(result.id).toBe(expectedId);
-		expect(result.roles).toEqual(expectedRoles);
-		expect(result.iat).toBeDefined();
-		expect(result.exp).toBeDefined();
-	}
-};
-
-export const assertJwtStructure = (token: string) => {
-	const parts = token.split(".");
-	expect(parts).toHaveLength(3);
-	expect(parts[0]).toMatch(/^[A-Za-z0-9_-]+$/); // Header
-	expect(parts[1]).toMatch(/^[A-Za-z0-9_-]+$/); // Payload
-	expect(parts[2]).toMatch(/^[A-Za-z0-9_-]+$/); // Signature
-};
-```
-
-**✅ Use Test Data Factories**
-
-```typescript
-// test-factories.ts
-export const createTestUser = (
-	overrides: Partial<{ id: string; roles: UserRoles[] }> = {}
-) => ({
-	id: "test-user-123",
-	roles: [UserRoles.Student],
-	...overrides,
-});
-
-export const createTestJwtPayload = (
-	overrides: Partial<CustomJwtPayload> = {}
-) => ({
-	id: "test-user-123",
-	roles: [UserRoles.Student],
-	...overrides,
-});
-```
-
-**✅ Follow Consistent Test Structure**
-
-```typescript
-describe("JWT Helper", () => {
-	let jwt: ReturnType<typeof createJwtHelper>;
-
-	beforeEach(() => {
-		jwt = createJwtHelper({ secret: "test-secret" });
+describe("JWT Algorithm Security", () => {
+	test("should reject unsupported algorithms", () => {
+		expect(() =>
+			createJwtHelper({
+				secret: "test",
+				alg: "none" as any,
+			})
+		).toThrow("Unsupported algorithm");
 	});
 
-	describe("sign", () => {
-		it("should sign valid payload", async () => {
-			// Arrange
-			const payload = createTestJwtPayload();
+	test("should accept only secure algorithms", () => {
+		const secureAlgorithms = ["HS256", "HS384", "HS512"];
 
-			// Act
-			const token = await jwt.sign(payload);
-
-			// Assert
-			assertJwtStructure(token);
-			const result = await jwt.verify(token);
-			assertValidJwtPayload(result, payload.id, payload.roles);
+		secureAlgorithms.forEach((alg) => {
+			expect(() =>
+				createJwtHelper({
+					secret: "test",
+					alg: alg as any,
+				})
+			).not.toThrow();
 		});
 	});
 });
 ```
 
-#### Security Testing Checklist
+#### 2. Token Verification
 
-- [ ] **Algorithm Validation**: Only allowed algorithms accepted
-- [ ] **Secret Validation**: Empty/invalid secrets rejected
-- [ ] **Signature Verification**: Tampered tokens rejected
-- [ ] **Expiry Validation**: Expired tokens rejected
-- [ ] **Role Validation**: Invalid roles rejected
-- [ ] **Token Structure**: Malformed tokens rejected
-- [ ] **Clock Tolerance**: Configurable time skew handling
-- [ ] **Token Uniqueness**: Identical payloads generate different tokens
-- [ ] **Claim Tampering**: Modified claims detected
+```typescript
+describe("JWT Token Verification", () => {
+	test("should verify valid tokens", async () => {
+		const jwt = createJwtHelper({ secret: "test-secret" });
+		const payload = { id: "user-1", roles: [UserRoles.Student] };
+
+		const token = await jwt.sign(payload);
+		const verified = await jwt.verify(token);
+
+		expect(verified).toBeTruthy();
+		expect(verified?.id).toBe("user-1");
+	});
+
+	test("should reject tampered tokens", async () => {
+		const jwt = createJwtHelper({ secret: "test-secret" });
+		const token =
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItMSIsInJvbGVzIjpbIlN0dWRlbnQiXX0.tampered-signature";
+
+		const verified = await jwt.verify(token);
+		expect(verified).toBe(false);
+	});
+
+	test("should reject expired tokens", async () => {
+		const jwt = createJwtHelper({
+			secret: "test-secret",
+			accessTokenExpiry: "1ms", // Very short expiry
+		});
+
+		const token = await jwt.sign({ id: "user-1", roles: [UserRoles.Student] });
+
+		// Wait for token to expire
+		await new Promise((resolve) => setTimeout(resolve, 10));
+
+		const verified = await jwt.verify(token);
+		expect(verified).toBe(false);
+	});
+});
+```
+
+#### 3. Role Validation
+
+```typescript
+describe("JWT Role Validation", () => {
+	test("should accept valid roles", async () => {
+		const jwt = createJwtHelper({ secret: "test-secret" });
+		const payload = {
+			id: "user-1",
+			roles: [UserRoles.Student, UserRoles.Supervisor],
+		};
+
+		const token = await jwt.sign(payload);
+		const verified = await jwt.verify(token);
+
+		expect(verified?.roles).toEqual([UserRoles.Student, UserRoles.Supervisor]);
+	});
+
+	test("should reject invalid roles", async () => {
+		const jwt = createJwtHelper({ secret: "test-secret" });
+		const payload = {
+			id: "user-1",
+			roles: ["InvalidRole" as any],
+		};
+
+		const token = await jwt.sign(payload);
+		const verified = await jwt.verify(token);
+
+		expect(verified).toBe(false);
+	});
+});
+```
+
+#### 4. Clock Tolerance Testing
+
+```typescript
+describe("JWT Clock Tolerance", () => {
+	test("should handle clock skew within tolerance", async () => {
+		const jwt = createJwtHelper({
+			secret: "test-secret",
+			clockTolerance: "5s",
+		});
+
+		// Mock time to be 3 seconds in the future
+		const originalDate = Date;
+		global.Date = class extends Date {
+			constructor() {
+				super();
+				return new originalDate(Date.now() + 3000);
+			}
+		} as any;
+
+		const token = await jwt.sign({ id: "user-1", roles: [UserRoles.Student] });
+		const verified = await jwt.verify(token);
+
+		expect(verified).toBeTruthy();
+
+		// Restore original Date
+		global.Date = originalDate;
+	});
+});
+```
+
+## Integration Testing
+
+### End-to-End Authentication Flows
+
+```typescript
+describe("Authentication Integration", () => {
+	test("complete signup and signin flow", async () => {
+		// 1. Sign up
+		const signupResult = await handleSignUp({
+			name: "Test User",
+			email: "test@example.com",
+			phone: "+1234567890",
+			password: "password123",
+		});
+
+		expect(signupResult.success).toBe(true);
+		expect(signupResult.accessToken).toBeDefined();
+		expect(signupResult.refreshToken).toBeDefined();
+
+		// 2. Sign in
+		const signinResult = await handleSignIn({
+			email: "test@example.com",
+			password: "password123",
+		});
+
+		expect(signinResult.success).toBe(true);
+		expect(signinResult.accessToken).toBeDefined();
+		expect(signinResult.refreshToken).toBeDefined();
+	});
+
+	test("token refresh flow", async () => {
+		// 1. Get initial tokens
+		const signupResult = await handleSignUp({
+			name: "Test User",
+			email: "test@example.com",
+			phone: "+1234567890",
+			password: "password123",
+		});
+
+		// 2. Refresh tokens
+		const refreshResult = await handleTokenRefresh(signupResult.refreshToken!);
+
+		expect(refreshResult.success).toBe(true);
+		expect(refreshResult.accessToken).toBeDefined();
+		expect(refreshResult.refreshToken).toBeDefined();
+
+		// 3. Verify old refresh token is invalid
+		const oldTokenResult = await handleTokenRefresh(signupResult.refreshToken!);
+		expect(oldTokenResult.success).toBe(false);
+	});
+});
+```
+
+## Performance Testing
+
+### Load Testing Authentication
+
+```typescript
+describe("Authentication Performance", () => {
+	test("should handle concurrent signups", async () => {
+		const concurrentUsers = 10;
+		const signupPromises = Array.from({ length: concurrentUsers }, (_, i) =>
+			handleSignUp({
+				name: `User ${i}`,
+				email: `user${i}@example.com`,
+				phone: `+123456789${i}`,
+				password: "password123",
+			})
+		);
+
+		const results = await Promise.all(signupPromises);
+		const successful = results.filter((r) => r.success);
+
+		expect(successful.length).toBe(concurrentUsers);
+	});
+
+	test("should handle concurrent token refreshes", async () => {
+		const jwt = createJwtHelper({ secret: "test-secret" });
+		const payload = { id: "user-1", roles: [UserRoles.Student] };
+		const token = await jwt.sign(payload, { type: "refresh" });
+
+		const concurrentRefreshes = 5;
+		const refreshPromises = Array.from({ length: concurrentRefreshes }, () =>
+			handleTokenRefresh(token)
+		);
+
+		const results = await Promise.all(refreshPromises);
+		const successful = results.filter((r) => r.success);
+
+		// Only one should succeed due to token rotation
+		expect(successful.length).toBe(1);
+	});
+});
+```
+
+## Error Handling Testing
+
+### Validation Error Testing
+
+```typescript
+describe("Validation Error Handling", () => {
+	test("should handle validation errors gracefully", async () => {
+		// Mock validation error
+		const validationError = new ValidationError();
+		validationError.property = "email";
+		validationError.constraints = { isEmail: "Invalid email format" };
+
+		jest.spyOn(User, "create").mockRejectedValue([validationError]);
+
+		const result = await handleSignUp({
+			name: "Test User",
+			email: "invalid-email",
+			phone: "+1234567890",
+			password: "password123",
+		});
+
+		expect(result.success).toBe(false);
+		expect(result.message).toBe("Validation failed");
+		expect(result.errors).toHaveLength(1);
+		expect(result.errors![0].field).toBe("email");
+	});
+});
+```
+
+## Security Testing Best Practices
+
+### 1. Test All Failure Modes
+
+```typescript
+describe("Security Failure Modes", () => {
+	test("should handle malformed tokens", async () => {
+		const jwt = createJwtHelper({ secret: "test-secret" });
+
+		const malformedTokens = [
+			"",
+			"not-a-jwt",
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", // Missing payload
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItMSJ9", // Missing signature
+		];
+
+		for (const token of malformedTokens) {
+			const result = await jwt.verify(token);
+			expect(result).toBe(false);
+		}
+	});
+});
+```
+
+### 2. Test Token Rotation Security
+
+```typescript
+describe("Token Rotation Security", () => {
+	test("should prevent refresh token reuse", async () => {
+		const jwt = createJwtHelper({ secret: "test-secret" });
+		const payload = { id: "user-1", roles: [UserRoles.Student] };
+		const refreshToken = await jwt.sign(payload, { type: "refresh" });
+
+		// First refresh should succeed
+		const result1 = await handleTokenRefresh(refreshToken);
+		expect(result1.success).toBe(true);
+
+		// Second refresh with same token should fail
+		const result2 = await handleTokenRefresh(refreshToken);
+		expect(result2.success).toBe(false);
+	});
+});
+```
+
+## Test Organization
+
+### File Structure
+
+```
+tests/
+├── unit/
+│   ├── auth.functions.test.ts    # Pure function tests
+│   ├── jwt.security.test.ts      # JWT security tests
+│   └── validation.test.ts        # Validation tests
+├── integration/
+│   ├── auth.flow.test.ts         # End-to-end flows
+│   └── database.test.ts          # Database integration
+└── performance/
+    ├── load.test.ts              # Load testing
+    └── stress.test.ts            # Stress testing
+```
+
+### Test Naming Conventions
+
+- **Unit tests**: `describe('functionName', () => {})`
+- **Integration tests**: `describe('feature integration', () => {})`
+- **Security tests**: `describe('security: attack vector', () => {})`
+- **Performance tests**: `describe('performance: scenario', () => {})`
+
+## Running Tests
+
+### Development
+
+```bash
+# Run all tests
+bun test
+
+# Run specific test file
+bun test tests/unit/auth.functions.test.ts
+
+# Run tests with coverage
+bun test --coverage
+
+# Run tests in watch mode
+bun test --watch
+```
+
+### CI/CD
+
+```bash
+# Run tests in CI environment
+bun test --ci --coverage --reporter=verbose
+
+# Run security tests only
+bun test tests/unit/jwt.security.test.ts
+
+# Run performance tests
+bun test tests/performance/
+```
+
+## Continuous Testing
+
+### Pre-commit Hooks
+
+```json
+{
+	"husky": {
+		"hooks": {
+			"pre-commit": "bun test --staged",
+			"pre-push": "bun test --coverage"
+		}
+	}
+}
+```
+
+### GitHub Actions
+
+```yaml
+name: Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install
+      - run: bun test --coverage
+      - run: bun test tests/unit/jwt.security.test.ts
+```
+
+## Coverage Goals
+
+- **Unit Tests**: 90%+ coverage for all pure functions
+- **Integration Tests**: 100% coverage for critical flows
+- **Security Tests**: 100% coverage for all security scenarios
+- **Performance Tests**: Baseline metrics for all endpoints
+
+---
+
+This testing approach ensures our authentication system is robust, secure, and maintainable. The pure function architecture makes testing straightforward, while comprehensive security testing protects against common attack vectors.

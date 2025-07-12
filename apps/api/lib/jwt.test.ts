@@ -196,13 +196,17 @@ describe("JWT Implementation", () => {
 
 		it("should return false for expired token", async () => {
 			const payload = { id: "123", roles: [UserRoles.Student] };
-			// Create a token that expires 1 second ago
-			const token = await jwt.sign(payload, { expiry: "1s" });
+			// Create a token that expires in 1 second with no clock tolerance
+			const jwtNoTolerance = createJwtHelper({
+				secret: "test-secret",
+				clockTolerance: "0s",
+			});
+			const token = await jwtNoTolerance.sign(payload, { expiry: "1s" });
 
 			// Wait 2 seconds to ensure token expires
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 
-			const result = await jwt.verify(token);
+			const result = await jwtNoTolerance.verify(token);
 			expect(result).toBe(false);
 		});
 
