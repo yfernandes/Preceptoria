@@ -26,7 +26,8 @@
 			"@web/stores": ["apps/web/app/src/stores/index.ts"],
 			"@web/libs": ["apps/web/app/src/libs/index.ts"],
 			"@api": ["apps/api/src/index.ts"],
-			"@api/*": ["apps/api/src/*"]
+			"@api/*": ["apps/api/src/*"],
+			"@api/controllers/*": ["apps/api/src/controllers/*"]
 		}
 	},
 	"exclude": ["coverage", ".storybook", "node_modules"]

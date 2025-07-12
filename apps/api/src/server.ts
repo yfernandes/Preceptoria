@@ -12,7 +12,7 @@ import { RequestContext, Utils, wrap } from "@mikro-orm/core";
 import { SyncService } from "./services/syncService";
 import { db } from "./db";
 
-// --- Controllers ---
+// // --- Controllers ---
 import {
 	adminController,
 	authController,
@@ -28,13 +28,15 @@ import {
 	supervisorController,
 	documentsController,
 	userController,
-} from "./controllers";
+	healthController,
+} from "@api/controllers";
 
 // --- App Setup ---
 const SPREADSHEET_ID = Bun.env.GOOGLE_SPREADSHEET_ID;
 const syncService = new SyncService();
 
-export const app = new Elysia()
+const app = new Elysia()
+
 	// --- Middleware ---
 	.use(swagger())
 	.use(bearer())
@@ -148,16 +150,11 @@ export const app = new Elysia()
 			error: "INTERNAL_ERROR",
 		};
 	})
-	// --- Health Check ---
-	.get("/health", () => ({
-		status: "ok",
-		timestamp: new Date().toISOString(),
-		uptime: process.uptime(),
-		environment: Bun.env.NODE_ENV || "development",
-	}))
+
 	// --- Controllers ---
-	.use(authController)
+	.use(healthController)
 	.use(adminController)
+	.use(authController)
 	.use(classesController)
 	.use(coursesController)
 	.use(hospitalController)
@@ -171,5 +168,5 @@ export const app = new Elysia()
 	.use(documentsController)
 	.use(userController);
 
-// Export the app type for Eden Treaty
-export type App = typeof app;
+// Export the app instance
+export { app };

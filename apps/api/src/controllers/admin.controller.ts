@@ -34,14 +34,14 @@ export const adminController = new Elysia({ prefix: "admin" })
 		},
 		createSysAdminDto
 	)
-	.post("/sync-google-sheets", async ({ requester, status }) => {
+	.post("/syncGoogleSheets", async ({ requester, status }) => {
 		if (!requester.sysAdminId) return status(401, { error: "Unauthorized" });
 		const result = await syncService.syncFromGoogleSheets(
 			Bun.env.GOOGLE_SPREADSHEET_ID
 		);
 		return result;
 	})
-	.get("/:id", async ({ requester, status, params: { id } }) => {
+	.get(":id", async ({ requester, status, params: { id } }) => {
 		try {
 			if (requester.sysAdminId !== id) {
 				return status(401);
@@ -53,6 +53,6 @@ export const adminController = new Elysia({ prefix: "admin" })
 		}
 	})
 	// .patch("/:id", "Update One") // Nothing to do here since SysAdmins don't have any properties
-	.delete("/:id", () => {
+	.delete(":id", () => {
 		return { success: false, message: "Undefined Behaviour" };
 	});

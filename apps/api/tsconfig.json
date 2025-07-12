@@ -47,6 +47,7 @@
 			"@web/stores": ["../web/src/stores/index.ts"],
 			"@web/libs": ["../web/src/libs/index.ts"],
 			"@api": ["src/index.ts"],
+			"@api/controllers/*": ["src/controllers/*"],
 			"@api/*": ["src/*"]
 		}
 	},

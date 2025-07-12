@@ -30,7 +30,7 @@ export const jwtInstance = jwt({
 	// exp: "15m",
 });
 
-const authController = new Elysia({ prefix: "/auth" })
+const authController = new Elysia({ prefix: "auth" })
 	.use(jwtInstance)
 	.post(
 		"/signup",

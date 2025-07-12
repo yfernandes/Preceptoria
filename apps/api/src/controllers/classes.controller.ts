@@ -27,7 +27,7 @@ export const classesController = new Elysia({ prefix: "/classes" })
 
 	// Create a new class
 	.post(
-		"/",
+		"",
 		async ({ body: { name, courseId }, requester }) => {
 			try {
 				// Check permissions for creating classes
@@ -95,7 +95,7 @@ export const classesController = new Elysia({ prefix: "/classes" })
 	)
 
 	// Get all classes (with optional filtering)
-	.get("/", async ({ requester, query }) => {
+	.get("", async ({ requester, query }) => {
 		try {
 			const { courseId, supervisorId, limit = 10, offset = 0 } = query;
 
@@ -166,7 +166,7 @@ export const classesController = new Elysia({ prefix: "/classes" })
 	})
 
 	// Get a specific class by ID
-	.get("/:id", async ({ params: { id }, requester }) => {
+	.get(":id", async ({ params: { id }, requester }) => {
 		try {
 			// Check permissions for reading this specific class
 			const hasAccess = await hasPermission(
@@ -298,7 +298,7 @@ export const classesController = new Elysia({ prefix: "/classes" })
 	)
 
 	// Delete a class
-	.delete("/:id", async ({ params: { id }, requester }) => {
+	.delete(":id", async ({ params: { id }, requester }) => {
 		try {
 			// Check permissions for deleting this class
 			const hasAccess = await hasPermission(

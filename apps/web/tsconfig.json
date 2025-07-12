@@ -1,5 +1,5 @@
 {
-	"extends": ["config/typescript/next.json"],
+	"extends": "config/typescript/next.json",
 	"compilerOptions": {
 		"target": "ES2017",
 		"lib": ["dom", "dom.iterable", "esnext"],
@@ -23,8 +23,11 @@
 			"@web/stores": ["src/stores/index.ts"],
 			"@web/libs": ["src/libs/index.ts"],
 			"@api": ["../api/src/index.ts"],
-			"@api/*": ["../api/src/*"]
-		}
+			"@api/*": ["../api/src/*"],
+			"@api/controllers/*": ["../api/src/controllers/*"]
+		},
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
 	"exclude": [

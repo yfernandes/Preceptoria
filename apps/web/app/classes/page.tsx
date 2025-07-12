@@ -26,7 +26,12 @@ export default function ClassesPage() {
 				setLoading(true);
 				setError(null);
 
-				const response = await treatise.classes.get();
+				const response = await treatise.classes.get({
+					query: {
+						limit: 10,
+						offset: 0,
+					},
+				});
 				console.log(response);
 
 				if (!response.ok) {
