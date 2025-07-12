@@ -18,16 +18,19 @@ The Preceptoria Auth Module provides comprehensive user authentication and autho
 The system implements six distinct user roles with hierarchical permissions designed to prevent accidental cross-referencing of data:
 
 #### SysAdmin
+
 - **Full System Access**: `*:*:*` permission (all resources, all actions)
 - **Administrative Control**: Complete system management capabilities
 
 #### OrgAdmin
+
 - **Organization-Wide Management**: Access to all resources within their organization using `*_Managed` permissions
 - **Operational Manager Creation**: Can create and manage Supervisors, HospitalManagers, and Preceptors
 - **Audit Access**: Can access logs and delete historical data (compliance requirement)
 - **Data Isolation**: Cannot access resources from other organizations
 
 #### Supervisor (MVP Focus)
+
 - **Academic Resources**: Manage courses, classes, students within their school using `*_Own` permissions
 - **Cross-Hospital Shift Management**: Create and manage shifts across hospitals, assign students and preceptors
 - **Student Document Management**: Upload, read, update, delete documents on behalf of students using `*_Students` permissions
@@ -36,6 +39,7 @@ The system implements six distinct user roles with hierarchical permissions desi
 - **Class-Level Data Access**: Can see other students in their classes using `Read_Class` permissions
 
 #### HospitalManager
+
 - **Hospital Operations**: Manage their hospital data using `*_Own` permissions
 - **Shift Oversight**: Read shifts assigned to their hospital using `Read_Managed` permissions
 - **Document Approval**: Read and approve/reject document bundles using `Approve_Bundle` permissions
@@ -43,11 +47,13 @@ The system implements six distinct user roles with hierarchical permissions desi
 - **Data Isolation**: Cannot access data from other hospitals
 
 #### Preceptor
+
 - **Assigned Shift Management**: Read and update shifts they're assigned to using `*_Assigned` permissions
 - **Teaching Context**: Basic access to student and hospital information for their teaching context
 - **Data Isolation**: Cannot access shifts they're not assigned to
 
 #### Student
+
 - **Personal Document Management**: Create, read, update, delete their own documents using `*_Own` permissions
 - **Academic Access**: Read access to their classes and shifts using `Read_Own` permissions
 - **Cross-Organization Navigation**: Basic hospital info for navigation using `Read_Basic` permissions
@@ -68,28 +74,28 @@ Permissions follow the pattern: `Resource:Action_Modifier`
 
 ```typescript
 // Supervisor can read their own classes (prevents cross-supervisor access)
-"Classes:Read_Own"
+"Classes:Read_Own";
 
 // OrgAdmin can manage all hospitals in their organization (prevents cross-organization access)
-"Hospital:Read_Managed"
+"Hospital:Read_Managed";
 
 // Supervisor can manage documents on behalf of students
-"Document:Create_Students"
+"Document:Create_Students";
 
 // Supervisor can assign students to shifts
-"Shift:Assign_Own"
+"Shift:Assign_Own";
 
 // Supervisor can compile student documents into bundles
-"Document:Compile_Students"
+"Document:Compile_Students";
 
 // HospitalManager can approve document bundles
-"Document:Approve_Bundle"
+"Document:Approve_Bundle";
 
 // Student can see classmates (prevents cross-class access)
-"Student:Read_Class"
+"Student:Read_Class";
 
 // Preceptor can manage assigned shifts
-"Shift:Read_Assigned"
+"Shift:Read_Assigned";
 ```
 
 ### Ownership Resolution
@@ -119,69 +125,91 @@ The system includes sophisticated ownership resolvers that determine access base
 ```typescript
 // Access Token (15 minutes)
 const accessToken = await jwt.sign({
-  id: user.id,
-  roles: user.roles.toString(),
+	id: user.id,
+	roles: user.roles, // Use UserRoles[] directly
 });
 
 // Refresh Token (7 days)
-const refreshToken = await jwt.sign({
-  id: user.id,
-  roles: user.roles.toString(),
-  exp: "7d",
-});
+const refreshToken = await jwt.sign(
+	{
+		id: user.id,
+		roles: user.roles, // Use UserRoles[] directly
+	},
+	{ type: "refresh" }
+);
+
+// Generate both tokens at once
+const { accessToken, refreshToken } = await jwt.generateTokenPair(user);
 ```
+
+### JWT Security Features
+
+Our JWT implementation includes several security enhancements:
+
+- **Algorithm Allowlist**: Only secure algorithms (HS256, HS384, HS512) are allowed
+- **Standard JWT Claims**: Support for `iss` (issuer), `aud` (audience), `sub` (subject)
+- **Clock Tolerance**: Configurable time skew handling (default: 2 seconds)
+- **Role Validation**: Strict validation of UserRoles enum values
+- **Error Logging**: Production-safe error handling without information leakage
+- **Type Safety**: Full TypeScript integration with UserRoles enum
 
 ## API Endpoints
 
 ### Authentication Endpoints
 
 #### POST `/auth/signup`
+
 Create a new user account.
 
 **Request Body:**
+
 ```typescript
 {
-  name: string;
-  email: string;
-  phone: string;
-  password: string; // min 6 characters
+	name: string;
+	email: string;
+	phone: string;
+	password: string; // min 6 characters
 }
 ```
 
 **Response:**
+
 ```typescript
 {
-  success: boolean;
-  message: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-  };
+	success: boolean;
+	message: string;
+	user: {
+		id: string;
+		name: string;
+		email: string;
+	}
 }
 ```
 
 #### POST `/auth/signin`
+
 Authenticate with email and password.
 
 **Request Body:**
+
 ```typescript
 {
-  email: string;
-  password: string;
+	email: string;
+	password: string;
 }
 ```
 
 **Response:**
+
 ```typescript
 {
-  success: boolean;
-  message: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-  };
+	success: boolean;
+	message: string;
+	user: {
+		id: string;
+		name: string;
+		email: string;
+	}
 }
 ```
 
@@ -192,10 +220,10 @@ The system uses middleware to enforce permissions:
 ```typescript
 // Example: Check if user can read a specific document
 const hasAccess = await hasPermission(
-  requester,
-  Resource.Document,
-  Actions.Read,
-  documentId
+	requester,
+	Resource.Document,
+	Actions.Read,
+	documentId
 );
 ```
 
@@ -245,23 +273,50 @@ bun run test src/controllers/auth.test.ts
 
 # Run permission tests
 bun run test src/utils/hasPermissions.test.ts
+
+# Run JWT tests
+bun run test lib/jwt.test.ts
 ```
+
+### JWT Testing
+
+Our JWT implementation includes comprehensive testing with security focus. See our [JWT Testing Guide](./JWT-Testing-Guide.md) for detailed testing patterns and best practices.
+
+**Key Testing Areas:**
+
+- **Security Validation**: Algorithm allowlists, signature verification, role validation
+- **Token Management**: Signing, verification, expiry handling, clock tolerance
+- **Error Handling**: Malformed tokens, invalid secrets, tampering detection
+- **Performance**: Concurrent access, large payloads, memory efficiency
+- **Integration**: End-to-end authentication flows
+
+**Test Coverage:**
+
+- ✅ Configuration edge cases and validation
+- ✅ All signing and verification scenarios
+- ✅ Security-critical failure modes
+- ✅ Performance and concurrency testing
+- ✅ Standard JWT claims validation
+- ⚠️ Token uniqueness and tampering tests (planned)
 
 ## Future Enhancements
 
 ### Planned Features
 
 #### Social Authentication
+
 - **Google OAuth**: Integration with Google authentication
 - **Additional Providers**: Support for Facebook, GitHub, etc.
 - **Hybrid Authentication**: Users can link social and local accounts
 
 #### Enhanced Security
+
 - **Multi-Factor Authentication (MFA)**: Additional security layer
 - **Rate Limiting**: Protection against brute force attacks
 - **Session Management**: Advanced session tracking and management
 
 #### Advanced Features
+
 - **Invitation System**: Role-based user invitations
 - **Audit Logging**: Comprehensive activity tracking
 - **Token Revocation**: Advanced token management with blacklisting
@@ -269,6 +324,7 @@ bun run test src/utils/hasPermissions.test.ts
 ### Integration Plans
 
 #### Supabase Integration (Future)
+
 - **Row Level Security (RLS)**: Database-level access control
 - **Supabase Auth**: Leverage Supabase authentication features
 - **IAM Integration**: Advanced identity and access management
@@ -280,14 +336,14 @@ bun run test src/utils/hasPermissions.test.ts
 ```typescript
 // Check if user can read a specific student
 const canReadStudent = await hasPermission(
-  user,
-  Resource.Student,
-  Actions.Read,
-  studentId
+	user,
+	Resource.Student,
+	Actions.Read,
+	studentId
 );
 
 if (!canReadStudent) {
-  throw new Error("Access denied");
+	throw new Error("Access denied");
 }
 ```
 
@@ -296,21 +352,21 @@ if (!canReadStudent) {
 ```typescript
 // Example controller with role-based access
 const studentsController = new Elysia({ prefix: "/students" })
-  .use(authMiddleware)
-  .get("/:id", async ({ params, user }) => {
-    const hasAccess = await hasPermission(
-      user,
-      Resource.Student,
-      Actions.Read,
-      params.id
-    );
-    
-    if (!hasAccess) {
-      return error(403, { message: "Access denied" });
-    }
-    
-    // Proceed with student data retrieval
-  });
+	.use(authMiddleware)
+	.get("/:id", async ({ params, user }) => {
+		const hasAccess = await hasPermission(
+			user,
+			Resource.Student,
+			Actions.Read,
+			params.id
+		);
+
+		if (!hasAccess) {
+			return error(403, { message: "Access denied" });
+		}
+
+		// Proceed with student data retrieval
+	});
 ```
 
 ## Best Practices

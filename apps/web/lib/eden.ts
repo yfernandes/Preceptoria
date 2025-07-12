@@ -15,5 +15,5 @@ export const treatise: TreatyApp = treaty<App>(API_BASE_URL, {
 	},
 });
 
-void treatise.healthFile.get();
-void treatise.admin.get();
+// void treatise.healthFile.get();
+// void treatise.admin.get();

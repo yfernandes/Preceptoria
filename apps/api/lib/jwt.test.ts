@@ -1,461 +1,433 @@
-import { Elysia, t } from "elysia";
 import { describe, expect, it, beforeEach } from "bun:test";
-import jwt from "./jwt";
+import { createJwtHelper } from "./jwt";
+import { UserRoles } from "../src/entities/role.abstract";
 
-// Test utilities
-const createTestApp = (options: Parameters<typeof jwt>[0]) => {
-	return new Elysia()
-		.use(jwt(options))
-		.post("/sign", ({ jwt, body }) => jwt.sign(body), {
-			body: t.Object({
-				name: t.String(),
-				data: t.Optional(t.String()),
-				exp: t.Optional(t.Union([t.String(), t.Number()])),
-				nbf: t.Optional(t.Union([t.String(), t.Number()])),
-			}),
-		})
-		.post("/sign-with-schema", ({ jwt, body }) => jwt.sign(body), {
-			body: t.Object({
-				userId: t.String(),
-				role: t.String(),
-				exp: t.Optional(t.Union([t.String(), t.Number()])),
-			}),
-		})
-		.post(
-			"/verify",
-			async ({ jwt, body: { token } }) => await jwt.verify(token),
-			{
-				body: t.Object({ token: t.String() }),
-			}
-		)
-		.post("/verify-empty", async ({ jwt }) => await jwt.verify(), {
-			body: t.Object({}),
-		});
-};
-
-const post = (_app: Elysia, path: string, body = {}) =>
-	new Request(`http://localhost${path}`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(body),
-	});
-
-describe.todo("JWT Implementation", () => {
-	describe.todo("Configuration", () => {
+describe("JWT Implementation", () => {
+	describe("Configuration", () => {
 		it("should throw error for empty secret", () => {
 			expect(() => {
-				jwt({ secret: "" });
-			}).toThrow("JWT secret cannot be empty");
+				createJwtHelper({ secret: "" });
+			}).toThrow("JWT secret is required");
 		});
 
 		it("should throw error for undefined secret", () => {
 			expect(() => {
-				jwt({ secret: undefined as any });
-			}).toThrow("JWT secret cannot be empty");
+				createJwtHelper({ secret: undefined as unknown as string });
+			}).toThrow("JWT secret is required");
 		});
 
 		it("should accept string secret", () => {
 			expect(() => {
-				jwt({ secret: "test-secret" });
+				createJwtHelper({ secret: "test-secret" });
 			}).not.toThrow();
 		});
 
 		it("should accept Uint8Array secret", () => {
 			expect(() => {
-				jwt({ secret: new TextEncoder().encode("test-secret") });
+				createJwtHelper({ secret: new TextEncoder().encode("test-secret") });
 			}).not.toThrow();
 		});
 
-		it("should use default algorithm HS256", () => {
-			const app = createTestApp({ secret: "test-secret" });
-			expect(app).toBeDefined();
-		});
-
-		it("should accept custom algorithm", () => {
+		it("should use custom expiry times", () => {
 			expect(() => {
-				jwt({ secret: "test-secret", alg: "HS512" });
+				createJwtHelper({
+					secret: "test-secret",
+					accessTokenExpiry: "30m",
+					refreshTokenExpiry: "14d",
+				});
 			}).not.toThrow();
 		});
 
 		it("should throw error for unsupported algorithm", () => {
 			expect(() => {
-				jwt({ secret: "test-secret", alg: "INVALID" as any });
-			}).toThrow("Algorithm 'INVALID' is not supported");
+				createJwtHelper({
+					secret: "test-secret",
+					alg: "INVALID" as unknown as "HS256",
+				});
+			}).toThrow("Unsupported algorithm: INVALID");
+		});
+
+		it("should accept valid algorithms", () => {
+			expect(() => {
+				createJwtHelper({ secret: "test-secret", alg: "HS512" });
+			}).not.toThrow();
 		});
 	});
 
-	describe.todo("JWT Signing", () => {
-		let app: Elysia;
+	describe("JWT Signing", () => {
+		let jwt: ReturnType<typeof createJwtHelper>;
 
 		beforeEach(() => {
-			app = createTestApp({ secret: "test-secret" });
+			jwt = createJwtHelper({ secret: "test-secret" });
 		});
 
 		it("should sign JWT with basic payload", async () => {
-			const name = "TestUser";
-			const response = await app.handle(post(app, "/sign", { name }));
-			const token = await response.text();
+			const payload = { id: "123", roles: [UserRoles.Student] };
+			const token = await jwt.sign(payload);
 
 			expect(token).toMatch(/^[A-Za-z0-9_-]{2,}(?:\.[A-Za-z0-9_-]{2,}){2}$/);
 			expect(token.split(".")).toHaveLength(3);
 		});
 
-		it("should sign JWT with custom expiration (number)", async () => {
-			const name = "TestUser";
-			const exp = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
-
-			const response = await app.handle(post(app, "/sign", { name, exp }));
-			const token = await response.text();
-
-			expect(token).toMatch(/^[A-Za-z0-9_-]{2,}(?:\.[A-Za-z0-9_-]{2,}){2}$/);
+		it("should sign access token with default expiry", async () => {
+			const payload = { id: "123", roles: [UserRoles.Student] };
+			const token = await jwt.sign(payload, { type: "access" });
 
 			// Verify the token
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const payload = await verifyResponse.json();
+			const result = await jwt.verify(token);
 
-			expect(payload.name).toBe(name);
-			expect(payload.exp).toBe(exp);
+			expect(result).not.toBe(false);
+			if (result !== false) {
+				expect(result.id).toBe(payload.id);
+				expect(result.roles).toEqual(payload.roles);
+				expect(result.iat).toBeDefined();
+				expect(result.exp).toBeDefined();
+			}
 		});
 
-		it("should sign JWT with custom expiration (string)", async () => {
-			const name = "TestUser";
-			const exp = "15m";
-
-			const response = await app.handle(post(app, "/sign", { name, exp }));
-			const token = await response.text();
-
-			expect(token).toMatch(/^[A-Za-z0-9_-]{2,}(?:\.[A-Za-z0-9_-]{2,}){2}$/);
+		it("should sign refresh token with longer expiry", async () => {
+			const payload = { id: "123", roles: [UserRoles.Student] };
+			const token = await jwt.sign(payload, { type: "refresh" });
 
 			// Verify the token
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const payload = await verifyResponse.json();
+			const result = await jwt.verify(token);
 
-			expect(payload.name).toBe(name);
-			expect(payload.exp).toBeGreaterThan(Math.floor(Date.now() / 1000));
+			expect(result).not.toBe(false);
+			if (result !== false) {
+				expect(result.id).toBe(payload.id);
+				expect(result.roles).toEqual(payload.roles);
+			}
 		});
 
-		it("should sign JWT with not-before time", async () => {
-			const name = "TestUser";
-			const nbf = Math.floor(Date.now() / 1000) - 60; // 1 minute ago
-
-			const response = await app.handle(post(app, "/sign", { name, nbf }));
-			const token = await response.text();
-
-			expect(token).toMatch(/^[A-Za-z0-9_-]{2,}(?:\.[A-Za-z0-9_-]{2,}){2}$/);
+		it("should sign with custom expiry", async () => {
+			const payload = { id: "123", roles: [UserRoles.Student] };
+			const token = await jwt.sign(payload, { expiry: "1h" });
 
 			// Verify the token
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const payload = await verifyResponse.json();
+			const result = await jwt.verify(token);
 
-			expect(payload.name).toBe(name);
-			expect(payload.nbf).toBe(nbf);
+			expect(result).not.toBe(false);
+			if (result !== false) {
+				expect(result.id).toBe(payload.id);
+			}
 		});
 
 		it("should include issued-at time", async () => {
-			const name = "TestUser";
-			const response = await app.handle(post(app, "/sign", { name }));
-			const token = await response.text();
+			const payload = { id: "123", roles: [UserRoles.Student] };
+			const token = await jwt.sign(payload);
 
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const payload = await verifyResponse.json();
+			const result = await jwt.verify(token);
 
-			expect(payload.iat).toBeDefined();
-			expect(typeof payload.iat).toBe("number");
-			expect(payload.iat).toBeGreaterThan(0);
+			expect(result).not.toBe(false);
+			if (result !== false) {
+				expect(result.iat).toBeDefined();
+				expect(typeof result.iat).toBe("number");
+				expect(result.iat).toBeGreaterThan(0);
+			}
 		});
 
-		it("should handle signing errors gracefully", async () => {
-			// Create app with invalid configuration
-			const invalidApp = createTestApp({
+		it("should include standard JWT claims when configured", async () => {
+			const jwtWithClaims = createJwtHelper({
 				secret: "test-secret",
-				alg: "HS256",
-				// Add invalid payload that might cause issues
-				iss: "test-issuer",
-				sub: "test-subject",
+				issuer: "test-issuer",
+				audience: "test-audience",
 			});
 
-			const response = await invalidApp.handle(
-				post(invalidApp, "/sign", { name: "test" })
-			);
+			const payload = { id: "123", roles: [UserRoles.Student] };
+			const token = await jwtWithClaims.sign(payload);
 
-			// Should still work with valid payload
-			expect(response.ok).toBe(true);
+			const result = await jwtWithClaims.verify(token);
+
+			expect(result).not.toBe(false);
+			if (result !== false) {
+				expect(result.sub).toBe(payload.id); // Subject should always be set
+				expect(result.iss).toBe("test-issuer");
+				expect(result.aud).toBe("test-audience");
+			}
 		});
 	});
 
-	describe.todo("JWT Verification", () => {
-		let app: Elysia;
+	describe("JWT Verification", () => {
+		let jwt: ReturnType<typeof createJwtHelper>;
 
 		beforeEach(() => {
-			app = createTestApp({ secret: "test-secret" });
+			jwt = createJwtHelper({ secret: "test-secret" });
 		});
 
 		it("should verify valid JWT", async () => {
-			const name = "TestUser";
+			const payload = { id: "123", roles: [UserRoles.Student] };
 
 			// Sign a token
-			const signResponse = await app.handle(post(app, "/sign", { name }));
-			const token = await signResponse.text();
+			const token = await jwt.sign(payload);
 
 			// Verify the token
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const payload = await verifyResponse.json();
+			const result = await jwt.verify(token);
 
-			expect(payload).not.toBe(false);
-			expect(payload.name).toBe(name);
+			expect(result).not.toBe(false);
+			if (result !== false) {
+				expect(result.id).toBe(payload.id);
+				expect(result.roles).toEqual(payload.roles);
+			}
 		});
 
 		it("should return false for empty token", async () => {
-			const response = await app.handle(post(app, "/verify-empty"));
-			const result = await response.json();
-
-			expect(result).toBe(false);
-		});
-
-		it("should return false for undefined token", async () => {
-			const response = await app.handle(post(app, "/verify-empty"));
-			const result = await response.json();
-
+			const result = await jwt.verify("");
 			expect(result).toBe(false);
 		});
 
 		it("should return false for malformed token", async () => {
-			const response = await app.handle(
-				post(app, "/verify", { token: "invalid.token" })
-			);
-			const result = await response.json();
-
+			const result = await jwt.verify("invalid.token");
 			expect(result).toBe(false);
 		});
 
 		it("should return false for token with wrong signature", async () => {
 			// Create token with different secret
-			const otherApp = createTestApp({ secret: "other-secret" });
-			const signResponse = await otherApp.handle(
-				post(otherApp, "/sign", { name: "test" })
-			);
-			const token = await signResponse.text();
+			const otherJwt = createJwtHelper({ secret: "other-secret" });
+			const token = await otherJwt.sign({
+				id: "test",
+				roles: [UserRoles.Student],
+			});
 
 			// Try to verify with different secret
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const result = await verifyResponse.json();
+			const result = await jwt.verify(token);
 
 			expect(result).toBe(false);
 		});
 
 		it("should return false for expired token", async () => {
-			const name = "TestUser";
-			const exp = Math.floor(Date.now() / 1000) - 3600; // 1 hour ago
+			const payload = { id: "123", roles: [UserRoles.Student] };
+			// Create a token that expires 1 second ago
+			const token = await jwt.sign(payload, { expiry: "1s" });
 
-			const response = await app.handle(post(app, "/sign", { name, exp }));
-			const token = await response.text();
+			// Wait 2 seconds to ensure token expires
+			await new Promise((resolve) => setTimeout(resolve, 2000));
 
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const result = await verifyResponse.json();
-
+			const result = await jwt.verify(token);
 			expect(result).toBe(false);
 		});
 
-		it("should return false for token with future not-before time", async () => {
-			const name = "TestUser";
-			const nbf = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
-
-			const response = await app.handle(post(app, "/sign", { name, nbf }));
-			const token = await response.text();
-
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const result = await verifyResponse.json();
-
-			expect(result).toBe(false);
-		});
-
-		it("should verify token with custom expiration string", async () => {
-			const name = "TestUser";
-			const exp = "15m";
-
-			const response = await app.handle(post(app, "/sign", { name, exp }));
-			const token = await response.text();
-
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const payload = await verifyResponse.json();
-
-			expect(payload).not.toBe(false);
-			expect(payload.name).toBe(name);
-		});
-	});
-
-	describe.todo("Schema Validation", () => {
-		const userSchema = t.Object({
-			userId: t.String(),
-			role: t.String(),
-		});
-
-		it("should validate payload against schema", async () => {
-			const app = createTestApp({
-				secret: "test-secret",
-				schema: userSchema,
-			});
-
-			const payload = { userId: "123", role: "admin" };
-			const response = await app.handle(
-				post(app, "/sign-with-schema", payload)
-			);
-			const token = await response.text();
-
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const result = await verifyResponse.json();
-
-			expect(result).not.toBe(false);
-			expect(result.userId).toBe(payload.userId);
-			expect(result.role).toBe(payload.role);
-		});
-
-		it("should reject token with invalid schema", async () => {
-			const app = createTestApp({
-				secret: "test-secret",
-				schema: userSchema,
-			});
-
-			// Sign with valid payload
-			const validPayload = { userId: "123", role: "admin" };
-			const signResponse = await app.handle(
-				post(app, "/sign-with-schema", validPayload)
-			);
-			const token = await signResponse.text();
-
-			// Try to verify with schema validation
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const result = await verifyResponse.json();
-
-			// Should still work because the payload is valid
-			expect(result).not.toBe(false);
-		});
-	});
-
-	describe.todo("Security Tests", () => {
-		it("should not be vulnerable to timing attacks", async () => {
-			const app = createTestApp({ secret: "test-secret" });
-
-			// Create valid token
-			const validResponse = await app.handle(
-				post(app, "/sign", { name: "test" })
-			);
-			const validToken = await validResponse.text();
-
-			// Create invalid token
+		it("should return false for token with invalid payload structure", async () => {
+			// Create a token manually with invalid structure
 			const invalidToken =
-				"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+				"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMyJ9.invalid";
 
-			// Measure verification time for both
-			const start1 = performance.now();
-			await app.handle(post(app, "/verify", { token: validToken }));
-			const time1 = performance.now() - start1;
-
-			const start2 = performance.now();
-			await app.handle(post(app, "/verify", { token: invalidToken }));
-			const time2 = performance.now() - start2;
-
-			// Times should be similar (within reasonable margin)
-			const timeDiff = Math.abs(time1 - time2);
-			expect(timeDiff).toBeLessThan(100); // 100ms tolerance
+			const result = await jwt.verify(invalidToken);
+			expect(result).toBe(false);
 		});
 
-		it("should handle algorithm confusion attacks", async () => {
-			// Create token with HS256
-			const hs256App = createTestApp({ secret: "test-secret", alg: "HS256" });
-			const signResponse = await hs256App.handle(
-				post(hs256App, "/sign", { name: "test" })
-			);
-			const token = await signResponse.text();
+		it("should validate issuer and audience when configured", async () => {
+			const jwtWithClaims = createJwtHelper({
+				secret: "test-secret",
+				issuer: "test-issuer",
+				audience: "test-audience",
+			});
 
-			// Try to verify with different algorithm
-			const hs512App = createTestApp({ secret: "test-secret", alg: "HS512" });
-			const verifyResponse = await hs512App.handle(
-				post(hs512App, "/verify", { token })
-			);
-			const result = await verifyResponse.json();
+			const payload = { id: "123", roles: [UserRoles.Student] };
+			const token = await jwtWithClaims.sign(payload);
 
-			// Should fail due to algorithm mismatch
-			expect(result).toBe(false);
+			// Should verify with correct claims
+			const result = await jwtWithClaims.verify(token);
+			expect(result).not.toBe(false);
+
+			// Should fail with different issuer
+			const jwtWrongIssuer = createJwtHelper({
+				secret: "test-secret",
+				issuer: "wrong-issuer",
+				audience: "test-audience",
+			});
+			const result2 = await jwtWrongIssuer.verify(token);
+			expect(result2).toBe(false);
 		});
 	});
 
-	describe.todo("Error Handling", () => {
-		it("should handle network errors gracefully", async () => {
-			const app = createTestApp({ secret: "test-secret" });
+	describe("Token Pair Generation", () => {
+		let jwt: ReturnType<typeof createJwtHelper>;
 
-			// Mock a network error scenario
-			const response = await app.handle(
-				post(app, "/verify", { token: "network.error.token" })
-			);
-			const result = await response.json();
-
-			expect(result).toBe(false);
+		beforeEach(() => {
+			jwt = createJwtHelper({ secret: "test-secret" });
 		});
 
+		it("should generate access and refresh token pair", async () => {
+			const user = { id: "123", roles: [UserRoles.Student] };
+			const result = await jwt.generateTokenPair(user);
+
+			expect(result.accessToken).toBeDefined();
+			expect(result.refreshToken).toBeDefined();
+			expect(result.accessToken).toMatch(
+				/^[A-Za-z0-9_-]{2,}(?:\.[A-Za-z0-9_-]{2,}){2}$/
+			);
+			expect(result.refreshToken).toMatch(
+				/^[A-Za-z0-9_-]{2,}(?:\.[A-Za-z0-9_-]{2,}){2}$/
+			);
+		});
+
+		it("should generate tokens with correct payload", async () => {
+			const user = {
+				id: "123",
+				roles: [UserRoles.Student, UserRoles.SysAdmin],
+			};
+			const { accessToken, refreshToken } = await jwt.generateTokenPair(user);
+
+			// Verify access token
+			const accessPayload = await jwt.verify(accessToken);
+
+			expect(accessPayload).not.toBe(false);
+			if (accessPayload !== false) {
+				expect(accessPayload.id).toBe(user.id);
+				expect(accessPayload.roles).toEqual(user.roles);
+			}
+
+			// Verify refresh token
+			const refreshPayload = await jwt.verify(refreshToken);
+
+			expect(refreshPayload).not.toBe(false);
+			if (refreshPayload !== false) {
+				expect(refreshPayload.id).toBe(user.id);
+				expect(refreshPayload.roles).toEqual(user.roles);
+			}
+		});
+
+		it("should generate tokens with different expiry times", async () => {
+			const user = { id: "123", roles: [UserRoles.Student] };
+			const { accessToken, refreshToken } = await jwt.generateTokenPair(user);
+
+			// Verify both tokens are valid
+			const accessResult = await jwt.verify(accessToken);
+			const refreshResult = await jwt.verify(refreshToken);
+
+			expect(accessResult).not.toBe(false);
+			expect(refreshResult).not.toBe(false);
+		});
+	});
+
+	describe("Custom Configuration", () => {
+		it("should use custom expiry times", async () => {
+			const jwt = createJwtHelper({
+				secret: "test-secret",
+				accessTokenExpiry: "30m",
+				refreshTokenExpiry: "14d",
+			});
+
+			const payload = { id: "123", roles: [UserRoles.Student] };
+
+			// Test access token
+			const accessToken = await jwt.sign(payload, { type: "access" });
+
+			// Test refresh token
+			const refreshToken = await jwt.sign(payload, { type: "refresh" });
+
+			// Both should be valid
+			const accessResult = await jwt.verify(accessToken);
+			const refreshResult = await jwt.verify(refreshToken);
+
+			expect(accessResult).not.toBe(false);
+			expect(refreshResult).not.toBe(false);
+		});
+
+		it("should use custom algorithm", async () => {
+			const jwt = createJwtHelper({
+				secret: "test-secret",
+				alg: "HS512",
+			});
+
+			const payload = { id: "123", roles: [UserRoles.Student] };
+			const token = await jwt.sign(payload);
+
+			const result = await jwt.verify(token);
+
+			expect(result).not.toBe(false);
+			if (result !== false) {
+				expect(result.id).toBe(payload.id);
+			}
+		});
+
+		it("should use custom clock tolerance", async () => {
+			const jwt = createJwtHelper({
+				secret: "test-secret",
+				clockTolerance: "5s",
+			});
+
+			const payload = { id: "123", roles: [UserRoles.Student] };
+			const token = await jwt.sign(payload);
+
+			const result = await jwt.verify(token);
+
+			expect(result).not.toBe(false);
+			if (result !== false) {
+				expect(result.id).toBe(payload.id);
+			}
+		});
+	});
+
+	describe("Error Handling", () => {
 		it("should handle malformed JWT structure", async () => {
-			const app = createTestApp({ secret: "test-secret" });
+			const jwt = createJwtHelper({ secret: "test-secret" });
 
 			const malformedTokens = [
 				"not.a.jwt",
 				"header.payload", // missing signature
 				"header.payload.signature.extra", // too many parts
 				"", // empty string
-				"header.payload.signature", // valid structure but invalid content
 			];
 
 			for (const token of malformedTokens) {
-				const response = await app.handle(post(app, "/verify", { token }));
-				const result = await response.json();
+				const result = await jwt.verify(token);
 				expect(result).toBe(false);
 			}
 		});
+
+		it("should handle network errors gracefully", async () => {
+			const jwt = createJwtHelper({ secret: "test-secret" });
+
+			const result = await jwt.verify("network.error.token");
+			expect(result).toBe(false);
+		});
 	});
 
-	describe.todo("Performance Tests", () => {
+	describe("Performance Tests", () => {
 		it("should handle multiple concurrent verifications", async () => {
-			const app = createTestApp({ secret: "test-secret" });
+			const jwt = createJwtHelper({ secret: "test-secret" });
 
 			// Create a token
-			const signResponse = await app.handle(
-				post(app, "/sign", { name: "test" })
-			);
-			const token = await signResponse.text();
+			const token = await jwt.sign({ id: "test", roles: [UserRoles.Student] });
 
 			// Verify multiple times concurrently
-			const promises = Array.from({ length: 10 }, () =>
-				app.handle(post(app, "/verify", { token }))
-			);
+			const promises = Array.from({ length: 10 }, () => jwt.verify(token));
 
 			const results = await Promise.all(promises);
-			const payloads = await Promise.all(results.map((r) => r.json()));
 
 			// All should succeed
-			payloads.forEach((payload) => {
-				expect(payload).not.toBe(false);
-				expect(payload.name).toBe("test");
+			results.forEach((result) => {
+				expect(result).not.toBe(false);
+				if (result !== false) {
+					expect(result.id).toBe("test");
+				}
 			});
 		});
 
 		it("should handle large payloads efficiently", async () => {
-			const app = createTestApp({ secret: "test-secret" });
+			const jwt = createJwtHelper({ secret: "test-secret" });
 
 			const largePayload = {
-				name: "test",
-				data: "x".repeat(1000), // 1KB of data
+				id: "123",
+				roles: [
+					UserRoles.Student,
+					UserRoles.OrgAdmin,
+					UserRoles.Supervisor,
+					UserRoles.HospitalManager,
+					UserRoles.Preceptor,
+					UserRoles.SysAdmin,
+				],
 			};
 
-			const response = await app.handle(post(app, "/sign", largePayload));
-			const token = await response.text();
-
-			const verifyResponse = await app.handle(post(app, "/verify", { token }));
-			const payload = await verifyResponse.json();
+			const token = await jwt.sign(largePayload);
+			const payload = await jwt.verify(token);
 
 			expect(payload).not.toBe(false);
-			expect(payload.name).toBe("test");
-			expect(payload.data).toBe(largePayload.data);
+			if (payload !== false) {
+				expect(payload.id).toBe(largePayload.id);
+				expect(payload.roles).toEqual(largePayload.roles);
+			}
 		});
 	});
 });

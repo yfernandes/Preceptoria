@@ -1,281 +1,204 @@
-import { Elysia, ValidationError, getSchemaValidator } from "elysia";
-
-import {
-	SignJWT,
-	jwtVerify,
-	type JWTPayload,
-	type JWSHeaderParameters,
-	importPKCS8,
-	importSPKI,
-	errors as joseErrors,
-} from "jose";
-
+import { Elysia } from "elysia";
+import { SignJWT, jwtVerify } from "jose";
 import { Type as t } from "@sinclair/typebox";
-import type { Static, TSchema } from "@sinclair/typebox";
+import { UserRoles } from "../src/entities/role.abstract";
 
-type UnwrapSchema<
-	Schema extends TSchema | undefined,
-	Fallback = unknown,
-> = Schema extends TSchema ? Static<NonNullable<Schema>> : Fallback;
+// JWT Payload Schema for our application
+export const jwtPayloadSchema = t.Object({
+	id: t.String(),
+	roles: t.Array(t.Enum(UserRoles)), // Use UserRoles enum directly
+	iat: t.Optional(t.Number()),
+	exp: t.Optional(t.Number()),
+	// Optional hardening claims
+	aud: t.Optional(t.String()),
+	iss: t.Optional(t.String()),
+	sub: t.Optional(t.String()),
+});
 
-export interface JWTPayloadSpec {
+export interface CustomJwtPayload {
+	id: string;
+	roles: UserRoles[];
+	iat?: number;
+	exp?: number;
+	aud?: string;
 	iss?: string;
 	sub?: string;
-	aud?: string | string[];
-	jti?: string;
-	nbf?: number | string;
-	exp?: number | string;
-	iat?: number;
 }
 
-export interface JWTOption<
-	Name extends string | undefined = "jwt",
-	Schema extends TSchema | undefined = undefined,
-> extends JWSHeaderParameters,
-		Omit<JWTPayload, "nbf" | "exp"> {
-	/**
-	 * Name to decorate method as
-	 *
-	 * ---
-	 * @example
-	 * For example, `jwt` will decorate Context with `Context.jwt`
-	 *
-	 * ```typescript
-	 * app
-	 *     .decorate({
-	 *         name: 'myJWTNamespace',
-	 *         secret: process.env.JWT_SECRETS
-	 *     })
-	 *     .get('/sign/:name', ({ myJWTNamespace, params }) => {
-	 *         return myJWTNamespace.sign(params)
-	 *     })
-	 * ```
-	 */
-	name?: Name;
-	/**
-	 * JWT Secret (string, Uint8Array, or PEM key)
-	 */
+// Supported algorithms - explicit allowlist for security
+const ALLOWED_ALGORITHMS = ["HS256", "HS384", "HS512"] as const;
+type AllowedAlgorithm = (typeof ALLOWED_ALGORITHMS)[number];
+
+// JWT Configuration interface
+export interface JwtConfig {
 	secret: string | Uint8Array;
-	/**
-	 * Type strict validation for JWT payload
-	 */
-	schema?: Schema;
-
-	/**
-	 * JWT Not Before
-	 *
-	 * @see [RFC7519#section-4.1.5](https://www.rfc-editor.org/rfc/rfc7519#section-4.1.5)
-	 */
-	nbf?: string | number;
-	/**
-	 * JWT Expiration Time
-	 *
-	 * @see [RFC7519#section-4.1.4](https://www.rfc-editor.org/rfc/rfc7519#section-4.1.4)
-	 */
-	exp?: string | number;
+	alg?: AllowedAlgorithm;
+	accessTokenExpiry?: string;
+	refreshTokenExpiry?: string;
+	// Optional hardening
+	issuer?: string;
+	audience?: string;
+	clockTolerance?: string;
 }
 
-// Supported algorithms for HMAC
-const HMAC_ALGORITHMS = ["HS256", "HS384", "HS512"] as const;
-type HMACAlgorithm = (typeof HMAC_ALGORITHMS)[number];
-
-// Supported algorithms for RSA/EC
-const ASYMMETRIC_ALGORITHMS = [
-	"RS256",
-	"RS384",
-	"RS512",
-	"PS256",
-	"PS384",
-	"PS512",
-	"ES256",
-	"ES384",
-	"ES512",
-	"EdDSA",
-] as const;
-type AsymmetricAlgorithm = (typeof ASYMMETRIC_ALGORITHMS)[number];
-
-type SupportedAlgorithm = HMACAlgorithm | AsymmetricAlgorithm;
+// Default configuration
+const defaultConfig: Required<
+	Omit<JwtConfig, "issuer" | "audience" | "clockTolerance">
+> & {
+	issuer?: string;
+	audience?: string;
+	clockTolerance: string;
+} = {
+	secret: "",
+	alg: "HS256",
+	accessTokenExpiry: "15m",
+	refreshTokenExpiry: "7d",
+	clockTolerance: "2s",
+};
 
 /**
- * Validates if the algorithm is supported for the given secret type
+ * Encodes secret to Uint8Array for consistent handling
  */
-function validateAlgorithm(
-	alg: string,
-	secret: string | Uint8Array
-): alg is SupportedAlgorithm {
-	if (HMAC_ALGORITHMS.includes(alg as HMACAlgorithm)) {
-		return true; // HMAC algorithms work with any secret
-	}
-
-	if (ASYMMETRIC_ALGORITHMS.includes(alg as AsymmetricAlgorithm)) {
-		return (
-			typeof secret === "string" &&
-			(secret.includes("-----BEGIN PRIVATE KEY-----") ||
-				secret.includes("-----BEGIN RSA PRIVATE KEY-----") ||
-				secret.includes("-----BEGIN EC PRIVATE KEY-----"))
-		);
-	}
-
-	return false;
-}
+export const encodeSecret = (input: string | Uint8Array): Uint8Array => {
+	return typeof input === "string" ? new TextEncoder().encode(input) : input;
+};
 
 /**
- * Prepares the key based on the secret type and algorithm
+ * Creates a JWT helper for direct usage (testing, controllers, etc.)
  */
-async function prepareKey(
-	secret: string | Uint8Array,
-	alg: string
-): Promise<Uint8Array | CryptoKey> {
-	if (typeof secret === "string") {
-		// Check if it's a PEM key
-		if (secret.includes("-----BEGIN")) {
-			try {
-				if (secret.includes("PRIVATE KEY")) {
-					return await importPKCS8(secret, alg);
-				} else if (secret.includes("PUBLIC KEY")) {
-					return await importSPKI(secret, alg);
-				}
-			} catch (error) {
-				throw new Error(
-					`Invalid PEM key format: ${error instanceof Error ? error.message : "Unknown error"}`
-				);
-			}
-		}
-		// Treat as HMAC secret
-		return new TextEncoder().encode(secret);
+export const createJwtHelper = (config: JwtConfig) => {
+	const finalConfig = { ...defaultConfig, ...config };
+
+	if (!finalConfig.secret) {
+		throw new Error("JWT secret is required");
 	}
 
-	// Uint8Array - treat as HMAC secret
-	return secret;
-}
-
-export const jwt = <
-	const Name extends string = "jwt",
-	const Schema extends TSchema | undefined = undefined,
->({
-	name = "jwt" as Name,
-	secret,
-	// Start JWT Header
-	alg = "HS256",
-	crit,
-	schema,
-	// End JWT Header
-	// Start JWT Payload
-	nbf,
-	exp,
-	...payload
-}: // End JWT Payload
-JWTOption<Name, Schema>) => {
-	if (!secret) {
-		throw new Error("JWT secret cannot be empty");
-	}
-
-	if (!validateAlgorithm(alg, secret)) {
+	// Validate algorithm against allowlist
+	if (!ALLOWED_ALGORITHMS.includes(finalConfig.alg)) {
 		throw new Error(
-			`Algorithm '${alg}' is not supported for the provided secret type`
+			`Unsupported algorithm: ${finalConfig.alg}. Allowed: ${ALLOWED_ALGORITHMS.join(", ")}`
 		);
 	}
 
-	const validator = schema
-		? getSchemaValidator(
-				t.Intersect([
-					schema,
-					t.Object({
-						iss: t.Optional(t.String()),
-						sub: t.Optional(t.String()),
-						aud: t.Optional(t.Union([t.String(), t.Array(t.String())])),
-						jti: t.Optional(t.String()),
-						nbf: t.Optional(t.Union([t.String(), t.Number()])),
-						exp: t.Optional(t.Union([t.String(), t.Number()])),
-						iat: t.Optional(t.Number()),
-					}),
-				]),
-				{}
-			)
-		: undefined;
+	// Convert secret to Uint8Array
+	const secret = encodeSecret(finalConfig.secret);
 
-	return new Elysia({
-		name: "@elysiajs/jwt",
-		seed: {
-			name,
-			secret,
-			alg,
-			crit,
-			schema,
-			nbf,
-			exp,
-			...payload,
-		},
-	}).decorate(name as Name extends string ? Name : "jwt", {
+	return {
+		/**
+		 * Sign a JWT token with the given payload
+		 */
 		async sign(
-			morePayload: UnwrapSchema<Schema, Record<string, string | number>> &
-				JWTPayloadSpec
+			payload: Omit<CustomJwtPayload, "iat" | "exp">,
+			options?: {
+				type?: "access" | "refresh";
+				expiry?: string;
+			}
 		): Promise<string> {
 			try {
-				const key = await prepareKey(secret, alg);
+				const tokenType = options?.type ?? "access";
+				const expiry =
+					options?.expiry ??
+					(tokenType === "access"
+						? finalConfig.accessTokenExpiry
+						: finalConfig.refreshTokenExpiry);
 
-				let jwt = new SignJWT({
-					...payload,
-					...morePayload,
-					exp: undefined,
-					nbf: undefined,
-				}).setProtectedHeader({
-					alg,
-					...(crit && { crit }),
-				});
+				let jwt = new SignJWT(payload)
+					.setProtectedHeader({ alg: finalConfig.alg })
+					.setIssuedAt()
+					.setExpirationTime(expiry);
 
-				// Set default expiration if not provided
-				if (nbf) jwt = jwt.setNotBefore(nbf);
-				if (exp) jwt = jwt.setExpirationTime(exp);
-				jwt.setIssuedAt();
+				// Add standard JWT claims if configured
+				if (finalConfig.issuer) {
+					jwt = jwt.setIssuer(finalConfig.issuer);
+				}
+				if (finalConfig.audience) {
+					jwt = jwt.setAudience(finalConfig.audience);
+				}
+				// Always set subject to user ID for consistency
+				jwt = jwt.setSubject(payload.id);
 
-				// Override with payload-specific values
-				if (morePayload.exp) jwt = jwt.setExpirationTime(morePayload.exp);
-				if (morePayload.nbf) jwt = jwt.setNotBefore(morePayload.nbf);
-
-				return await jwt.sign(key);
+				return await jwt.sign(secret);
 			} catch (error) {
 				throw new Error(
 					`JWT signing failed: ${error instanceof Error ? error.message : "Unknown error"}`
 				);
 			}
 		},
-		async verify(
-			jwt?: string
-		): Promise<
-			| (UnwrapSchema<Schema, Record<string, string | number>> & JWTPayloadSpec)
-			| false
-		> {
-			if (!jwt) return false;
+
+		/**
+		 * Verify a JWT token and return the payload
+		 */
+		async verify(token: string): Promise<CustomJwtPayload | false> {
+			if (!token) return false;
 
 			try {
-				const key = await prepareKey(secret, alg);
-				const { payload: data } = await jwtVerify(jwt, key, {
-					algorithms: [alg],
+				const { payload } = await jwtVerify(token, secret, {
+					algorithms: [finalConfig.alg],
+					clockTolerance: finalConfig.clockTolerance,
+					// Validate standard claims if configured
+					...(finalConfig.issuer && { issuer: finalConfig.issuer }),
+					...(finalConfig.audience && { audience: finalConfig.audience }),
 				});
 
-				if (validator && !validator.Check(data)) {
-					throw new ValidationError("JWT", validator, data);
+				// Validate payload structure
+				if (!payload.id || !payload.roles || !Array.isArray(payload.roles)) {
+					return false;
 				}
 
-				return data as UnwrapSchema<Schema, Record<string, string | number>> &
-					JWTPayloadSpec;
+				// Validate roles are all valid UserRoles
+				if (
+					!payload.roles.every((r: unknown) =>
+						Object.values(UserRoles).includes(r as UserRoles)
+					)
+				) {
+					return false;
+				}
+
+				return payload as unknown as CustomJwtPayload;
 			} catch (error) {
-				// Handle specific JWT errors
-				if (error instanceof joseErrors.JWTExpired) {
-					console.error("JWT expired:", error.message);
-				} else if (error instanceof joseErrors.JWSSignatureVerificationFailed) {
-					console.error("JWT signature verification failed:", error.message);
-				} else {
-					console.error(
-						"JWT verification error:",
-						error instanceof Error ? error.message : "Unknown error"
-					);
+				// Only log in non-production environments to avoid information leakage
+				if (error instanceof Error && process.env.NODE_ENV !== "production") {
+					console.debug("JWT verification failed:", error.message);
 				}
 				return false;
 			}
 		},
-	});
+
+		/**
+		 * Generate both access and refresh tokens for a user
+		 */
+		async generateTokenPair(user: { id: string; roles: UserRoles[] }): Promise<{
+			accessToken: string;
+			refreshToken: string;
+		}> {
+			const payload = {
+				id: user.id,
+				roles: user.roles, // Use UserRoles[] directly
+			};
+
+			const [accessToken, refreshToken] = await Promise.all([
+				this.sign(payload, { type: "access" }),
+				this.sign(payload, { type: "refresh" }),
+			]);
+
+			return { accessToken, refreshToken };
+		},
+	};
 };
+
+/**
+ * Creates a JWT plugin for Elysia with support for access and refresh tokens
+ */
+export const createJwtPlugin = (config: JwtConfig) => {
+	const helper = createJwtHelper(config);
+
+	return new Elysia({
+		name: "jwt-plugin",
+		seed: config,
+	}).decorate("jwt", helper);
+};
+
+// Export a default function for backward compatibility
+export const jwt = createJwtPlugin;
 
 export default jwt;
