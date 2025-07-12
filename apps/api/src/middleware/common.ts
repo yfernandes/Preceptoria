@@ -9,7 +9,7 @@ import { APP_CONFIG } from "../config/app";
 /**
  * Applies all middleware to the Elysia app
  */
-export const commomMidlewares = new Elysia()
+export const commonMiddlewares = new Elysia()
 	// API Documentation
 	.use(swagger())
 

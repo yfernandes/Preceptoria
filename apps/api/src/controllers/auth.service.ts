@@ -89,7 +89,11 @@ export const createUserResponse = (user: User): UserResponse => ({
 export const handleValidationError = (
 	err: unknown
 ): ValidationErrorResponse | null => {
-	if (Array.isArray(err) && err.every((e) => e instanceof ValidationError)) {
+	if (
+		Array.isArray(err) &&
+		err.length > 0 &&
+		err.every((e) => e instanceof ValidationError)
+	) {
 		return {
 			success: false,
 			message: "Validation failed",

@@ -21,7 +21,7 @@ import {
 
 // --- Middleware ---
 import {
-	commomMidlewares,
+	commonMiddlewares,
 	loggingMiddleware,
 	errorHandlerMiddleware,
 	cronMiddleware,
@@ -30,7 +30,7 @@ import {
 // Create and configure the Elysia app
 const app = new Elysia()
 	// Apply all middleware and services
-	.use(commomMidlewares)
+	.use(commonMiddlewares)
 	.use(loggingMiddleware)
 	.use(errorHandlerMiddleware)
 	.use(cronMiddleware)
