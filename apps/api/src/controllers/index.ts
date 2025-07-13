@@ -15,4 +15,4 @@ export { studentsController } from "@api/modules/students";
 
 // Controllers
 export { supervisorController } from "@api/controllers/supervisor.controller";
-export { userController } from "@api/controllers/user.controller";
+export { userController } from "@api/modules/user/user.controller";

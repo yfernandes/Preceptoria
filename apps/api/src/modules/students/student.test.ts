@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Student } from "@api/modules/students/student.entity";
-import { User } from "@api/entities/user.entity";
+import { User } from "@api/modules/user/user.entity";
 import { Classes } from "@api/modules/classes";
 import { Course } from "@api/modules/courses/course.entity";
 import { School } from "@api/modules/school/school.entity";

@@ -1,4 +1,4 @@
-import { User } from "../../entities/user.entity";
+import { User } from "../user/user.entity";
 import { UserRoles } from "../common/role.abstract";
 import { db } from "../../db";
 import { ValidationError } from "class-validator";

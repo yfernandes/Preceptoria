@@ -8,7 +8,7 @@ import {
 	REFRESH_TOKEN_AGE,
 	COOKIE_CONFIG,
 } from "./auth.service";
-import { User } from "../../entities/user.entity";
+import { User } from "../user/user.entity";
 import { UserRoles } from "../common/role.abstract";
 import { ValidationError } from "class-validator";
 

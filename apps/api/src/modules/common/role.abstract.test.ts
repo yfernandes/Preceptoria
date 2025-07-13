@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Role, UserRoles } from "./role.abstract";
-import { User } from "../../entities/user.entity";
+import { User } from "../user/user.entity";
 
 // Create a concrete implementation of Role for testing
 class TestRole extends Role {}

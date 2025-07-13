@@ -15,5 +15,5 @@ export { BaseEntity } from "@api/modules/common/baseEntity";
 export { Organization } from "@api/modules/common/";
 
 // Entities
-export { User } from "./user.entity";
+export { User } from "../modules/user/user.entity";
 export { Supervisor } from "./supervisor.entity";

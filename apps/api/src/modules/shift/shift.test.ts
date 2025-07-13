@@ -3,7 +3,7 @@ import { Shift } from "@api/modules/shift/shift.entity";
 import { Collection } from "@mikro-orm/postgresql";
 import { Hospital } from "@api/modules/hospital";
 import { Preceptor } from "@api/modules/preceptor/preceptor.entity";
-import { User } from "@api/entities/user.entity";
+import { User } from "@api/modules/user/user.entity";
 
 describe("Shift Entity", () => {
 	let mockHospital: Hospital;

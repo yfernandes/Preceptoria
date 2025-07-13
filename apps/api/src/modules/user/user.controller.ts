@@ -1,9 +1,9 @@
 import Elysia, { status as error, t } from "elysia";
-import { User } from "../entities";
-import { db } from "../db";
+import { User } from "./";
+import { db } from "../../db";
 import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
-import { hasPermission } from "../utils/hasPermissions";
-import { Actions, Resource } from "../utils/permissions";
+import { hasPermission } from "../../utils/hasPermissions";
+import { Actions, Resource } from "../../utils/permissions";
 
 // DTOs for request validation
 const createUserDto = {

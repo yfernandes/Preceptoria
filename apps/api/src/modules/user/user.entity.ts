@@ -12,14 +12,14 @@ import {
 	IsNotEmpty,
 } from "class-validator";
 
-import { HospitalManager } from "../modules/hospitalManager/hospitalManager.entity";
-import { OrgAdmin } from "../modules/admin/OrgAdmin.entity";
-import { Preceptor } from "../modules/preceptor/preceptor.entity";
-import { UserRoles } from "../modules/common/role.abstract";
-import { Student } from "../modules/students/student.entity";
-import { Supervisor } from "./supervisor.entity";
-import { SysAdmin } from "../modules/admin/SysAdmin.entity";
-import { BaseEntity } from "../modules/common/baseEntity";
+import { HospitalManager } from "../hospitalManager/hospitalManager.entity";
+import { OrgAdmin } from "../admin/OrgAdmin.entity";
+import { Preceptor } from "../preceptor/preceptor.entity";
+import { UserRoles } from "../common/role.abstract";
+import { Student } from "../students/student.entity";
+import { Supervisor } from "../../entities/supervisor.entity";
+import { SysAdmin } from "../admin/SysAdmin.entity";
+import { BaseEntity } from "../common/baseEntity";
 
 @Entity()
 export class User extends BaseEntity {

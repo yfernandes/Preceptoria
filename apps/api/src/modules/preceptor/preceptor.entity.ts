@@ -10,7 +10,7 @@ import {
 import { Hospital } from "@api/modules/hospital";
 import { Role } from "@api/modules/common";
 import { Shift } from "@api/modules/shift/shift.entity";
-import { User } from "@api/entities/user.entity";
+import { User } from "@api/modules/user/user.entity";
 
 @Entity()
 export class Preceptor extends Role {

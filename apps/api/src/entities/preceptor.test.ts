@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Preceptor } from "@api/modules/preceptor/preceptor.entity";
-import { User } from "@api/entities/user.entity";
+import { User } from "@api/modules/user/user.entity";
 import { Hospital } from "@api/modules/hospital";
 import { Collection } from "@mikro-orm/postgresql";
 

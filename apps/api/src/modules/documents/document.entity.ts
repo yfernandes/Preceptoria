@@ -9,7 +9,7 @@ import { IsUrl } from "class-validator";
 
 import { BaseEntity } from "../common/baseEntity";
 import { Student } from "../students/student.entity";
-import { User } from "../../entities/user.entity";
+import { User } from "../user/user.entity";
 
 export enum DocumentType {
 	PROFESSIONAL_ID = "PROFESSIONAL_ID", // e.g., Crefito for physiotherapists
