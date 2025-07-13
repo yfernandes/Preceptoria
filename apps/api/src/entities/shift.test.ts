@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from "bun:test";
-import { Shift } from "./shift.entity";
+import { Shift } from "@api/entities/shift.entity";
 import { Collection } from "@mikro-orm/postgresql";
-import { Hospital } from "./hospital.entity";
-import { Preceptor } from "./preceptor.entity";
-import { User } from "./user.entity";
+import { Hospital } from "@api/modules/hospital";
+import { Preceptor } from "@api/entities/preceptor.entity";
+import { User } from "@api/entities/user.entity";
 
 describe("Shift Entity", () => {
 	let mockHospital: Hospital;

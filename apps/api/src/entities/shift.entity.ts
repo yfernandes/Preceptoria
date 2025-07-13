@@ -9,9 +9,9 @@ import {
 
 import { BaseEntity } from "../modules/common/baseEntity";
 
-import { Hospital } from "./hospital.entity";
-import { Preceptor } from "./preceptor.entity";
-import { Student } from "./student.entity";
+import { Hospital } from "@api/modules/hospital";
+import { Preceptor } from "@api/entities/preceptor.entity";
+import { Student } from "@api/entities/student.entity";
 
 @Entity()
 export class Shift extends BaseEntity {
