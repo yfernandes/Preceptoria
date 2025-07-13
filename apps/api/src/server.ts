@@ -17,7 +17,7 @@ import {
 	documentsController,
 	userController,
 	healthController,
-} from "@api/controllers";
+} from "@api/modules/controllers";
 
 // --- Middleware ---
 import {
