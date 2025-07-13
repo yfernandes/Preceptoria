@@ -2,29 +2,29 @@ import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import { hasPermission } from "./hasPermissions";
 import { Resource, Actions } from "./permissions";
 import { UserRoles } from "../entities/role.abstract";
-import { CachedUserType } from "../middlewares/auth";
+import { UserContext } from "../types/jwtCookie";
 
 // Mock the database module before importing hasPermissions
 const mockDb = {
 	student: {
-		findOne: mock(() => Promise.resolve(null)),
+		findOne: mock<() => Promise<unknown>>(() => Promise.resolve(null)),
 	},
 	shift: {
-		findOne: mock(() => Promise.resolve(null)),
+		findOne: mock<() => Promise<unknown>>(() => Promise.resolve(null)),
 	},
 	hospital: {
-		findOne: mock(() => Promise.resolve(null)),
+		findOne: mock<() => Promise<unknown>>(() => Promise.resolve(null)),
 	},
 	classes: {
-		findOne: mock(() => Promise.resolve(null)),
+		findOne: mock<() => Promise<unknown>>(() => Promise.resolve(null)),
 	},
 	document: {
-		findOne: mock(() => Promise.resolve(null)),
+		findOne: mock<() => Promise<unknown>>(() => Promise.resolve(null)),
 	},
 };
 
 // Mock the db module
-mock.module("../db", () => ({
+await mock.module("../db", () => ({
 	db: mockDb,
 }));
 
@@ -45,7 +45,7 @@ describe.todo("hasPermission", () => {
 
 	describe.todo("SysAdmin permissions", () => {
 		it("should always return true for SysAdmin", async () => {
-			const requester: CachedUserType = {
+			const requester: UserContext = {
 				id: "sys-admin-1",
 				roles: [UserRoles.SysAdmin],
 				sysAdminId: "sys-admin-1",
@@ -63,7 +63,7 @@ describe.todo("hasPermission", () => {
 	});
 
 	describe.todo("OrgAdmin permissions", () => {
-		const orgAdminRequester: CachedUserType = {
+		const orgAdminRequester: UserContext = {
 			id: "org-admin-1",
 			roles: [UserRoles.OrgAdmin],
 			orgAdminId: "org-admin-1",
@@ -148,7 +148,7 @@ describe.todo("hasPermission", () => {
 	});
 
 	describe.todo("HospitalManager permissions", () => {
-		const hospitalManagerRequester: CachedUserType = {
+		const hospitalManagerRequester: UserContext = {
 			id: "hospital-manager-1",
 			roles: [UserRoles.HospitalManager],
 			hospitalManagerId: "hospital-manager-1",
@@ -163,7 +163,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+				mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 				const result = await hasPermission(
 					hospitalManagerRequester,
@@ -186,7 +186,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+				mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 				const result = await hasPermission(
 					hospitalManagerRequester,
@@ -236,7 +236,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.shift.findOne.mockResolvedValue(mockShift as any);
+				mockDb.shift.findOne.mockResolvedValue(mockShift);
 
 				const result = await hasPermission(
 					hospitalManagerRequester,
@@ -259,7 +259,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.shift.findOne.mockResolvedValue(mockShift as any);
+				mockDb.shift.findOne.mockResolvedValue(mockShift);
 
 				const result = await hasPermission(
 					hospitalManagerRequester,
@@ -296,7 +296,7 @@ describe.todo("hasPermission", () => {
 	});
 
 	describe.todo("Preceptor permissions", () => {
-		const preceptorRequester: CachedUserType = {
+		const preceptorRequester: UserContext = {
 			id: "preceptor-1",
 			roles: [UserRoles.Preceptor],
 			preceptorId: "preceptor-1",
@@ -311,7 +311,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+				mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 				const result = await hasPermission(
 					preceptorRequester,
@@ -331,7 +331,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+				mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 				const result = await hasPermission(
 					preceptorRequester,
@@ -353,7 +353,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.shift.findOne.mockResolvedValue(mockShift as any);
+				mockDb.shift.findOne.mockResolvedValue(mockShift);
 
 				const result = await hasPermission(
 					preceptorRequester,
@@ -373,7 +373,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.shift.findOne.mockResolvedValue(mockShift as any);
+				mockDb.shift.findOne.mockResolvedValue(mockShift);
 
 				const result = await hasPermission(
 					preceptorRequester,
@@ -395,7 +395,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.hospital.findOne.mockResolvedValue(mockHospital as any);
+				mockDb.hospital.findOne.mockResolvedValue(mockHospital);
 
 				const result = await hasPermission(
 					preceptorRequester,
@@ -415,7 +415,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.hospital.findOne.mockResolvedValue(mockHospital as any);
+				mockDb.hospital.findOne.mockResolvedValue(mockHospital);
 
 				const result = await hasPermission(
 					preceptorRequester,
@@ -430,7 +430,7 @@ describe.todo("hasPermission", () => {
 	});
 
 	describe.todo("Student permissions", () => {
-		const studentRequester: CachedUserType = {
+		const studentRequester: UserContext = {
 			id: "student-1",
 			roles: [UserRoles.Student],
 			studentId: "student-1",
@@ -445,7 +445,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.document.findOne.mockResolvedValue(mockDocument as any);
+				mockDb.document.findOne.mockResolvedValue(mockDocument);
 
 				const result = await hasPermission(
 					studentRequester,
@@ -465,7 +465,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.document.findOne.mockResolvedValue(mockDocument as any);
+				mockDb.document.findOne.mockResolvedValue(mockDocument);
 
 				const result = await hasPermission(
 					studentRequester,
@@ -487,7 +487,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+				mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 				const result = await hasPermission(
 					studentRequester,
@@ -507,7 +507,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+				mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 				const result = await hasPermission(
 					studentRequester,
@@ -529,7 +529,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+				mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 				const result = await hasPermission(
 					studentRequester,
@@ -549,7 +549,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+				mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 				const result = await hasPermission(
 					studentRequester,
@@ -588,7 +588,7 @@ describe.todo("hasPermission", () => {
 	});
 
 	describe.todo("Supervisor permissions", () => {
-		const supervisorRequester: CachedUserType = {
+		const supervisorRequester: UserContext = {
 			id: "supervisor-1",
 			roles: [UserRoles.Supervisor],
 			supervisorId: "supervisor-1",
@@ -607,7 +607,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+				mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 				const result = await hasPermission(
 					supervisorRequester,
@@ -631,7 +631,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+				mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 				const result = await hasPermission(
 					supervisorRequester,
@@ -655,7 +655,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.classes.findOne.mockResolvedValue(mockClass as any);
+				mockDb.classes.findOne.mockResolvedValue(mockClass);
 
 				const result = await hasPermission(
 					supervisorRequester,
@@ -677,7 +677,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.classes.findOne.mockResolvedValue(mockClass as any);
+				mockDb.classes.findOne.mockResolvedValue(mockClass);
 
 				const result = await hasPermission(
 					supervisorRequester,
@@ -705,7 +705,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.document.findOne.mockResolvedValue(mockDocument as any);
+				mockDb.document.findOne.mockResolvedValue(mockDocument);
 
 				const result = await hasPermission(
 					supervisorRequester,
@@ -731,7 +731,7 @@ describe.todo("hasPermission", () => {
 					},
 				};
 
-				mockDb.document.findOne.mockResolvedValue(mockDocument as any);
+				mockDb.document.findOne.mockResolvedValue(mockDocument);
 
 				const result = await hasPermission(
 					supervisorRequester,
@@ -747,7 +747,7 @@ describe.todo("hasPermission", () => {
 
 	describe.todo("Multiple roles", () => {
 		it("should return true if any role has permission", async () => {
-			const multiRoleRequester: CachedUserType = {
+			const multiRoleRequester: UserContext = {
 				id: "user-1",
 				roles: [UserRoles.Student, UserRoles.Preceptor],
 				studentId: "student-1",
@@ -761,7 +761,7 @@ describe.todo("hasPermission", () => {
 				},
 			};
 
-			mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+			mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 			const result = await hasPermission(
 				multiRoleRequester,
@@ -774,7 +774,7 @@ describe.todo("hasPermission", () => {
 		});
 
 		it("should return false if no role has permission", async () => {
-			const multiRoleRequester: CachedUserType = {
+			const multiRoleRequester: UserContext = {
 				id: "user-1",
 				roles: [UserRoles.Student, UserRoles.Preceptor],
 				studentId: "student-1",
@@ -788,7 +788,7 @@ describe.todo("hasPermission", () => {
 				},
 			};
 
-			mockDb.student.findOne.mockResolvedValue(mockStudent as any);
+			mockDb.student.findOne.mockResolvedValue(mockStudent);
 
 			const result = await hasPermission(
 				multiRoleRequester,
@@ -803,7 +803,7 @@ describe.todo("hasPermission", () => {
 
 	describe.todo("Edge cases", () => {
 		it("should return false for unknown role", async () => {
-			const unknownRoleRequester: CachedUserType = {
+			const unknownRoleRequester: UserContext = {
 				id: "user-1",
 				roles: ["UnknownRole" as UserRoles],
 			};
@@ -819,7 +819,7 @@ describe.todo("hasPermission", () => {
 		});
 
 		it("should return false for unknown resource", async () => {
-			const requester: CachedUserType = {
+			const requester: UserContext = {
 				id: "student-1",
 				roles: [UserRoles.Student],
 				studentId: "student-1",
@@ -836,7 +836,7 @@ describe.todo("hasPermission", () => {
 		});
 
 		it("should handle empty roles array", async () => {
-			const emptyRolesRequester: CachedUserType = {
+			const emptyRolesRequester: UserContext = {
 				id: "user-1",
 				roles: [],
 			};

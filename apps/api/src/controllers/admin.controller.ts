@@ -41,17 +41,25 @@ export const adminController = new Elysia({ prefix: "admin" })
 		);
 		return result;
 	})
-	.get(":id", async ({ requester, status, params: { id } }) => {
-		try {
-			if (requester.sysAdminId !== id) {
-				return status(401);
+	.get(
+		":id",
+		async ({ requester, status, params: { id } }) => {
+			try {
+				if (requester.sysAdminId !== id) {
+					return status(401);
+				}
+				// Used only by each SysAdmin
+				return await db.sysAdmin.findOne({ id });
+			} catch (err) {
+				return status(500, { err });
 			}
-			// Used only by each SysAdmin
-			return await db.sysAdmin.findOne({ id });
-		} catch (err) {
-			return status(500, { err });
+		},
+		{
+			params: t.Object({
+				id: t.String(),
+			}),
 		}
-	})
+	)
 	// .patch("/:id", "Update One") // Nothing to do here since SysAdmins don't have any properties
 	.delete(":id", () => {
 		return { success: false, message: "Undefined Behaviour" };

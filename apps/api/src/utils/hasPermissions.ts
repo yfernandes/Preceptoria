@@ -1,23 +1,23 @@
 import { db } from "../db";
 import { UserRoles } from "../entities/role.abstract";
-import { CachedUserType } from "../middlewares/auth";
+import { UserContext } from "../types/jwtCookie";
 import { Actions, Modifiers, Resource, rolesPermissions } from "./permissions";
 
 export async function hasPermission(
-	requester: CachedUserType,
+	requester: UserContext,
 	resource: Resource,
 	action: Actions,
 	resourceId: string
 ): Promise<boolean> {
 	for (const role of requester.roles) {
-		const permissions = rolesPermissions[role];
+		const permissions = rolesPermissions[role as UserRoles];
 
 		// Full access
 		if (permissions.includes("*:*:*")) return true;
 
 		// Own Resources
 		if (permissions.includes(`${resource}:${action}_Own`)) {
-			const checkOwnership = resolvers[role][resource]?.Own;
+			const checkOwnership = resolvers[role as UserRoles][resource]?.Own;
 			if (!checkOwnership) {
 				return false;
 			}
@@ -28,7 +28,7 @@ export async function hasPermission(
 
 		// Scoped permission: Check management
 		if (permissions.includes(`${resource}:${action}_Managed`)) {
-			const checkOwnership = resolvers[role][resource]?.Managed;
+			const checkOwnership = resolvers[role as UserRoles][resource]?.Managed;
 			if (!checkOwnership) {
 				return false;
 			}
@@ -39,7 +39,8 @@ export async function hasPermission(
 
 		// Students modifier: Permission to act on behalf of students
 		if (permissions.includes(`${resource}:${action}_Students`)) {
-			const checkStudentsAccess = resolvers[role][resource]?.Students;
+			const checkStudentsAccess =
+				resolvers[role as UserRoles][resource]?.Students;
 			if (!checkStudentsAccess) {
 				return false;
 			}
@@ -53,7 +54,7 @@ export async function hasPermission(
 }
 
 type OwnershipResolver = (
-	requester: CachedUserType,
+	requester: UserContext,
 	resourceId: string
 ) => Promise<boolean> | boolean;
 

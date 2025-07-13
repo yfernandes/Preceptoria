@@ -166,52 +166,60 @@ export const classesController = new Elysia({ prefix: "/classes" })
 	})
 
 	// Get a specific class by ID
-	.get(":id", async ({ params: { id }, requester }) => {
-		try {
-			// Check permissions for reading this specific class
-			const hasAccess = await hasPermission(
-				requester,
-				Resource.Classes,
-				Actions.Read,
-				id
-			);
+	.get(
+		":id",
+		async ({ params: { id }, requester }) => {
+			try {
+				// Check permissions for reading this specific class
+				const hasAccess = await hasPermission(
+					requester,
+					Resource.Classes,
+					Actions.Read,
+					id
+				);
 
-			if (!hasAccess) {
-				return error(403, {
-					success: false,
-					message: "You don't have permission to view this class",
-				});
-			}
-
-			// Find class by ID with populated relationships
-			const classItem = await db.classes.findOne(
-				{ id },
-				{
-					populate: [
-						"course",
-						"students",
-						"course.supervisor",
-						"course.school",
-					],
+				if (!hasAccess) {
+					return error(403, {
+						success: false,
+						message: "You don't have permission to view this class",
+					});
 				}
-			);
 
-			if (!classItem) {
-				return error(404, {
-					success: false,
-					message: "Class not found",
-				});
+				// Find class by ID with populated relationships
+				const classItem = await db.classes.findOne(
+					{ id },
+					{
+						populate: [
+							"course",
+							"students",
+							"course.supervisor",
+							"course.school",
+						],
+					}
+				);
+
+				if (!classItem) {
+					return error(404, {
+						success: false,
+						message: "Class not found",
+					});
+				}
+
+				return {
+					success: true,
+					data: classItem,
+				};
+			} catch (err) {
+				console.error("Error fetching class:", err);
+				return error(500, { success: false, message: "Internal server error" });
 			}
-
-			return {
-				success: true,
-				data: classItem,
-			};
-		} catch (err) {
-			console.error("Error fetching class:", err);
-			return error(500, { success: false, message: "Internal server error" });
+		},
+		{
+			params: t.Object({
+				id: t.String(),
+			}),
 		}
-	})
+	)
 
 	// Update a class
 	.patch(
@@ -298,54 +306,62 @@ export const classesController = new Elysia({ prefix: "/classes" })
 	)
 
 	// Delete a class
-	.delete(":id", async ({ params: { id }, requester }) => {
-		try {
-			// Check permissions for deleting this class
-			const hasAccess = await hasPermission(
-				requester,
-				Resource.Classes,
-				Actions.Delete,
-				id
-			);
+	.delete(
+		":id",
+		async ({ params: { id }, requester }) => {
+			try {
+				// Check permissions for deleting this class
+				const hasAccess = await hasPermission(
+					requester,
+					Resource.Classes,
+					Actions.Delete,
+					id
+				);
 
-			if (!hasAccess) {
-				return error(403, {
-					success: false,
-					message: "You don't have permission to delete this class",
-				});
+				if (!hasAccess) {
+					return error(403, {
+						success: false,
+						message: "You don't have permission to delete this class",
+					});
+				}
+
+				// Find class by ID with students
+				const classItem = await db.classes.findOne(
+					{ id },
+					{ populate: ["students"] }
+				);
+
+				if (!classItem) {
+					return error(404, {
+						success: false,
+						message: "Class not found",
+					});
+				}
+
+				// Check if class has students (prevent deletion if occupied)
+				if (classItem.students.length > 0) {
+					return error(400, {
+						success: false,
+						message:
+							"Cannot delete class that has students. Please reassign or remove students first.",
+					});
+				}
+
+				// Delete class
+				await db.em.removeAndFlush(classItem);
+
+				return {
+					success: true,
+					message: "Class deleted successfully",
+				};
+			} catch (err) {
+				console.error("Error deleting class:", err);
+				return error(500, { success: false, message: "Internal server error" });
 			}
-
-			// Find class by ID with students
-			const classItem = await db.classes.findOne(
-				{ id },
-				{ populate: ["students"] }
-			);
-
-			if (!classItem) {
-				return error(404, {
-					success: false,
-					message: "Class not found",
-				});
-			}
-
-			// Check if class has students (prevent deletion if occupied)
-			if (classItem.students.length > 0) {
-				return error(400, {
-					success: false,
-					message:
-						"Cannot delete class that has students. Please reassign or remove students first.",
-				});
-			}
-
-			// Delete class
-			await db.em.removeAndFlush(classItem);
-
-			return {
-				success: true,
-				message: "Class deleted successfully",
-			};
-		} catch (err) {
-			console.error("Error deleting class:", err);
-			return error(500, { success: false, message: "Internal server error" });
+		},
+		{
+			params: t.Object({
+				id: t.String(),
+			}),
 		}
-	});
+	);
