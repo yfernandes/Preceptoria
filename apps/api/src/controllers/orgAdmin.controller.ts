@@ -3,7 +3,7 @@ import { OrgAdmin } from "../entities";
 import { db } from "../db";
 import { UserRoles } from "../entities/role.abstract";
 import { FilterQuery } from "@mikro-orm/postgresql";
-import { authenticatedUserMiddleware } from "@api/middlewares";
+import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
 
 // DTOs for request validation
 const createOrgAdminDto = {

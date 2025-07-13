@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
 import { authController } from "./auth.controller";
-import { UserRoles } from "../entities/role.abstract";
+import { UserRoles } from "../../entities/role.abstract";
 
 describe("Auth Controller", () => {
 	describe("Controller Structure", () => {

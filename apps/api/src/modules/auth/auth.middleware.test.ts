@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
 import { Elysia } from "elysia";
-import { authMiddleware } from "./auth";
+import { authMiddleware } from "./auth.middleware";
 
 describe("Auth Middleware", () => {
 	it("should reject request without session cookie", async () => {

@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { LRUCache } from "lru-cache";
 import { db } from "../db";
 import { UserContext } from "../types/jwtCookie";
-import { authMiddleware } from "./auth";
+import { authMiddleware } from "../modules/auth/auth.middleware";
 
 // Extract user lookup logic for better testability
 export async function findUserById(

@@ -8,8 +8,8 @@ import {
 	REFRESH_TOKEN_AGE,
 	COOKIE_CONFIG,
 } from "./auth.service";
-import { User } from "../entities/user.entity";
-import { UserRoles } from "../entities/role.abstract";
+import { User } from "../../entities/user.entity";
+import { UserRoles } from "../../entities/role.abstract";
 import { ValidationError } from "class-validator";
 
 describe("Auth Service", () => {

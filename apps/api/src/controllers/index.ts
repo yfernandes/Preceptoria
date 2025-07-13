@@ -1,5 +1,5 @@
 export { adminController } from "@api/controllers/admin.controller";
-export { authController } from "@api/controllers/auth.controller";
+export { authController } from "@api/modules/auth/auth.controller";
 export { classesController } from "@api/controllers/classes.controller";
 export { coursesController } from "@api/controllers/courses.controller";
 export { documentsController } from "@api/controllers/documents.controller";

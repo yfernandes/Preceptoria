@@ -1,7 +1,7 @@
 import Elysia, { t } from "elysia";
 import { Hospital } from "../entities";
 import { db } from "../db";
-import { authenticatedUserMiddleware } from "@api/middlewares";
+import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 

@@ -1,8 +1,8 @@
-import { User } from "../entities/user.entity";
-import { UserRoles } from "../entities/role.abstract";
-import { db } from "../db";
+import { User } from "../../entities/user.entity";
+import { UserRoles } from "../../entities/role.abstract";
+import { db } from "../../db";
 import { ValidationError } from "class-validator";
-import { createJwtHelper } from "../../lib/jwt";
+import { createJwtHelper } from "../../../lib/jwt";
 
 // JWT Configuration
 const JWT_CONFIG = {

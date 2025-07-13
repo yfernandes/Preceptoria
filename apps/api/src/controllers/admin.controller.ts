@@ -2,7 +2,7 @@ import Elysia, { t } from "elysia";
 import { SysAdmin } from "../entities";
 import { db } from "../db";
 import { SyncService } from "../services/syncService";
-import { authenticatedUserMiddleware } from "@api/middlewares";
+import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
 
 const createSysAdminDto = {
 	body: t.Object({
