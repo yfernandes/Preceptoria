@@ -1,10 +1,10 @@
 import { FilterQuery } from "@mikro-orm/postgresql";
 import Elysia, { status as error, t } from "elysia";
-import { Student } from "../entities";
-import { db } from "../db";
-import { hasPermission } from "../utils/hasPermissions";
-import { Actions, Resource } from "../utils/permissions";
-import { UserRoles } from "../modules/common/role.abstract";
+import { Student } from "../../entities";
+import { db } from "../../db";
+import { hasPermission } from "../../utils/hasPermissions";
+import { Actions, Resource } from "../../utils/permissions";
+import { UserRoles } from "../common/role.abstract";
 import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
 
 const createStudentDto = {

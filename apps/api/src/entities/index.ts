@@ -7,13 +7,13 @@ export { Course } from "@api/modules/courses";
 export { Hospital } from "@api/modules/hospital";
 export { HospitalManager } from "@api/modules/hospitalManager";
 export { Preceptor } from "@api/modules/preceptor";
+export { Role } from "@api/modules/common/role.abstract";
+export { School } from "@api/modules/school";
+export { Shift } from "@api/modules/shift";
+export { Student } from "@api/modules/students";
+export { BaseEntity } from "@api/modules/common/baseEntity";
 
 // Entities
-export { BaseEntity } from "../modules/common/baseEntity";
 export { User } from "./user.entity";
-export { Role } from "../modules/common/role.abstract";
-export { School } from "../modules/school/school.entity";
-export { Shift } from "../modules/shift/shift.entity";
-export { Student } from "./student.entity";
 export { Supervisor } from "./supervisor.entity";
 export { Organization } from "./organization.abstract";

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Document, DocumentType, DocumentStatus } from "./document.entity";
 import { User } from "@api/entities/user.entity";
-import { Student } from "@api/entities/student.entity";
+import { Student } from "@api/modules/students/student.entity";
 import { Classes } from "@api/modules/classes";
 import { Course } from "@api/modules/courses/course.entity";
 import { School } from "@api/modules/school/school.entity";

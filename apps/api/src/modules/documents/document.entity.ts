@@ -8,7 +8,7 @@ import {
 import { IsUrl } from "class-validator";
 
 import { BaseEntity } from "../common/baseEntity";
-import { Student } from "../../entities/student.entity";
+import { Student } from "../students/student.entity";
 import { User } from "../../entities/user.entity";
 
 export enum DocumentType {

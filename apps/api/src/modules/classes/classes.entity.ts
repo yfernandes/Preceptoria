@@ -8,7 +8,7 @@ import {
 } from "@mikro-orm/postgresql";
 
 import { Course } from "@api/modules/courses/course.entity";
-import { Student } from "@api/entities/student.entity";
+import { Student } from "@api/modules/students/student.entity";
 
 import { BaseEntity } from "@api/modules/common/baseEntity";
 
