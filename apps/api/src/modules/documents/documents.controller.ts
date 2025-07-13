@@ -6,7 +6,7 @@ import { Actions, Resource } from "@api/utils/permissions";
 import { getValidationTemplateForDocument } from "@api/utils/validationTemplates";
 import { UserRoles } from "@api/modules/common/";
 import { FilterQuery } from "@mikro-orm/postgresql";
-import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
+import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
 
 const documentValidationDto = {
 	body: t.Object({

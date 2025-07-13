@@ -58,7 +58,8 @@
 		"eslint.config.mjs",
 		"drizzle.config.ts",
 		"types/types.d.ts",
-		"lib"
+		"lib",
+		"src/types/testTypes.ts"
 	],
 	"exclude": ["node_modules", "dist", "drizzle.config.ts", "coverage"]
 }

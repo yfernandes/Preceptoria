@@ -1,7 +1,7 @@
 import Elysia, { status as error, t } from "elysia";
 import { User } from "./";
 import { db } from "../../db";
-import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
+import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
 import { hasPermission } from "../../utils/hasPermissions";
 import { Actions, Resource } from "../../utils/permissions";
 

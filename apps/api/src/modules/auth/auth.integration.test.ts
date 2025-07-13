@@ -5,7 +5,7 @@ import {
 	LoginResponse,
 	ErrorResponse,
 	ClassesResponse,
-} from "./testTypes";
+} from "@api/types/testTypes";
 
 // Test configuration
 const TEST_PORT = Math.floor(Math.random() * 10000) + 3001; // Random port between 3001-13000

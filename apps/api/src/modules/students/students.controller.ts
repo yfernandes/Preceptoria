@@ -5,7 +5,7 @@ import { db } from "../../db";
 import { hasPermission } from "../../utils/hasPermissions";
 import { Actions, Resource } from "../../utils/permissions";
 import { UserRoles } from "../common/role.abstract";
-import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
+import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
 
 const createStudentDto = {
 	body: t.Object({

@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { describe, it, expect, beforeAll, afterAll } from "bun:test";
-import { HealthResponse } from "./testTypes";
+import { HealthResponse } from "@api/types/testTypes";
 
 // Test configuration
 const TEST_PORT = Math.floor(Math.random() * 10000) + 3001; // Random port between 3001-13000

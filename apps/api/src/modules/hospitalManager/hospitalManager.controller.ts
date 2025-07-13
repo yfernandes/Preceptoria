@@ -5,7 +5,7 @@ import { hasPermission } from "@api/utils/hasPermissions";
 import { Actions, Resource } from "@api/utils/permissions";
 import { UserRoles } from "@api/modules/common";
 import { FilterQuery } from "@mikro-orm/postgresql";
-import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
+import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
 
 // DTOs for request validation
 const createHospitalManagerDto = {
