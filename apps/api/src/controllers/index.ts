@@ -1,11 +1,14 @@
-export { adminController } from "@api/controllers/admin.controller";
-export { authController } from "@api/modules/auth/auth.controller";
-export { classesController } from "@api/controllers/classes.controller";
-export { coursesController } from "@api/controllers/courses.controller";
+// Modules
+export { adminController } from "@api/modules/admin";
+export { orgAdminController } from "@api/modules/admin";
+export { authController } from "@api/modules/auth";
 export { documentsController } from "@api/modules/documents/";
+export { classesController } from "@api/modules/classes";
+
+// Controllers
+export { coursesController } from "@api/controllers/courses.controller";
 export { hospitalController } from "@api/controllers/hospital.controller";
 export { hospitalManagerController } from "@api/controllers/hospitalManager.controller";
-export { orgAdminController } from "@api/controllers/orgAdmin.controller";
 export { preceptorController } from "@api/controllers/preceptor.controller";
 export { schoolController } from "@api/controllers/school.controller";
 export { shiftController } from "@api/controllers/shift.controller";

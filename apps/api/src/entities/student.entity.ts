@@ -7,11 +7,11 @@ import {
 	OneToMany,
 } from "@mikro-orm/postgresql";
 
-import { Classes } from "./classes.entity";
-import { Role } from "./role.abstract";
-import { Shift } from "./shift.entity";
-import { User } from "./user.entity";
-import { Document } from "../modules/documents";
+import { Classes } from "@api/modules/classes";
+import { Role } from "@api/entities/role.abstract";
+import { Shift } from "@api/entities/shift.entity";
+import { User } from "@api/entities/user.entity";
+import { Document } from "@api/modules/documents";
 
 @Entity()
 export class Student extends Role {

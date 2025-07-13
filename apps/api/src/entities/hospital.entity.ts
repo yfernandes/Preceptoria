@@ -1,7 +1,7 @@
 import { Collection, Entity, OneToMany } from "@mikro-orm/postgresql";
 
 import { HospitalManager } from "./hospitalManager.entity";
-import { OrgAdmin } from "./OrgAdmin.entity";
+import { OrgAdmin } from "../modules/admin/OrgAdmin.entity";
 import { Organization } from "./organization.abstract";
 import { Shift } from "./shift.entity";
 

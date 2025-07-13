@@ -9,9 +9,9 @@ import {
 
 import { BaseEntity } from "./baseEntity";
 
-import { Classes } from "./classes.entity";
-import { School } from "./school.entity";
-import { Supervisor } from "./supervisor.entity";
+import { Classes } from "@api/modules/classes";
+import { School } from "@api/entities/school.entity";
+import { Supervisor } from "@api/entities/supervisor.entity";
 
 @Entity()
 export class Course extends BaseEntity {

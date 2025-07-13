@@ -1,8 +1,9 @@
 import Elysia, { t } from "elysia";
-import { SysAdmin } from "../entities";
-import { db } from "../db";
-import { SyncService } from "../services/syncService";
+
+import { db } from "../../db";
+import { SyncService } from "../../services/syncService";
 import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
+import { SysAdmin } from "./SysAdmin.entity";
 
 const createSysAdminDto = {
 	body: t.Object({

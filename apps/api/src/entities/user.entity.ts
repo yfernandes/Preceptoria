@@ -13,12 +13,12 @@ import {
 } from "class-validator";
 
 import { HospitalManager } from "./hospitalManager.entity";
-import { OrgAdmin } from "./OrgAdmin.entity";
+import { OrgAdmin } from "../modules/admin/OrgAdmin.entity";
 import { Preceptor } from "./preceptor.entity";
 import { UserRoles } from "./role.abstract";
 import { Student } from "./student.entity";
 import { Supervisor } from "./supervisor.entity";
-import { SysAdmin } from "./SysAdmin.entity";
+import { SysAdmin } from "../modules/admin/SysAdmin.entity";
 import { BaseEntity } from "./baseEntity";
 
 @Entity()

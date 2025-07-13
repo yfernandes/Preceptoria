@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from "bun:test";
-import { Student } from "./student.entity";
-import { User } from "./user.entity";
-import { Classes } from "./classes.entity";
-import { Course } from "./course.entity";
-import { School } from "./school.entity";
-import { Supervisor } from "./supervisor.entity";
+import { Student } from "@api/entities/student.entity";
+import { User } from "@api/entities/user.entity";
+import { Classes } from "@api/modules/classes";
+import { Course } from "@api/entities/course.entity";
+import { School } from "@api/entities/school.entity";
+import { Supervisor } from "@api/entities/supervisor.entity";
 import { Collection } from "@mikro-orm/postgresql";
 
 describe("Student Entity", () => {
