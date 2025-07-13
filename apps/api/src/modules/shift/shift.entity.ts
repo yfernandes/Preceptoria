@@ -11,7 +11,7 @@ import { BaseEntity } from "../common/baseEntity";
 
 import { Hospital } from "@api/modules/hospital";
 import { Preceptor } from "@api/modules/preceptor/";
-import { Student } from "@api/entities/";
+import { Student } from "@api/modules/entities";
 
 @Entity()
 export class Shift extends BaseEntity {

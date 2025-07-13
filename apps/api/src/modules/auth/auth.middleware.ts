@@ -1,11 +1,11 @@
 import { Elysia } from "elysia";
-import { JwtOptions } from "../../jwt";
+import { JwtOptions } from "@api/jwt";
 import {
 	tCookie,
 	TJwtPayload,
 	AuthenticatedUser,
 	CookieValue,
-} from "../../types/jwtCookie";
+} from "@api/types/jwtCookie";
 import { jwt } from "@elysiajs/jwt";
 
 // Helper function to extract session token from cookie

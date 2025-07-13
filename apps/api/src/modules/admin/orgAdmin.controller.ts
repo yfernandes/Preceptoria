@@ -1,7 +1,7 @@
 import Elysia, { status as error, t } from "elysia";
-import { OrgAdmin } from "../../entities";
-import { db } from "../../db";
-import { UserRoles } from "../common/role.abstract";
+import { OrgAdmin } from "@api/modules/entities";
+import { db } from "@api/db";
+import { UserRoles } from "@api/modules/common/";
 import { FilterQuery } from "@mikro-orm/postgresql";
 import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
 

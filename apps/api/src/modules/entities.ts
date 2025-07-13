@@ -1,4 +1,3 @@
-// Modules
 export { Document } from "@api/modules/documents";
 export { OrgAdmin } from "@api/modules/admin";
 export { SysAdmin } from "@api/modules/admin";
@@ -13,7 +12,5 @@ export { Shift } from "@api/modules/shift";
 export { Student } from "@api/modules/students";
 export { BaseEntity } from "@api/modules/common/baseEntity";
 export { Organization } from "@api/modules/common/";
-
-// Entities
-export { User } from "../modules/user/user.entity";
-export { Supervisor } from "../modules/supervisor/supervisor.entity";
+export { User } from "@api/modules/user";
+export { Supervisor } from "@api/modules/supervisor";

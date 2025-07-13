@@ -12,7 +12,7 @@ import {
 	OrgAdmin,
 	SysAdmin,
 	HospitalManager,
-} from "../entities";
+} from "../modules/entities";
 import { DocumentType } from "../modules/documents";
 import {
 	GoogleSheetsService,

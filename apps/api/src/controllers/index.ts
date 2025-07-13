@@ -1,4 +1,3 @@
-// Modules
 export { adminController } from "@api/modules/admin";
 export { orgAdminController } from "@api/modules/admin";
 export { authController } from "@api/modules/auth";
@@ -12,7 +11,5 @@ export { preceptorController } from "@api/modules/preceptor";
 export { schoolController } from "@api/modules/school";
 export { shiftController } from "@api/modules/shift";
 export { studentsController } from "@api/modules/students";
-
-// Controllers
-export { supervisorController } from "@api/modules/supervisor/supervisor.controller";
-export { userController } from "@api/modules/user/user.controller";
+export { userController } from "@api/modules/user/";
+export { supervisorController } from "@api/modules/supervisor";

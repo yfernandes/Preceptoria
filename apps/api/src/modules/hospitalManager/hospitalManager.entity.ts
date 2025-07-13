@@ -1,8 +1,6 @@
 import { type Rel, Entity, ManyToOne } from "@mikro-orm/postgresql";
 
-import { Hospital } from "@api/modules/hospital";
-import { Role } from "@api/modules/common";
-import { User } from "@api/modules/user/user.entity";
+import { Hospital, Role, User } from "@api/modules/entities";
 
 @Entity()
 export class HospitalManager extends Role {

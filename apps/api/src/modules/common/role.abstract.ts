@@ -1,7 +1,7 @@
 import { OneToOne, type Rel } from "@mikro-orm/postgresql";
 
 import { BaseEntity } from "./baseEntity";
-import { User } from "../user/user.entity";
+import { User } from "@api/modules/entities";
 
 export enum UserRoles {
 	SysAdmin = "SysAdmin",

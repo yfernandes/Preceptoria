@@ -20,7 +20,7 @@ import {
 	Supervisor,
 	SysAdmin,
 	User,
-} from "./entities/index";
+} from "./modules/entities";
 
 // Base configuration shared across all environments
 const baseConfig = {

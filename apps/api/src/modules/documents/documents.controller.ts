@@ -1,10 +1,10 @@
 import Elysia, { status as error, t } from "elysia";
-import { db } from "../../db";
-import { Document, DocumentStatus, DocumentType } from "./document.entity";
-import { hasPermission } from "../../utils/hasPermissions";
-import { Actions, Resource } from "../../utils/permissions";
-import { getValidationTemplateForDocument } from "../../utils/validationTemplates";
-import { UserRoles } from "../common/role.abstract";
+import { db } from "@api/db";
+import { Document, DocumentStatus, DocumentType } from "@api/modules/documents";
+import { hasPermission } from "@api/utils/hasPermissions";
+import { Actions, Resource } from "@api/utils/permissions";
+import { getValidationTemplateForDocument } from "@api/utils/validationTemplates";
+import { UserRoles } from "@api/modules/common/";
 import { FilterQuery } from "@mikro-orm/postgresql";
 import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
-import { School } from "./school.entity";
 import { Collection } from "@mikro-orm/postgresql";
+import { School } from "./school.entity";
 
 describe("School Entity", () => {
 	describe("Constructor", () => {

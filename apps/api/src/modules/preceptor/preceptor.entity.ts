@@ -7,10 +7,7 @@ import {
 	Property,
 } from "@mikro-orm/postgresql";
 
-import { Hospital } from "@api/modules/hospital";
-import { Role } from "@api/modules/common";
-import { Shift } from "@api/modules/shift/shift.entity";
-import { User } from "@api/modules/user/user.entity";
+import { Hospital, Role, Shift, User } from "@api/modules/entities";
 
 @Entity()
 export class Preceptor extends Role {

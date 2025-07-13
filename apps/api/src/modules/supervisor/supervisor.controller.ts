@@ -1,10 +1,10 @@
 import Elysia, { status as error, t } from "elysia";
-import { Supervisor } from "../../entities";
-import { db } from "../../db";
+import { Supervisor } from "@api/modules/entities";
+import { db } from "@api/db";
 import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
-import { hasPermission } from "../../utils/hasPermissions";
-import { Actions, Resource } from "../../utils/permissions";
-import { UserRoles } from "../common/role.abstract";
+import { hasPermission } from "@api/utils/hasPermissions";
+import { Actions, Resource } from "@api/utils/permissions";
+import { UserRoles } from "@api/modules/common/";
 import { FilterQuery } from "@mikro-orm/postgresql";
 
 // DTOs for request validation

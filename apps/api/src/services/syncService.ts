@@ -7,7 +7,7 @@ import {
 	Classes,
 	Course,
 	Supervisor,
-} from "../entities";
+} from "../modules/entities";
 import { GoogleSheetsService, GoogleSheetsSubmission } from "./googleSheets";
 import { DocumentType } from "../modules/documents";
 
