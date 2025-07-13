@@ -12,7 +12,7 @@ import {
 	IsNotEmpty,
 } from "class-validator";
 
-import { HospitalManager } from "./hospitalManager.entity";
+import { HospitalManager } from "../modules/hospitalManager/hospitalManager.entity";
 import { OrgAdmin } from "../modules/admin/OrgAdmin.entity";
 import { Preceptor } from "./preceptor.entity";
 import { UserRoles } from "../modules/common/role.abstract";

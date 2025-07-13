@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "bun:test";
-import { HospitalManager } from "@api/entities/hospitalManager.entity";
+import { HospitalManager } from "@api/modules/hospitalManager/hospitalManager.entity";
 import { User } from "@api/entities/user.entity";
 import { Hospital } from "@api/modules/hospital";
 

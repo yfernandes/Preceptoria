@@ -1,6 +1,6 @@
 import { Collection, Entity, OneToMany } from "@mikro-orm/postgresql";
 
-import { HospitalManager } from "@api/entities/hospitalManager.entity";
+import { HospitalManager } from "@api/modules/hospitalManager/hospitalManager.entity";
 import { OrgAdmin } from "@api/modules/admin";
 import { Organization } from "@api/entities/organization.abstract";
 import { Shift } from "@api/entities/shift.entity";

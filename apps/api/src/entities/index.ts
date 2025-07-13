@@ -5,11 +5,11 @@ export { SysAdmin } from "../modules/admin";
 export { Classes } from "@api/modules/classes/";
 export { Course } from "@api/modules/courses";
 export { Hospital } from "@api/modules/hospital";
+export { HospitalManager } from "@api/modules/hospitalManager";
 
 // Entities
 export { BaseEntity } from "../modules/common/baseEntity";
 export { User } from "./user.entity";
-export { HospitalManager } from "./hospitalManager.entity";
 export { Preceptor } from "./preceptor.entity";
 export { Role } from "../modules/common/role.abstract";
 export { School } from "./school.entity";
