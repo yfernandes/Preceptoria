@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { Document, DocumentType, DocumentStatus } from "./document.entity";
-import { User } from "./user.entity";
-import { Student } from "./student.entity";
-import { Classes } from "./classes.entity";
-import { Course } from "./course.entity";
-import { School } from "./school.entity";
-import { Supervisor } from "./supervisor.entity";
+import { User } from "../../entities/user.entity";
+import { Student } from "../../entities/student.entity";
+import { Classes } from "../../entities/classes.entity";
+import { Course } from "../../entities/course.entity";
+import { School } from "../../entities/school.entity";
+import { Supervisor } from "../../entities/supervisor.entity";
 
 describe("Document Entity", () => {
 	let mockUser: User;

@@ -9,7 +9,7 @@ import {
 	Supervisor,
 } from "../entities";
 import { GoogleSheetsService, GoogleSheetsSubmission } from "./googleSheets";
-import { DocumentType } from "../entities/document.entity";
+import { DocumentType } from "../modules/documents";
 
 export interface SyncResult {
 	success: boolean;

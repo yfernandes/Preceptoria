@@ -1,6 +1,6 @@
 export { BaseEntity } from "./baseEntity";
 export { User } from "./user.entity";
-export { Document } from "./document.entity";
+export { Document } from "../modules/documents";
 export { Classes } from "./classes.entity";
 export { Course } from "./course.entity";
 export { Hospital } from "./hospital.entity";

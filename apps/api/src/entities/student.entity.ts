@@ -11,7 +11,7 @@ import { Classes } from "./classes.entity";
 import { Role } from "./role.abstract";
 import { Shift } from "./shift.entity";
 import { User } from "./user.entity";
-import { Document } from "./document.entity";
+import { Document } from "../modules/documents";
 
 @Entity()
 export class Student extends Role {

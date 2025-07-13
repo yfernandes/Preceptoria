@@ -2,7 +2,7 @@ export { adminController } from "@api/controllers/admin.controller";
 export { authController } from "@api/modules/auth/auth.controller";
 export { classesController } from "@api/controllers/classes.controller";
 export { coursesController } from "@api/controllers/courses.controller";
-export { documentsController } from "@api/controllers/documents.controller";
+export { documentsController } from "@api/modules/documents/";
 export { hospitalController } from "@api/controllers/hospital.controller";
 export { hospitalManagerController } from "@api/controllers/hospitalManager.controller";
 export { orgAdminController } from "@api/controllers/orgAdmin.controller";

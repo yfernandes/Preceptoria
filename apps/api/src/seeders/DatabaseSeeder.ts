@@ -13,7 +13,7 @@ import {
 	SysAdmin,
 	HospitalManager,
 } from "../entities";
-import { DocumentType } from "../entities/document.entity";
+import { DocumentType } from "../modules/documents";
 import {
 	GoogleSheetsService,
 	// ConsolidatedSubmission,
