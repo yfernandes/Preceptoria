@@ -11,7 +11,7 @@ import { BaseEntity } from "../common/baseEntity";
 
 import { Classes } from "@api/modules/classes";
 import { School } from "@api/modules/school/school.entity";
-import { Supervisor } from "@api/entities/supervisor.entity";
+import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
 
 @Entity()
 export class Course extends BaseEntity {

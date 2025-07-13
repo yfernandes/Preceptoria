@@ -4,7 +4,7 @@ import { User } from "@api/modules/user/user.entity";
 import { Classes } from "@api/modules/classes";
 import { Course } from "@api/modules/courses/course.entity";
 import { School } from "@api/modules/school/school.entity";
-import { Supervisor } from "@api/entities/supervisor.entity";
+import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
 import { Collection } from "@mikro-orm/postgresql";
 
 describe("Student Entity", () => {

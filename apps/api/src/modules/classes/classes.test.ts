@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "bun:test";
 import { Classes } from "./classes.entity";
 import { Course } from "@api/modules/courses/course.entity";
 import { School } from "@api/modules/school/school.entity";
-import { Supervisor } from "@api/entities/supervisor.entity";
+import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
 import { User } from "@api/modules/user/user.entity";
 import { Collection } from "@mikro-orm/postgresql";
 

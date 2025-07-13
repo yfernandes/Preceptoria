@@ -6,10 +6,10 @@ import {
 	OneToMany,
 } from "@mikro-orm/postgresql";
 
-import { Course } from "../modules/courses/course.entity";
-import { Role } from "../modules/common/role.abstract";
-import { School } from "../modules/school/school.entity";
-import { User } from "../modules/user/user.entity";
+import { Course } from "../courses/course.entity";
+import { Role } from "../common/role.abstract";
+import { School } from "../school/school.entity";
+import { User } from "../user/user.entity";
 
 @Entity()
 export class Supervisor extends Role {

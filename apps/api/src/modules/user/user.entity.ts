@@ -17,7 +17,7 @@ import { OrgAdmin } from "../admin/OrgAdmin.entity";
 import { Preceptor } from "../preceptor/preceptor.entity";
 import { UserRoles } from "../common/role.abstract";
 import { Student } from "../students/student.entity";
-import { Supervisor } from "../../entities/supervisor.entity";
+import { Supervisor } from "../supervisor/supervisor.entity";
 import { SysAdmin } from "../admin/SysAdmin.entity";
 import { BaseEntity } from "../common/baseEntity";
 
