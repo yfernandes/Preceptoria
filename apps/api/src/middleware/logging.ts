@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
 import { RequestContext, Utils, wrap } from "@mikro-orm/core";
-import { db } from "../db";
+import { db } from "@api/db";
 
 /**
  * Applies logging middleware to the Elysia app

@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
-import { DatabaseSeeder } from "../src/seeders/DatabaseSeeder";
-import { initORM } from "../src/db";
+import { initORM } from "@api/db";
 import { EntityManager } from "@mikro-orm/postgresql";
+import { DatabaseSeeder } from "../database/seeders/DatabaseSeeder";
 
 // Environment validation
 const requiredEnvVars = ["DB_HOST", "DB_USER", "DB_PASS", "DB_NAME"];

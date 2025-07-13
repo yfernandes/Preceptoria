@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { OrgAdmin } from "./OrgAdmin.entity";
-import { User } from "@api/modules/user/user.entity";
+import { User } from "@api/modules/users/user.entity";
 import { School } from "@api/modules/school/school.entity";
 import { Hospital } from "@api/modules/hospital";
 

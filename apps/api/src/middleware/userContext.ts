@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
 import { LRUCache } from "lru-cache";
-import { db } from "../db";
+import { db } from "@api/db";
 import { UserContext } from "../types/jwtCookie";
 import { authMiddleware } from "../modules/auth/auth.middleware";
 

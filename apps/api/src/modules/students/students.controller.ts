@@ -1,7 +1,7 @@
 import { FilterQuery } from "@mikro-orm/postgresql";
 import Elysia, { status as error, t } from "elysia";
 import { Student } from "@api/modules/entities";
-import { db } from "../../db";
+import { db } from "@api/db";
 import { hasPermission } from "../../utils/hasPermissions";
 import { Actions, Resource } from "../../utils/permissions";
 import { UserRoles } from "../common/role.abstract";

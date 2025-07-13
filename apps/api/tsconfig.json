@@ -48,17 +48,18 @@
 			"@web/libs": ["../web/src/libs/index.ts"],
 			"@api": ["src/index.ts"],
 			"@api/controllers/*": ["src/controllers/*"],
-			"@api/*": ["src/*"]
+			"@api/*": ["src/*"],
+			"@api/db": ["infrastructure/database/db"],
+			"@api/infrastructure/*": ["infrastructure/*"]
 		}
 	},
 	"include": [
 		"src",
+		"infrastructure",
 		"test",
-		"scripts",
 		"eslint.config.mjs",
 		"drizzle.config.ts",
 		"types/types.d.ts",
-		"lib",
 		"src/types/testTypes.ts"
 	],
 	"exclude": ["node_modules", "dist", "drizzle.config.ts", "coverage"]

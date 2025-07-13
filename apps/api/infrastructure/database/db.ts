@@ -1,6 +1,6 @@
 import { EntityManager, EntityRepository, MikroORM } from "@mikro-orm/core";
 
-import { localConfig } from "./mikro-orm.config.js";
+import { localConfig } from "./config/mikro-orm.config.js";
 import {
 	Classes,
 	User,
@@ -15,7 +15,7 @@ import {
 	Supervisor,
 	SysAdmin,
 	Document,
-} from "./modules/entities.js";
+} from "@api/modules/entities.js";
 
 export interface Services {
 	orm: MikroORM;

@@ -20,7 +20,7 @@ import {
 	Supervisor,
 	SysAdmin,
 	User,
-} from "./modules/entities";
+} from "@api/modules/entities";
 
 // Base configuration shared across all environments
 const baseConfig = {
@@ -50,7 +50,7 @@ const baseConfig = {
 	extensions: [Migrator, SeedManager],
 	migrations: {
 		path: "dist/migrations",
-		pathTs: "src/migrations",
+		pathTs: "../migrations",
 		tableName: "mikro_orm_migrations",
 		transactional: true,
 		disableForeignKeys: false,
@@ -61,7 +61,7 @@ const baseConfig = {
 	},
 	seeder: {
 		path: "dist/seeders",
-		pathTs: "src/seeders",
+		pathTs: "../seeders",
 		defaultSeeder: "DatabaseSeeder",
 		glob: "!(*.d).{js,ts}",
 		emit: "ts" as const,

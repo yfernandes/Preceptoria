@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { SyncService } from "../src/services/syncService";
+import { SyncService } from "@api/services/syncService";
 
 // Environment validation
 const requiredEnvVars = ["GOOGLE_SPREADSHEET_ID"];

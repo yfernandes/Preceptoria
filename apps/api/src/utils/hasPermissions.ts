@@ -1,4 +1,4 @@
-import { db } from "../db";
+import { db } from "@api/db";
 import { UserRoles } from "../modules/common/role.abstract";
 import { UserContext } from "../types/jwtCookie";
 import { Actions, Modifiers, Resource, rolesPermissions } from "./permissions";

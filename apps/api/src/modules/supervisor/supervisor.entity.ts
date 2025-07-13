@@ -9,7 +9,7 @@ import {
 import { Course } from "../courses/course.entity";
 import { Role } from "../common/role.abstract";
 import { School } from "../school/school.entity";
-import { User } from "../user/user.entity";
+import { User } from "../users/user.entity";
 
 @Entity()
 export class Supervisor extends Role {

@@ -22,7 +22,7 @@ console.log(
 );
 
 // --- Database ---
-import { initORM } from "./db";
+import { initORM } from "@api/infrastructure/database/db";
 export const db = await initORM();
 
 // --- Import and start server ---

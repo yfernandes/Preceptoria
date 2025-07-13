@@ -35,9 +35,9 @@
 		"db:schema:drop": "bunx --bun mikro-orm schema:drop",
 		"db:seed": "bunx --bun mikro-orm seeder:run",
 		"db:seed:create": "bunx --bun mikro-orm seeder:create",
-		"sync:google-sheets": "bun scripts/syncGoogleSheets.ts",
-		"test:seed": "bun scripts/testSeeder.ts",
-		"run:seed": "bun scripts/runSeeder.ts",
+		"sync:google-sheets": "bun infrastructure/scripts/syncGoogleSheets.ts",
+		"test:seed": "bun infrastructure/scripts/testSeeder.ts",
+		"run:seed": "bun infrastructure/scripts/runSeeder.ts",
 		"build": "tsc -p tsconfig.json"
 	},
 	"dependencies": {

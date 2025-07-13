@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { SysAdmin } from "./SysAdmin.entity";
-import { User } from "../user/user.entity";
+import { User } from "../users/user.entity";
 
 describe("SysAdmin Entity", () => {
 	let mockUser: User;

@@ -12,13 +12,13 @@ import {
 	OrgAdmin,
 	SysAdmin,
 	HospitalManager,
-} from "../modules/entities";
-import { DocumentType } from "../modules/documents";
+} from "@api/modules/entities";
+import { DocumentType } from "@api/modules/documents";
 import {
 	GoogleSheetsService,
 	// ConsolidatedSubmission,
-} from "../services/googleSheets";
-import { UserRoles } from "../modules/common/role.abstract";
+} from "@api/services/googleSheets";
+import { UserRoles } from "@api/modules/common/role.abstract";
 
 export class DatabaseSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {

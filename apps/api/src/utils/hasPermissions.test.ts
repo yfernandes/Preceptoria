@@ -24,7 +24,7 @@ const mockDb = {
 };
 
 // Mock the db module
-await mock.module("../db", () => ({
+await mock.module("@api/db", () => ({
 	db: mockDb,
 }));
 

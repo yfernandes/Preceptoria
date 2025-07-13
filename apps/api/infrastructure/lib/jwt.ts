@@ -1,7 +1,7 @@
 import { Elysia } from "elysia";
 import { SignJWT, jwtVerify } from "jose";
 import { Type as t } from "@sinclair/typebox";
-import { UserRoles } from "../src/modules/common/role.abstract";
+import { UserRoles } from "@api/modules/common/role.abstract";
 
 // JWT Payload Schema for our application
 export const jwtPayloadSchema = t.Object({
