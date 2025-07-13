@@ -11,5 +11,5 @@ export { preceptorController } from "@api/modules/preceptor";
 export { schoolController } from "@api/modules/school";
 export { shiftController } from "@api/modules/shift";
 export { studentsController } from "@api/modules/students";
-export { userController } from "@api/modules/user/";
+export { userController } from "@api/modules/users";
 export { supervisorController } from "@api/modules/supervisor";

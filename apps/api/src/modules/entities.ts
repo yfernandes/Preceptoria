@@ -12,5 +12,5 @@ export { Shift } from "@api/modules/shift";
 export { Student } from "@api/modules/students";
 export { BaseEntity } from "@api/modules/common/baseEntity";
 export { Organization } from "@api/modules/common/";
-export { User } from "@api/modules/user";
+export { User } from "@api/modules/users";
 export { Supervisor } from "@api/modules/supervisor";
