@@ -1,7 +1,7 @@
 import Elysia, { status as error, t } from "elysia";
 import { Supervisor } from "../entities";
 import { db } from "../db";
-import { authMiddleware } from "../middlewares/auth";
+import { authenticatedUserMiddleware } from "@api/middlewares";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 import { UserRoles } from "../entities/role.abstract";
@@ -25,7 +25,7 @@ const updateSupervisorDto = {
 };
 
 export const supervisorController = new Elysia({ prefix: "/supervisors" })
-	.use(authMiddleware)
+	.use(authenticatedUserMiddleware)
 
 	// Create a new supervisor
 	.post(

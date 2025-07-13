@@ -1,8 +1,8 @@
 import Elysia, { t } from "elysia";
 import { SysAdmin } from "../entities";
 import { db } from "../db";
-import { authMiddleware } from "../middlewares/auth";
 import { SyncService } from "../services/syncService";
+import { authenticatedUserMiddleware } from "@api/middlewares";
 
 const createSysAdminDto = {
 	body: t.Object({
@@ -13,7 +13,7 @@ const createSysAdminDto = {
 const syncService = new SyncService();
 
 export const adminController = new Elysia({ prefix: "admin" })
-	.use(authMiddleware)
+	.use(authenticatedUserMiddleware)
 	.post(
 		"/",
 		async ({ requester, status, body: { userId } }) => {

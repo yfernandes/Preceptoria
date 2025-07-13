@@ -6,6 +6,7 @@ import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 import { UserRoles } from "../entities/role.abstract";
 import { FilterQuery } from "@mikro-orm/postgresql";
+import { authenticatedUserMiddleware } from "@api/middlewares";
 
 // DTOs for request validation
 const createPreceptorDto = {
@@ -26,7 +27,7 @@ const updatePreceptorDto = {
 };
 
 export const preceptorController = new Elysia({ prefix: "/preceptors" })
-	.use(authMiddleware)
+	.use(authenticatedUserMiddleware)
 
 	// Create a new preceptor
 	.post(

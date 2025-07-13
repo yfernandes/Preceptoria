@@ -1,7 +1,7 @@
 import Elysia, { status as error, t } from "elysia";
 import { Shift } from "../entities";
 import { db } from "../db";
-import { authMiddleware } from "../middlewares/auth";
+import { authenticatedUserMiddleware } from "@api/middlewares";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 import { UserRoles } from "../entities/role.abstract";
@@ -33,7 +33,7 @@ const updateShiftDto = {
 };
 
 export const shiftController = new Elysia({ prefix: "/shifts" })
-	.use(authMiddleware)
+	.use(authenticatedUserMiddleware)
 
 	// Create a new shift
 	.post(

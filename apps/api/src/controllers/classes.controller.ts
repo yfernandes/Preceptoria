@@ -1,11 +1,11 @@
 import Elysia, { status as error, t } from "elysia";
 import { Classes } from "../entities";
 import { db } from "../db";
-import { authMiddleware } from "../middlewares/auth";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 import { UserRoles } from "../entities/role.abstract";
 import { FilterQuery } from "@mikro-orm/postgresql";
+import { authenticatedUserMiddleware } from "@api/middlewares";
 
 // DTOs for request validation
 const createClassDto = {
@@ -23,7 +23,7 @@ const updateClassDto = {
 };
 
 export const classesController = new Elysia({ prefix: "/classes" })
-	.use(authMiddleware)
+	.use(authenticatedUserMiddleware)
 
 	// Create a new class
 	.post(

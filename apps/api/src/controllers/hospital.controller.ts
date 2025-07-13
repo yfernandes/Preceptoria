@@ -1,7 +1,7 @@
 import Elysia, { t } from "elysia";
 import { Hospital } from "../entities";
 import { db } from "../db";
-import { authMiddleware } from "../middlewares/auth";
+import { authenticatedUserMiddleware } from "@api/middlewares";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 
@@ -27,7 +27,7 @@ const updateHospitalDto = {
 };
 
 export const hospitalController = new Elysia({ prefix: "/hospitals" })
-	.use(authMiddleware)
+	.use(authenticatedUserMiddleware)
 
 	// Create a new hospital
 	.post(

@@ -1,5 +1,4 @@
 import Elysia, { status as error, t } from "elysia";
-import { authMiddleware } from "../middlewares/auth";
 import { db } from "../db";
 import {
 	Document,
@@ -11,6 +10,7 @@ import { Actions, Resource } from "../utils/permissions";
 import { getValidationTemplateForDocument } from "../utils/validationTemplates";
 import { UserRoles } from "../entities/role.abstract";
 import { FilterQuery } from "@mikro-orm/postgresql";
+import { authenticatedUserMiddleware } from "@api/middlewares";
 
 const documentValidationDto = {
 	body: t.Object({
@@ -33,7 +33,7 @@ const documentRejectionDto = {
 };
 
 export const documentsController = new Elysia({ prefix: "/documents" })
-	.use(authMiddleware)
+	.use(authenticatedUserMiddleware)
 
 	// Create a new document
 	.post(

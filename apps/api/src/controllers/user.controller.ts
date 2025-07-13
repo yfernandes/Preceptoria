@@ -1,7 +1,7 @@
 import Elysia, { status as error, t } from "elysia";
 import { User } from "../entities";
 import { db } from "../db";
-import { authMiddleware } from "../middlewares/auth";
+import { authenticatedUserMiddleware } from "@api/middlewares";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 
@@ -25,7 +25,7 @@ const updateUserDto = {
 };
 
 export const userController = new Elysia({ prefix: "/users" })
-	.use(authMiddleware)
+	.use(authenticatedUserMiddleware)
 
 	// Create a new user
 	.post(

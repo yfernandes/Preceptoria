@@ -1,11 +1,11 @@
+import { FilterQuery } from "@mikro-orm/postgresql";
 import Elysia, { status as error, t } from "elysia";
 import { Student } from "../entities";
 import { db } from "../db";
-import { authMiddleware } from "../middlewares/auth";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
 import { UserRoles } from "../entities/role.abstract";
-import { FilterQuery } from "@mikro-orm/postgresql";
+import { authenticatedUserMiddleware } from "@api/middlewares";
 
 const createStudentDto = {
 	body: t.Object({
@@ -24,7 +24,7 @@ const updateStudentDto = {
 };
 
 export const studentsController = new Elysia({ prefix: "students" })
-	.use(authMiddleware)
+	.use(authenticatedUserMiddleware)
 	.post(
 		"/",
 		async ({ body: { userId, classId }, requester }) => {

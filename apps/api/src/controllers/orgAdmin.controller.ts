@@ -1,9 +1,9 @@
 import Elysia, { status as error, t } from "elysia";
 import { OrgAdmin } from "../entities";
 import { db } from "../db";
-import { authMiddleware } from "../middlewares/auth";
 import { UserRoles } from "../entities/role.abstract";
 import { FilterQuery } from "@mikro-orm/postgresql";
+import { authenticatedUserMiddleware } from "@api/middlewares";
 
 // DTOs for request validation
 const createOrgAdminDto = {
@@ -22,7 +22,7 @@ const updateOrgAdminDto = {
 };
 
 export const orgAdminController = new Elysia({ prefix: "/org-admins" })
-	.use(authMiddleware)
+	.use(authenticatedUserMiddleware)
 
 	// Create a new org admin
 	.post(
