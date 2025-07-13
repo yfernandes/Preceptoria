@@ -2,7 +2,7 @@ import { Collection, Entity, OneToMany } from "@mikro-orm/postgresql";
 
 import { Course } from "../courses/course.entity";
 import { OrgAdmin } from "../admin/OrgAdmin.entity";
-import { Organization } from "../../entities/organization.abstract";
+import { Organization } from "../common/organization.abstract";
 import { Supervisor } from "../../entities/supervisor.entity";
 
 @Entity()
