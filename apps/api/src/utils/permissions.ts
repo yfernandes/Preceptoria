@@ -1,4 +1,4 @@
-import { UserRoles } from "../entities/role.abstract";
+import { UserRoles } from "../modules/common/role.abstract";
 export enum Resource {
 	Hospital = "Hospital",
 	Student = "Student",

@@ -9,7 +9,7 @@ import {
 	COOKIE_CONFIG,
 } from "./auth.service";
 import { User } from "../../entities/user.entity";
-import { UserRoles } from "../../entities/role.abstract";
+import { UserRoles } from "../common/role.abstract";
 import { ValidationError } from "class-validator";
 
 describe("Auth Service", () => {

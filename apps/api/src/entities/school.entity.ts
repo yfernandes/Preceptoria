@@ -1,6 +1,6 @@
 import { Collection, Entity, OneToMany } from "@mikro-orm/postgresql";
 
-import { Course } from "./course.entity";
+import { Course } from "../modules/courses/course.entity";
 import { OrgAdmin } from "../modules/admin/OrgAdmin.entity";
 import { Organization } from "./organization.abstract";
 import { Supervisor } from "./supervisor.entity";

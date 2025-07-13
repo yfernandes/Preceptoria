@@ -1,5 +1,5 @@
 import { mock } from "bun:test";
-import { UserRoles } from "../entities/role.abstract";
+import { UserRoles } from "../modules/common/role.abstract";
 
 // Mock data types
 export interface MockUser {

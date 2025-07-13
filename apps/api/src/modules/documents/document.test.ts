@@ -3,7 +3,7 @@ import { Document, DocumentType, DocumentStatus } from "./document.entity";
 import { User } from "@api/entities/user.entity";
 import { Student } from "@api/entities/student.entity";
 import { Classes } from "@api/modules/classes";
-import { Course } from "@api/entities/course.entity";
+import { Course } from "@api/modules/courses/course.entity";
 import { School } from "@api/entities/school.entity";
 import { Supervisor } from "@api/entities/supervisor.entity";
 

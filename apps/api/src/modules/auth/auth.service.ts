@@ -1,5 +1,5 @@
 import { User } from "../../entities/user.entity";
-import { UserRoles } from "../../entities/role.abstract";
+import { UserRoles } from "../common/role.abstract";
 import { db } from "../../db";
 import { ValidationError } from "class-validator";
 import { createJwtHelper } from "../../../lib/jwt";

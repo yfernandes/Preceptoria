@@ -4,9 +4,9 @@ export { orgAdminController } from "@api/modules/admin";
 export { authController } from "@api/modules/auth";
 export { documentsController } from "@api/modules/documents/";
 export { classesController } from "@api/modules/classes";
+export { coursesController } from "@api/modules/courses";
 
 // Controllers
-export { coursesController } from "@api/controllers/courses.controller";
 export { hospitalController } from "@api/controllers/hospital.controller";
 export { hospitalManagerController } from "@api/controllers/hospitalManager.controller";
 export { preceptorController } from "@api/controllers/preceptor.controller";

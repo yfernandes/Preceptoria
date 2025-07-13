@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from "bun:test";
 import { createJwtHelper } from "./jwt";
-import { UserRoles } from "../src/entities/role.abstract";
+import { UserRoles } from "../src/modules/common/role.abstract";
 
 describe("JWT Implementation", () => {
 	describe("Configuration", () => {

@@ -7,7 +7,7 @@ import {
 	Property,
 } from "@mikro-orm/postgresql";
 
-import { BaseEntity } from "./baseEntity";
+import { BaseEntity } from "../modules/common/baseEntity";
 
 import { Hospital } from "./hospital.entity";
 import { Preceptor } from "./preceptor.entity";

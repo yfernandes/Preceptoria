@@ -1,6 +1,6 @@
 import { Property } from "@mikro-orm/postgresql";
 import { IsEmail, IsPhoneNumber } from "class-validator";
-import { BaseEntity } from "./baseEntity";
+import { BaseEntity } from "../modules/common/baseEntity";
 
 export abstract class Organization extends BaseEntity {
 	@Property()

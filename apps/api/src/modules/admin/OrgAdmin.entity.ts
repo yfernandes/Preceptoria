@@ -1,6 +1,6 @@
 import { type Rel, Entity, ManyToOne } from "@mikro-orm/postgresql";
 import { Hospital } from "../../entities/hospital.entity";
-import { Role } from "../../entities/role.abstract";
+import { Role } from "../common/role.abstract";
 import { School } from "../../entities/school.entity";
 
 @Entity()

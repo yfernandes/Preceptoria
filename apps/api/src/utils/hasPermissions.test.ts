@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import { hasPermission } from "./hasPermissions";
 import { Resource, Actions } from "./permissions";
-import { UserRoles } from "../entities/role.abstract";
+import { UserRoles } from "../modules/common/role.abstract";
 import { UserContext } from "../types/jwtCookie";
 
 // Mock the database module before importing hasPermissions

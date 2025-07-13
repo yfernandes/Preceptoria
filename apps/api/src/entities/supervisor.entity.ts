@@ -6,8 +6,8 @@ import {
 	OneToMany,
 } from "@mikro-orm/postgresql";
 
-import { Course } from "./course.entity";
-import { Role } from "./role.abstract";
+import { Course } from "../modules/courses/course.entity";
+import { Role } from "../modules/common/role.abstract";
 import { School } from "./school.entity";
 import { User } from "./user.entity";
 

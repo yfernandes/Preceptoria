@@ -3,7 +3,7 @@ import { Classes } from "./";
 import { db } from "@api/db";
 import { hasPermission } from "@api/utils/hasPermissions";
 import { Actions, Resource } from "@api/utils/permissions";
-import { UserRoles } from "@api/entities/role.abstract";
+import { UserRoles } from "@api/modules/common/role.abstract";
 import { FilterQuery } from "@mikro-orm/postgresql";
 import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
 

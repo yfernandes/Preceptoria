@@ -4,7 +4,7 @@ import { db } from "../db";
 import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
 import { hasPermission } from "../utils/hasPermissions";
 import { Actions, Resource } from "../utils/permissions";
-import { UserRoles } from "../entities/role.abstract";
+import { UserRoles } from "../modules/common/role.abstract";
 import { FilterQuery } from "@mikro-orm/postgresql";
 
 // DTOs for request validation

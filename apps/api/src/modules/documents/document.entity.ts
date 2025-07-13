@@ -7,7 +7,7 @@ import {
 } from "@mikro-orm/postgresql";
 import { IsUrl } from "class-validator";
 
-import { BaseEntity } from "../../entities/baseEntity";
+import { BaseEntity } from "../common/baseEntity";
 import { Student } from "../../entities/student.entity";
 import { User } from "../../entities/user.entity";
 

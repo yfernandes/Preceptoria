@@ -1,7 +1,7 @@
 import { type Rel, Entity, ManyToOne } from "@mikro-orm/postgresql";
 
 import { Hospital } from "./hospital.entity";
-import { Role } from "./role.abstract";
+import { Role } from "../modules/common/role.abstract";
 import { User } from "./user.entity";
 
 @Entity()

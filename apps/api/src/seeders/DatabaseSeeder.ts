@@ -18,7 +18,7 @@ import {
 	GoogleSheetsService,
 	// ConsolidatedSubmission,
 } from "../services/googleSheets";
-import { UserRoles } from "../entities/role.abstract";
+import { UserRoles } from "../modules/common/role.abstract";
 
 export class DatabaseSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {

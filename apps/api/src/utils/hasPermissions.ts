@@ -1,5 +1,5 @@
 import { db } from "../db";
-import { UserRoles } from "../entities/role.abstract";
+import { UserRoles } from "../modules/common/role.abstract";
 import { UserContext } from "../types/jwtCookie";
 import { Actions, Modifiers, Resource, rolesPermissions } from "./permissions";
 

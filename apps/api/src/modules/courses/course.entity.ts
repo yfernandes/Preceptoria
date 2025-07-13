@@ -7,7 +7,7 @@ import {
 	Property,
 } from "@mikro-orm/postgresql";
 
-import { BaseEntity } from "./baseEntity";
+import { BaseEntity } from "../common/baseEntity";
 
 import { Classes } from "@api/modules/classes";
 import { School } from "@api/entities/school.entity";
