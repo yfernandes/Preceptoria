@@ -7,11 +7,11 @@ import {
 	Property,
 } from "@mikro-orm/postgresql";
 
-import { BaseEntity } from "../modules/common/baseEntity";
+import { BaseEntity } from "../common/baseEntity";
 
 import { Hospital } from "@api/modules/hospital";
-import { Preceptor } from "@api/modules/preceptor/preceptor.entity";
-import { Student } from "@api/entities/student.entity";
+import { Preceptor } from "@api/modules/preceptor/";
+import { Student } from "@api/entities/";
 
 @Entity()
 export class Shift extends BaseEntity {

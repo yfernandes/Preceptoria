@@ -9,7 +9,7 @@ import {
 
 import { Hospital } from "@api/modules/hospital";
 import { Role } from "@api/modules/common";
-import { Shift } from "@api/entities/shift.entity";
+import { Shift } from "@api/modules/shift/shift.entity";
 import { User } from "@api/entities/user.entity";
 
 @Entity()

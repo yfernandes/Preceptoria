@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { OrgAdmin } from "./OrgAdmin.entity";
 import { User } from "@api/entities/user.entity";
-import { School } from "@api/entities/school.entity";
+import { School } from "@api/modules/school/school.entity";
 import { Hospital } from "@api/modules/hospital";
 
 describe("OrgAdmin Entity", () => {

@@ -11,8 +11,8 @@ export { hospitalManagerController } from "@api/modules/hospitalManager";
 export { preceptorController } from "@api/modules/preceptor";
 
 // Controllers
-export { schoolController } from "@api/controllers/school.controller";
-export { shiftController } from "@api/controllers/shift.controller";
+export { schoolController } from "@api/modules/school/school.controller";
+export { shiftController } from "@api/modules/shift/shift.controller";
 export { studentsController } from "@api/controllers/students.controller";
 export { supervisorController } from "@api/controllers/supervisor.controller";
 export { userController } from "@api/controllers/user.controller";

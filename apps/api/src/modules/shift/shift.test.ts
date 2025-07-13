@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "bun:test";
-import { Shift } from "@api/entities/shift.entity";
+import { Shift } from "@api/modules/shift/shift.entity";
 import { Collection } from "@mikro-orm/postgresql";
 import { Hospital } from "@api/modules/hospital";
 import { Preceptor } from "@api/modules/preceptor/preceptor.entity";

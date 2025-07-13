@@ -4,7 +4,7 @@ import { User } from "@api/entities/user.entity";
 import { Student } from "@api/entities/student.entity";
 import { Classes } from "@api/modules/classes";
 import { Course } from "@api/modules/courses/course.entity";
-import { School } from "@api/entities/school.entity";
+import { School } from "@api/modules/school/school.entity";
 import { Supervisor } from "@api/entities/supervisor.entity";
 
 describe("Document Entity", () => {

@@ -10,7 +10,7 @@ import {
 import { BaseEntity } from "../common/baseEntity";
 
 import { Classes } from "@api/modules/classes";
-import { School } from "@api/entities/school.entity";
+import { School } from "@api/modules/school/school.entity";
 import { Supervisor } from "@api/entities/supervisor.entity";
 
 @Entity()

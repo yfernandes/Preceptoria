@@ -8,7 +8,7 @@ import {
 
 import { Course } from "../modules/courses/course.entity";
 import { Role } from "../modules/common/role.abstract";
-import { School } from "./school.entity";
+import { School } from "../modules/school/school.entity";
 import { User } from "./user.entity";
 
 @Entity()

@@ -1,9 +1,9 @@
 import { Collection, Entity, OneToMany } from "@mikro-orm/postgresql";
 
-import { Course } from "../modules/courses/course.entity";
-import { OrgAdmin } from "../modules/admin/OrgAdmin.entity";
-import { Organization } from "./organization.abstract";
-import { Supervisor } from "./supervisor.entity";
+import { Course } from "../courses/course.entity";
+import { OrgAdmin } from "../admin/OrgAdmin.entity";
+import { Organization } from "../../entities/organization.abstract";
+import { Supervisor } from "../../entities/supervisor.entity";
 
 @Entity()
 export class School extends Organization {
