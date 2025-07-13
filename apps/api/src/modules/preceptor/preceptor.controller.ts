@@ -1,9 +1,9 @@
 import Elysia, { status as error, t } from "elysia";
-import { Preceptor } from "../entities";
-import { db } from "../db";
-import { hasPermission } from "../utils/hasPermissions";
-import { Actions, Resource } from "../utils/permissions";
-import { UserRoles } from "../modules/common/role.abstract";
+import { Preceptor } from "./";
+import { db } from "@api/db";
+import { hasPermission } from "@api/utils/hasPermissions";
+import { Actions, Resource } from "@api/utils/permissions";
+import { UserRoles } from "@api/modules/common";
 import { FilterQuery } from "@mikro-orm/postgresql";
 import { authenticatedUserMiddleware } from "@api/middlewares/authenticatedUser.middleware";
 

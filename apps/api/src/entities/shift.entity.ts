@@ -10,7 +10,7 @@ import {
 import { BaseEntity } from "../modules/common/baseEntity";
 
 import { Hospital } from "@api/modules/hospital";
-import { Preceptor } from "@api/entities/preceptor.entity";
+import { Preceptor } from "@api/modules/preceptor/preceptor.entity";
 import { Student } from "@api/entities/student.entity";
 
 @Entity()

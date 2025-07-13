@@ -1,16 +1,16 @@
 // Modules
-export { Document } from "../modules/documents";
-export { OrgAdmin } from "../modules/admin";
-export { SysAdmin } from "../modules/admin";
+export { Document } from "@api/modules/documents";
+export { OrgAdmin } from "@api/modules/admin";
+export { SysAdmin } from "@api/modules/admin";
 export { Classes } from "@api/modules/classes/";
 export { Course } from "@api/modules/courses";
 export { Hospital } from "@api/modules/hospital";
 export { HospitalManager } from "@api/modules/hospitalManager";
+export { Preceptor } from "@api/modules/preceptor";
 
 // Entities
 export { BaseEntity } from "../modules/common/baseEntity";
 export { User } from "./user.entity";
-export { Preceptor } from "./preceptor.entity";
 export { Role } from "../modules/common/role.abstract";
 export { School } from "./school.entity";
 export { Shift } from "./shift.entity";

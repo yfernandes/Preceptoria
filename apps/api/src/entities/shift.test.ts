@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "bun:test";
 import { Shift } from "@api/entities/shift.entity";
 import { Collection } from "@mikro-orm/postgresql";
 import { Hospital } from "@api/modules/hospital";
-import { Preceptor } from "@api/entities/preceptor.entity";
+import { Preceptor } from "@api/modules/preceptor/preceptor.entity";
 import { User } from "@api/entities/user.entity";
 
 describe("Shift Entity", () => {

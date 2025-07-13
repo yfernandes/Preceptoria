@@ -14,7 +14,7 @@ import {
 
 import { HospitalManager } from "../modules/hospitalManager/hospitalManager.entity";
 import { OrgAdmin } from "../modules/admin/OrgAdmin.entity";
-import { Preceptor } from "./preceptor.entity";
+import { Preceptor } from "../modules/preceptor/preceptor.entity";
 import { UserRoles } from "../modules/common/role.abstract";
 import { Student } from "./student.entity";
 import { Supervisor } from "./supervisor.entity";

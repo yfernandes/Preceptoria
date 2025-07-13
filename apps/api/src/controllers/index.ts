@@ -8,9 +8,9 @@ export { coursesController } from "@api/modules/courses";
 export { healthController } from "@api/modules/common";
 export { hospitalController } from "@api/modules/hospital";
 export { hospitalManagerController } from "@api/modules/hospitalManager";
+export { preceptorController } from "@api/modules/preceptor";
 
 // Controllers
-export { preceptorController } from "@api/controllers/preceptor.controller";
 export { schoolController } from "@api/controllers/school.controller";
 export { shiftController } from "@api/controllers/shift.controller";
 export { studentsController } from "@api/controllers/students.controller";
