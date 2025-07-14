@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { treatise } from "lib/eden";
 import { Document } from "@api/modules/documents/document.entity";
+import { useRouter } from "next/navigation";
 
 interface DocumentsResponse {
 	success: boolean;
@@ -16,6 +17,7 @@ interface DocumentsResponse {
 }
 
 export default function DocumentsPage() {
+	const router = useRouter();
 	const [mounted, setMounted] = useState(false);
 	const [data, setData] = useState<DocumentsResponse | null>(null);
 	const [loading, setLoading] = useState(true);
@@ -39,7 +41,15 @@ export default function DocumentsPage() {
 
 				const result = response.data;
 				setData(result);
-			} catch (err) {
+			} catch (err: any) {
+				// If unauthorized, redirect to login
+				if (
+					err?.response?.status === 401 ||
+					err?.message?.toLowerCase().includes("unauthorized")
+				) {
+					router.push("/login");
+					return;
+				}
 				setError(err instanceof Error ? err.message : "Unknown error");
 			} finally {
 				setLoading(false);
@@ -47,7 +57,7 @@ export default function DocumentsPage() {
 		};
 
 		fetchDocuments();
-	}, []);
+	}, [router]);
 
 	if (!mounted || loading) {
 		return (

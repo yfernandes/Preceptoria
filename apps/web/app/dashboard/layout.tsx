@@ -35,7 +35,7 @@ export default function DashboardLayout({
 				<aside className="w-64 bg-gray-50 border-r border-gray-200 h-[calc(100vh-4rem)] fixed top-16 left-0 flex flex-col z-10">
 					<nav className="flex flex-col h-full p-4 gap-2">
 						<Link
-							href="/"
+							href="/dashboard/home"
 							className="text-blue-600 font-semibold hover:text-blue-800 mb-2"
 						>
 							Home

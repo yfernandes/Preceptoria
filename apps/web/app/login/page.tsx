@@ -17,8 +17,8 @@ export default function LoginPage() {
 
 		try {
 			await signin(email, password);
-			// Successful login - redirect to classes
-			router.push("/classes");
+			// Successful login - redirect to dashboard
+			router.push("/dashboard");
 		} catch (err) {
 			// Error is handled by the auth context
 			console.error("Login failed:", err);
