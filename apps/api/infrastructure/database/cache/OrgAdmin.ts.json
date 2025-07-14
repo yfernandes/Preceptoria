@@ -1,41 +1,45 @@
 {
-	"data": {
-		"_id": 14000,
-		"properties": {
-			"hospital": {
-				"name": "hospital",
-				"kind": "m:1",
-				"cascade": ["persist"],
-				"nullable": true,
-				"owner": true,
-				"type": "Hospital"
-			},
-			"school": {
-				"name": "school",
-				"kind": "m:1",
-				"cascade": ["persist"],
-				"nullable": true,
-				"owner": true,
-				"type": "School"
-			}
-		},
-		"primaryKeys": [],
-		"filters": {},
-		"hooks": {},
-		"indexes": [],
-		"uniques": [],
-		"className": "OrgAdmin",
-		"path": "./src/modules/admin/OrgAdmin.entity.ts",
-		"name": "OrgAdmin",
-		"abstract": false,
-		"internal": true,
-		"constructorParams": [],
-		"toJsonParams": [],
-		"extends": "Role",
-		"useCache": true,
-		"collection": "org_admin"
-	},
-	"origin": "./src/modules/admin/OrgAdmin.entity.ts",
-	"hash": "a13186c69d443e5e133185a2752accf8",
-	"version": "6.4.16"
+  "data": {
+    "_id": 13000,
+    "properties": {
+      "hospital": {
+        "name": "hospital",
+        "kind": "m:1",
+        "cascade": [
+          "persist"
+        ],
+        "nullable": true,
+        "owner": true,
+        "type": "Hospital"
+      },
+      "school": {
+        "name": "school",
+        "kind": "m:1",
+        "cascade": [
+          "persist"
+        ],
+        "nullable": true,
+        "owner": true,
+        "type": "School"
+      }
+    },
+    "primaryKeys": [],
+    "filters": {},
+    "hooks": {},
+    "indexes": [],
+    "uniques": [],
+    "className": "OrgAdmin",
+    "path": "./src/modules/admin/OrgAdmin.entity.ts",
+    "name": "OrgAdmin",
+    "abstract": false,
+    "internal": true,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "extends": "Role",
+    "useCache": true,
+    "collection": "org_admin"
+  },
+  "origin": "./src/modules/admin/OrgAdmin.entity.ts",
+  "hash": "d9b4415d385ab7fec96b0e386b5738d4",
+  "version": "6.4.16"
 }

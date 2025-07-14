@@ -1,56 +1,63 @@
 {
-	"data": {
-		"_id": 11000,
-		"properties": {
-			"hospital": {
-				"name": "hospital",
-				"kind": "m:1",
-				"cascade": ["persist"],
-				"owner": true,
-				"type": "Hospital"
-			},
-			"shifts": {
-				"name": "shifts",
-				"kind": "1:m",
-				"cascade": ["persist"],
-				"type": "Shift"
-			},
-			"specialty": {
-				"name": "specialty",
-				"kind": "scalar",
-				"getter": false,
-				"setter": false,
-				"type": "string",
-				"array": false,
-				"runtimeType": "string"
-			},
-			"licenseNumber": {
-				"name": "licenseNumber",
-				"kind": "scalar",
-				"getter": false,
-				"setter": false,
-				"type": "string",
-				"array": false,
-				"runtimeType": "string"
-			}
-		},
-		"primaryKeys": [],
-		"filters": {},
-		"hooks": {},
-		"indexes": [],
-		"uniques": [],
-		"className": "Preceptor",
-		"path": "./src/modules/preceptor/preceptor.entity.ts",
-		"name": "Preceptor",
-		"abstract": false,
-		"internal": true,
-		"constructorParams": ["user", "hospital"],
-		"toJsonParams": [],
-		"extends": "Role",
-		"useCache": true,
-		"collection": "preceptor"
-	},
-	"origin": "./src/modules/preceptor/preceptor.entity.ts",
-	"hash": "8cbfef91c1d9b15721444482af8ac034",
-	"version": "6.4.16"
+  "data": {
+    "_id": 14000,
+    "properties": {
+      "hospital": {
+        "name": "hospital",
+        "kind": "m:1",
+        "cascade": [
+          "persist"
+        ],
+        "owner": true,
+        "type": "Hospital"
+      },
+      "shifts": {
+        "name": "shifts",
+        "kind": "1:m",
+        "cascade": [
+          "persist"
+        ],
+        "type": "Shift"
+      },
+      "specialty": {
+        "name": "specialty",
+        "kind": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false,
+        "runtimeType": "string"
+      },
+      "licenseNumber": {
+        "name": "licenseNumber",
+        "kind": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false,
+        "runtimeType": "string"
+      }
+    },
+    "primaryKeys": [],
+    "filters": {},
+    "hooks": {},
+    "indexes": [],
+    "uniques": [],
+    "className": "Preceptor",
+    "path": "./src/modules/preceptors/preceptor.entity.ts",
+    "name": "Preceptor",
+    "abstract": false,
+    "internal": true,
+    "constructorParams": [
+      "user",
+      "hospital"
+    ],
+    "toJsonParams": [],
+    "extends": "Role",
+    "useCache": true,
+    "collection": "preceptor"
+  },
+  "origin": "./src/modules/preceptors/preceptor.entity.ts",
+  "hash": "9883aeb2234754bee670c1b083d8fe38",
+  "version": "6.4.16"
 }

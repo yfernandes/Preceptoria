@@ -30,7 +30,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 
 	// Create a new document
 	.post(
-		"/",
+		"",
 		async ({ requester, body }) => {
 			const result = await documentService.createDocument(
 				requester,
@@ -67,7 +67,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 	)
 
 	// Get all documents (filtered by permissions)
-	.get("/", async ({ requester, query }) => {
+	.get("", async ({ requester, query }) => {
 		const result = await documentService.getDocuments(requester, query);
 		return {
 			success: true,
@@ -77,7 +77,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 	})
 
 	// Get a specific document
-	.get("/:id", async ({ params, requester }) => {
+	.get(":id", async ({ params, requester }) => {
 		const result = await documentService.getDocumentById(requester, params.id);
 		if (result.status) {
 			return error(result.status, { success: false, message: result.error });
@@ -101,7 +101,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 
 	// Update validation checks
 	.patch(
-		"/:id/validation",
+		":id/validation",
 		async ({ params, requester, body }) => {
 			const result = await documentService.updateValidation(
 				requester,
