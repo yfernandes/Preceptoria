@@ -17,23 +17,53 @@ import {
 import { Alert, AlertDescription } from "@web/components/ui/alert";
 import { GraduationCap } from "lucide-react";
 
-export default function LoginPage() {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const { signin, loading, error, clearError } = useAuth();
+export default function SignupPage() {
+	const [formData, setFormData] = useState({
+		name: "",
+		email: "",
+		password: "",
+		confirmPassword: "",
+	});
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState("");
 	const router = useRouter();
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setFormData({
+			...formData,
+			[e.target.name]: e.target.value,
+		});
+	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		clearError();
+		setError("");
+
+		// Basic validation
+		if (formData.password !== formData.confirmPassword) {
+			setError("As senhas não coincidem");
+			return;
+		}
+
+		if (formData.password.length < 6) {
+			setError("A senha deve ter pelo menos 6 caracteres");
+			return;
+		}
+
+		setLoading(true);
 
 		try {
-			await signin(email, password);
-			// Successful login - redirect to dashboard
-			router.push("/dashboard");
+			// TODO: Implement signup logic
+			// For now, just simulate a signup process
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+
+			// Redirect to login page after successful signup
+			router.push("/login?message=signup-success");
 		} catch (err) {
-			// Error is handled by the auth context
-			console.error("Login failed:", err);
+			setError("Erro ao criar conta. Tente novamente.");
+			console.error("Signup failed:", err);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -51,20 +81,31 @@ export default function LoginPage() {
 					</p>
 				</div>
 
-				{/* Login Card */}
+				{/* Signup Card */}
 				<Card className="shadow-xl">
 					<CardHeader className="space-y-1">
-						<CardTitle className="text-2xl text-center">Entrar</CardTitle>
+						<CardTitle className="text-2xl text-center">Criar Conta</CardTitle>
 						<CardDescription className="text-center">
-							Digite suas credenciais para acessar o sistema
-							<br />
-							Email: yagoalmeida@gmail.com
-							<br />
-							Senha: TotallyS3cr3tP4ssw_rd
+							Preencha os dados para criar sua conta
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<form onSubmit={handleSubmit} className="space-y-4">
+							<div className="space-y-2">
+								<Label htmlFor="name">Nome Completo</Label>
+								<Input
+									id="name"
+									data-testid="name"
+									name="name"
+									type="text"
+									required
+									value={formData.name}
+									onChange={handleChange}
+									placeholder="Seu nome completo"
+									className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+								/>
+							</div>
+
 							<div className="space-y-2">
 								<Label htmlFor="email">Email</Label>
 								<Input
@@ -73,8 +114,8 @@ export default function LoginPage() {
 									name="email"
 									type="email"
 									required
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
+									value={formData.email}
+									onChange={handleChange}
 									placeholder="seu@email.com"
 									className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
 								/>
@@ -88,8 +129,23 @@ export default function LoginPage() {
 									name="password"
 									type="password"
 									required
-									value={password}
-									onChange={(e) => setPassword(e.target.value)}
+									value={formData.password}
+									onChange={handleChange}
+									placeholder="••••••••"
+									className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+								/>
+							</div>
+
+							<div className="space-y-2">
+								<Label htmlFor="confirmPassword">Confirmar Senha</Label>
+								<Input
+									id="confirmPassword"
+									data-testid="confirm-password"
+									name="confirmPassword"
+									type="password"
+									required
+									value={formData.confirmPassword}
+									onChange={handleChange}
 									placeholder="••••••••"
 									className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
 								/>
@@ -103,22 +159,25 @@ export default function LoginPage() {
 
 							<Button
 								type="submit"
-								data-testid="login-button"
+								data-testid="signup-button"
 								disabled={loading}
 								className="w-full transition-all duration-200 hover:scale-[1.02]"
 								size="lg"
 							>
-								{loading ? "Entrando..." : "Entrar"}
+								{loading ? "Criando conta..." : "Criar Conta"}
 							</Button>
 						</form>
 
 						<div className="mt-6 text-center">
-							<Link
-								href="/"
-								className="text-sm text-blue-600 hover:text-blue-500 transition-colors duration-200"
-							>
-								Voltar ao início
-							</Link>
+							<p className="text-sm text-gray-600">
+								Já tem uma conta?{" "}
+								<Link
+									href="/login"
+									className="text-blue-600 hover:text-blue-500 transition-colors duration-200"
+								>
+									Entrar
+								</Link>
+							</p>
 						</div>
 					</CardContent>
 				</Card>
