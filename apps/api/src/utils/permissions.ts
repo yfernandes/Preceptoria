@@ -12,6 +12,7 @@ export enum Resource {
 	Preceptor = "Preceptor",
 	User = "User",
 	Audit = "Audit",
+	OrgAdmin = "OrgAdmin", // <-- Added
 }
 export enum Actions {
 	Create = "Create",
@@ -53,10 +54,17 @@ const readUpdate = (resource: Resource, modifier: Modifiers): Perm => [
 ];
 
 export const rolesPermissions: Record<keyof typeof UserRoles, Perm> = {
-	SysAdmin: ["*:*:*"],
+	SysAdmin: [
+		"*:*:*",
+		// OrgAdmin management
+		...crud(Resource.OrgAdmin, Modifiers.Managed),
+	],
 	OrgAdmin: [
 		// User management
 		...crud(Resource.User, Modifiers.Managed),
+
+		// OrgAdmin management (self-management and managed)
+		...crud(Resource.OrgAdmin, Modifiers.Managed),
 
 		// Organization-wide management (prevents cross-organization access)
 		...readUpdate(Resource.Hospital, Modifiers.Managed),
