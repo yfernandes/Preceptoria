@@ -24,7 +24,10 @@
 			"@web/libs": ["src/libs/index.ts"],
 			"@api": ["../api/src/index.ts"],
 			"@api/*": ["../api/src/*"],
-			"@api/controllers/*": ["../api/src/controllers/*"]
+			"@api/controllers/*": ["../api/src/controllers/*"],
+			"@web/components/ui": ["src/components/ui"],
+			"@web/lib": ["src/lib"],
+			"@web/hooks": ["src/hooks"]
 		},
 		"allowSyntheticDefaultImports": true,
 		"forceConsistentCasingInFileNames": true
