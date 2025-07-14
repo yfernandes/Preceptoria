@@ -19,10 +19,10 @@
 
 ### 1.1 Setup Testing Infrastructure
 
-- [ ] Install Playwright
-- [ ] Configure test environment
-- [ ] Set up test data and fixtures
-- [ ] Create basic test structure
+- [x] Install Playwright
+- [x] Configure test environment
+- [x] Set up test data and fixtures
+- [x] Create basic test structure
 
 ### 1.2 Core User Flow Tests
 
@@ -40,15 +40,15 @@
 
 ### 1.3 Basic UI Implementation (Minimal)
 
-- [ ] **Simple Login Page**
+- [x] **Simple Login Page**
   - Basic form with email/password
   - Error handling
   - Success redirect
-- [ ] **Classes Display Page**
+- [x] **Classes Display Page**
   - Simple table or list view
   - No fancy styling, just functional
-- [ ] **Basic Navigation**
-  - Login → Dashboard → Classes
+- [ ] **Simple Navigation**
+  - Basic links between Login, Dashboard, Classes, and Documents pages
   - Logout functionality
 
 ## 🎯 Success Criteria (Phase 1)
@@ -59,6 +59,7 @@
 - [ ] API integration works reliably
 - [ ] Basic user flows functional
 - [ ] No external UI dependencies
+- [ ] Test coverage metrics are tracked and meet minimum threshold
 
 ### User Experience (Minimal)
 
@@ -216,6 +217,7 @@ bun run dev
 - [ ] 0 external UI dependencies
 - [ ] < 2 second page load times
 - [ ] 100% API endpoint success rate
+- [ ] Test coverage is measured and reported (e.g., using Playwright or other tools)
 
 ### User Flow Metrics
 

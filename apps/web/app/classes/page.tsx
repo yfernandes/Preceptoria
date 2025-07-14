@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { treatise } from "lib/eden";
 import { Classes } from "@api/modules/classes/classes.entity";
+import { useRouter } from "next/navigation";
 
 interface ClassesResponse {
 	success: boolean;
@@ -16,6 +17,7 @@ interface ClassesResponse {
 }
 
 export default function ClassesPage() {
+	const router = useRouter();
 	const [data, setData] = useState<ClassesResponse | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -37,7 +39,15 @@ export default function ClassesPage() {
 
 				const result = response.data;
 				setData(result);
-			} catch (err) {
+			} catch (err: any) {
+				// If unauthorized, redirect to login
+				if (
+					err?.response?.status === 401 ||
+					err?.message?.toLowerCase().includes("unauthorized")
+				) {
+					router.push("/login");
+					return;
+				}
 				setError(err instanceof Error ? err.message : "Unknown error");
 			} finally {
 				setLoading(false);
@@ -45,7 +55,7 @@ export default function ClassesPage() {
 		};
 
 		fetchClasses();
-	}, []);
+	}, [router]);
 
 	if (loading) {
 		return (
@@ -86,7 +96,7 @@ export default function ClassesPage() {
 				Total: {data.pagination.total} classes
 			</div>
 
-			<div className="space-y-4">
+			<div className="space-y-4" data-testid="classes-table">
 				{data.data.map((classItem) => (
 					<div
 						key={classItem.id}
