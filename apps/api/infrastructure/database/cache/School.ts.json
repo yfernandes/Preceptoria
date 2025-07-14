@@ -1,49 +1,43 @@
 {
-  "data": {
-    "_id": 13000,
-    "properties": {
-      "orgAdmin": {
-        "name": "orgAdmin",
-        "kind": "1:m",
-        "cascade": [
-          "persist"
-        ],
-        "type": "OrgAdmin"
-      },
-      "courses": {
-        "name": "courses",
-        "kind": "1:m",
-        "cascade": [
-          "persist"
-        ],
-        "type": "Course"
-      },
-      "supervisors": {
-        "name": "supervisors",
-        "kind": "1:m",
-        "cascade": [
-          "persist"
-        ],
-        "type": "Supervisor"
-      }
-    },
-    "primaryKeys": [],
-    "filters": {},
-    "hooks": {},
-    "indexes": [],
-    "uniques": [],
-    "className": "School",
-    "path": "./src/modules/school/school.entity.ts",
-    "name": "School",
-    "abstract": false,
-    "internal": true,
-    "constructorParams": [],
-    "toJsonParams": [],
-    "extends": "Organization",
-    "useCache": true,
-    "collection": "school"
-  },
-  "origin": "./src/modules/school/school.entity.ts",
-  "hash": "179ec1f74f00871f3eafd38c5b8bc8fe",
-  "version": "6.4.16"
+	"data": {
+		"_id": 13000,
+		"properties": {
+			"orgAdmin": {
+				"name": "orgAdmin",
+				"kind": "1:m",
+				"cascade": ["persist"],
+				"type": "OrgAdmin"
+			},
+			"courses": {
+				"name": "courses",
+				"kind": "1:m",
+				"cascade": ["persist"],
+				"type": "Course"
+			},
+			"supervisors": {
+				"name": "supervisors",
+				"kind": "1:m",
+				"cascade": ["persist"],
+				"type": "Supervisor"
+			}
+		},
+		"primaryKeys": [],
+		"filters": {},
+		"hooks": {},
+		"indexes": [],
+		"uniques": [],
+		"className": "School",
+		"path": "./src/modules/school/school.entity.ts",
+		"name": "School",
+		"abstract": false,
+		"internal": true,
+		"constructorParams": [],
+		"toJsonParams": [],
+		"extends": "Organization",
+		"useCache": true,
+		"collection": "school"
+	},
+	"origin": "./src/modules/school/school.entity.ts",
+	"hash": "179ec1f74f00871f3eafd38c5b8bc8fe",
+	"version": "6.4.16"
 }

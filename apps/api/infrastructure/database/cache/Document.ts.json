@@ -1,245 +1,236 @@
 {
-  "data": {
-    "_id": 7000,
-    "properties": {
-      "student": {
-        "name": "student",
-        "kind": "m:1",
-        "cascade": [
-          "persist"
-        ],
-        "owner": true,
-        "type": "Student"
-      },
-      "name": {
-        "name": "name",
-        "kind": "scalar",
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false,
-        "runtimeType": "string"
-      },
-      "description": {
-        "name": "description",
-        "kind": "scalar",
-        "nullable": true,
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false,
-        "runtimeType": "string",
-        "optional": true
-      },
-      "type": {
-        "name": "type",
-        "kind": "scalar",
-        "enum": true,
-        "items": [
-          "PROFESSIONAL_ID",
-          "VACCINATION_CARD",
-          "COMMITMENT_CONTRACT",
-          "ADMISSION_FORM",
-          "BADGE_PICTURE",
-          "INSURANCE_DOCUMENTATION",
-          "OTHER"
-        ],
-        "type": "DocumentType",
-        "array": false,
-        "runtimeType": "DocumentType"
-      },
-      "url": {
-        "name": "url",
-        "kind": "scalar",
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false,
-        "runtimeType": "string"
-      },
-      "thumbnailUrl": {
-        "name": "thumbnailUrl",
-        "kind": "scalar",
-        "nullable": true,
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false,
-        "runtimeType": "string",
-        "optional": true
-      },
-      "uploadedAt": {
-        "name": "uploadedAt",
-        "kind": "scalar",
-        "getter": false,
-        "setter": false,
-        "type": "Date",
-        "runtimeType": "Date"
-      },
-      "expiresAt": {
-        "name": "expiresAt",
-        "kind": "scalar",
-        "nullable": true,
-        "getter": false,
-        "setter": false,
-        "type": "Date",
-        "array": false,
-        "runtimeType": "Date",
-        "optional": true
-      },
-      "status": {
-        "name": "status",
-        "kind": "scalar",
-        "enum": true,
-        "items": [
-          "PENDING",
-          "APPROVED",
-          "REJECTED",
-          "EXPIRED"
-        ],
-        "type": "string",
-        "default": "PENDING",
-        "runtimeType": "string"
-      },
-      "rejectionReason": {
-        "name": "rejectionReason",
-        "kind": "scalar",
-        "nullable": true,
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false,
-        "runtimeType": "string",
-        "optional": true
-      },
-      "verifiedBy": {
-        "name": "verifiedBy",
-        "kind": "m:1",
-        "cascade": [
-          "persist"
-        ],
-        "nullable": true,
-        "owner": true,
-        "type": "User"
-      },
-      "verifiedAt": {
-        "name": "verifiedAt",
-        "kind": "scalar",
-        "nullable": true,
-        "getter": false,
-        "setter": false,
-        "type": "Date",
-        "array": false,
-        "runtimeType": "Date",
-        "optional": true
-      },
-      "fileSize": {
-        "name": "fileSize",
-        "kind": "scalar",
-        "nullable": true,
-        "getter": false,
-        "setter": false,
-        "type": "number",
-        "array": false,
-        "runtimeType": "number",
-        "optional": true
-      },
-      "mimeType": {
-        "name": "mimeType",
-        "kind": "scalar",
-        "nullable": true,
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false,
-        "runtimeType": "string",
-        "optional": true
-      },
-      "isRequired": {
-        "name": "isRequired",
-        "kind": "scalar",
-        "default": false,
-        "getter": false,
-        "setter": false,
-        "type": "boolean",
-        "runtimeType": "boolean"
-      },
-      "isPublic": {
-        "name": "isPublic",
-        "kind": "scalar",
-        "default": false,
-        "getter": false,
-        "setter": false,
-        "type": "boolean",
-        "runtimeType": "boolean"
-      },
-      "validationChecks": {
-        "name": "validationChecks",
-        "kind": "scalar",
-        "type": "json",
-        "nullable": true,
-        "getter": false,
-        "setter": false
-      },
-      "validationNotes": {
-        "name": "validationNotes",
-        "kind": "scalar",
-        "nullable": true,
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false,
-        "runtimeType": "string",
-        "optional": true
-      },
-      "originalFileName": {
-        "name": "originalFileName",
-        "kind": "scalar",
-        "nullable": true,
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false,
-        "runtimeType": "string",
-        "optional": true
-      },
-      "googleDriveId": {
-        "name": "googleDriveId",
-        "kind": "scalar",
-        "nullable": true,
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false,
-        "runtimeType": "string",
-        "optional": true
-      }
-    },
-    "primaryKeys": [],
-    "filters": {},
-    "hooks": {},
-    "indexes": [],
-    "uniques": [],
-    "className": "Document",
-    "path": "./src/modules/documents/document.entity.ts",
-    "name": "Document",
-    "abstract": false,
-    "internal": true,
-    "constructorParams": [
-      "name",
-      "type",
-      "url",
-      "student",
-      "description",
-      "expiresAt",
-      "isRequired"
-    ],
-    "toJsonParams": [],
-    "extends": "BaseEntity",
-    "useCache": true,
-    "collection": "document"
-  },
-  "origin": "./src/modules/documents/document.entity.ts",
-  "hash": "a83b63dbe8233e88c211c6810a490d1f",
-  "version": "6.4.16"
+	"data": {
+		"_id": 7000,
+		"properties": {
+			"student": {
+				"name": "student",
+				"kind": "m:1",
+				"cascade": ["persist"],
+				"owner": true,
+				"type": "Student"
+			},
+			"name": {
+				"name": "name",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string"
+			},
+			"description": {
+				"name": "description",
+				"kind": "scalar",
+				"nullable": true,
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string",
+				"optional": true
+			},
+			"type": {
+				"name": "type",
+				"kind": "scalar",
+				"enum": true,
+				"items": [
+					"PROFESSIONAL_ID",
+					"VACCINATION_CARD",
+					"COMMITMENT_CONTRACT",
+					"ADMISSION_FORM",
+					"BADGE_PICTURE",
+					"INSURANCE_DOCUMENTATION",
+					"OTHER"
+				],
+				"type": "DocumentType",
+				"array": false,
+				"runtimeType": "DocumentType"
+			},
+			"url": {
+				"name": "url",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string"
+			},
+			"thumbnailUrl": {
+				"name": "thumbnailUrl",
+				"kind": "scalar",
+				"nullable": true,
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string",
+				"optional": true
+			},
+			"uploadedAt": {
+				"name": "uploadedAt",
+				"kind": "scalar",
+				"getter": false,
+				"setter": false,
+				"type": "Date",
+				"runtimeType": "Date"
+			},
+			"expiresAt": {
+				"name": "expiresAt",
+				"kind": "scalar",
+				"nullable": true,
+				"getter": false,
+				"setter": false,
+				"type": "Date",
+				"array": false,
+				"runtimeType": "Date",
+				"optional": true
+			},
+			"status": {
+				"name": "status",
+				"kind": "scalar",
+				"enum": true,
+				"items": ["PENDING", "APPROVED", "REJECTED", "EXPIRED"],
+				"type": "string",
+				"default": "PENDING",
+				"runtimeType": "string"
+			},
+			"rejectionReason": {
+				"name": "rejectionReason",
+				"kind": "scalar",
+				"nullable": true,
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string",
+				"optional": true
+			},
+			"verifiedBy": {
+				"name": "verifiedBy",
+				"kind": "m:1",
+				"cascade": ["persist"],
+				"nullable": true,
+				"owner": true,
+				"type": "User"
+			},
+			"verifiedAt": {
+				"name": "verifiedAt",
+				"kind": "scalar",
+				"nullable": true,
+				"getter": false,
+				"setter": false,
+				"type": "Date",
+				"array": false,
+				"runtimeType": "Date",
+				"optional": true
+			},
+			"fileSize": {
+				"name": "fileSize",
+				"kind": "scalar",
+				"nullable": true,
+				"getter": false,
+				"setter": false,
+				"type": "number",
+				"array": false,
+				"runtimeType": "number",
+				"optional": true
+			},
+			"mimeType": {
+				"name": "mimeType",
+				"kind": "scalar",
+				"nullable": true,
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string",
+				"optional": true
+			},
+			"isRequired": {
+				"name": "isRequired",
+				"kind": "scalar",
+				"default": false,
+				"getter": false,
+				"setter": false,
+				"type": "boolean",
+				"runtimeType": "boolean"
+			},
+			"isPublic": {
+				"name": "isPublic",
+				"kind": "scalar",
+				"default": false,
+				"getter": false,
+				"setter": false,
+				"type": "boolean",
+				"runtimeType": "boolean"
+			},
+			"validationChecks": {
+				"name": "validationChecks",
+				"kind": "scalar",
+				"type": "json",
+				"nullable": true,
+				"getter": false,
+				"setter": false
+			},
+			"validationNotes": {
+				"name": "validationNotes",
+				"kind": "scalar",
+				"nullable": true,
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string",
+				"optional": true
+			},
+			"originalFileName": {
+				"name": "originalFileName",
+				"kind": "scalar",
+				"nullable": true,
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string",
+				"optional": true
+			},
+			"googleDriveId": {
+				"name": "googleDriveId",
+				"kind": "scalar",
+				"nullable": true,
+				"getter": false,
+				"setter": false,
+				"type": "string",
+				"array": false,
+				"runtimeType": "string",
+				"optional": true
+			}
+		},
+		"primaryKeys": [],
+		"filters": {},
+		"hooks": {},
+		"indexes": [],
+		"uniques": [],
+		"className": "Document",
+		"path": "./src/modules/documents/document.entity.ts",
+		"name": "Document",
+		"abstract": false,
+		"internal": true,
+		"constructorParams": [
+			"name",
+			"type",
+			"url",
+			"student",
+			"description",
+			"expiresAt",
+			"isRequired"
+		],
+		"toJsonParams": [],
+		"extends": "BaseEntity",
+		"useCache": true,
+		"collection": "document"
+	},
+	"origin": "./src/modules/documents/document.entity.ts",
+	"hash": "a83b63dbe8233e88c211c6810a490d1f",
+	"version": "6.4.16"
 }

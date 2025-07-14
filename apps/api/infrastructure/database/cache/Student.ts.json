@@ -1,57 +1,48 @@
 {
-  "data": {
-    "_id": 8000,
-    "properties": {
-      "documents": {
-        "name": "documents",
-        "kind": "1:m",
-        "cascade": [
-          "persist"
-        ],
-        "type": "Document"
-      },
-      "class": {
-        "name": "class",
-        "kind": "m:1",
-        "cascade": [
-          "persist"
-        ],
-        "owner": true,
-        "type": "Classes"
-      },
-      "shifts": {
-        "name": "shifts",
-        "kind": "m:n",
-        "cascade": [
-          "persist"
-        ],
-        "fixedOrder": false,
-        "owner": true,
-        "type": "Shift",
-        "array": false,
-        "runtimeType": "Collection<Shift, object>"
-      }
-    },
-    "primaryKeys": [],
-    "filters": {},
-    "hooks": {},
-    "indexes": [],
-    "uniques": [],
-    "className": "Student",
-    "path": "./src/modules/students/student.entity.ts",
-    "name": "Student",
-    "abstract": false,
-    "internal": true,
-    "constructorParams": [
-      "user",
-      "classes"
-    ],
-    "toJsonParams": [],
-    "extends": "Role",
-    "useCache": true,
-    "collection": "student"
-  },
-  "origin": "./src/modules/students/student.entity.ts",
-  "hash": "b5725faa7aa4b87e8fdd58bf0fb07431",
-  "version": "6.4.16"
+	"data": {
+		"_id": 8000,
+		"properties": {
+			"documents": {
+				"name": "documents",
+				"kind": "1:m",
+				"cascade": ["persist"],
+				"type": "Document"
+			},
+			"class": {
+				"name": "class",
+				"kind": "m:1",
+				"cascade": ["persist"],
+				"owner": true,
+				"type": "Classes"
+			},
+			"shifts": {
+				"name": "shifts",
+				"kind": "m:n",
+				"cascade": ["persist"],
+				"fixedOrder": false,
+				"owner": true,
+				"type": "Shift",
+				"array": false,
+				"runtimeType": "Collection<Shift, object>"
+			}
+		},
+		"primaryKeys": [],
+		"filters": {},
+		"hooks": {},
+		"indexes": [],
+		"uniques": [],
+		"className": "Student",
+		"path": "./src/modules/students/student.entity.ts",
+		"name": "Student",
+		"abstract": false,
+		"internal": true,
+		"constructorParams": ["user", "classes"],
+		"toJsonParams": [],
+		"extends": "Role",
+		"useCache": true,
+		"collection": "student"
+	},
+	"origin": "./src/modules/students/student.entity.ts",
+	"hash": "b5725faa7aa4b87e8fdd58bf0fb07431",
+	"version": "6.4.16"
 }
