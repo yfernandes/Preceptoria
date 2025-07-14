@@ -7,9 +7,9 @@ import {
 	Property,
 } from "@mikro-orm/postgresql";
 
-import { Hospital } from "@api/modules/hospital/hospital.entity";
+import { Hospital } from "@api/modules/hospitals/hospital.entity";
 import { Role } from "@api/modules/common/role.abstract";
-import { Shift } from "@api/modules/shift/shift.entity";
+import { Shift } from "@api/modules/shifts/shift.entity";
 import { User } from "@api/modules/users/user.entity";
 
 @Entity()

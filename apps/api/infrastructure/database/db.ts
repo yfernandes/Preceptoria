@@ -7,13 +7,13 @@ import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity";
 import { Classes } from "@api/modules/classes/classes.entity";
 import { Course } from "@api/modules/courses/course.entity";
 import { Document } from "@api/modules/documents/document.entity";
-import { Hospital } from "@api/modules/hospital/hospital.entity";
-import { HospitalManager } from "@api/modules/hospitalManager/hospitalManager.entity";
-import { Preceptor } from "@api/modules/preceptor/preceptor.entity";
-import { School } from "@api/modules/school/school.entity";
-import { Shift } from "@api/modules/shift/shift.entity";
+import { Hospital } from "@api/modules/hospitals/hospital.entity";
+import { HospitalManager } from "@api/modules/hospitalManagers/hospitalManager.entity";
+import { Preceptor } from "@api/modules/preceptors/preceptor.entity";
+import { School } from "@api/modules/schools/school.entity";
+import { Shift } from "@api/modules/shifts/shift.entity";
 import { Student } from "@api/modules/students/student.entity";
-import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
+import { Supervisor } from "@api/modules/supervisors/supervisor.entity";
 
 export interface Services {
 	orm: MikroORM;

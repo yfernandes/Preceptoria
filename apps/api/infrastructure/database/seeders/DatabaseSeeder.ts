@@ -8,16 +8,16 @@ import {
 } from "@api/services/googleSheets";
 import { UserRoles } from "@api/modules/common/role.abstract";
 import { User } from "@api/modules/users/user.entity";
-import { School } from "@api/modules/school/school.entity";
-import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
+import { School } from "@api/modules/schools/school.entity";
+import { Supervisor } from "@api/modules/supervisors/supervisor.entity";
 import { Course } from "@api/modules/courses/course.entity";
 import { Classes } from "@api/modules/classes/classes.entity";
 import { Student } from "@api/modules/students/student.entity";
 import { Document } from "@api/modules/documents/document.entity";
-import { Hospital } from "@api/modules/hospital/hospital.entity";
+import { Hospital } from "@api/modules/hospitals/hospital.entity";
 import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity";
 import { SysAdmin } from "@api/modules/admin/SysAdmin.entity";
-import { HospitalManager } from "@api/modules/hospitalManager/hospitalManager.entity";
+import { HospitalManager } from "@api/modules/hospitalManagers/hospitalManager.entity";
 
 export class DatabaseSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {

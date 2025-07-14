@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 
-import { HospitalManager } from "@api/modules/hospitalManager/hospitalManager.entity";
+import { HospitalManager } from "@api/modules/hospitalManagers/hospitalManager.entity";
 import { User } from "@api/modules/users/user.entity";
-import { Hospital } from "@api/modules/hospital/hospital.entity";
+import { Hospital } from "@api/modules/hospitals/hospital.entity";
 
 describe("HospitalManager Entity", () => {
 	let mockUser: User;

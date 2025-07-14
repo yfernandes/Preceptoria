@@ -1,5 +1,5 @@
 import Elysia, { status as error, t } from "elysia";
-import { Shift } from "@api/modules/shift/shift.entity";
+import { Shift } from "@api/modules/shifts/shift.entity";
 import { db } from "@api/db";
 import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
 import { hasPermission } from "@api/utils/hasPermissions";

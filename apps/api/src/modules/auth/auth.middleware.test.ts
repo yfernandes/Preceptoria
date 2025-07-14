@@ -2,6 +2,16 @@ import { describe, it, expect } from "bun:test";
 import { Elysia } from "elysia";
 import { authMiddleware } from "./auth.middleware";
 
+// Helper type for response data
+interface ErrorResponse {
+	message: string;
+}
+
+// Helper function to safely parse JSON response
+async function parseErrorResponse(response: Response): Promise<ErrorResponse> {
+	return (await response.json()) as ErrorResponse;
+}
+
 describe("Auth Middleware", () => {
 	it("should reject request without session cookie", async () => {
 		const app = new Elysia()
@@ -11,7 +21,7 @@ describe("Auth Middleware", () => {
 		const response = await app.handle(new Request("http://localhost/"));
 
 		expect(response.status).toBe(401);
-		const data = await response.json();
+		const data = await parseErrorResponse(response);
 		expect(data.message).toBe("Authentication failed");
 	});
 
@@ -29,7 +39,7 @@ describe("Auth Middleware", () => {
 		);
 
 		expect(response.status).toBe(401);
-		const data = await response.json();
+		const data = await parseErrorResponse(response);
 		expect(data.message).toBe("Authentication failed");
 	});
 
@@ -47,7 +57,7 @@ describe("Auth Middleware", () => {
 		);
 
 		expect(response.status).toBe(401);
-		const data = await response.json();
+		const data = await parseErrorResponse(response);
 		expect(data.message).toBe("Authentication failed");
 	});
 
@@ -68,7 +78,7 @@ describe("Auth Middleware", () => {
 
 		// Should return 401 for auth failures, not 500
 		expect(response.status).toBe(401);
-		const data = await response.json();
+		const data = await parseErrorResponse(response);
 		expect(data.message).toBe("Authentication failed");
 	});
 });

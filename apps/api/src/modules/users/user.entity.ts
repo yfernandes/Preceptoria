@@ -15,11 +15,11 @@ import {
 import { BaseEntity } from "@api/modules/common/baseEntity";
 import { SysAdmin } from "@api/modules/admin/SysAdmin.entity";
 import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity";
-import { Preceptor } from "@api/modules/preceptor/preceptor.entity";
+import { Preceptor } from "@api/modules/preceptors/preceptor.entity";
 import { Student } from "@api/modules/students/student.entity";
-import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
+import { Supervisor } from "@api/modules/supervisors/supervisor.entity";
 import { UserRoles } from "@api/modules/common/role.abstract";
-import { HospitalManager } from "@api/modules/hospitalManager/hospitalManager.entity";
+import { HospitalManager } from "@api/modules/hospitalManagers/hospitalManager.entity";
 
 @Entity()
 export class User extends BaseEntity {

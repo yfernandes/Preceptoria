@@ -1,5 +1,5 @@
 import Elysia, { status as error, t } from "elysia";
-import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
+import { Supervisor } from "@api/modules/supervisors/supervisor.entity";
 import { db } from "@api/db";
 import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
 import { hasPermission } from "@api/utils/hasPermissions";

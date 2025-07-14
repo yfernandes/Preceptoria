@@ -62,5 +62,11 @@
 		"types/types.d.ts",
 		"src/types/testTypes.ts"
 	],
-	"exclude": ["node_modules", "dist", "drizzle.config.ts", "coverage"]
+	"exclude": [
+		"node_modules",
+		"dist",
+		"drizzle.config.ts",
+		"coverage",
+		"infrastructure/database/migrations"
+	]
 }

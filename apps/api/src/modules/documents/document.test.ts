@@ -9,8 +9,8 @@ import { User } from "@api/modules/users/user.entity";
 import { Student } from "@api/modules/students/student.entity";
 import { Classes } from "@api/modules/classes/classes.entity";
 import { Course } from "@api/modules/courses/course.entity";
-import { School } from "@api/modules/school/school.entity";
-import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
+import { School } from "@api/modules/schools/school.entity";
+import { Supervisor } from "@api/modules/supervisors/supervisor.entity";
 
 describe("Document Entity", () => {
 	let mockUser: User;

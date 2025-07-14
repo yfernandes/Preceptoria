@@ -9,7 +9,7 @@ import {
 
 import { Classes } from "@api/modules/classes";
 import { Role } from "@api/modules/common/role.abstract";
-import { Shift } from "@api/modules/shift/shift.entity";
+import { Shift } from "@api/modules/shifts/shift.entity";
 import { User } from "@api/modules/users/user.entity";
 import { Document } from "@api/modules/documents";
 
