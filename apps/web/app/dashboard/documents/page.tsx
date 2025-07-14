@@ -52,11 +52,6 @@ export default function DocumentsPage() {
 	if (!mounted || loading) {
 		return (
 			<div className="p-8">
-				<div className="mb-4">
-					<a href="/dashboard" className="text-blue-600 hover:text-blue-500">
-						← Back to Dashboard
-					</a>
-				</div>
 				<h1 className="mb-4 text-2xl font-bold">Documents</h1>
 				<p>Loading...</p>
 			</div>
@@ -66,11 +61,6 @@ export default function DocumentsPage() {
 	if (error) {
 		return (
 			<div className="p-8">
-				<div className="mb-4">
-					<a href="/dashboard" className="text-blue-600 hover:text-blue-500">
-						← Back to Dashboard
-					</a>
-				</div>
 				<h1 className="mb-4 text-2xl font-bold">Documents</h1>
 				<div className="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
 					<strong>Error:</strong> {error}
@@ -82,11 +72,6 @@ export default function DocumentsPage() {
 	if (!data || !data.success) {
 		return (
 			<div className="p-8">
-				<div className="mb-4">
-					<a href="/dashboard" className="text-blue-600 hover:text-blue-500">
-						← Back to Dashboard
-					</a>
-				</div>
 				<h1 className="mb-4 text-2xl font-bold">Documents</h1>
 				<div className="rounded border border-yellow-400 bg-yellow-100 px-4 py-3 text-yellow-700">
 					<strong>No data available</strong>
@@ -97,11 +82,6 @@ export default function DocumentsPage() {
 
 	return (
 		<div className="p-8">
-			<div className="mb-4">
-				<a href="/dashboard" className="text-blue-600 hover:text-blue-500">
-					← Back to Dashboard
-				</a>
-			</div>
 			<h1 className="mb-4 text-2xl font-bold">Documents</h1>
 
 			<div className="mb-4 text-sm text-gray-600">
