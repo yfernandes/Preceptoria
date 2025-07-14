@@ -1,5 +1,5 @@
 import Elysia, { status as error, t } from "elysia";
-import { OrgAdmin } from "@api/modules/entities";
+import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity";
 import { db } from "@api/db";
 import { UserRoles } from "@api/modules/common/";
 import { FilterQuery } from "@mikro-orm/postgresql";

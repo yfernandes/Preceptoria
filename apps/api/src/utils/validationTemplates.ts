@@ -1,4 +1,4 @@
-import { DocumentType } from "../modules/documents";
+import { DocumentType } from "@api/modules/documents/document.entity";
 
 export interface ValidationCheck {
 	id: string;

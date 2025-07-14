@@ -1,11 +1,9 @@
 import { Collection, Entity, OneToMany } from "@mikro-orm/postgresql";
 
-import {
-	HospitalManager,
-	OrgAdmin,
-	Shift,
-	Organization,
-} from "@api/modules/entities";
+import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity";
+import { Shift } from "@api/modules/shift/shift.entity";
+import { Organization } from "@api/modules/common/organization.abstract";
+import { HospitalManager } from "@api/modules/hospitalManager/hospitalManager.entity";
 
 @Entity()
 export class Hospital extends Organization {

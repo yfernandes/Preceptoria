@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
-import { User } from "@api/modules/entities";
-import { UserRoles } from "../common/role.abstract";
+import { User } from "@api/modules/users/user.entity";
+import { UserRoles } from "@api/modules/common/role.abstract";
 
 describe("User Entity", () => {
 	describe("User.create()", () => {

@@ -22,8 +22,8 @@ console.log(
 );
 
 // --- Database ---
-import { initORM } from "@api/infrastructure/database/db";
-export const db = await initORM();
+import { initializeDatabase } from "@api/infrastructure/database/db";
+export const db = await initializeDatabase();
 
 // --- Import and start server ---
 import { app } from "./server";

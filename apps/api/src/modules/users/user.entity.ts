@@ -12,16 +12,14 @@ import {
 	IsNotEmpty,
 } from "class-validator";
 
-import {
-	BaseEntity,
-	HospitalManager,
-	OrgAdmin,
-	Preceptor,
-	Student,
-	Supervisor,
-	SysAdmin,
-} from "@api/modules/entities";
-import { UserRoles } from "../common";
+import { BaseEntity } from "@api/modules/common/baseEntity";
+import { SysAdmin } from "@api/modules/admin/SysAdmin.entity";
+import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity";
+import { Preceptor } from "@api/modules/preceptor/preceptor.entity";
+import { Student } from "@api/modules/students/student.entity";
+import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
+import { UserRoles } from "@api/modules/common/role.abstract";
+import { HospitalManager } from "@api/modules/hospitalManager/hospitalManager.entity";
 
 @Entity()
 export class User extends BaseEntity {

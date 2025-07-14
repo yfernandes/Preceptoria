@@ -1,0 +1,49 @@
+{
+  "data": {
+    "_id": 6000,
+    "properties": {
+      "shifts": {
+        "name": "shifts",
+        "kind": "1:m",
+        "cascade": [
+          "persist"
+        ],
+        "type": "Shift"
+      },
+      "manager": {
+        "name": "manager",
+        "kind": "1:m",
+        "cascade": [
+          "persist"
+        ],
+        "type": "HospitalManager"
+      },
+      "orgAdmin": {
+        "name": "orgAdmin",
+        "kind": "1:m",
+        "cascade": [
+          "persist"
+        ],
+        "type": "OrgAdmin"
+      }
+    },
+    "primaryKeys": [],
+    "filters": {},
+    "hooks": {},
+    "indexes": [],
+    "uniques": [],
+    "className": "Hospital",
+    "path": "./src/modules/hospital/hospital.entity.ts",
+    "name": "Hospital",
+    "abstract": false,
+    "internal": true,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "extends": "Organization",
+    "useCache": true,
+    "collection": "hospital"
+  },
+  "origin": "./src/modules/hospital/hospital.entity.ts",
+  "hash": "a3c29271b56504f2f263012e6b1441f7",
+  "version": "6.4.16"
+}

@@ -1,21 +1,19 @@
 import { EntityManager, EntityRepository, MikroORM } from "@mikro-orm/core";
 
-import { localConfig } from "./config/mikro-orm.config.js";
-import {
-	Classes,
-	User,
-	Course,
-	Hospital,
-	HospitalManager,
-	OrgAdmin,
-	Preceptor,
-	School,
-	Shift,
-	Student,
-	Supervisor,
-	SysAdmin,
-	Document,
-} from "@api/modules/entities.js";
+import { localConfig } from "./config/mikro-orm.config";
+import { User } from "@api/modules/users/user.entity";
+import { SysAdmin } from "@api/modules/admin/SysAdmin.entity";
+import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity";
+import { Classes } from "@api/modules/classes/classes.entity";
+import { Course } from "@api/modules/courses/course.entity";
+import { Document } from "@api/modules/documents/document.entity";
+import { Hospital } from "@api/modules/hospital/hospital.entity";
+import { HospitalManager } from "@api/modules/hospitalManager/hospitalManager.entity";
+import { Preceptor } from "@api/modules/preceptor/preceptor.entity";
+import { School } from "@api/modules/school/school.entity";
+import { Shift } from "@api/modules/shift/shift.entity";
+import { Student } from "@api/modules/students/student.entity";
+import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
 
 export interface Services {
 	orm: MikroORM;
@@ -65,4 +63,103 @@ export async function initORM(): Promise<Services> {
 }
 
 // Export a lazy db object that initializes on first access
-export const db = await initORM();
+let dbInstance: Services | null = null;
+
+export const db = {
+	get orm() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.orm;
+	},
+	get em() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.em;
+	},
+	get user() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.user;
+	},
+	get sysAdmin() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.sysAdmin;
+	},
+	get orgAdmin() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.orgAdmin;
+	},
+	get classes() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.classes;
+	},
+	get course() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.course;
+	},
+	get document() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.document;
+	},
+	get hospital() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.hospital;
+	},
+	get hospitalManager() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.hospitalManager;
+	},
+	get preceptor() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.preceptor;
+	},
+	get school() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.school;
+	},
+	get shift() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.shift;
+	},
+	get student() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.student;
+	},
+	get supervisor() {
+		if (!dbInstance) {
+			throw new Error("Database not initialized. Call await initORM() first.");
+		}
+		return dbInstance.supervisor;
+	},
+};
+
+// Initialize the database when needed
+export async function initializeDatabase() {
+	dbInstance ??= await initORM();
+	return dbInstance;
+}

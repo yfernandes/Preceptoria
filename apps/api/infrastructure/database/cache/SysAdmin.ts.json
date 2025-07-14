@@ -1,0 +1,24 @@
+{
+  "data": {
+    "_id": 2000,
+    "properties": {},
+    "primaryKeys": [],
+    "filters": {},
+    "hooks": {},
+    "indexes": [],
+    "uniques": [],
+    "className": "SysAdmin",
+    "path": "./src/modules/admin/SysAdmin.entity.ts",
+    "name": "SysAdmin",
+    "abstract": false,
+    "internal": true,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "extends": "Role",
+    "useCache": true,
+    "collection": "sys_admin"
+  },
+  "origin": "./src/modules/admin/SysAdmin.entity.ts",
+  "hash": "cd8a56528eb6524acf3ec76c4d81225b",
+  "version": "6.4.16"
+}

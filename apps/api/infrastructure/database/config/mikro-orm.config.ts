@@ -3,27 +3,25 @@ import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
 import { Migrator } from "@mikro-orm/migrations";
 import { SeedManager } from "@mikro-orm/seeder";
 
-import {
-	BaseEntity,
-	Document,
-	Classes,
-	Course,
-	Hospital,
-	HospitalManager,
-	OrgAdmin,
-	Organization,
-	Preceptor,
-	Role,
-	School,
-	Shift,
-	Student,
-	Supervisor,
-	SysAdmin,
-	User,
-} from "@api/modules/entities";
+import { BaseEntity } from "@api/modules/common/baseEntity";
+import { User } from "@api/modules/users/user.entity";
+import { SysAdmin } from "@api/modules/admin/SysAdmin.entity";
+import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity";
+import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
+import { HospitalManager } from "@api/modules/hospitalManager/hospitalManager.entity";
+import { Preceptor } from "@api/modules/preceptor/preceptor.entity";
+import { School } from "@api/modules/school/school.entity";
+import { Shift } from "@api/modules/shift/shift.entity";
+import { Student } from "@api/modules/students/student.entity";
+import { Course } from "@api/modules/courses/course.entity";
+import { Classes } from "@api/modules/classes/classes.entity";
+import { Document } from "@api/modules/documents/document.entity";
+import { Hospital } from "@api/modules/hospital/hospital.entity";
+import { Role } from "@api/modules/common/role.abstract";
+import { Organization } from "@api/modules/common/organization.abstract";
 
 // Base configuration shared across all environments
-const baseConfig = {
+const baseConfig = defineConfig({
 	metadataProvider: TsMorphMetadataProvider,
 	driver: PostgreSqlDriver,
 	strict: true,
@@ -59,6 +57,15 @@ const baseConfig = {
 		safe: true,
 		emit: "ts" as const,
 	},
+
+	metadataCache: {
+		enabled: true,
+		pretty: true,
+		options: {
+			cacheDir: "./infrastructure/database/cache/", // relative to project root
+		},
+	},
+
 	seeder: {
 		path: "dist/seeders",
 		pathTs: "../seeders",
@@ -95,7 +102,7 @@ const baseConfig = {
 	// Schema validation
 	validateRequired: true,
 	validate: true,
-};
+});
 
 // Development configuration
 export const devConfig = defineConfig({

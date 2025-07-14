@@ -1,7 +1,8 @@
-import { User } from "@api/modules/entities";
+import { ValidationError } from "class-validator";
+
+import { User } from "@api/modules/users/user.entity";
 import { UserRoles } from "@api/modules/common/role.abstract";
 import { db } from "@api/db";
-import { ValidationError } from "class-validator";
 import { createJwtHelper } from "@api/infrastructure/lib/jwt";
 
 // JWT Configuration

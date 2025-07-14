@@ -7,7 +7,9 @@ import {
 } from "@mikro-orm/postgresql";
 import { IsUrl } from "class-validator";
 
-import { BaseEntity, Student, User } from "@api/modules/entities";
+import { BaseEntity } from "@api/modules/common/baseEntity";
+import { Student } from "@api/modules/students/student.entity";
+import { User } from "@api/modules/users/user.entity";
 
 export enum DocumentType {
 	PROFESSIONAL_ID = "PROFESSIONAL_ID", // e.g., Crefito for physiotherapists

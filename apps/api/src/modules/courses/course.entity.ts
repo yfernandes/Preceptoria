@@ -8,7 +8,9 @@ import {
 } from "@mikro-orm/postgresql";
 
 import { BaseEntity } from "@api/modules/common/";
-import { Classes, School, Supervisor } from "@api/modules/entities";
+import { Classes } from "@api/modules/classes/classes.entity";
+import { School } from "@api/modules/school/school.entity";
+import { Supervisor } from "@api/modules/supervisor/supervisor.entity";
 
 @Entity()
 export class Course extends BaseEntity {
