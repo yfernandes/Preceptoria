@@ -4,6 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../contexts/AuthContext";
 import Link from "next/link";
+import { Button } from "@web/components/ui/button";
+import { Input } from "@web/components/ui/input";
+import { Label } from "@web/components/ui/label";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@web/components/ui/card";
+import { Alert, AlertDescription } from "@web/components/ui/alert";
+import { GraduationCap } from "lucide-react";
 
 export default function LoginPage() {
 	const [email, setEmail] = useState("");
@@ -26,88 +38,117 @@ export default function LoginPage() {
 	};
 
 	return (
-		<div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+		<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-12 sm:px-6 lg:px-8">
 			<div className="w-full max-w-md space-y-8">
+				{/* Header */}
 				<div className="text-center">
+					<div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 mb-4">
+						<GraduationCap className="h-6 w-6 text-white" />
+					</div>
 					<h1 className="text-3xl font-bold text-gray-900">Preceptoria</h1>
 					<p className="mt-2 text-sm text-gray-600">
 						Sistema de Gestão de Estágios
 					</p>
 				</div>
 
-				<form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-					<div className="space-y-4">
-						<div>
-							<label
-								htmlFor="email"
-								className="block text-sm font-medium text-gray-700"
+				{/* Login Card */}
+				<Card className="shadow-xl">
+					<CardHeader className="space-y-1">
+						<CardTitle className="text-2xl text-center">Entrar</CardTitle>
+						<CardDescription className="text-center">
+							Digite suas credenciais para acessar o sistema
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<form onSubmit={handleSubmit} className="space-y-4">
+							<div className="space-y-2">
+								<Label htmlFor="email">Email (yagoalmeida@gmail.com)</Label>
+								<Input
+									id="email"
+									data-testid="email"
+									name="email"
+									type="email"
+									required
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
+									placeholder="seu@email.com"
+									className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+								/>
+							</div>
+
+							<div className="space-y-2">
+								<Label htmlFor="password">Senha (TotallyS3cr3tP4ssw_rd)</Label>
+								<Input
+									id="password"
+									data-testid="password"
+									name="password"
+									type="password"
+									required
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									placeholder="••••••••"
+									className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+								/>
+							</div>
+
+							{error && (
+								<Alert variant="destructive" data-testid="error-message">
+									<AlertDescription>{error}</AlertDescription>
+								</Alert>
+							)}
+
+							<Button
+								type="submit"
+								data-testid="login-button"
+								disabled={loading}
+								className="w-full transition-all duration-200 hover:scale-[1.02]"
+								size="lg"
 							>
-								Email (yagoalmeida@gmail.com)
-							</label>
-							<input
-								id="email"
-								data-testid="email"
-								name="email"
-								type="email"
-								required
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-								placeholder="seu@email.com"
-							/>
-						</div>
+								{loading ? "Entrando..." : "Entrar"}
+							</Button>
+						</form>
 
-						<div>
-							<label
-								htmlFor="password"
-								className="block text-sm font-medium text-gray-700"
+						<div className="mt-6 text-center">
+							<Link
+								href="/"
+								className="text-sm text-blue-600 hover:text-blue-500 transition-colors duration-200"
 							>
-								Senha (TotallyS3cr3tP4ssw_rd)
-							</label>
-							<input
-								id="password"
-								data-testid="password"
-								name="password"
-								type="password"
-								required
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-								placeholder="••••••••"
-							/>
+								Voltar ao início
+							</Link>
 						</div>
-					</div>
+					</CardContent>
+				</Card>
 
-					{error && (
-						<div
-							data-testid="error-message"
-							className="text-center text-sm text-red-600"
-						>
-							{error}
-						</div>
-					)}
-
-					<div>
-						<button
-							type="submit"
-							data-testid="login-button"
-							disabled={loading}
-							className="group relative flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50"
-						>
-							{loading ? "Entrando..." : "Entrar"}
-						</button>
-					</div>
-
-					<div className="text-center">
-						<Link
-							href="/"
-							className="text-sm text-blue-600 hover:text-blue-500"
-						>
-							Voltar ao início
-						</Link>
-					</div>
-				</form>
+				{/* Footer */}
+				<div className="text-center text-xs text-gray-500">
+					<p>© 2024 Preceptoria. Todos os direitos reservados.</p>
+				</div>
 			</div>
 		</div>
 	);
 }
+
+/* ShadCN Login Form
+
+import { GalleryVerticalEnd } from "lucide-react"
+
+import { LoginForm } from "@/components/login-form"
+
+export default function LoginPage() {
+  return (
+    <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+      <div className="flex w-full max-w-sm flex-col gap-6">
+        <a href="#" className="flex items-center gap-2 self-center font-medium">
+          <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+            <GalleryVerticalEnd className="size-4" />
+          </div>
+          Acme Inc.
+        </a>
+        <LoginForm />
+      </div>
+    </div>
+  )
+}
+
+
+*/
