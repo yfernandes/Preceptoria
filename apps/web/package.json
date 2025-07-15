@@ -6,14 +6,18 @@
 		"build": "bunx next build",
 		"dev": "bunx next dev -p 4123",
 		"lint": "bunx next lint",
+		"lint:fix": "bunx next lint --fix",
 		"format": "bunx prettier --write .",
+		"format:check": "bunx prettier --check .",
 		"typecheck": "bunx tsc --noEmit",
 		"start": "bunx next start -p 4123",
 		"clean": "rm -rf .next out dist",
 		"test": "playwright test",
 		"test:ui": "playwright test --ui",
 		"test:headed": "playwright test --headed",
-		"test:debug": "playwright test --debug"
+		"test:debug": "playwright test --debug",
+		"test:e2e": "playwright test",
+		"test:unit": "echo 'No unit tests configured for web app'"
 	},
 	"dependencies": {
 		"@dnd-kit/core": "^6.3.1",

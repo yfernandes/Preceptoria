@@ -169,6 +169,9 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Turborepo
+.turbo
+
 # IntelliJ based IDEs
 .idea
 

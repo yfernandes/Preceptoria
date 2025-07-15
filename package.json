@@ -4,16 +4,32 @@
 	"description": "A comprehensive preceptorship management system",
 	"private": true,
 	"scripts": {
-		"dev": "bun scripts/run dev",
-		"build": "bun scripts/run build",
-		"test": "bun scripts/run test",
-		"typecheck": "bun scripts/run typecheck",
-		"test:ui": "cd apps/web && bun run test",
-		"test:e2e": "bun scripts/run test:e2e",
-		"test:unit": "bun scripts/run test:unit",
-		"lint": "bun scripts/run lint",
-		"format": "bun scripts/run format",
-		"docker": "bun scripts/run docker"
+		"dev": "turbo dev",
+		"build": "turbo build",
+		"test": "turbo test",
+		"typecheck": "turbo typecheck",
+		"test:ui": "turbo test:ui",
+		"test:e2e": "turbo test:e2e",
+		"test:unit": "turbo test:unit",
+		"lint": "turbo lint",
+		"format": "turbo format",
+		"docker": "turbo docker",
+		"clean": "turbo clean",
+		"db:studio": "turbo db:studio",
+		"db:check": "turbo db:check",
+		"db:cache": "turbo db:cache",
+		"db:cache:clear": "turbo db:cache:clear",
+		"db:migration:create": "turbo db:migration:create",
+		"db:migration:up": "turbo db:migration:up",
+		"db:migration:down": "turbo db:migration:down",
+		"db:migration:list": "turbo db:migration:list",
+		"db:schema:update": "turbo db:schema:update",
+		"db:schema:drop": "turbo db:schema:drop",
+		"db:seed": "turbo db:seed",
+		"db:seed:create": "turbo db:seed:create",
+		"sync:google-sheets": "turbo sync:google-sheets",
+		"test:seed": "turbo test:seed",
+		"run:seed": "turbo run:seed"
 	},
 	"workspaces": [
 		"apps/*",
@@ -22,9 +38,11 @@
 	"devDependencies": {
 		"concurrently": "^9.2.0",
 		"typescript": "^5.8.3",
-		"@types/bun": "^1.2.11"
+		"@types/bun": "^1.2.11",
+		"turbo": "^2.1.7"
 	},
 	"engines": {
 		"bun": ">=1.2.0"
-	}
+	},
+	"packageManager": "bun@1.2.18"
 }

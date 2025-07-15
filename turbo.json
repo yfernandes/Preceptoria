@@ -1,0 +1,104 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"globalDependencies": ["**/.env.*local", "**/.env"],
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"]
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"test": {
+			"dependsOn": ["^build"],
+			"outputs": ["coverage/**", "test-results/**"]
+		},
+		"test:watch": {
+			"cache": false,
+			"persistent": true
+		},
+		"test:coverage": {
+			"dependsOn": ["^build"],
+			"outputs": ["coverage/**"]
+		},
+		"test:ui": {
+			"cache": false,
+			"persistent": true
+		},
+		"test:e2e": {
+			"dependsOn": ["^build"],
+			"outputs": ["test-results/**"]
+		},
+		"test:unit": {
+			"dependsOn": ["^build"],
+			"outputs": ["coverage/**"]
+		},
+		"lint": {
+			"outputs": []
+		},
+		"lint:fix": {
+			"outputs": []
+		},
+		"format": {
+			"outputs": []
+		},
+		"format:check": {
+			"outputs": []
+		},
+		"typecheck": {
+			"outputs": []
+		},
+		"clean": {
+			"cache": false
+		},
+		"docker": {
+			"cache": false
+		},
+		"db:studio": {
+			"cache": false
+		},
+		"db:check": {
+			"cache": false
+		},
+		"db:cache": {
+			"cache": false
+		},
+		"db:cache:clear": {
+			"cache": false
+		},
+		"db:migration:create": {
+			"cache": false
+		},
+		"db:migration:up": {
+			"cache": false
+		},
+		"db:migration:down": {
+			"cache": false
+		},
+		"db:migration:list": {
+			"cache": false
+		},
+		"db:schema:update": {
+			"cache": false
+		},
+		"db:schema:drop": {
+			"cache": false
+		},
+		"db:seed": {
+			"cache": false
+		},
+		"db:seed:create": {
+			"cache": false
+		},
+		"sync:google-sheets": {
+			"cache": false
+		},
+		"test:seed": {
+			"cache": false
+		},
+		"run:seed": {
+			"cache": false
+		}
+	}
+}
