@@ -4,8 +4,23 @@
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./*"],
-			"@workspace/ui/*": ["../../packages/ui/src/*"]
+			"@web/*": ["src/*"],
+			"@web/public/*": ["public/*"],
+			"@web/components": ["src/components/index.ts"],
+			"@web/layouts": ["src/layouts/index.ts"],
+			"@web/stores": ["src/stores/index.ts"],
+			"@web/libs": ["src/libs/index.ts"],
+			"@api": ["../api/src/index.ts"],
+			"@api/*": ["../api/src/*"],
+			"@api/db": ["../api/infrastructure/database/db"],
+			"@api/infrastructure/*": ["../api/infrastructure/*"],
+			"@lib/ui": ["../../packages/ui/src/index.ts"],
+			"@lib/ui/*": ["../../packages/ui/src/*"],
+			"@lib/ui/components/*": ["../../packages/ui/src/components/*"],
+			"@lib/ui/lib/*": ["../../packages/ui/src/lib/*"],
+			"@lib/ui/hooks/*": ["../../packages/ui/src/hooks/*"],
+			"@lib/ui/styles/*": ["../../packages/ui/src/styles/*"],
+			"@config/*": ["../../packages/config/*"]
 		},
 		"plugins": [
 			{

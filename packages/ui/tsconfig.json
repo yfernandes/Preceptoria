@@ -1,12 +1,27 @@
 {
-	"extends": "config/typescript/react-library.json",
+	"extends": "@config/typescript/react-library.json",
 	"compilerOptions": {
 		"baseUrl": ".",
-		"moduleResolution": "NodeNext",
 		"paths": {
-			"@workspace/ui/*": ["./src/*"]
+			"@web/*": ["../../apps/web/src/*"],
+			"@web/public/*": ["../../apps/web/public/*"],
+			"@web/components": ["../../apps/web/src/components/index.ts"],
+			"@web/layouts": ["../../apps/web/src/layouts/index.ts"],
+			"@web/stores": ["../../apps/web/src/stores/index.ts"],
+			"@web/libs": ["../../apps/web/src/libs/index.ts"],
+			"@api": ["../../apps/api/src/index.ts"],
+			"@api/*": ["../../apps/api/src/*"],
+			"@api/db": ["../../apps/api/infrastructure/database/db"],
+			"@api/infrastructure/*": ["../../apps/api/infrastructure/*"],
+			"@lib/ui": ["src/index.ts"],
+			"@lib/ui/*": ["src/*"],
+			"@lib/ui/components/*": ["src/components/*"],
+			"@lib/ui/lib/*": ["src/lib/*"],
+			"@lib/ui/hooks/*": ["src/hooks/*"],
+			"@lib/ui/styles/*": ["src/styles/*"],
+			"@config/*": ["../../packages/config/*"]
 		}
 	},
-	"include": ["."],
+	"include": ["src"],
 	"exclude": ["node_modules", "dist"]
 }

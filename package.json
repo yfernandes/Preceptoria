@@ -36,10 +36,11 @@
 		"packages/*"
 	],
 	"devDependencies": {
-		"concurrently": "^9.2.0",
-		"typescript": "^5.8.3",
 		"@types/bun": "^1.2.11",
-		"turbo": "^2.1.7"
+		"@types/minimatch": "^6.0.0",
+		"concurrently": "^9.2.0",
+		"turbo": "^2.1.7",
+		"typescript": "^5.8.3"
 	},
 	"engines": {
 		"bun": ">=1.2.0"

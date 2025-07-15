@@ -47,10 +47,16 @@
 			"@web/stores": ["../web/src/stores/index.ts"],
 			"@web/libs": ["../web/src/libs/index.ts"],
 			"@api": ["src/index.ts"],
-			"@api/controllers/*": ["src/controllers/*"],
 			"@api/*": ["src/*"],
 			"@api/db": ["infrastructure/database/db"],
-			"@api/infrastructure/*": ["infrastructure/*"]
+			"@api/infrastructure/*": ["infrastructure/*"],
+			"@lib/ui": ["../../packages/ui/src/index.ts"],
+			"@lib/ui/*": ["../../packages/ui/src/*"],
+			"@lib/ui/components/*": ["../../packages/ui/src/components/*"],
+			"@lib/ui/lib/*": ["../../packages/ui/src/lib/*"],
+			"@lib/ui/hooks/*": ["../../packages/ui/src/hooks/*"],
+			"@lib/ui/styles/*": ["../../packages/ui/src/styles/*"],
+			"@config/*": ["../../packages/config/*"]
 		}
 	},
 	"include": [

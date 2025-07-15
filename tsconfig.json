@@ -1,4 +1,3 @@
-// FIXME: THIS FILE COMES FROM THE SHADCN REPO IT MUST COMPLY TO PREVIOUS STANDARDS
 {
 	"extends": "./packages/config/typescript/base.json"
 }
