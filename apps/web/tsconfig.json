@@ -1,6 +1,6 @@
 {
-  // "extends": "@workspace/typescript-config/nextjs.json",
- 	"extends": "config/typescript/nextjs.json",
+  // THIS FILE COMES FROM THE SHADCN REPO IT MUST COMPLY TO PREVIOUS STANDARDS
+  "extends": "config/typescript/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
