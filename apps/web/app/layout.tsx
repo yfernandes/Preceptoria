@@ -1,24 +1,30 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { AuthProvider } from "../contexts/AuthContext";
+import { Geist, Geist_Mono } from "next/font/google"
 
-export const metadata: Metadata = {
-	title: "Preceptoria - Sistema de Gestão de Estágios",
-	description:
-		"Sistema moderno para gestão de estágios e documentação de estudantes",
-	generator: "Next.js",
-};
+import "@workspace/ui/globals.css"
+import { Providers } from "@/components/providers"
+
+const fontSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
+
+const fontMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+})
 
 export default function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
-	return (
-		<html lang="en">
-			<body>
-				<AuthProvider>{children}</AuthProvider>
-			</body>
-		</html>
-	);
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
+      >
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  )
 }

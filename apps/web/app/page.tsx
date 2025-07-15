@@ -1,12 +1,12 @@
-"use client";
+import { Button } from "@workspace/ui/components/button"
 
-export default function Home() {
-	return (
-		<main className="flex min-h-screen flex-col items-center justify-center p-24">
-			<h1 className="mb-4 text-3xl font-bold">Welcome to Preceptoria</h1>
-			<a href="/login" className="text-blue-600 underline">
-				Login
-			</a>
-		</main>
-	);
+export default function Page() {
+  return (
+    <div className="flex items-center justify-center min-h-svh">
+      <div className="flex flex-col items-center justify-center gap-4">
+        <h1 className="text-2xl font-bold">Hello World</h1>
+        <Button size="sm">Button</Button>
+      </div>
+    </div>
+  )
 }

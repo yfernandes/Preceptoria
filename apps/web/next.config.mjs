@@ -1,18 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	eslint: {
-		ignoreDuringBuilds: true,
-	},
-	typescript: {
-		ignoreBuildErrors: true,
-	},
-	images: {
-		unoptimized: true,
-	},
-	// Development server configuration
-	experimental: {
-		// This will be used by the dev script
-	},
-};
+  transpilePackages: ["@workspace/ui"],
+}
 
-export default nextConfig;
+export default nextConfig
