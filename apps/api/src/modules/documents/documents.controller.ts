@@ -8,6 +8,9 @@ const documentValidationDto = {
 		validationChecks: t.Record(t.String(), t.Boolean()),
 		notes: t.Optional(t.String()),
 	}),
+	params: t.Object({
+		id: t.String(),
+	}),
 };
 
 const documentApprovalDto = {
@@ -77,27 +80,38 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 	})
 
 	// Get a specific document
-	.get(":id", async ({ params, requester }) => {
-		const result = await documentService.getDocumentById(requester, params.id);
-		if (result.status) {
-			return error(result.status, { success: false, message: result.error });
+	.get(
+		":id",
+		async ({ params, requester }) => {
+			const result = await documentService.getDocumentById(
+				requester,
+				params.id
+			);
+			if (result.status) {
+				return error(result.status, { success: false, message: result.error });
+			}
+			if (!result.document) {
+				return error(500, {
+					success: false,
+					message: "Unexpected error: document missing",
+				});
+			}
+			return {
+				success: true,
+				data: {
+					document: result.document.toPOJO(),
+					validationTemplate: documentService
+						.getValidationTemplates()
+						.find((t) => t.type === result.document.type)?.template,
+				},
+			};
+		},
+		{
+			params: t.Object({
+				id: t.String(),
+			}),
 		}
-		if (!result.document) {
-			return error(500, {
-				success: false,
-				message: "Unexpected error: document missing",
-			});
-		}
-		return {
-			success: true,
-			data: {
-				document: result.document.toPOJO(),
-				validationTemplate: documentService
-					.getValidationTemplates()
-					.find((t) => t.type === result.document.type)?.template,
-			},
-		};
-	})
+	)
 
 	// Update validation checks
 	.patch(
