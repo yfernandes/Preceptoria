@@ -2,11 +2,11 @@
 
 ## Introduction
 
-The **Preceptoria Internship Admission Manager** is a comprehensive system designed to streamline the process of handling student applications, documentation, and shift scheduling for internships. This project addresses the challenges of managing internship documentation through a modern, role-based platform that enables efficient coordination between students, supervisors, administrators, and hospital partners.
+**Preceptoria** is a comprehensive internship management system designed to streamline student applications, documentation, and shift scheduling. Built with modern web technologies, it provides a role-based platform for efficient coordination between students, supervisors, administrators, and hospital partners.
 
 ### Current Status: MVP Development (Supervisor-Focused)
 
-The system is currently in MVP development with a focus on **supervisor workflow**, as supervisors will be the first users of the platform. This MVP emphasizes document validation and management capabilities that supervisors need to handle student documentation effectively.
+Currently in MVP development with a **supervisor-first approach**. This phase emphasizes document validation and management capabilities that supervisors need to handle student documentation effectively.
 
 ### Problem Statement
 

@@ -2,23 +2,19 @@
 
 ## Overview
 
-The Preceptoria API is built with Elysia.js and provides RESTful endpoints for managing the internship system. All endpoints require authentication and implement role-based access control.
+The Preceptoria API provides RESTful endpoints for managing the internship system, built with Elysia.js and designed for seamless **Eden Treaty** integration for end-to-end type safety.
 
-The API is designed to work seamlessly with **Eden Treaty** for end-to-end type safety in the frontend application.
-
-## Base URL
-
-- **Development**: `http://localhost:3000`
-- **Production**: `https://api.preceptoria.com` (planned)
+**Base URLs:**
+- **Development:** `http://localhost:3000`
+- **Production:** `https://api.preceptoria.com` (planned)
 
 ## Eden Treaty Integration
 
-The frontend application uses Eden Treaty for type-safe API calls. This provides:
-
-- **End-to-end type safety** between frontend and backend
-- **Automatic type inference** from API responses
-- **Compile-time error detection** for API changes
-- **IntelliSense support** in your IDE
+Eden Treaty provides:
+- End-to-end type safety between frontend and backend
+- Automatic type inference from API responses
+- Compile-time error detection for API changes
+- Full IntelliSense support
 
 ### Basic Usage
 

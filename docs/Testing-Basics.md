@@ -1,15 +1,13 @@
 # Testing Basics
 
-This document covers the fundamental testing approaches and patterns used in the Preceptoria project, with a focus on the new pure function architecture and JWT security testing.
+Fundamental testing approaches and patterns for the Preceptoria project, emphasizing pure function architecture and comprehensive JWT security testing.
 
 ## Testing Philosophy
 
-Our testing approach emphasizes:
-
-- **Pure Functions**: All business logic is extracted into pure, testable functions
-- **Security First**: Comprehensive security testing for authentication and authorization
-- **Type Safety**: Leverage TypeScript for compile-time testing
-- **Real-world Scenarios**: Test actual use cases, not just happy paths
+- **Pure Functions:** All business logic extracted into pure, testable functions
+- **Security First:** Comprehensive security testing for authentication and authorization
+- **Type Safety:** Leverage TypeScript for compile-time testing
+- **Real-world Scenarios:** Test actual use cases, not just happy paths
 
 ## Pure Function Testing
 

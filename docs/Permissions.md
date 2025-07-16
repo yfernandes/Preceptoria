@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Preceptoria RBAC system implements a sophisticated permission model that enforces access control based on user roles and resource ownership. The system uses a hierarchical permission structure with ownership resolvers to determine access rights and prevent accidental cross-referencing of data.
+The Preceptoria RBAC system implements a sophisticated permission model that enforces access control based on user roles and resource ownership. Uses hierarchical permission structure with ownership resolvers to determine access rights and prevent accidental cross-referencing of data.
 
 ## Permission Structure
 

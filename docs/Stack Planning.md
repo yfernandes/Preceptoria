@@ -2,48 +2,28 @@
 
 ## Current Technology Stack
 
-### Runtime & Development
+### Core Technologies
+- **Runtime:** Bun 🍞 - Fast JavaScript runtime for development and production
+- **Language:** TypeScript - Type-safe development across the entire stack
+- **Architecture:** Monorepo - Shared packages and configurations
 
-- **Bun** 🍞 - Fast JavaScript runtime for development and production
-- **TypeScript** - Type-safe development across the entire stack
-- **Monorepo Architecture** - Shared packages and configurations
+### Backend Stack
+- **Framework:** Elysia.js - High-performance TypeScript-first web framework
+- **Database:** PostgreSQL with MikroORM for type-safe database operations
+- **Authentication:** JWT with role-based access control and token rotation
+- **Security:** HTTP-only cookies, CORS protection, comprehensive input validation
 
-### Backend
-
-- **Elysia.js** - High-performance TypeScript-first web framework
-- **MikroORM** - TypeScript ORM with PostgreSQL support
-- **PostgreSQL** - Robust relational database
-- **JWT** - Stateless authentication with role-based access control
-
-### Frontend
-
-- **Next.js 15** - React framework with App Router
-- **React 19** - Modern React with latest features
-- **TypeScript** - Type-safe frontend development
-- **Tailwind CSS** - Utility-first CSS framework
-- **Shadcn/ui** - High-quality React components
-- **Radix UI** - Accessible component primitives
-- **Eden Treaty** - End-to-end type-safe API client
+### Frontend Stack
+- **Framework:** Next.js 15 with App Router
+- **UI Library:** React 19 with TypeScript
+- **Styling:** Tailwind CSS + Shadcn/ui components
+- **API Client:** Eden Treaty for end-to-end type safety
+- **Components:** Radix UI primitives for accessibility
 
 ### Development Tools
-
-- **ESLint** - Code linting and quality enforcement
-- **Prettier** - Code formatting
-- **Bun Test** - Built-in testing framework
-- **EditorConfig** - Consistent editor settings
-
-### Database & Storage
-
-- **PostgreSQL** - Primary database (local Docker for development)
-- **MikroORM** - Database migrations and schema management
-- **Drizzle Studio** - Database browser (development only)
-
-### Authentication & Security
-
-- **JWT Tokens** - Secure authentication with refresh tokens
-- **HTTP-Only Cookies** - Secure token storage
-- **CORS Protection** - Cross-origin request security
-- **Input Validation** - Comprehensive request validation
+- **Testing:** Bun Test with 95%+ coverage
+- **Code Quality:** ESLint + Prettier + EditorConfig
+- **Database:** Drizzle Studio for development browsing
 
 ## Architecture Decisions
 

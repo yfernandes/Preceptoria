@@ -2,25 +2,23 @@
 
 ## Overview
 
-The Auth Module provides comprehensive authentication functionality for the Preceptoria API, including user registration, login, token management, and logout operations. The module has been refactored to use pure functions for better testability and maintainability.
+The Auth Module provides comprehensive authentication functionality for the Preceptoria API, including user registration, login, token management, and logout operations. Refactored to use pure functions for better testability and maintainability.
 
 ## Architecture
 
 ### Core Components
-
-1. **Pure Functions**: All business logic is extracted into pure, testable functions
-2. **JWT Helper**: Centralized JWT operations with security hardening
-3. **Type Safety**: Comprehensive TypeScript interfaces for all operations
-4. **Token Rotation**: Implements refresh token rotation for enhanced security
+- **Pure Functions:** All business logic extracted into pure, testable functions
+- **JWT Helper:** Centralized JWT operations with security hardening
+- **Type Safety:** Comprehensive TypeScript interfaces for all operations
+- **Token Rotation:** Refresh token rotation for enhanced security
 
 ### Key Features
-
-- ✅ **Pure Function Architecture**: All core logic is in pure functions for easy testing
-- ✅ **Token Rotation**: Refresh tokens are rotated on each use
-- ✅ **Type Safety**: Comprehensive TypeScript interfaces
-- ✅ **Security Hardening**: JWT claims, algorithm validation, clock tolerance
-- ✅ **Cookie Management**: Secure cookie configuration based on environment
-- ✅ **Error Handling**: Graceful validation and error responses
+- ✅ **Pure Function Architecture:** All core logic in pure functions for easy testing
+- ✅ **Token Rotation:** Refresh tokens rotated on each use
+- ✅ **Type Safety:** Comprehensive TypeScript interfaces
+- ✅ **Security Hardening:** JWT claims, algorithm validation, clock tolerance
+- ✅ **Cookie Management:** Secure cookie configuration based on environment
+- ✅ **Error Handling:** Graceful validation and error responses
 
 ## Pure Functions
 
