@@ -1,77 +1,61 @@
 {
-	"extends": "config/typescript/base.json",
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"display": "API Server Configuration",
+
 	"compilerOptions": {
-		"jsx": "react",
-		"module": "ESNext",
-		"moduleResolution": "bundler",
-		"noEmit": true,
-		"baseUrl": ".",
-		/* Language and Environment */
-		"target": "ESNext" /* Bun works well with ESNext */,
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true,
+		// ===== TARGET & MODULE SETTINGS =====
+		"target": "ESNext", // Modern JavaScript features
+		"module": "ESNext", // ES modules
+		"moduleResolution": "bundler", // Use bundler resolution
+		"moduleDetection": "force", // Force module detection
+		"isolatedModules": true, // Each file is a module
 
-		/* Modules */
-		// "types": ["bun-types" /* Bun-specific types for better compatibility */],
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
+		// ===== DECORATORS (for MikroORM) =====
+		"experimentalDecorators": true, // Enable decorators
+		"emitDecoratorMetadata": true, // Emit decorator metadata
 
-		/* Type Checking */
-		"strict": true /* Keep TypeScript's strict type checking */,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noImplicitReturns": true,
-		"noImplicitOverride": true,
-		"skipLibCheck": true /* Skip checking libraries for faster compilation */,
+		// ===== MODULE INTEROP =====
+		"allowSyntheticDefaultImports": true, // Allow default imports from modules without default exports
+		"esModuleInterop": true, // Enable ES module interop
+		"resolveJsonModule": true, // Allow importing JSON files
 
-		/* Completeness */
-		"skipDefaultLibCheck": true,
+		// ===== TYPE CHECKING =====
+		"strict": true, // Enable all strict type checking options
+		"noUncheckedIndexedAccess": false, // Allow unchecked indexed access
+		"skipLibCheck": true, // Skip type checking of declaration files
 
-		/* Output Settings */
-		"declaration": true /* Optional if you need type declarations */,
-		"declarationMap": true,
-		"sourceMap": true /* If debugging with Bun, sourcemaps are useful */,
+		// ===== OUTPUT SETTINGS =====
+		"noEmit": true, // Don't emit files (Bun handles this)
+		"declaration": true, // Generate declaration files
+		"declarationMap": true, // Generate source maps for declarations
+		"sourceMap": true, // Generate source maps
 
-		/* Others */
-		"forceConsistentCasingInFileNames": true /* Ensure consistent file name casing */,
+		// ===== PROJECT SETTINGS =====
+		"composite": true, // Enable project references
+		"incremental": true, // Enable incremental compilation
+		"baseUrl": ".", // Base directory for path resolution
 
-		"outDir": "dist",
-		"emitDeclarationOnly": true,
-		"composite": true,
-		"incremental": true,
+		// ===== CODE QUALITY =====
+		"forceConsistentCasingInFileNames": true, // Ensure consistent file name casing
+		"noUnusedLocals": true, // Error on unused local variables
+		"noUnusedParameters": true, // Error on unused parameters
+		"noImplicitReturns": true, // Error on functions that don't return
+		"noImplicitOverride": true, // Error on missing override keyword
+
+		// ===== PATH MAPPINGS =====
 		"paths": {
-			"@web/*": ["../web/src/*"],
-			"@web/public/*": ["../web/public/*"],
-			"@web/components": ["../web/src/components/index.ts"],
-			"@web/layouts": ["../web/src/layouts/index.ts"],
-			"@web/stores": ["../web/src/stores/index.ts"],
-			"@web/libs": ["../web/src/libs/index.ts"],
 			"@api": ["src/index.ts"],
 			"@api/*": ["src/*"],
 			"@api/db": ["infrastructure/database/db"],
-			"@api/infrastructure/*": ["infrastructure/*"],
-			"@lib/ui": ["../../packages/ui/src/index.ts"],
-			"@lib/ui/*": ["../../packages/ui/src/*"],
-			"@lib/ui/components/*": ["../../packages/ui/src/components/*"],
-			"@lib/ui/lib/*": ["../../packages/ui/src/lib/*"],
-			"@lib/ui/hooks/*": ["../../packages/ui/src/hooks/*"],
-			"@lib/ui/styles/*": ["../../packages/ui/src/styles/*"],
-			"@config/*": ["../../packages/config/*"]
+			"@api/infrastructure/*": ["infrastructure/*"]
 		}
 	},
-	"include": [
-		"src",
-		"infrastructure",
-		"test",
-		"eslint.config.mjs",
-		"drizzle.config.ts",
-		"types/types.d.ts",
-		"src/types/testTypes.ts"
-	],
+
+	// ===== INCLUDE/EXCLUDE =====
+	"include": ["src/**/*", "infrastructure/**/*", "test/**/*", "types/**/*"],
 	"exclude": [
 		"node_modules",
 		"dist",
-		"drizzle.config.ts",
 		"coverage",
 		"infrastructure/database/migrations"
 	]
