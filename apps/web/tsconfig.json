@@ -1,6 +1,5 @@
 {
-	// FIXME: THIS FILE COMES FROM THE SHADCN REPO IT MUST COMPLY TO PREVIOUS STANDARDS
-	"extends": "config/typescript/nextjs.json",
+	"extends": "config/typescript/next.json",
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
