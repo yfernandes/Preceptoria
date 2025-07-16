@@ -1,0 +1,1 @@
+export { treatise } from "./src";
