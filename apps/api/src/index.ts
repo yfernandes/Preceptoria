@@ -28,9 +28,6 @@ export const db = await initializeDatabase();
 // --- Import and start server ---
 import { app } from "./server";
 
-// Export the app type for Eden Treaty - this is the single source of truth
-export type App = typeof app;
-
 // Get port from CLI arg, env, or default
 const argPort = process.argv.find((arg) => arg.startsWith("--port="));
 const cliPort = argPort ? Number(argPort.split("=")[1]) : undefined;
