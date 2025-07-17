@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { AppSidebar } from "@/components/app-sidebar";
 import React from "react";
+import { ModeToggle } from "@/components/mode-toggle";
 
 // Map of routes to their display names
 const routeNames: Record<string, string> = {
@@ -95,35 +96,38 @@ export default function DashboardLayout({
 			<AppSidebar />
 			<SidebarInset>
 				<header className="flex h-16 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-					<div className="flex items-center gap-2 px-4">
-						<SidebarTrigger className="-ml-1" />
-						<Separator
-							orientation="vertical"
-							className="mr-2 data-[orientation=vertical]:h-4"
-						/>
-						<Breadcrumb>
-							<BreadcrumbList>
-								{breadcrumbs.map((breadcrumb, index) => (
-									<React.Fragment key={breadcrumb.href}>
-										<BreadcrumbItem className="hidden md:block">
-											{breadcrumb.isCurrent ? (
-												<BreadcrumbPage>{breadcrumb.title}</BreadcrumbPage>
-											) : (
-												<BreadcrumbLink href={breadcrumb.href}>
-													{breadcrumb.title}
-												</BreadcrumbLink>
+					<div className="flex items-center gap-2 px-4 w-full justify-between">
+						<div className="flex items-center gap-2">
+							<SidebarTrigger className="-ml-1" />
+							<Separator
+								orientation="vertical"
+								className="mr-2 data-[orientation=vertical]:h-4"
+							/>
+							<Breadcrumb>
+								<BreadcrumbList>
+									{breadcrumbs.map((breadcrumb, index) => (
+										<React.Fragment key={breadcrumb.href}>
+											<BreadcrumbItem className="hidden md:block">
+												{breadcrumb.isCurrent ? (
+													<BreadcrumbPage>{breadcrumb.title}</BreadcrumbPage>
+												) : (
+													<BreadcrumbLink href={breadcrumb.href}>
+														{breadcrumb.title}
+													</BreadcrumbLink>
+												)}
+											</BreadcrumbItem>
+											{index < breadcrumbs.length - 1 && (
+												<BreadcrumbSeparator className="hidden md:block" />
 											)}
-										</BreadcrumbItem>
-										{index < breadcrumbs.length - 1 && (
-											<BreadcrumbSeparator className="hidden md:block" />
-										)}
-									</React.Fragment>
-								))}
-							</BreadcrumbList>
-						</Breadcrumb>
+										</React.Fragment>
+									))}
+								</BreadcrumbList>
+							</Breadcrumb>
+						</div>
+						<ModeToggle />
 					</div>
 				</header>
-				<div className="flex flex-1 flex-col gap-4 p-4pt-0">{children}</div>
+				<div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
 			</SidebarInset>
 		</SidebarProvider>
 	);
