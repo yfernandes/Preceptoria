@@ -1,19 +1,30 @@
-import { GalleryVerticalEnd } from "lucide-react"
+import { GraduationCap } from "lucide-react";
 
-import { LoginForm } from "@/components/login-form"
+import { LoginForm } from "@/components/login-form";
 
 export default function LoginPage() {
-  return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-      <div className="flex w-full max-w-sm flex-col gap-6">
-        <a href="#" className="flex items-center gap-2 self-center font-medium">
-          <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-            <GalleryVerticalEnd className="size-4" />
-          </div>
-          Acme Inc.
-        </a>
-        <LoginForm />
-      </div>
-    </div>
-  )
+	return (
+		<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-12 sm:px-6 lg:px-8">
+			<div className="w-full max-w-md space-y-8">
+				{/* Header */}
+				<div className="text-center">
+					<div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 mb-4">
+						<GraduationCap className="h-6 w-6 text-white" />
+					</div>
+					<h1 className="text-3xl font-bold text-gray-900">Preceptoria</h1>
+					<p className="mt-2 text-sm text-gray-600">
+						Sistema de Gestão de Estágios
+					</p>
+				</div>
+
+				{/* Login Form */}
+				<LoginForm />
+
+				{/* Footer */}
+				<div className="text-center text-xs text-gray-500">
+					<p>©2024Preceptoria. Todos os direitos reservados.</p>
+				</div>
+			</div>
+		</div>
+	);
 }
