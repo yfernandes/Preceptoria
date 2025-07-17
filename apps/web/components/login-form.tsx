@@ -1,31 +1,55 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function LoginForm({
-  className,
-  ...props
+	className,
+	...props
 }: React.ComponentProps<"div">) {
-  return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>
-            Login with your Apple or Google account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="grid gap-6">
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const { signin, loading, error, clearError } = useAuth();
+	const router = useRouter();
+	const isDevelopment = process.env.NODE_ENV === "development";
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		clearError();
+
+		try {
+			await signin(email, password);
+			// Successful login - redirect to dashboard
+			router.push("/dashboard");
+		} catch (err) {
+			// Error is handled by the auth context
+			console.error("Login failed:", err);
+		}
+	};
+
+	return (
+		<div className={cn("flex flex-col gap-6", className)} {...props}>
+			<Card>
+				<CardHeader className="text-center">
+					<CardTitle className="text-xl">Bem-vindo de volta</CardTitle>
+					<CardDescription>Entre com suas credenciais</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<form onSubmit={handleSubmit}>
+						<div className="grid gap-6">
+							{/* Login social temporariamente desabilitado
               <div className="flex flex-col gap-4">
                 <Button variant="outline" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -34,7 +58,7 @@ export function LoginForm({
                       fill="currentColor"
                     />
                   </svg>
-                  Login with Apple
+                  Entrar com Apple
                 </Button>
                 <Button variant="outline" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -43,54 +67,89 @@ export function LoginForm({
                       fill="currentColor"
                     />
                   </svg>
-                  Login with Google
+                  Entrar com Google
                 </Button>
               </div>
               <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                 <span className="bg-card text-muted-foreground relative z-10 px-2">
-                  Or continue with
+                  Ou continue com
                 </span>
               </div>
-              <div className="grid gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <a
-                      href="#"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </a>
-                  </div>
-                  <Input id="password" type="password" required />
-                </div>
-                <Button type="submit" className="w-full">
-                  Login
-                </Button>
-              </div>
-              <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <a href="#" className="underline underline-offset-4">
-                  Sign up
-                </a>
-              </div>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </div>
-    </div>
-  )
+              */}
+
+							{/* Credenciais de desenvolvimento */}
+							{isDevelopment && (
+								<div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+									<h4 className="text-sm font-semibold text-blue-900 mb-2">
+										🔧 Credenciais de Desenvolvimento
+									</h4>
+									<div className="text-xs text-blue-700 space-y-1">
+										<p>
+											<strong>Email:</strong> yagoalmeida@gmail.com
+										</p>
+										<p>
+											<strong>Senha:</strong> TotallyS3cr3tP4ssw_rd
+										</p>
+									</div>
+								</div>
+							)}
+
+							<div className="grid gap-6">
+								<div className="grid gap-3">
+									<Label htmlFor="email">Email</Label>
+									<Input
+										id="email"
+										type="email"
+										placeholder="seu@email.com"
+										value={email}
+										onChange={(e) => setEmail(e.target.value)}
+										required
+									/>
+								</div>
+								<div className="grid gap-3">
+									<div className="flex items-center">
+										<Label htmlFor="password">Senha</Label>
+										<a
+											href="#"
+											className="ml-auto text-sm underline-offset-4 hover:underline"
+										>
+											Esqueceu sua senha?
+										</a>
+									</div>
+									<Input
+										id="password"
+										type="password"
+										value={password}
+										onChange={(e) => setPassword(e.target.value)}
+										required
+									/>
+								</div>
+
+								{error && (
+									<div className="bg-red-100 border border-red-300 text-red-800 rounded p-2 text-sm mb-2 text-center">
+										{error}
+									</div>
+								)}
+
+								<Button type="submit" className="w-full" disabled={loading}>
+									{loading ? "Entrando..." : "Entrar"}
+								</Button>
+							</div>
+							<div className="text-center text-sm">
+								Não tem uma conta?{" "}
+								<a href="#" className="underline underline-offset-4">
+									Cadastre-se
+								</a>
+							</div>
+						</div>
+					</form>
+				</CardContent>
+			</Card>
+			<div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
+				Ao clicar em continuar, você concorda com nossos{" "}
+				<a href="#">Termos de Serviço</a> e{" "}
+				<a href="#">Política de Privacidade</a>.
+			</div>
+		</div>
+	);
 }
