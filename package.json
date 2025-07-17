@@ -8,28 +8,14 @@
 		"build": "turbo build",
 		"test": "turbo test",
 		"typecheck": "turbo typecheck",
-		"test:ui": "turbo test:ui",
-		"test:e2e": "turbo test:e2e",
-		"test:unit": "turbo test:unit",
 		"lint": "turbo lint",
 		"format": "turbo format",
 		"docker": "turbo docker",
 		"clean": "turbo clean",
 		"db:studio": "turbo db:studio",
 		"db:check": "turbo db:check",
-		"db:cache": "turbo db:cache",
-		"db:cache:clear": "turbo db:cache:clear",
-		"db:migration:create": "turbo db:migration:create",
 		"db:migration:up": "turbo db:migration:up",
-		"db:migration:down": "turbo db:migration:down",
-		"db:migration:list": "turbo db:migration:list",
-		"db:schema:update": "turbo db:schema:update",
-		"db:schema:drop": "turbo db:schema:drop",
-		"db:seed": "turbo db:seed",
-		"db:seed:create": "turbo db:seed:create",
-		"sync:google-sheets": "turbo sync:google-sheets",
-		"test:seed": "turbo test:seed",
-		"run:seed": "turbo run:seed"
+		"sync:google-sheets": "turbo sync:google-sheets"
 	},
 	"workspaces": [
 		"apps/*",
@@ -37,16 +23,11 @@
 	],
 	"devDependencies": {
 		"@types/bun": "^1.2.11",
-		"@types/minimatch": "^6.0.0",
-		"concurrently": "^9.2.0",
 		"turbo": "^2.1.7",
 		"typescript": "^5.8.3"
 	},
 	"engines": {
 		"bun": ">=1.2.0"
 	},
-	"packageManager": "bun@1.2.18",
-	"dependencies": {
-		"caniuse-lite": "^1.0.30001727"
-	}
+	"packageManager": "bun@1.2.18"
 }
