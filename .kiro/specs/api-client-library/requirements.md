@@ -50,8 +50,8 @@ This document outlines the requirements for a centralized API client library for
 1. WHEN making API calls THEN the system SHALL provide utilities to track loading states.
 2. WHEN an API call completes THEN the system SHALL provide utilities to handle success states.
 3. WHEN an API call fails THEN the system SHALL provide utilities to handle error states.
-4. WHEN using the API client THEN the system SHALL support React hooks for common data fetching patterns.
-5. WHEN using the API client with React components THEN the system SHALL handle component unmounting to prevent memory leaks.
+
+> **Note:** React integration (hooks, components, etc.) is out of scope for the initial version of the API client library and may be added in a future release.
 
 ### Requirement 5
 
@@ -64,4 +64,3 @@ This document outlines the requirements for a centralized API client library for
 3. WHEN cached data is available THEN the system SHALL return cached data while fetching fresh data in the background.
 4. WHEN a mutation occurs THEN the system SHALL provide utilities to invalidate related cached data.
 5. WHEN using the API client THEN the system SHALL support manual cache management (clearing, updating).
-

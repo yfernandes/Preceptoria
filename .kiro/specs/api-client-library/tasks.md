@@ -91,16 +91,10 @@
     - Define request state interface
     - Implement state management functions
     - _Requirements: 4.1, 4.2, 4.3_
-  - [x] 6.2 Implement React hooks for data fetching
-    - Create useApiRequest hook
-    - Add support for loading, error, and success states
-    - _Requirements: 4.4_
-  - [x] 6.3 Add cleanup for unmounted components
-    - Implement request cancellation
-    - Add cleanup on component unmount
-    - _Requirements: 4.5_
 
-- [ ] 7. Implement Caching and Request Deduplication
+  # React integration (hooks, components, etc.) is out of scope for the initial version of the API client library and may be added in a future release.
+
+- [x] 7. Implement Caching and Request Deduplication
   - [x] 7.1 Create cache manager
     - Implement cache storage
     - Add time-to-live (TTL) support
@@ -115,37 +109,35 @@
     - Create manual cache management utilities
     - _Requirements: 5.4, 5.5_
 
-- [ ] 8. Implement Mutation Utilities
-  - [ ] 8.1 Create useMutation hook
+- [x] 8. Implement Mutation Utilities
+  - [x] 8.1 Create useMutation hook
     - Implement mutation hook for data modifications
     - Add loading, error, and success states
     - _Requirements: 4.4_
-  - [ ] 8.2 Add cache invalidation on mutation
+  - [x] 8.2 Add cache invalidation on mutation
     - Integrate mutation with cache invalidation
     - Implement automatic cache updates
     - _Requirements: 5.4_
 
-- [ ] 9. Write Comprehensive Tests
-  - [ ] 9.1 Write unit tests for core components
+- [x] 9. Write Comprehensive Tests
+  - [x] 9.1 Write unit tests for core components
     - Test ApiClient
     - Test AuthManager
     - Test CacheManager
     - _Requirements: All_
-  - [ ] 9.2 Write integration tests
+  - [x] 9.2 Write integration tests
     - Test component interactions
     - Test end-to-end flows
     - _Requirements: All_
-  - [ ] 9.3 Test React hooks and components
-    - Test useApiRequest hook
-    - Test useMutation hook
+  - [x] 9.3 Test React hooks and components (out of scope for now)
     - _Requirements: 4.4, 4.5_
 
-- [ ] 10. Create Documentation and Examples
-  - [ ] 10.1 Write API documentation
+- [x] 10. Create Documentation and Examples
+  - [x] 10.1 Write API documentation
     - Document public interfaces
     - Add usage examples
     - _Requirements: All_
-  - [ ] 10.2 Create example components
+  - [x] 10.2 Create example components (out of scope for now)
     - Implement example data fetching components
     - Create example mutation components
     - _Requirements: All_

@@ -12,16 +12,15 @@ The API client library will follow a modular architecture with the following key
 2. **Endpoint Definitions**: Type-safe definitions of API endpoints with request/response types.
 3. **Request State Management**: Utilities for handling loading, error, and success states.
 4. **Caching Layer**: Mechanism for caching responses and deduplicating requests.
-5. **React Integration**: React hooks and components for seamless integration with React components.
+
+> **Note:** React integration (hooks, components, etc.) is out of scope for the initial version of the API client library and may be provided in a separate package or module in the future.
 
 ### High-Level Architecture Diagram
 
 ```mermaid
 graph TD
-    A[Application] --> B[React Hooks/Components]
-    A --> C[Direct API Client Usage]
-    B --> D[API Client Library]
-    C --> D
+    A[Application] --> C[Direct API Client Usage]
+    C --> D[API Client Library]
     D --> E[Core Client]
     D --> F[Endpoint Definitions]
     D --> G[Request State Management]
@@ -40,27 +39,39 @@ The Core Client will be responsible for making HTTP requests and handling common
 
 ```typescript
 interface ApiClientConfig {
-  baseUrl: string;
-  defaultHeaders?: Record<string, string>;
-  timeout?: number;
-  retryConfig?: RetryConfig;
+	baseUrl: string;
+	defaultHeaders?: Record<string, string>;
+	timeout?: number;
+	retryConfig?: RetryConfig;
 }
 
 interface RetryConfig {
-  maxRetries: number;
-  retryDelay: number;
-  retryStatusCodes: number[];
+	maxRetries: number;
+	retryDelay: number;
+	retryStatusCodes: number[];
 }
 
 class ApiClient {
-  constructor(config: ApiClientConfig);
-  
-  async request<T>(config: RequestConfig): Promise<ApiResponse<T>>;
-  async get<T>(url: string, config?: RequestConfig): Promise<ApiResponse<T>>;
-  async post<T>(url: string, data?: any, config?: RequestConfig): Promise<ApiResponse<T>>;
-  async put<T>(url: string, data?: any, config?: RequestConfig): Promise<ApiResponse<T>>;
-  async patch<T>(url: string, data?: any, config?: RequestConfig): Promise<ApiResponse<T>>;
-  async delete<T>(url: string, config?: RequestConfig): Promise<ApiResponse<T>>;
+	constructor(config: ApiClientConfig);
+
+	async request<T>(config: RequestConfig): Promise<ApiResponse<T>>;
+	async get<T>(url: string, config?: RequestConfig): Promise<ApiResponse<T>>;
+	async post<T>(
+		url: string,
+		data?: any,
+		config?: RequestConfig
+	): Promise<ApiResponse<T>>;
+	async put<T>(
+		url: string,
+		data?: any,
+		config?: RequestConfig
+	): Promise<ApiResponse<T>>;
+	async patch<T>(
+		url: string,
+		data?: any,
+		config?: RequestConfig
+	): Promise<ApiResponse<T>>;
+	async delete<T>(url: string, config?: RequestConfig): Promise<ApiResponse<T>>;
 }
 ```
 
@@ -70,27 +81,27 @@ The Authentication Manager will handle token management, including storage, refr
 
 ```typescript
 interface AuthConfig {
-  tokenStorage: TokenStorage;
-  loginUrl: string;
-  refreshUrl: string;
-  onAuthError?: () => void;
+	tokenStorage: TokenStorage;
+	loginUrl: string;
+	refreshUrl: string;
+	onAuthError?: () => void;
 }
 
 interface TokenStorage {
-  getToken(): string | null;
-  setToken(token: string): void;
-  clearToken(): void;
-  getRefreshToken(): string | null;
-  setRefreshToken(token: string): void;
+	getToken(): string | null;
+	setToken(token: string): void;
+	clearToken(): void;
+	getRefreshToken(): string | null;
+	setRefreshToken(token: string): void;
 }
 
 class AuthManager {
-  constructor(config: AuthConfig);
-  
-  getAuthHeader(): Record<string, string> | null;
-  async refreshToken(): Promise<boolean>;
-  handleAuthError(error: ApiError): Promise<boolean>;
-  logout(): void;
+	constructor(config: AuthConfig);
+
+	getAuthHeader(): Record<string, string> | null;
+	async refreshToken(): Promise<boolean>;
+	handleAuthError(error: ApiError): Promise<boolean>;
+	logout(): void;
 }
 ```
 
@@ -100,27 +111,27 @@ Endpoints will be defined in a type-safe manner using TypeScript interfaces.
 
 ```typescript
 interface EndpointDefinition<TRequest, TResponse> {
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-  url: string | ((params: any) => string);
-  headers?: Record<string, string>;
-  cacheConfig?: CacheConfig;
+	method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+	url: string | ((params: any) => string);
+	headers?: Record<string, string>;
+	cacheConfig?: CacheConfig;
 }
 
 interface CacheConfig {
-  enabled: boolean;
-  ttl?: number;
-  invalidateOn?: string[];
+	enabled: boolean;
+	ttl?: number;
+	invalidateOn?: string[];
 }
 
 // Example endpoint definition
 const getUserEndpoint: EndpointDefinition<void, User> = {
-  method: 'GET',
-  url: '/users/me',
-  cacheConfig: {
-    enabled: true,
-    ttl: 300000, // 5 minutes
-    invalidateOn: ['updateUser', 'logout']
-  }
+	method: "GET",
+	url: "/users/me",
+	cacheConfig: {
+		enabled: true,
+		ttl: 300000, // 5 minutes
+		invalidateOn: ["updateUser", "logout"],
+	},
 };
 ```
 
@@ -130,11 +141,11 @@ The library will provide utilities for managing request states in a consistent w
 
 ```typescript
 interface RequestState<T> {
-  data: T | null;
-  isLoading: boolean;
-  isError: boolean;
-  error: ApiError | null;
-  isSuccess: boolean;
+	data: T | null;
+	isLoading: boolean;
+	isError: boolean;
+	error: ApiError | null;
+	isSuccess: boolean;
 }
 
 function createRequestState<T>(): RequestState<T>;
@@ -149,56 +160,25 @@ The caching layer will handle response caching and request deduplication.
 
 ```typescript
 interface CacheEntry<T> {
-  data: T;
-  timestamp: number;
-  ttl: number;
+	data: T;
+	timestamp: number;
+	ttl: number;
 }
 
 class CacheManager {
-  constructor(config?: CacheConfig);
-  
-  get<T>(key: string): CacheEntry<T> | null;
-  set<T>(key: string, data: T, ttl?: number): void;
-  invalidate(key: string): void;
-  invalidateByTags(tags: string[]): void;
-  clear(): void;
+	constructor(config?: CacheConfig);
+
+	get<T>(key: string): CacheEntry<T> | null;
+	set<T>(key: string, data: T, ttl?: number): void;
+	invalidate(key: string): void;
+	invalidateByTags(tags: string[]): void;
+	clear(): void;
 }
 
 class RequestDeduplicator {
-  deduplicate<T>(key: string, requestFn: () => Promise<T>): Promise<T>;
-  cancelRequest(key: string): void;
+	deduplicate<T>(key: string, requestFn: () => Promise<T>): Promise<T>;
+	cancelRequest(key: string): void;
 }
-```
-
-### React Integration
-
-The library will provide React hooks for easy integration with React components.
-
-```typescript
-function useApiRequest<TRequest, TResponse>(
-  endpoint: EndpointDefinition<TRequest, TResponse>,
-  params?: TRequest,
-  options?: UseApiRequestOptions
-): {
-  data: TResponse | null;
-  isLoading: boolean;
-  isError: boolean;
-  error: ApiError | null;
-  isSuccess: boolean;
-  refetch: () => Promise<void>;
-};
-
-function useMutation<TRequest, TResponse>(
-  endpoint: EndpointDefinition<TRequest, TResponse>,
-  options?: UseMutationOptions
-): {
-  mutate: (data: TRequest) => Promise<TResponse>;
-  isLoading: boolean;
-  isError: boolean;
-  error: ApiError | null;
-  isSuccess: boolean;
-  reset: () => void;
-};
 ```
 
 ## Data Models
@@ -207,9 +187,9 @@ function useMutation<TRequest, TResponse>(
 
 ```typescript
 interface ApiResponse<T> {
-  data: T;
-  status: number;
-  headers: Record<string, string>;
+	data: T;
+	status: number;
+	headers: Record<string, string>;
 }
 ```
 
@@ -217,11 +197,11 @@ interface ApiResponse<T> {
 
 ```typescript
 interface ApiError {
-  message: string;
-  status?: number;
-  code?: string;
-  validationErrors?: Record<string, string[]>;
-  isNetworkError?: boolean;
+	message: string;
+	status?: number;
+	code?: string;
+	validationErrors?: Record<string, string[]>;
+	isNetworkError?: boolean;
 }
 ```
 
@@ -229,12 +209,12 @@ interface ApiError {
 
 ```typescript
 interface ValidationError {
-  field: string;
-  message: string;
+	field: string;
+	message: string;
 }
 
 interface ValidationErrors {
-  [field: string]: string[];
+	[field: string]: string[];
 }
 ```
 
@@ -275,14 +255,12 @@ The testing strategy for the API client library will include:
 1. **Unit Tests**: Testing individual components in isolation.
 2. **Integration Tests**: Testing the interaction between components.
 3. **Mock Server**: Using a mock server to simulate API responses.
-4. **React Testing**: Testing React hooks and components with React Testing Library.
 
 ### Test Coverage Goals
 
 - Core Client: 100% coverage
 - Authentication Manager: 100% coverage
 - Caching Layer: 90% coverage
-- React Hooks: 90% coverage
 
 ## Design Decisions and Rationales
 
@@ -310,11 +288,11 @@ The testing strategy for the API client library will include:
 
 **Rationale**: This approach balances performance optimization with data freshness. Invalidation tags allow for targeted cache invalidation when related data changes.
 
-### 5. React Hooks for State Management
+### 5. React Integration (Out of Scope)
 
-**Decision**: Provide React hooks for request state management.
+**Decision**: React hooks and integration are not included in the initial version of the API client library.
 
-**Rationale**: React hooks provide a clean, declarative API for managing request states in React components, reducing boilerplate code and improving component readability.
+**Rationale**: This keeps the core library framework-agnostic and maximally reusable. React integration may be provided in a separate package or module in the future.
 
 ### 6. Request Deduplication
 
