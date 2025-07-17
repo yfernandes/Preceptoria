@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import {
 	SidebarProvider,
 	SidebarInset,
@@ -13,12 +16,80 @@ import {
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { AppSidebar } from "@/components/app-sidebar";
+import React from "react";
+
+// Map of routes to their display names
+const routeNames: Record<string, string> = {
+	courses: "Cursos",
+	classes: "Turmas",
+	students: "Estudantes",
+	supervisors: "Supervisores",
+	hospitals: "Hospitais",
+	preceptors: "Preceptores",
+	"hospital-managers": "Gerentes Hospitalares",
+	shifts: "Turnos",
+	documents: "Documentos",
+	users: "Usuários",
+	"org-admins": "Admins de Organização",
+	settings: "Configurações",
+};
+
+// Map of parent routes to their display names
+const parentRouteNames: Record<string, string> = {
+	academic: "Gestão Acadêmica",
+	hospital: "Gestão Hospitalar",
+	internships: "Estágios",
+	admin: "Administração",
+};
+
+function getBreadcrumbs(pathname: string) {
+	const segments = pathname.split("/").filter(Boolean);
+	const breadcrumbs = [];
+
+	// Always add Dashboard as the first breadcrumb
+	breadcrumbs.push({
+		title: "Dashboard",
+		href: "/dashboard",
+		isCurrent: segments.length === 1,
+	});
+
+	// Add parent section if it exists
+	if (segments.length > 1) {
+		const parentRoute = segments[1];
+		const parentName = parentRouteNames[parentRoute];
+
+		if (parentName) {
+			breadcrumbs.push({
+				title: parentName,
+				href: `/dashboard/${parentRoute}`,
+				isCurrent: segments.length === 2,
+			});
+		}
+	}
+
+	// Add current page
+	if (segments.length > 1) {
+		const currentRoute = segments[segments.length - 1];
+		const currentName = routeNames[currentRoute] || currentRoute;
+
+		breadcrumbs.push({
+			title: currentName,
+			href: pathname,
+			isCurrent: true,
+		});
+	}
+
+	return breadcrumbs;
+}
 
 export default function DashboardLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
+	const pathname = usePathname();
+	const breadcrumbs = getBreadcrumbs(pathname);
+
 	return (
 		<SidebarProvider>
 			<AppSidebar />
@@ -32,13 +103,22 @@ export default function DashboardLayout({
 						/>
 						<Breadcrumb>
 							<BreadcrumbList>
-								<BreadcrumbItem className="hidden md:block">
-									<BreadcrumbLink href="/dashboard">Preceptoria</BreadcrumbLink>
-								</BreadcrumbItem>
-								<BreadcrumbSeparator className="hidden md:block" />
-								<BreadcrumbItem>
-									<BreadcrumbPage>Dashboard</BreadcrumbPage>
-								</BreadcrumbItem>
+								{breadcrumbs.map((breadcrumb, index) => (
+									<React.Fragment key={breadcrumb.href}>
+										<BreadcrumbItem className="hidden md:block">
+											{breadcrumb.isCurrent ? (
+												<BreadcrumbPage>{breadcrumb.title}</BreadcrumbPage>
+											) : (
+												<BreadcrumbLink href={breadcrumb.href}>
+													{breadcrumb.title}
+												</BreadcrumbLink>
+											)}
+										</BreadcrumbItem>
+										{index < breadcrumbs.length - 1 && (
+											<BreadcrumbSeparator className="hidden md:block" />
+										)}
+									</React.Fragment>
+								))}
 							</BreadcrumbList>
 						</Breadcrumb>
 					</div>
