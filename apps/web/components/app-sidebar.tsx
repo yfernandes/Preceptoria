@@ -57,100 +57,100 @@ const data = {
 		},
 		{
 			title: "Gestão Acadêmica",
-			url: "/academic",
+			url: "/dashboard/academic",
 			icon: BookOpen,
 			items: [
 				{
 					title: "Cursos",
-					url: "/courses",
+					url: "/dashboard/courses",
 				},
 				{
 					title: "Turmas",
-					url: "/classes",
+					url: "/dashboard/classes",
 				},
 				{
 					title: "Estudantes",
-					url: "/students",
+					url: "/dashboard/students",
 				},
 				{
 					title: "Supervisores",
-					url: "/supervisors",
+					url: "/dashboard/supervisors",
 				},
 			],
 		},
 		{
 			title: "Gestão Hospitalar",
-			url: "/hospital",
+			url: "/dashboard/hospital",
 			icon: Building2,
 			items: [
 				{
 					title: "Hospitais",
-					url: "/hospitals",
+					url: "/dashboard/hospitals",
 				},
 				{
 					title: "Preceptores",
-					url: "/preceptors",
+					url: "/dashboard/preceptors",
 				},
 				{
 					title: "Gerentes Hospitalares",
-					url: "/hospital-managers",
+					url: "/dashboard/hospital-managers",
 				},
 			],
 		},
 		{
 			title: "Estágios",
-			url: "/internships",
+			url: "/dashboard/internships",
 			icon: Calendar,
 			items: [
 				{
 					title: "Turnos",
-					url: "/shifts",
+					url: "/dashboard/shifts",
 				},
 				{
 					title: "Agendamento",
-					url: "/scheduling",
+					url: "/dashboard/scheduling",
 				},
 				{
 					title: "Calendário",
-					url: "/calendar",
+					url: "/dashboard/calendar",
 				},
 			],
 		},
 		{
 			title: "Documentos",
-			url: "/documents",
+			url: "/dashboard/documents",
 			icon: FileText,
 			items: [
 				{
 					title: "Gestão de Documentos",
-					url: "/documents",
+					url: "/dashboard/documents",
 				},
 				{
 					title: "Validação",
-					url: "/documents/validation",
+					url: "/dashboard/documents/validation",
 				},
 				{
 					title: "Relatórios",
-					url: "/documents/reports",
+					url: "/dashboard/documents/reports",
 				},
 			],
 		},
 		{
 			title: "Administração",
-			url: "/admin",
+			url: "/dashboard/admin",
 			icon: Settings2,
 			items: [
 				{
 					title: "Usuários",
-					url: "/users",
+					url: "/dashboard/users",
 				},
 				{
 					title: "Admins de Organização",
-					url: "/org-admins",
+					url: "/dashboard/org-admins",
 				},
 				{
 					title: "Configurações",
-					url: "/settings",
+					url: "/dashboard/settings",
 				},
 			],
 		},
@@ -158,17 +158,17 @@ const data = {
 	projects: [
 		{
 			name: "Estágios Ativos",
-			url: "/shifts/active",
+			url: "/dashboard/shifts/active",
 			icon: Calendar,
 		},
 		{
 			name: "Documentos Pendentes",
-			url: "/documents/pending",
+			url: "/dashboard/documents/pending",
 			icon: FileText,
 		},
 		{
 			name: "Relatórios",
-			url: "/reports",
+			url: "/dashboard/reports",
 			icon: ClipboardList,
 		},
 	],
