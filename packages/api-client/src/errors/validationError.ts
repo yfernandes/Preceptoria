@@ -9,9 +9,7 @@ export interface ValidationError {
 	message: string;
 }
 
-export interface ValidationErrors {
-	[field: string]: string[];
-}
+export type ValidationErrors = Record<string, string[]>;
 
 /**
  * formatValidationErrors

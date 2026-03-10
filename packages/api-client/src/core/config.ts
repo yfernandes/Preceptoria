@@ -23,9 +23,13 @@ export interface ApiClientConfig {
 export function getApiBaseUrl(): string {
 	// In a real app, you might use process.env or import.meta.env
 	// Here we use a placeholder for demonstration
-	return (
-		(typeof process !== "undefined" && process.env.API_BASE_URL) ||
-		(typeof window !== "undefined" && (window as any).API_BASE_URL) ||
-		"http://localhost:3000/api"
-	);
+	const nodeUrl =
+		typeof process !== "undefined" && typeof process.env !== "undefined"
+			? process.env.API_BASE_URL
+			: undefined;
+	const browserUrl =
+		typeof window !== "undefined"
+			? (window as { API_BASE_URL?: string }).API_BASE_URL
+			: undefined;
+	return nodeUrl ?? browserUrl ?? "http://localhost:3000/api";
 }

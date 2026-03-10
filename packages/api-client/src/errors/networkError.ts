@@ -6,9 +6,12 @@
 
 import type { ApiError } from "./index";
 
-export function isNetworkError(error: any): boolean {
+export function isNetworkError(error: unknown): boolean {
 	return (
 		(error instanceof TypeError && error.message === "Failed to fetch") ||
-		(error && (error as ApiError).isNetworkError)
+		(!!error &&
+			typeof error === "object" &&
+			"isNetworkError" in error &&
+			(error as ApiError).isNetworkError === true)
 	);
 }

@@ -4,11 +4,13 @@
  * Standardized error objects and error handling utilities.
  */
 
+import { ValidationErrors } from "./validationError";
+
 export interface ApiError {
 	message: string;
 	status?: number;
 	code?: string;
-	validationErrors?: Record<string, string[]>;
+	validationErrors?: ValidationErrors;
 	isNetworkError?: boolean;
 }
 
