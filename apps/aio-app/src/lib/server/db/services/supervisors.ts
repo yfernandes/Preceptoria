@@ -1,8 +1,11 @@
-import { db } from '$lib/server/db';
-import { supervisors, user } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
+import { db } from "$lib/server/db";
+import { supervisors, user } from "$lib/server/db/schema";
 
-export async function createSupervisor(data: { userId: string; schoolId: string }) {
+export async function createSupervisor(data: {
+	userId: string;
+	schoolId: string;
+}) {
 	const [result] = await db.insert(supervisors).values(data).returning();
 	return result;
 }
@@ -12,8 +15,8 @@ export async function getSupervisorById(id: string) {
 		where: eq(supervisors.id, id),
 		with: {
 			user: true,
-			school: true
-		}
+			school: true,
+		},
 	});
 	return result;
 }
@@ -23,19 +26,22 @@ export async function listSupervisors(schoolId?: string) {
 		return await db.query.supervisors.findMany({
 			where: eq(supervisors.schoolId, schoolId),
 			with: {
-				user: true
-			}
+				user: true,
+			},
 		});
 	}
 	return await db.query.supervisors.findMany({
 		with: {
 			user: true,
-			school: true
-		}
+			school: true,
+		},
 	});
 }
 
 export async function deleteSupervisor(id: string) {
-	const [result] = await db.delete(supervisors).where(eq(supervisors.id, id)).returning();
+	const [result] = await db
+		.delete(supervisors)
+		.where(eq(supervisors.id, id))
+		.returning();
 	return result;
 }

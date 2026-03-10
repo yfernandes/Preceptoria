@@ -1,46 +1,48 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as hospitalService from '$lib/server/db/services/hospitals';
-import * as orgService from '$lib/server/db/services/organizations';
-import { load, actions } from './+page.server';
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import * as hospitalService from "$lib/server/db/services/hospitals";
+import * as orgService from "$lib/server/db/services/organizations";
+import { actions, load } from "./+page.server";
 
-vi.mock('$lib/server/db/services/hospitals');
-vi.mock('$lib/server/db/services/organizations');
+vi.mock("$lib/server/db/services/hospitals");
+vi.mock("$lib/server/db/services/organizations");
 
-describe('Hospitals Page Server', () => {
+describe("Hospitals Page Server", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
-	it('should load hospitals and organizations', async () => {
-		const mockHospitals = [{ id: '1', name: 'Hosp 1' }];
-		const mockOrgs = [{ id: '1', name: 'Org 1' }];
-		
+	it("should load hospitals and organizations", async () => {
+		const mockHospitals = [{ id: "1", name: "Hosp 1" }];
+		const mockOrgs = [{ id: "1", name: "Org 1" }];
+
 		(hospitalService.listHospitals as any).mockResolvedValue(mockHospitals);
 		(orgService.listOrganizations as any).mockResolvedValue(mockOrgs);
 
-		const result = await load({ locals: { user: { id: '1', role: 'SysAdmin' } } } as any);
+		const result = await load({
+			locals: { user: { id: "1", role: "SysAdmin" } },
+		} as any);
 
 		expect(result).toEqual({
 			hospitals: mockHospitals,
-			organizations: mockOrgs
+			organizations: mockOrgs,
 		});
 	});
 
-	it('should create a hospital via action', async () => {
+	it("should create a hospital via action", async () => {
 		const formData = new FormData();
-		formData.append('name', 'New Hospital');
-		formData.append('address', '123 St');
+		formData.append("name", "New Hospital");
+		formData.append("address", "123 St");
 
 		const request = {
-			formData: () => Promise.resolve(formData)
+			formData: () => Promise.resolve(formData),
 		};
 
-		await (actions.create as any)({ request, locals: { user: { id: '1' } } });
+		await (actions.create as any)({ request, locals: { user: { id: "1" } } });
 
 		expect(hospitalService.createHospital).toHaveBeenCalledWith({
-			name: 'New Hospital',
-			address: '123 St',
-			organizationId: undefined
+			name: "New Hospital",
+			address: "123 St",
+			organizationId: undefined,
 		});
 	});
 });

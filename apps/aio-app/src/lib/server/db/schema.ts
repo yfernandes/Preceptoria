@@ -4,10 +4,10 @@ import {
 	jsonb,
 	pgEnum,
 	pgTable,
+	primaryKey,
 	text,
 	timestamp,
 	uuid,
-    primaryKey,
 } from "drizzle-orm/pg-core";
 
 export const userRoleEnum = pgEnum("user_role", [
@@ -192,16 +192,20 @@ export const shifts = pgTable("shift", {
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const studentShifts = pgTable("student_shift", {
-	studentId: uuid("student_id")
-		.notNull()
-		.references(() => students.id),
-	shiftId: uuid("shift_id")
-		.notNull()
-		.references(() => shifts.id),
-}, (t) => ({
-	pk: primaryKey({ columns: [t.studentId, t.shiftId] }),
-}));
+export const studentShifts = pgTable(
+	"student_shift",
+	{
+		studentId: uuid("student_id")
+			.notNull()
+			.references(() => students.id),
+		shiftId: uuid("shift_id")
+			.notNull()
+			.references(() => shifts.id),
+	},
+	(t) => ({
+		pk: primaryKey({ columns: [t.studentId, t.shiftId] }),
+	}),
+);
 
 export const documents = pgTable("document", {
 	id: uuid("id").defaultRandom().primaryKey(),

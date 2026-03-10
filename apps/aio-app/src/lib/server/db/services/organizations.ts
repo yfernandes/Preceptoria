@@ -1,6 +1,6 @@
-import { db } from '$lib/server/db';
-import { organizations } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
+import { db } from "$lib/server/db";
+import { organizations } from "$lib/server/db/schema";
 
 export async function createOrganization(name: string) {
 	const [result] = await db.insert(organizations).values({ name }).returning();
@@ -8,7 +8,10 @@ export async function createOrganization(name: string) {
 }
 
 export async function getOrganizationById(id: string) {
-	const [result] = await db.select().from(organizations).where(eq(organizations.id, id));
+	const [result] = await db
+		.select()
+		.from(organizations)
+		.where(eq(organizations.id, id));
 	return result;
 }
 
@@ -26,6 +29,9 @@ export async function updateOrganization(id: string, name: string) {
 }
 
 export async function deleteOrganization(id: string) {
-	const [result] = await db.delete(organizations).where(eq(organizations.id, id)).returning();
+	const [result] = await db
+		.delete(organizations)
+		.where(eq(organizations.id, id))
+		.returning();
 	return result;
 }

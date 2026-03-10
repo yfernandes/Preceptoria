@@ -1,11 +1,11 @@
-import { error, fail } from '@sveltejs/kit';
-import type { PageServerLoad, Actions } from './$types';
-import * as schoolService from '$lib/server/db/services/schools';
-import * as orgService from '$lib/server/db/services/organizations';
+import { error, fail } from "@sveltejs/kit";
+import * as orgService from "$lib/server/db/services/organizations";
+import * as schoolService from "$lib/server/db/services/schools";
+import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
-		throw error(401, 'Unauthorized');
+		throw error(401, "Unauthorized");
 	}
 
 	const schools = await schoolService.listSchools();
@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	return {
 		schools,
-		organizations
+		organizations,
 	};
 };
 
@@ -22,22 +22,22 @@ export const actions: Actions = {
 		if (!locals.user) return fail(401);
 
 		const formData = await request.formData();
-		const name = formData.get('name')?.toString();
-		const organizationId = formData.get('organizationId')?.toString();
+		const name = formData.get("name")?.toString();
+		const organizationId = formData.get("organizationId")?.toString();
 
 		if (!name) {
-			return fail(400, { message: 'Name is required' });
+			return fail(400, { message: "Name is required" });
 		}
 
 		try {
 			await schoolService.createSchool({
 				name,
-				organizationId: organizationId || undefined
+				organizationId: organizationId || undefined,
 			});
 			return { success: true };
 		} catch (err) {
 			console.error(err);
-			return fail(500, { message: 'Failed to create school' });
+			return fail(500, { message: "Failed to create school" });
 		}
 	},
 
@@ -45,11 +45,11 @@ export const actions: Actions = {
 		if (!locals.user) return fail(401);
 
 		const formData = await request.formData();
-		const id = formData.get('id')?.toString();
-		const name = formData.get('name')?.toString();
+		const id = formData.get("id")?.toString();
+		const name = formData.get("name")?.toString();
 
 		if (!id || !name) {
-			return fail(400, { message: 'ID and Name are required' });
+			return fail(400, { message: "ID and Name are required" });
 		}
 
 		try {
@@ -57,7 +57,7 @@ export const actions: Actions = {
 			return { success: true };
 		} catch (err) {
 			console.error(err);
-			return fail(500, { message: 'Failed to update school' });
+			return fail(500, { message: "Failed to update school" });
 		}
 	},
 
@@ -65,10 +65,10 @@ export const actions: Actions = {
 		if (!locals.user) return fail(401);
 
 		const formData = await request.formData();
-		const id = formData.get('id')?.toString();
+		const id = formData.get("id")?.toString();
 
 		if (!id) {
-			return fail(400, { message: 'ID is required' });
+			return fail(400, { message: "ID is required" });
 		}
 
 		try {
@@ -76,7 +76,7 @@ export const actions: Actions = {
 			return { success: true };
 		} catch (err) {
 			console.error(err);
-			return fail(500, { message: 'Failed to delete school' });
+			return fail(500, { message: "Failed to delete school" });
 		}
-	}
+	},
 };

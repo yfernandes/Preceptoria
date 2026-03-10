@@ -1,11 +1,11 @@
-import { error, fail } from '@sveltejs/kit';
-import type { PageServerLoad, Actions } from './$types';
-import * as hospitalService from '$lib/server/db/services/hospitals';
-import * as orgService from '$lib/server/db/services/organizations';
+import { error, fail } from "@sveltejs/kit";
+import * as hospitalService from "$lib/server/db/services/hospitals";
+import * as orgService from "$lib/server/db/services/organizations";
+import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
-		throw error(401, 'Unauthorized');
+		throw error(401, "Unauthorized");
 	}
 
 	// For MVP, OrgAdmin or SysAdmin can manage hospitals
@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	return {
 		hospitals,
-		organizations
+		organizations,
 	};
 };
 
@@ -24,24 +24,24 @@ export const actions: Actions = {
 		if (!locals.user) return fail(401);
 
 		const formData = await request.formData();
-		const name = formData.get('name')?.toString();
-		const address = formData.get('address')?.toString();
-		const organizationId = formData.get('organizationId')?.toString();
+		const name = formData.get("name")?.toString();
+		const address = formData.get("address")?.toString();
+		const organizationId = formData.get("organizationId")?.toString();
 
 		if (!name) {
-			return fail(400, { message: 'Name is required' });
+			return fail(400, { message: "Name is required" });
 		}
 
 		try {
 			await hospitalService.createHospital({
 				name,
 				address,
-				organizationId: organizationId || undefined
+				organizationId: organizationId || undefined,
 			});
 			return { success: true };
 		} catch (err) {
 			console.error(err);
-			return fail(500, { message: 'Failed to create hospital' });
+			return fail(500, { message: "Failed to create hospital" });
 		}
 	},
 
@@ -49,12 +49,12 @@ export const actions: Actions = {
 		if (!locals.user) return fail(401);
 
 		const formData = await request.formData();
-		const id = formData.get('id')?.toString();
-		const name = formData.get('name')?.toString();
-		const address = formData.get('address')?.toString();
+		const id = formData.get("id")?.toString();
+		const name = formData.get("name")?.toString();
+		const address = formData.get("address")?.toString();
 
 		if (!id || !name) {
-			return fail(400, { message: 'ID and Name are required' });
+			return fail(400, { message: "ID and Name are required" });
 		}
 
 		try {
@@ -62,7 +62,7 @@ export const actions: Actions = {
 			return { success: true };
 		} catch (err) {
 			console.error(err);
-			return fail(500, { message: 'Failed to update hospital' });
+			return fail(500, { message: "Failed to update hospital" });
 		}
 	},
 
@@ -70,10 +70,10 @@ export const actions: Actions = {
 		if (!locals.user) return fail(401);
 
 		const formData = await request.formData();
-		const id = formData.get('id')?.toString();
+		const id = formData.get("id")?.toString();
 
 		if (!id) {
-			return fail(400, { message: 'ID is required' });
+			return fail(400, { message: "ID is required" });
 		}
 
 		try {
@@ -81,7 +81,7 @@ export const actions: Actions = {
 			return { success: true };
 		} catch (err) {
 			console.error(err);
-			return fail(500, { message: 'Failed to delete hospital' });
+			return fail(500, { message: "Failed to delete hospital" });
 		}
-	}
+	},
 };
