@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
 	boolean,
 	integer,
@@ -240,3 +241,148 @@ export const internshipPlacements = pgTable("internship_placement", {
 	status: text("status").default("ACTIVE").notNull(), // ACTIVE, COMPLETED, CANCELLED
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+// Relations
+export const userRelations = relations(user, ({ many, one }) => ({
+	student: one(students, { fields: [user.id], references: [students.userId] }),
+	supervisor: one(supervisors, {
+		fields: [user.id],
+		references: [supervisors.userId],
+	}),
+	hospitalManager: one(hospitalManagers, {
+		fields: [user.id],
+		references: [hospitalManagers.userId],
+	}),
+	preceptor: one(preceptors, {
+		fields: [user.id],
+		references: [preceptors.userId],
+	}),
+}));
+
+export const organizationRelations = relations(organizations, ({ many }) => ({
+	hospitals: many(hospitals),
+	schools: many(schools),
+}));
+
+export const hospitalRelations = relations(hospitals, ({ one, many }) => ({
+	organization: one(organizations, {
+		fields: [hospitals.organizationId],
+		references: [organizations.id],
+	}),
+	managers: many(hospitalManagers),
+	preceptors: many(preceptors),
+	shifts: many(shifts),
+	placements: many(internshipPlacements),
+}));
+
+export const schoolRelations = relations(schools, ({ one, many }) => ({
+	organization: one(organizations, {
+		fields: [schools.organizationId],
+		references: [organizations.id],
+	}),
+	courses: many(courses),
+	supervisors: many(supervisors),
+}));
+
+export const courseRelations = relations(courses, ({ one, many }) => ({
+	school: one(schools, {
+		fields: [courses.schoolId],
+		references: [schools.id],
+	}),
+	classes: many(classes),
+}));
+
+export const classRelations = relations(classes, ({ one, many }) => ({
+	course: one(courses, {
+		fields: [classes.courseId],
+		references: [courses.id],
+	}),
+	students: many(students),
+}));
+
+export const studentRelations = relations(students, ({ one, many }) => ({
+	user: one(user, { fields: [students.userId], references: [user.id] }),
+	class: one(classes, { fields: [students.classId], references: [classes.id] }),
+	documents: many(documents),
+	placements: many(internshipPlacements),
+	shifts: many(studentShifts),
+}));
+
+export const supervisorRelations = relations(supervisors, ({ one, many }) => ({
+	user: one(user, { fields: [supervisors.userId], references: [user.id] }),
+	school: one(schools, {
+		fields: [supervisors.schoolId],
+		references: [schools.id],
+	}),
+}));
+
+export const hospitalManagerRelations = relations(
+	hospitalManagers,
+	({ one }) => ({
+		user: one(user, {
+			fields: [hospitalManagers.userId],
+			references: [user.id],
+		}),
+		hospital: one(hospitals, {
+			fields: [hospitalManagers.hospitalId],
+			references: [hospitals.id],
+		}),
+	}),
+);
+
+export const preceptorRelations = relations(preceptors, ({ one, many }) => ({
+	user: one(user, { fields: [preceptors.userId], references: [user.id] }),
+	hospital: one(hospitals, {
+		fields: [preceptors.hospitalId],
+		references: [hospitals.id],
+	}),
+	shifts: many(shifts),
+}));
+
+export const shiftRelations = relations(shifts, ({ one, many }) => ({
+	hospital: one(hospitals, {
+		fields: [shifts.hospitalId],
+		references: [hospitals.id],
+	}),
+	preceptor: one(preceptors, {
+		fields: [shifts.preceptorId],
+		references: [preceptors.id],
+	}),
+	students: many(studentShifts),
+}));
+
+export const studentShiftRelations = relations(studentShifts, ({ one }) => ({
+	student: one(students, {
+		fields: [studentShifts.studentId],
+		references: [students.id],
+	}),
+	shift: one(shifts, {
+		fields: [studentShifts.shiftId],
+		references: [shifts.id],
+	}),
+}));
+
+export const documentRelations = relations(documents, ({ one }) => ({
+	student: one(students, {
+		fields: [documents.studentId],
+		references: [students.id],
+	}),
+	verifier: one(user, {
+		fields: [documents.verifiedBy],
+		references: [user.id],
+	}),
+}));
+
+export const placementRelations = relations(
+	internshipPlacements,
+	({ one }) => ({
+		student: one(students, {
+			fields: [internshipPlacements.studentId],
+			references: [students.id],
+		}),
+		hospital: one(hospitals, {
+			fields: [internshipPlacements.hospitalId],
+			references: [hospitals.id],
+		}),
+	}),
+);

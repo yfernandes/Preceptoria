@@ -1,16 +1,9 @@
-import { and, eq } from "drizzle-orm";
-import { db } from "$lib/server/db";
-import { documents } from "$lib/server/db/schema";
+import { db } from '$lib/server/db';
+import { documents } from '$lib/server/db/schema';
+import { eq, and } from 'drizzle-orm';
 
-export type DocumentType =
-	| "PROFESSIONAL_ID"
-	| "VACCINATION_CARD"
-	| "COMMITMENT_CONTRACT"
-	| "ADMISSION_FORM"
-	| "BADGE_PICTURE"
-	| "INSURANCE_DOCUMENTATION"
-	| "OTHER";
-export type DocumentStatus = "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED";
+export type DocumentType = 'PROFESSIONAL_ID' | 'VACCINATION_CARD' | 'COMMITMENT_CONTRACT' | 'ADMISSION_FORM' | 'BADGE_PICTURE' | 'INSURANCE_DOCUMENTATION' | 'OTHER';
+export type DocumentStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'EXPIRED';
 
 export async function createDocument(data: {
 	studentId: string;
@@ -26,33 +19,39 @@ export async function createDocument(data: {
 }
 
 export async function getDocumentById(id: string) {
-	const [result] = await db
-		.select()
-		.from(documents)
-		.where(eq(documents.id, id));
-	return result;
+	return await db.query.documents.findFirst({
+		where: eq(documents.id, id),
+		with: {
+			student: {
+				with: {
+					user: true
+				}
+			}
+		}
+	});
 }
 
 export async function listDocumentsByStudent(studentId: string) {
-	return await db
-		.select()
-		.from(documents)
-		.where(eq(documents.studentId, studentId));
+	return await db.query.documents.findMany({
+		where: eq(documents.studentId, studentId),
+		with: {
+			student: {
+				with: {
+					user: true
+				}
+			}
+		}
+	});
 }
 
-export async function updateDocumentStatus(
-	id: string,
-	status: DocumentStatus,
-	verifiedBy: string,
-	rejectionReason?: string,
-) {
+export async function updateDocumentStatus(id: string, status: DocumentStatus, verifiedBy: string, rejectionReason?: string) {
 	const [result] = await db
 		.update(documents)
 		.set({
 			status,
 			verifiedBy,
 			verifiedAt: new Date(),
-			rejectionReason,
+			rejectionReason
 		})
 		.where(eq(documents.id, id))
 		.returning();
@@ -60,9 +59,6 @@ export async function updateDocumentStatus(
 }
 
 export async function deleteDocument(id: string) {
-	const [result] = await db
-		.delete(documents)
-		.where(eq(documents.id, id))
-		.returning();
+	const [result] = await db.delete(documents).where(eq(documents.id, id)).returning();
 	return result;
 }

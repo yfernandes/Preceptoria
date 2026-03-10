@@ -13,18 +13,28 @@ export async function createClass(data: {
 }
 
 export async function getClassById(id: string) {
-	const [result] = await db.select().from(classes).where(eq(classes.id, id));
-	return result;
+	return await db.query.classes.findFirst({
+		where: eq(classes.id, id),
+		with: {
+			course: true,
+		},
+	});
 }
 
 export async function listClasses(courseId?: string) {
 	if (courseId) {
-		return await db
-			.select()
-			.from(classes)
-			.where(eq(classes.courseId, courseId));
+		return await db.query.classes.findMany({
+			where: eq(classes.courseId, courseId),
+			with: {
+				course: true,
+			},
+		});
 	}
-	return await db.select().from(classes);
+	return await db.query.classes.findMany({
+		with: {
+			course: true,
+		},
+	});
 }
 
 export async function updateClass(
