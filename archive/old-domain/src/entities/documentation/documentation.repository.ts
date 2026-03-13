@@ -1,9 +1,9 @@
-import { EntityRepository } from "@mikro-orm/sqlite";
-import { Documentation } from "./documentation.entity.js";
-import { Student } from "../student/student.entity.js";
-import { Submission } from "../submission/submission.entity.js";
-import { Document } from "../document/document.entity.js";
-import { DocumentType } from "../document/document.interface.js";
+import { EntityRepository } from "@mikro-orm/sqlite"
+import { Document } from "../document/document.entity.js"
+import { DocumentType } from "../document/document.interface.js"
+import type { Student } from "../student/student.entity.js"
+import type { Submission } from "../submission/submission.entity.js"
+import { Documentation } from "./documentation.entity.js"
 
 export class DocumentationRepository extends EntityRepository<Documentation> {
 	static createDocumentationFromSubmission(
@@ -11,11 +11,11 @@ export class DocumentationRepository extends EntityRepository<Documentation> {
 		submission: Submission
 	): Documentation {
 		// Create a new documentation based on the submission
-		const documentation = new Documentation(submission.timestamp, student.documentations.length);
+		const documentation = new Documentation(submission.timestamp, student.documentations.length)
 
 		// Initialize the documents and add them to the documentation
-		const entryIndex = student.documentations.length;
-		const crefito = student.crefito;
+		const entryIndex = student.documentations.length
+		const crefito = student.crefito
 
 		// Create documents from the submission
 		const documents = [
@@ -95,10 +95,10 @@ export class DocumentationRepository extends EntityRepository<Documentation> {
 						crefito
 					)
 				: undefined,
-		].filter((doc): doc is Document => doc !== undefined); // Filter out undefined
+		].filter((doc): doc is Document => doc !== undefined) // Filter out undefined
 		// Apply documents to the Documentation entity
-		documentation.includeDocuments(documents);
+		documentation.includeDocuments(documents)
 
-		return documentation;
+		return documentation
 	}
 }

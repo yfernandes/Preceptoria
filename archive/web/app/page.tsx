@@ -1,5 +1,5 @@
-import { GraduationCap, FileText, Calendar, Shield } from "lucide-react";
-import Link from "next/link";
+import { Calendar, FileText, GraduationCap, Shield } from "lucide-react"
+import Link from "next/link"
 
 export default function Home() {
 	return (
@@ -115,5 +115,5 @@ export default function Home() {
 				</div>
 			</footer>
 		</div>
-	);
+	)
 }

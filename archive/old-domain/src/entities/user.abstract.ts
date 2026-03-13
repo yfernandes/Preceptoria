@@ -1,5 +1,5 @@
-import { Property } from "@mikro-orm/sqlite";
-import { BaseEntity } from "./entities";
+import { Property } from "@mikro-orm/sqlite"
+import { BaseEntity } from "./entities"
 
 export enum UserRole {
 	Admin = "admin",
@@ -10,22 +10,22 @@ export enum UserRole {
 
 export abstract class User extends BaseEntity {
 	@Property()
-	fullName: string;
+	fullName: string
 
 	@Property()
-	role: UserRole;
+	role: UserRole
 
 	@Property()
-	cpf: string;
+	cpf: string
 
 	@Property()
-	phone: string;
+	phone: string
 
 	@Property()
-	email: string;
+	email: string
 
 	@Property()
-	password?: string;
+	password?: string
 
 	constructor(
 		fullName: string,
@@ -35,13 +35,13 @@ export abstract class User extends BaseEntity {
 		email: string,
 		password?: string
 	) {
-		super();
-		this.fullName = fullName;
-		this.role = role;
-		this.cpf = cpf;
-		this.phone = phone;
-		this.email = email;
-		this.password = password;
+		super()
+		this.fullName = fullName
+		this.role = role
+		this.cpf = cpf
+		this.phone = phone
+		this.email = email
+		this.password = password
 	}
 }
 

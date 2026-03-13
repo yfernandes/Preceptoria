@@ -1,19 +1,14 @@
-import { and, eq, sql } from "drizzle-orm";
-import { db } from "$lib/server/db";
+import { and, eq } from "drizzle-orm"
+import { db } from "$lib/server/db"
 import {
 	classes,
-	courses,
 	documents,
 	hospitalManagers,
-	hospitals,
 	internshipPlacements,
-	organizations,
-	preceptors,
 	shifts,
 	students,
 	supervisors,
-	user,
-} from "$lib/server/db/schema";
+} from "$lib/server/db/schema"
 
 export enum Resource {
 	Hospital = "Hospital",
@@ -51,23 +46,23 @@ export enum Modifiers {
 	Bundle = "Bundle",
 }
 
-type Perm = `${Resource}:${Actions}_${Modifiers}` | "*:*:*";
+type Perm = `${Resource}:${Actions}_${Modifiers}` | "*:*:*"
 
 const crud = (resource: Resource, modifier: Modifiers): Perm[] => [
 	`${resource}:Create_${modifier}`,
 	`${resource}:Read_${modifier}`,
 	`${resource}:Update_${modifier}`,
 	`${resource}:Delete_${modifier}`,
-];
+]
 
 const readOnly = (resource: Resource, modifier: Modifiers): Perm[] => [
 	`${resource}:Read_${modifier}`,
-];
+]
 
 const readUpdate = (resource: Resource, modifier: Modifiers): Perm[] => [
 	`${resource}:Read_${modifier}`,
 	`${resource}:Update_${modifier}`,
-];
+]
 
 export const rolesPermissions: Record<string, Perm[]> = {
 	SysAdmin: ["*:*:*", ...crud(Resource.OrgAdmin, Modifiers.Managed)],
@@ -122,9 +117,12 @@ export const rolesPermissions: Record<string, Perm[]> = {
 		...readOnly(Resource.Hospital, Modifiers.Basic),
 		...readOnly(Resource.Student, Modifiers.Class),
 	],
-};
+}
 
-type OwnershipResolver = (user: any, resourceId: string) => Promise<boolean> | boolean;
+type OwnershipResolver = (
+	user: { id: string; role: string },
+	resourceId: string
+) => Promise<boolean> | boolean
 
 const resolvers: Record<
 	string,
@@ -132,152 +130,152 @@ const resolvers: Record<
 > = {
 	SysAdmin: {},
 	OrgAdmin: {
-		Document: { Managed: (user: any, resourceId: string) => true },
-		Student: { Managed: (user: any, resourceId: string) => true },
-		Hospital: { Managed: (user: any, resourceId: string) => true },
-		School: { Managed: (user: any, resourceId: string) => true },
-		Course: { Managed: (user: any, resourceId: string) => true },
-		Classes: { Managed: (user: any, resourceId: string) => true },
+		Document: { Managed: (_user, _resourceId) => true },
+		Student: { Managed: (_user, _resourceId) => true },
+		Hospital: { Managed: (_user, _resourceId) => true },
+		School: { Managed: (_user, _resourceId) => true },
+		Course: { Managed: (_user, _resourceId) => true },
+		Classes: { Managed: (_user, _resourceId) => true },
 	},
 	HospitalManager: {
 		Student: {
-			Own: async (user: any, resourceId: string) => {
+			Own: async (user, resourceId) => {
 				const mgr = await db.query.hospitalManagers.findFirst({
 					where: eq(hospitalManagers.userId, user.id),
-				});
-				if (!mgr) return false;
+				})
+				if (!mgr) return false
 				const placement = await db.query.internshipPlacements.findFirst({
 					where: and(
 						eq(internshipPlacements.studentId, resourceId),
 						eq(internshipPlacements.hospitalId, mgr.hospitalId)
 					),
-				});
-				return !!placement;
+				})
+				return !!placement
 			},
 		},
 		Shift: {
-			Own: async (user: any, resourceId: string) => {
+			Own: async (user, resourceId) => {
 				const mgr = await db.query.hospitalManagers.findFirst({
 					where: eq(hospitalManagers.userId, user.id),
-				});
-				if (!mgr) return false;
+				})
+				if (!mgr) return false
 				const s = await db.query.shifts.findFirst({
 					where: eq(shifts.id, resourceId),
-				});
-				return s?.hospitalId === mgr.hospitalId;
+				})
+				return s?.hospitalId === mgr.hospitalId
 			},
 		},
-		Document: { Managed: (user: any, resourceId: string) => true },
-		Classes: { Managed: (user: any, resourceId: string) => true },
+		Document: { Managed: (_user, _resourceId) => true },
+		Classes: { Managed: (_user, _resourceId) => true },
 	},
 	Supervisor: {
 		Student: {
-			Own: async (user: any, resourceId: string) => {
+			Own: async (user, resourceId) => {
 				const sup = await db.query.supervisors.findFirst({
 					where: eq(supervisors.userId, user.id),
-				});
-				if (!sup) return false;
+				})
+				if (!sup) return false
 				const studentEntry = await db.query.students.findFirst({
 					where: eq(students.id, resourceId),
 					with: { class: true },
-				});
-				return studentEntry?.class.supervisorId === sup.id;
+				})
+				return studentEntry?.class.supervisorId === sup.id
 			},
-			Class: async (user: any, resourceId: string) => {
+			Class: async (user, resourceId) => {
 				const sup = await db.query.supervisors.findFirst({
 					where: eq(supervisors.userId, user.id),
-				});
-				if (!sup) return false;
+				})
+				if (!sup) return false
 				const studentEntry = await db.query.students.findFirst({
 					where: eq(students.id, resourceId),
 					with: { class: true },
-				});
-				return studentEntry?.class.supervisorId === sup.id;
+				})
+				return studentEntry?.class.supervisorId === sup.id
 			},
 		},
 		Document: {
-			Students: async (user: any, resourceId: string) => {
+			Students: async (user, resourceId) => {
 				const sup = await db.query.supervisors.findFirst({
 					where: eq(supervisors.userId, user.id),
-				});
-				if (!sup) return false;
+				})
+				if (!sup) return false
 				const doc = await db.query.documents.findFirst({
 					where: eq(documents.id, resourceId),
 					with: { student: { with: { class: true } } },
-				});
-				return doc?.student.class.supervisorId === sup.id;
+				})
+				return doc?.student.class.supervisorId === sup.id
 			},
 		},
 		Shift: {
-			Assigned: async (user: any, studentId: string) => {
+			Assigned: async (_user, studentId) => {
 				const studentDocs = await db.query.documents.findMany({
 					where: eq(documents.studentId, studentId),
-				});
+				})
 				const allApproved =
-					studentDocs.length > 0 && studentDocs.every((d) => d.status === "APPROVED");
-				return allApproved;
+					studentDocs.length > 0 && studentDocs.every((d) => d.status === "APPROVED")
+				return allApproved
 			},
 		},
 		Classes: {
-			Own: async (user: any, resourceId: string) => {
+			Own: async (user, resourceId) => {
 				const sup = await db.query.supervisors.findFirst({
 					where: eq(supervisors.userId, user.id),
-				});
-				if (!sup) return false;
+				})
+				if (!sup) return false
 				const c = await db.query.classes.findFirst({
 					where: eq(classes.id, resourceId),
-				});
-				return c?.supervisorId === sup.id;
+				})
+				return c?.supervisorId === sup.id
 			},
 		},
 	},
 	Student: {
 		Document: {
-			Own: async (user: any, resourceId: string) => {
+			Own: async (user, resourceId) => {
 				const studentEntry = await db.query.students.findFirst({
 					where: eq(students.userId, user.id),
 					with: { class: true },
-				});
-				if (!studentEntry) return false;
-				if (studentEntry.class.status === "COMPLETED") return false;
+				})
+				if (!studentEntry) return false
+				if (studentEntry.class.status === "COMPLETED") return false
 				const doc = await db.query.documents.findFirst({
 					where: eq(documents.id, resourceId),
-				});
-				return doc?.studentId === studentEntry.id;
+				})
+				return doc?.studentId === studentEntry.id
 			},
 		},
 		Student: {
-			Own: async (user: any, resourceId: string) => {
+			Own: async (user, resourceId) => {
 				const studentEntry = await db.query.students.findFirst({
 					where: eq(students.userId, user.id),
-				});
-				return studentEntry?.id === resourceId;
+				})
+				return studentEntry?.id === resourceId
 			},
-			Class: async (user: any, resourceId: string) => {
+			Class: async (user, resourceId) => {
 				const studentEntry = await db.query.students.findFirst({
 					where: eq(students.userId, user.id),
-				});
-				if (!studentEntry) return false;
+				})
+				if (!studentEntry) return false
 				const otherStudent = await db.query.students.findFirst({
 					where: eq(students.id, resourceId),
-				});
-				return studentEntry.classId === otherStudent?.classId;
+				})
+				return studentEntry.classId === otherStudent?.classId
 			},
 		},
 	},
-};
+}
 
 export async function hasPermission(
-	user: any,
+	user: { id: string; role: string },
 	resource: Resource,
 	action: Actions,
 	resourceId: string = ""
 ): Promise<boolean> {
-	if (!user || !user.role) return false;
+	if (!user || !user.role) return false
 
-	const permissions = rolesPermissions[user.role] || [];
+	const permissions = rolesPermissions[user.role] || []
 
-	if (permissions.includes("*:*:*")) return true;
+	if (permissions.includes("*:*:*")) return true
 
 	const modifiers = [
 		Modifiers.Own,
@@ -287,25 +285,25 @@ export async function hasPermission(
 		Modifiers.Basic,
 		Modifiers.Class,
 		Modifiers.Bundle,
-	];
+	]
 
 	for (const modifier of modifiers) {
 		if (permissions.includes(`${resource}:${action}_${modifier}`)) {
-			const resolver = resolvers[user.role]?.[resource]?.[modifier];
+			const resolver = resolvers[user.role]?.[resource]?.[modifier]
 			if (!resolver) {
 				// But let's be strict for core modifiers
 				if (
 					[Modifiers.Own, Modifiers.Managed, Modifiers.Students, Modifiers.Class].includes(modifier)
 				) {
-					return false;
+					return false
 				}
-				return true;
+				return true
 			}
 			if (await resolver(user, resourceId)) {
-				return true;
+				return true
 			}
 		}
 	}
 
-	return false;
+	return false
 }

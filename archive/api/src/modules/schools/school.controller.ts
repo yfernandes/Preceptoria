@@ -1,11 +1,11 @@
-import Elysia, { status as error, t } from "elysia";
-import { School } from "./";
-import { db } from "@api/db";
-import { hasPermission } from "@api/utils/hasPermissions";
-import { Actions, Resource } from "@api/utils/permissions";
-import { UserRoles } from "@api/modules/common";
-import { FilterQuery } from "@mikro-orm/postgresql";
-import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
+import { db } from "@api/db"
+import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware"
+import { UserRoles } from "@api/modules/common"
+import { hasPermission } from "@api/utils/hasPermissions"
+import { Actions, Resource } from "@api/utils/permissions"
+import type { FilterQuery } from "@mikro-orm/postgresql"
+import Elysia, { status as error, t } from "elysia"
+import { School } from "./"
 
 // DTOs for request validation
 const createSchoolDto = {
@@ -15,7 +15,7 @@ const createSchoolDto = {
 		email: t.String(),
 		phone: t.String(),
 	}),
-};
+}
 
 const updateSchoolDto = {
 	body: t.Object({
@@ -24,7 +24,7 @@ const updateSchoolDto = {
 		email: t.Optional(t.String()),
 		phone: t.Optional(t.String()),
 	}),
-};
+}
 
 export const schoolController = new Elysia({ prefix: "/schools" })
 	.use(authenticatedUserMiddleware)
@@ -35,66 +35,61 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 		async ({ body: { name, address, email, phone }, requester }) => {
 			try {
 				// Check permissions for creating schools
-				const hasAccess = await hasPermission(
-					requester,
-					Resource.School,
-					Actions.Create,
-					""
-				);
+				const hasAccess = await hasPermission(requester, Resource.School, Actions.Create, "")
 
 				if (!hasAccess) {
 					return error(403, {
 						success: false,
 						message: "You don't have permission to create schools",
-					});
+					})
 				}
 
 				// Validate email format
-				const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+				const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 				if (!emailRegex.test(email)) {
 					return error(400, {
 						success: false,
 						message: "Invalid email format",
-					});
+					})
 				}
 
 				// Validate phone format (Brazilian format)
-				const phoneRegex = /^\+55\s?\(\d{2}\)\s?\d{4,5}-?\d{4}$/;
+				const phoneRegex = /^\+55\s?\(\d{2}\)\s?\d{4,5}-?\d{4}$/
 				if (!phoneRegex.test(phone)) {
 					return error(400, {
 						success: false,
 						message: "Invalid phone format. Expected: +55 (XX) XXXXX-XXXX",
-					});
+					})
 				}
 
 				// Check if school with same name already exists
-				const existingSchool = await db.school.findOne({ name });
+				const existingSchool = await db.school.findOne({ name })
 				if (existingSchool) {
 					return error(400, {
 						success: false,
 						message: "A school with this name already exists",
-					});
+					})
 				}
 
 				// Create new school
-				const newSchool = new School(name, address, email, phone);
+				const newSchool = new School(name, address, email, phone)
 
-				await db.em.persistAndFlush(newSchool);
+				await db.em.persistAndFlush(newSchool)
 
 				// Return created school with populated relationships
 				const createdSchool = await db.school.findOne(
 					{ id: newSchool.id },
 					{ populate: ["orgAdmin", "courses", "supervisors"] }
-				);
+				)
 
 				return {
 					success: true,
 					data: createdSchool,
 					message: "School created successfully",
-				};
+				}
 			} catch (err) {
-				console.error("Error creating school:", err);
-				return error(500, { success: false, message: "Internal server error" });
+				console.error("Error creating school:", err)
+				return error(500, { success: false, message: "Internal server error" })
 			}
 		},
 		createSchoolDto
@@ -103,14 +98,14 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 	// Get all schools (with optional filtering)
 	.get("/", async ({ requester, query }) => {
 		try {
-			const { name, limit = 10, offset = 0 } = query;
+			const { name, limit = 10, offset = 0 } = query
 
 			// Build filter based on user permissions and role
-			const filter: FilterQuery<School> = {};
+			const filter: FilterQuery<School> = {}
 
 			// Apply query filters
 			if (name) {
-				filter.name = { $ilike: `%${name}%` };
+				filter.name = { $ilike: `%${name}%` }
 			}
 
 			// Apply role-based filtering for data isolation
@@ -134,23 +129,18 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 			// Get schools with pagination
 			const schools = await db.school.find(filter, {
 				populate: ["orgAdmin", "courses", "supervisors"],
-				limit: parseInt(limit as string),
-				offset: parseInt(offset as string),
+				limit: parseInt(limit as string, 10),
+				offset: parseInt(offset as string, 10),
 				orderBy: { createdAt: "DESC" },
-			});
+			})
 
 			// Filter schools based on permissions
-			const accessibleSchools = [];
+			const accessibleSchools = []
 			for (const school of schools) {
-				const hasAccess = await hasPermission(
-					requester,
-					Resource.School,
-					Actions.Read,
-					school.id
-				);
+				const hasAccess = await hasPermission(requester, Resource.School, Actions.Read, school.id)
 
 				if (hasAccess) {
-					accessibleSchools.push(school);
+					accessibleSchools.push(school)
 				}
 			}
 
@@ -159,14 +149,14 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 				data: accessibleSchools,
 				pagination: {
 					total: accessibleSchools.length,
-					limit: parseInt(limit as string),
-					offset: parseInt(offset as string),
-					hasMore: accessibleSchools.length === parseInt(limit as string),
+					limit: parseInt(limit as string, 10),
+					offset: parseInt(offset as string, 10),
+					hasMore: accessibleSchools.length === parseInt(limit as string, 10),
 				},
-			};
+			}
 		} catch (err) {
-			console.error("Error fetching schools:", err);
-			return error(500, { success: false, message: "Internal server error" });
+			console.error("Error fetching schools:", err)
+			return error(500, { success: false, message: "Internal server error" })
 		}
 	})
 
@@ -174,18 +164,13 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 	.get("/:id", async ({ params: { id }, requester }) => {
 		try {
 			// Check permissions for reading this specific school
-			const hasAccess = await hasPermission(
-				requester,
-				Resource.School,
-				Actions.Read,
-				id
-			);
+			const hasAccess = await hasPermission(requester, Resource.School, Actions.Read, id)
 
 			if (!hasAccess) {
 				return error(403, {
 					success: false,
 					message: "You don't have permission to view this school",
-				});
+				})
 			}
 
 			// Find school by ID with populated relationships
@@ -201,22 +186,22 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 						"supervisors.user",
 					],
 				}
-			);
+			)
 
 			if (!school) {
 				return error(404, {
 					success: false,
 					message: "School not found",
-				});
+				})
 			}
 
 			return {
 				success: true,
 				data: school,
-			};
+			}
 		} catch (err) {
-			console.error("Error fetching school:", err);
-			return error(500, { success: false, message: "Internal server error" });
+			console.error("Error fetching school:", err)
+			return error(500, { success: false, message: "Internal server error" })
 		}
 	})
 
@@ -226,95 +211,90 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 		async ({ params: { id }, body, requester }) => {
 			try {
 				// Check permissions for updating this school
-				const hasAccess = await hasPermission(
-					requester,
-					Resource.School,
-					Actions.Update,
-					id
-				);
+				const hasAccess = await hasPermission(requester, Resource.School, Actions.Update, id)
 
 				if (!hasAccess) {
 					return error(403, {
 						success: false,
 						message: "You don't have permission to update this school",
-					});
+					})
 				}
 
 				// Find school by ID
-				const school = await db.school.findOne({ id });
+				const school = await db.school.findOne({ id })
 				if (!school) {
 					return error(404, {
 						success: false,
 						message: "School not found",
-					});
+					})
 				}
 
 				// Validate email format if being updated
 				if (body.email) {
-					const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+					const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 					if (!emailRegex.test(body.email)) {
 						return error(400, {
 							success: false,
 							message: "Invalid email format",
-						});
+						})
 					}
 				}
 
 				// Validate phone format if being updated
 				if (body.phone) {
-					const phoneRegex = /^\+55\s?\(\d{2}\)\s?\d{4,5}-?\d{4}$/;
+					const phoneRegex = /^\+55\s?\(\d{2}\)\s?\d{4,5}-?\d{4}$/
 					if (!phoneRegex.test(body.phone)) {
 						return error(400, {
 							success: false,
 							message: "Invalid phone format. Expected: +55 (XX) XXXXX-XXXX",
-						});
+						})
 					}
 				}
 
 				// Check if school name is being changed and if it conflicts with existing school
 				if (body.name && body.name !== school.name) {
-					const existingSchool = await db.school.findOne({ name: body.name });
+					const existingSchool = await db.school.findOne({ name: body.name })
 					if (existingSchool) {
 						return error(400, {
 							success: false,
 							message: "A school with this name already exists",
-						});
+						})
 					}
 				}
 
 				// Update school properties
 				if (body.name) {
-					school.name = body.name;
+					school.name = body.name
 				}
 
 				if (body.address) {
-					school.address = body.address;
+					school.address = body.address
 				}
 
 				if (body.email) {
-					school.email = body.email;
+					school.email = body.email
 				}
 
 				if (body.phone) {
-					school.phone = body.phone;
+					school.phone = body.phone
 				}
 
-				await db.em.persistAndFlush(school);
+				await db.em.persistAndFlush(school)
 
 				// Return updated school with populated relationships
 				const updatedSchool = await db.school.findOne(
 					{ id },
 					{ populate: ["orgAdmin", "courses", "supervisors"] }
-				);
+				)
 
 				return {
 					success: true,
 					data: updatedSchool,
 					message: "School updated successfully",
-				};
+				}
 			} catch (err) {
-				console.error("Error updating school:", err);
-				return error(500, { success: false, message: "Internal server error" });
+				console.error("Error updating school:", err)
+				return error(500, { success: false, message: "Internal server error" })
 			}
 		},
 		updateSchoolDto
@@ -324,31 +304,26 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 	.delete("/:id", async ({ params: { id }, requester }) => {
 		try {
 			// Check permissions for deleting this school
-			const hasAccess = await hasPermission(
-				requester,
-				Resource.School,
-				Actions.Delete,
-				id
-			);
+			const hasAccess = await hasPermission(requester, Resource.School, Actions.Delete, id)
 
 			if (!hasAccess) {
 				return error(403, {
 					success: false,
 					message: "You don't have permission to delete this school",
-				});
+				})
 			}
 
 			// Find school by ID with courses and supervisors
 			const school = await db.school.findOne(
 				{ id },
 				{ populate: ["courses", "supervisors", "orgAdmin"] }
-			);
+			)
 
 			if (!school) {
 				return error(404, {
 					success: false,
 					message: "School not found",
-				});
+				})
 			}
 
 			// Check if school has courses (prevent deletion if occupied)
@@ -357,7 +332,7 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 					success: false,
 					message:
 						"Cannot delete school that has courses. Please remove or reassign courses first.",
-				});
+				})
 			}
 
 			// Check if school has supervisors (prevent deletion if occupied)
@@ -366,7 +341,7 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 					success: false,
 					message:
 						"Cannot delete school that has supervisors. Please remove or reassign supervisors first.",
-				});
+				})
 			}
 
 			// Check if school has org admins (prevent deletion if occupied)
@@ -375,18 +350,18 @@ export const schoolController = new Elysia({ prefix: "/schools" })
 					success: false,
 					message:
 						"Cannot delete school that has org admins. Please remove or reassign org admins first.",
-				});
+				})
 			}
 
 			// Delete school
-			await db.em.removeAndFlush(school);
+			await db.em.removeAndFlush(school)
 
 			return {
 				success: true,
 				message: "School deleted successfully",
-			};
+			}
 		} catch (err) {
-			console.error("Error deleting school:", err);
-			return error(500, { success: false, message: "Internal server error" });
+			console.error("Error deleting school:", err)
+			return error(500, { success: false, message: "Internal server error" })
 		}
-	});
+	})

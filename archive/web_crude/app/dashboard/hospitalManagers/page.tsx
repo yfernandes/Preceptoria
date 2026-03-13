@@ -1,61 +1,58 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { treatise } from "lib/eden";
-import { HospitalManager } from "@api/modules/hospitalManagers/hospitalManager.entity";
-import { useRouter } from "next/navigation";
+import type { HospitalManager } from "@api/modules/hospitalManagers/hospitalManager.entity"
+import { treatise } from "lib/eden"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 interface HospitalManagersResponse {
-	success: boolean;
-	data: HospitalManager[];
+	success: boolean
+	data: HospitalManager[]
 	pagination: {
-		total: number;
-		limit: number;
-		offset: number;
-		hasMore: boolean;
-	};
+		total: number
+		limit: number
+		offset: number
+		hasMore: boolean
+	}
 }
 
 export default function CoursesPage() {
-	const router = useRouter();
-	const [data, setData] = useState<HospitalManagersResponse | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const router = useRouter()
+	const [data, setData] = useState<HospitalManagersResponse | null>(null)
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
 		const fetchHospitalManagers = async () => {
 			try {
-				setLoading(true);
-				setError(null);
+				setLoading(true)
+				setError(null)
 
 				const response = await treatise.classes.get({
 					query: {
 						limit: 10,
 						offset: 0,
 					},
-				});
+				})
 
-				console.log(response.data);
+				console.log(response.data)
 
-				const result = response.data;
-				setData(result);
+				const result = response.data
+				setData(result)
 			} catch (err: any) {
 				// If unauthorized, redirect to login
-				if (
-					err?.response?.status === 401 ||
-					err?.message?.toLowerCase().includes("unauthorized")
-				) {
-					router.push("/login");
-					return;
+				if (err?.response?.status === 401 || err?.message?.toLowerCase().includes("unauthorized")) {
+					router.push("/login")
+					return
 				}
-				setError(err instanceof Error ? err.message : "Unknown error");
+				setError(err instanceof Error ? err.message : "Unknown error")
 			} finally {
-				setLoading(false);
+				setLoading(false)
 			}
-		};
+		}
 
-		fetchHospitalManagers();
-	}, [router]);
+		fetchHospitalManagers()
+	}, [router])
 
 	if (loading) {
 		return (
@@ -63,7 +60,7 @@ export default function CoursesPage() {
 				<h1 className="mb-4 text-2xl font-bold">Hospital Managers</h1>
 				<p>Loading...</p>
 			</div>
-		);
+		)
 	}
 
 	if (error) {
@@ -74,7 +71,7 @@ export default function CoursesPage() {
 					<strong>Error:</strong> {error}
 				</div>
 			</div>
-		);
+		)
 	}
 
 	if (!data || !data.success) {
@@ -85,7 +82,7 @@ export default function CoursesPage() {
 					<strong>No data available</strong>
 				</div>
 			</div>
-		);
+		)
 	}
 
 	return (
@@ -110,9 +107,7 @@ export default function CoursesPage() {
 								<p className="text-sm text-gray-600">
 									Hospital: {hospitalManagerItem.hospital.name}
 								</p>
-								<p className="text-xs text-gray-500">
-									ID: {hospitalManagerItem.id}
-								</p>
+								<p className="text-xs text-gray-500">ID: {hospitalManagerItem.id}</p>
 							</div>
 							<div className="text-right">
 								<div className="text-2xl font-bold text-blue-600">
@@ -126,10 +121,8 @@ export default function CoursesPage() {
 			</div>
 
 			{data.data.length === 0 && (
-				<div className="py-8 text-center text-gray-500">
-					No hospital managers found
-				</div>
+				<div className="py-8 text-center text-gray-500">No hospital managers found</div>
 			)}
 		</div>
-	);
+	)
 }

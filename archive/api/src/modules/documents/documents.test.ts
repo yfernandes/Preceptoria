@@ -1,4 +1,4 @@
-import { describe, it } from "bun:test";
+import { describe, it } from "bun:test"
 
 describe.todo("Document Controller", () => {
 	describe.todo("approveDocument", () => {
@@ -12,7 +12,7 @@ describe.todo("Document Controller", () => {
 			// - Optional notes are stored with the approval
 			// - Success response is returned with appropriate message
 			// Why: Document approval is a critical workflow that requires proper authorization and audit trail
-		});
+		})
 
 		it("should reject approval when document cannot be verified", async () => {
 			// TODO: Test document approval rejection when verification fails
@@ -23,7 +23,7 @@ describe.todo("Document Controller", () => {
 			// - No approval record is created
 			// - User receives appropriate feedback
 			// Why: Prevents approval of invalid or incomplete documents
-		});
+		})
 
 		it("should handle document not found", async () => {
 			// TODO: Test document approval with non-existent document
@@ -33,7 +33,7 @@ describe.todo("Document Controller", () => {
 			// - No database operations are performed
 			// - Response includes appropriate error status
 			// Why: Proper error handling prevents system crashes and provides clear user feedback
-		});
+		})
 
 		it("should handle user not found", async () => {
 			// TODO: Test document approval with non-existent user
@@ -43,7 +43,7 @@ describe.todo("Document Controller", () => {
 			// - No approval operation is performed
 			// - Database integrity is maintained
 			// Why: Prevents orphaned approval records and maintains data consistency
-		});
+		})
 
 		it("should handle insufficient permissions", async () => {
 			// TODO: Test document approval with insufficient user permissions
@@ -53,7 +53,7 @@ describe.todo("Document Controller", () => {
 			// - Document status remains unchanged
 			// - Audit log records the unauthorized attempt
 			// Why: Authorization is critical for document workflow security
-		});
+		})
 
 		it("should handle already approved documents", async () => {
 			// TODO: Test approval of already approved documents
@@ -63,7 +63,7 @@ describe.todo("Document Controller", () => {
 			// - No duplicate approval records are created
 			// - Original approval information is preserved
 			// Why: Prevents duplicate approvals and maintains data integrity
-		});
+		})
 
 		it("should handle expired documents", async () => {
 			// TODO: Test approval of expired documents
@@ -73,8 +73,8 @@ describe.todo("Document Controller", () => {
 			// - Document status remains unchanged
 			// - User is informed about document renewal requirements
 			// Why: Expired documents should not be approved as they may not be valid
-		});
-	});
+		})
+	})
 
 	describe.todo("rejectDocument", () => {
 		it("should reject a document when user has permission", async () => {
@@ -86,7 +86,7 @@ describe.todo("Document Controller", () => {
 			// - Rejection timestamp, user, and reason are recorded
 			// - Success response is returned with appropriate message
 			// Why: Document rejection is part of the quality control workflow
-		});
+		})
 
 		it("should handle rejection of already rejected documents", async () => {
 			// TODO: Test rejection of already rejected documents
@@ -96,7 +96,7 @@ describe.todo("Document Controller", () => {
 			// - No duplicate rejection records are created
 			// - Original rejection information is preserved
 			// Why: Prevents duplicate rejections and maintains data integrity
-		});
+		})
 
 		it("should require rejection reason", async () => {
 			// TODO: Test document rejection without reason
@@ -106,8 +106,8 @@ describe.todo("Document Controller", () => {
 			// - Document status remains unchanged
 			// - No rejection record is created
 			// Why: Rejection reasons are important for user feedback and process improvement
-		});
-	});
+		})
+	})
 
 	describe.todo("getDocumentStatus", () => {
 		it("should return document status and validity", async () => {
@@ -119,7 +119,7 @@ describe.todo("Document Controller", () => {
 			// - Response includes all necessary status information
 			// - Performance is acceptable for status checks
 			// Why: Document status is critical for workflow decisions and user information
-		});
+		})
 
 		it("should handle non-existent document status request", async () => {
 			// TODO: Test status request for non-existent document
@@ -129,7 +129,7 @@ describe.todo("Document Controller", () => {
 			// - No database queries are performed unnecessarily
 			// - Response includes appropriate error status
 			// Why: Proper error handling prevents system crashes
-		});
+		})
 
 		it("should return detailed status information", async () => {
 			// TODO: Test comprehensive document status information
@@ -140,8 +140,8 @@ describe.todo("Document Controller", () => {
 			// - Current workflow state and next steps
 			// - Any pending actions or requirements
 			// Why: Detailed status information helps users understand document state
-		});
-	});
+		})
+	})
 
 	describe.todo("uploadDocument", () => {
 		it("should upload document with valid data", async () => {
@@ -153,7 +153,7 @@ describe.todo("Document Controller", () => {
 			// - File validation (size, type, content) passes
 			// - Success response includes document ID and status
 			// Why: Document upload is the entry point of the document workflow
-		});
+		})
 
 		it("should validate file type and size", async () => {
 			// TODO: Test document upload with invalid file properties
@@ -163,7 +163,7 @@ describe.todo("Document Controller", () => {
 			// - Clear error messages explain validation failures
 			// - No partial uploads are saved
 			// Why: File validation prevents storage of invalid or malicious files
-		});
+		})
 
 		it("should handle duplicate document uploads", async () => {
 			// TODO: Test uploading duplicate documents
@@ -173,7 +173,7 @@ describe.todo("Document Controller", () => {
 			// - Option to replace or keep existing document
 			// - No duplicate records are created
 			// Why: Prevents document duplication and storage waste
-		});
+		})
 
 		it("should handle upload failures", async () => {
 			// TODO: Test document upload when storage fails
@@ -183,8 +183,8 @@ describe.todo("Document Controller", () => {
 			// - No partial data is left in database
 			// - System remains in consistent state
 			// Why: Robust error handling ensures system stability
-		});
-	});
+		})
+	})
 
 	describe.todo("updateDocument", () => {
 		it("should update document metadata", async () => {
@@ -196,7 +196,7 @@ describe.todo("Document Controller", () => {
 			// - Document status remains appropriate
 			// - Success response confirms changes
 			// Why: Document updates are necessary for maintaining accurate information
-		});
+		})
 
 		it("should prevent updates to approved/rejected documents", async () => {
 			// TODO: Test updates to finalized documents
@@ -206,7 +206,7 @@ describe.todo("Document Controller", () => {
 			// - Clear error message explains restriction
 			// - Document integrity is maintained
 			// Why: Finalized documents should not be modified to maintain audit trail
-		});
+		})
 
 		it("should handle update with invalid data", async () => {
 			// TODO: Test document updates with invalid information
@@ -216,8 +216,8 @@ describe.todo("Document Controller", () => {
 			// - Document remains unchanged
 			// - No partial updates occur
 			// Why: Data validation prevents corruption and maintains integrity
-		});
-	});
+		})
+	})
 
 	describe.todo("deleteDocument", () => {
 		it("should delete document when user has permission", async () => {
@@ -229,7 +229,7 @@ describe.todo("Document Controller", () => {
 			// - Deletion is logged for audit purposes
 			// - Success response confirms deletion
 			// Why: Document deletion requires proper authorization and cleanup
-		});
+		})
 
 		it("should prevent deletion of approved documents", async () => {
 			// TODO: Test deletion of approved documents
@@ -239,7 +239,7 @@ describe.todo("Document Controller", () => {
 			// - Document remains intact
 			// - Audit trail is preserved
 			// Why: Approved documents are part of official records and should be preserved
-		});
+		})
 
 		it("should handle deletion of non-existent documents", async () => {
 			// TODO: Test deletion of non-existent documents
@@ -248,8 +248,8 @@ describe.todo("Document Controller", () => {
 			// - Clear "Document not found" message is returned
 			// - No unnecessary operations are performed
 			// Why: Proper error handling prevents system issues
-		});
-	});
+		})
+	})
 
 	describe.todo("listDocuments", () => {
 		it("should return user's documents with proper filtering", async () => {
@@ -261,7 +261,7 @@ describe.todo("Document Controller", () => {
 			// - Response includes necessary metadata
 			// - Performance is acceptable for large document sets
 			// Why: Document listing is essential for user workflow management
-		});
+		})
 
 		it("should handle empty document lists", async () => {
 			// TODO: Test document listing when user has no documents
@@ -271,7 +271,7 @@ describe.todo("Document Controller", () => {
 			// - Response indicates no documents found
 			// - Pagination metadata is correct
 			// Why: Empty states should be handled gracefully
-		});
+		})
 
 		it("should respect user permissions in document listing", async () => {
 			// TODO: Test document listing with permission restrictions
@@ -281,8 +281,8 @@ describe.todo("Document Controller", () => {
 			// - Permission-based filtering works correctly
 			// - No unauthorized document access occurs
 			// Why: Document access control is critical for privacy and security
-		});
-	});
+		})
+	})
 
 	describe.todo("documentValidation", () => {
 		it("should validate document content and format", async () => {
@@ -293,7 +293,7 @@ describe.todo("Document Controller", () => {
 			// - Malicious content is detected and rejected
 			// - Validation errors are clearly reported
 			// Why: Content validation ensures document quality and security
-		});
+		})
 
 		it("should check document expiration dates", async () => {
 			// TODO: Test document expiration validation
@@ -303,7 +303,7 @@ describe.todo("Document Controller", () => {
 			// - Warning notifications are sent for soon-to-expire documents
 			// - Expiration status is accurately reported
 			// Why: Expiration tracking ensures document validity
-		});
+		})
 
 		it("should validate document metadata completeness", async () => {
 			// TODO: Test document metadata validation
@@ -313,6 +313,6 @@ describe.todo("Document Controller", () => {
 			// - Optional fields are handled properly
 			// - Validation errors are specific and helpful
 			// Why: Complete metadata is essential for document management
-		});
-	});
-});
+		})
+	})
+})

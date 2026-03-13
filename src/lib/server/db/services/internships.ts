@@ -1,15 +1,15 @@
-import { and, eq } from "drizzle-orm";
-import { db } from "$lib/server/db";
-import { internshipPlacements } from "$lib/server/db/schema";
+import { and, eq } from "drizzle-orm"
+import { db } from "$lib/server/db"
+import { internshipPlacements } from "$lib/server/db/schema"
 
 export async function createInternshipPlacement(data: {
-	studentId: string;
-	hospitalId: string;
-	startDate: Date;
-	endDate: Date;
+	studentId: string
+	hospitalId: string
+	startDate: Date
+	endDate: Date
 }) {
-	const [result] = await db.insert(internshipPlacements).values(data).returning();
-	return result;
+	const [result] = await db.insert(internshipPlacements).values(data).returning()
+	return result
 }
 
 export async function getPlacementById(id: string) {
@@ -23,13 +23,13 @@ export async function getPlacementById(id: string) {
 			},
 			hospital: true,
 		},
-	});
+	})
 }
 
 export async function listPlacementsByHospital(hospitalId: string, activeOnly = true) {
-	const conditions = [eq(internshipPlacements.hospitalId, hospitalId)];
+	const conditions = [eq(internshipPlacements.hospitalId, hospitalId)]
 	if (activeOnly) {
-		conditions.push(eq(internshipPlacements.status, "ACTIVE"));
+		conditions.push(eq(internshipPlacements.status, "ACTIVE"))
 	}
 
 	return await db.query.internshipPlacements.findMany({
@@ -41,7 +41,7 @@ export async function listPlacementsByHospital(hospitalId: string, activeOnly = 
 				},
 			},
 		},
-	});
+	})
 }
 
 export async function updatePlacementStatus(
@@ -52,6 +52,6 @@ export async function updatePlacementStatus(
 		.update(internshipPlacements)
 		.set({ status })
 		.where(eq(internshipPlacements.id, id))
-		.returning();
-	return result;
+		.returning()
+	return result
 }

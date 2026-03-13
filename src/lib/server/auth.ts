@@ -1,12 +1,12 @@
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { sveltekitCookies } from "better-auth/svelte-kit";
-import { getRequestEvent } from "$app/server";
-import { env } from "$env/dynamic/private";
-import { db } from "$lib/server/db";
-import * as schema from "$lib/server/db/schema";
-import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { betterAuth } from "better-auth"
+import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { sveltekitCookies } from "better-auth/svelte-kit"
+import { eq } from "drizzle-orm"
+import { z } from "zod"
+import { getRequestEvent } from "$app/server"
+import { env } from "$env/dynamic/private"
+import { db } from "$lib/server/db"
+import * as schema from "$lib/server/db/schema"
 
 export const auth = betterAuth({
 	baseURL: env.ORIGIN,
@@ -43,12 +43,12 @@ export const auth = betterAuth({
 				const schema_auth = z.object({
 					email: z.string().email(),
 					password: z.string(),
-				});
-				const parsed = schema_auth.safeParse(credentials);
-				if (!parsed.success) return null;
+				})
+				const parsed = schema_auth.safeParse(credentials)
+				if (!parsed.success) return null
 
-				const { email, password } = parsed.data;
-				if (password !== "123456") return null;
+				const { email, password } = parsed.data
+				if (password !== "123456") return null
 
 				const roleMap: Record<string, typeof schema.user.$inferSelect.role> = {
 					estudante: "Student",
@@ -56,19 +56,19 @@ export const auth = betterAuth({
 					supervisor: "Supervisor",
 					instituicao: "OrgAdmin",
 					sysadmin: "SysAdmin",
-				};
+				}
 
-				const prefix = email.split("@")[0].toLowerCase();
-				const role = roleMap[prefix];
+				const prefix = email.split("@")[0].toLowerCase()
+				const role = roleMap[prefix]
 
 				if (role && email.endsWith("@preceptoria.com")) {
 					// Check if user exists, otherwise create a mock one
 					let existingUser = await db.query.user.findFirst({
 						where: (u, { eq }) => eq(u.email, email),
-					});
+					})
 
 					if (!existingUser) {
-						const id = crypto.randomUUID();
+						const id = crypto.randomUUID()
 						const [newUser] = await db
 							.insert(schema.user)
 							.values({
@@ -80,8 +80,8 @@ export const auth = betterAuth({
 								createdAt: new Date(),
 								updatedAt: new Date(),
 							})
-							.returning();
-						existingUser = newUser;
+							.returning()
+						existingUser = newUser
 					}
 
 					return {
@@ -89,9 +89,9 @@ export const auth = betterAuth({
 						email: existingUser.email,
 						name: existingUser.name,
 						role: existingUser.role,
-					};
+					}
 				}
-				return null;
+				return null
 			},
 		},
 	},
@@ -112,7 +112,7 @@ export const auth = betterAuth({
 					const invitation = await db.query.invitations.findFirst({
 						where: (i, { eq, and, gt }) =>
 							and(eq(i.email, user.email), eq(i.status, "PENDING"), gt(i.expiresAt, new Date())),
-					});
+					})
 
 					if (invitation) {
 						return {
@@ -120,43 +120,43 @@ export const auth = betterAuth({
 								...user,
 								role: invitation.role,
 							},
-						};
+						}
 					}
-					return { data: user };
+					return { data: user }
 				},
 				after: async (user) => {
 					// Link to student profile if role is Student
 					const invitation = await db.query.invitations.findFirst({
 						where: (i, { eq, and }) => and(eq(i.email, user.email), eq(i.status, "PENDING")),
-					});
+					})
 
 					if (invitation) {
 						if (invitation.role === "Student" && invitation.classId) {
 							await db.insert(schema.students).values({
 								userId: user.id,
 								classId: invitation.classId,
-							});
+							})
 						} else if (invitation.role === "Preceptor" && invitation.hospitalId) {
 							await db.insert(schema.preceptors).values({
 								userId: user.id,
 								hospitalId: invitation.hospitalId,
-							});
+							})
 						} else if (invitation.role === "HospitalManager" && invitation.hospitalId) {
 							await db.insert(schema.hospitalManagers).values({
 								userId: user.id,
 								hospitalId: invitation.hospitalId,
-							});
+							})
 						}
 
 						// Mark invitation as accepted
 						await db
 							.update(schema.invitations)
 							.set({ status: "ACCEPTED" })
-							.where(eq(schema.invitations.id, invitation.id));
+							.where(eq(schema.invitations.id, invitation.id))
 					}
 				},
 			},
 		},
 	},
 	plugins: [sveltekitCookies(getRequestEvent)],
-});
+})

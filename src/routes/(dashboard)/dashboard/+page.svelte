@@ -1,80 +1,69 @@
 <script lang="ts">
-	import type { PageData } from "./$types";
-	import Card from "$lib/components/ui/Card.svelte";
-	import Badge from "$lib/components/ui/Badge.svelte";
-	import {
-		Users,
-		Hospital,
-		FileText,
-		Briefcase,
-		ArrowUpRight,
-		Clock,
-		CheckCircle2,
-		AlertCircle,
-	} from "lucide-svelte";
+import { Briefcase, FileText, Hospital, Users } from "lucide-svelte"
+import type { PageData } from "./$types"
 
-	let { data }: { data: PageData } = $props();
+let { data }: { data: PageData } = $props()
 
-	const stats = $derived([
-		{
-			name: "Total de Estudantes",
-			value: data.stats.students,
-			icon: Users,
-			color: "text-blue-600",
-			bg: "bg-blue-50",
-			trend: "+12% este mês",
-		},
-		{
-			name: "Hospitais",
-			value: data.stats.hospitals,
-			icon: Hospital,
-			color: "text-green-600",
-			bg: "bg-green-50",
-			trend: "Ativos",
-		},
-		{
-			name: "Documentos Pendentes",
-			value: data.stats.pendingDocuments,
-			icon: FileText,
-			color: "text-orange-600",
-			bg: "bg-orange-50",
-			trend: "Urgente",
-		},
-		{
-			name: "Estágios Ativos",
-			value: data.stats.activePlacements,
-			icon: Briefcase,
-			color: "text-purple-600",
-			bg: "bg-purple-50",
-			trend: "Em andamento",
-		},
-	]);
+const _stats = $derived([
+	{
+		name: "Total de Estudantes",
+		value: data.stats.students,
+		icon: Users,
+		color: "text-blue-600",
+		bg: "bg-blue-50",
+		trend: "+12% este mês",
+	},
+	{
+		name: "Hospitais",
+		value: data.stats.hospitals,
+		icon: Hospital,
+		color: "text-green-600",
+		bg: "bg-green-50",
+		trend: "Ativos",
+	},
+	{
+		name: "Documentos Pendentes",
+		value: data.stats.pendingDocuments,
+		icon: FileText,
+		color: "text-orange-600",
+		bg: "bg-orange-50",
+		trend: "Urgente",
+	},
+	{
+		name: "Estágios Ativos",
+		value: data.stats.activePlacements,
+		icon: Briefcase,
+		color: "text-purple-600",
+		bg: "bg-purple-50",
+		trend: "Em andamento",
+	},
+])
 
-	// Mock recent activity for the vibe check
-	const activities = [
-		{
-			id: 1,
-			user: "Maria Silva",
-			action: "enviou um novo documento",
-			time: "Há 5 minutos",
-			type: "upload",
-		},
-		{
-			id: 2,
-			user: "João Pereira",
-			action: "completou o estágio",
-			time: "Há 2 horas",
-			type: "complete",
-		},
-		{
-			id: 3,
-			user: "Hospital Santa Luzia",
-			action: "solicitou novos estagiários",
-			time: "Há 5 horas",
-			type: "request",
-		},
-		{ id: 4, user: "Ana Costa", action: "teve documento rejeitado", time: "Ontem", type: "reject" },
-	];
+// Mock recent activity for the vibe check
+const _activities = [
+	{
+		id: 1,
+		user: "Maria Silva",
+		action: "enviou um novo documento",
+		time: "Há 5 minutos",
+		type: "upload",
+	},
+	{
+		id: 2,
+		user: "João Pereira",
+		action: "completou o estágio",
+		time: "Há 2 horas",
+		type: "complete",
+	},
+	{
+		id: 3,
+		user: "Hospital Santa Luzia",
+		action: "solicitou novos estagiários",
+		time: "Há 5 horas",
+		type: "request",
+	},
+	{ id: 4, user: "Ana Costa", action: "teve documento rejeitado", time: "Ontem", type: "reject" },
+]
 </script>
 
 <div class="animate-in fade-in space-y-10 duration-500">

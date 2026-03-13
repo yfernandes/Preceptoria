@@ -1,16 +1,16 @@
-import { type Rel, Entity, ManyToOne } from "@mikro-orm/postgresql";
+import { Role } from "@api/modules/common/role.abstract"
 
-import { Hospital } from "@api/modules/hospitals/hospital.entity";
-import { Role } from "@api/modules/common/role.abstract";
-import { User } from "@api/modules/users/user.entity";
+import type { Hospital } from "@api/modules/hospitals/hospital.entity"
+import type { User } from "@api/modules/users/user.entity"
+import { Entity, ManyToOne, type Rel } from "@mikro-orm/postgresql"
 
 @Entity()
 export class HospitalManager extends Role {
 	@ManyToOne()
-	hospital: Rel<Hospital>;
+	hospital: Rel<Hospital>
 
 	constructor(user: Rel<User>, hospital: Rel<Hospital>) {
-		super(user);
-		this.hospital = hospital;
+		super(user)
+		this.hospital = hospital
 	}
 }

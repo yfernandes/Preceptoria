@@ -6,5 +6,5 @@ export default function UsersPage() {
 				<p className="text-gray-600">Gestão de Usuários</p>
 			</div>
 		</div>
-	);
+	)
 }

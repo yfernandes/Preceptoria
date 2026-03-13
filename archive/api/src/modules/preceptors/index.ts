@@ -1,2 +1,2 @@
-export * from "./preceptor.entity";
-export * from "./preceptor.controller";
+export * from "./preceptor.controller"
+export * from "./preceptor.entity"

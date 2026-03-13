@@ -1,41 +1,35 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../contexts/AuthContext";
-import Link from "next/link";
-import { Button } from "@web/components/ui/button";
-import { Input } from "@web/components/ui/input";
-import { Label } from "@web/components/ui/label";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@web/components/ui/card";
-import { Alert, AlertDescription } from "@web/components/ui/alert";
-import { GraduationCap } from "lucide-react";
+import { Alert, AlertDescription } from "@web/components/ui/alert"
+import { Button } from "@web/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@web/components/ui/card"
+import { Input } from "@web/components/ui/input"
+import { Label } from "@web/components/ui/label"
+import { GraduationCap } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { useAuth } from "../../contexts/AuthContext"
 
 export default function LoginPage() {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const { signin, loading, error, clearError } = useAuth();
-	const router = useRouter();
+	const [email, setEmail] = useState("")
+	const [password, setPassword] = useState("")
+	const { signin, loading, error, clearError } = useAuth()
+	const router = useRouter()
 
 	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		clearError();
+		e.preventDefault()
+		clearError()
 
 		try {
-			await signin(email, password);
+			await signin(email, password)
 			// Successful login - redirect to dashboard
-			router.push("/dashboard");
+			router.push("/dashboard")
 		} catch (err) {
 			// Error is handled by the auth context
-			console.error("Login failed:", err);
+			console.error("Login failed:", err)
 		}
-	};
+	}
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-12 sm:px-6 lg:px-8">
@@ -46,9 +40,7 @@ export default function LoginPage() {
 						<GraduationCap className="h-6 w-6 text-white" />
 					</div>
 					<h1 className="text-3xl font-bold text-gray-900">Preceptoria</h1>
-					<p className="mt-2 text-sm text-gray-600">
-						Sistema de Gestão de Estágios
-					</p>
+					<p className="mt-2 text-sm text-gray-600">Sistema de Gestão de Estágios</p>
 				</div>
 
 				{/* Login Card */}
@@ -129,5 +121,5 @@ export default function LoginPage() {
 				</div>
 			</div>
 		</div>
-	);
+	)
 }

@@ -1,40 +1,40 @@
-import { EntityManager, MikroORM } from "@mikro-orm/sqlite";
-import type { Options } from "@mikro-orm/sqlite";
+import type { Options } from "@mikro-orm/sqlite"
+import { type EntityManager, MikroORM } from "@mikro-orm/sqlite"
 
 // Entities
-import { Student, Documentation, Document, Submission } from "entities/entities";
+import { Document, Documentation, Student, Submission } from "entities/entities"
 
 // Repositories
-import {
-	StudentRepository,
+import type {
 	DocumentationRepository,
 	DocumentRepository,
+	StudentRepository,
 	SubmissionRepository,
-} from "entities/repositories";
+} from "entities/repositories"
 
-import config from "./mikro-orm.config.js";
+import config from "./mikro-orm.config.js"
 
 export interface Services {
-	orm: MikroORM;
-	em: EntityManager;
-	student: StudentRepository;
-	documentation: DocumentationRepository;
-	document: DocumentRepository;
-	submission: SubmissionRepository;
+	orm: MikroORM
+	em: EntityManager
+	student: StudentRepository
+	documentation: DocumentationRepository
+	document: DocumentRepository
+	submission: SubmissionRepository
 }
 
-let cache: Services;
+let cache: Services
 
 export async function initOrm(options?: Options): Promise<Services> {
 	if (cache) {
-		return cache;
+		return cache
 	}
 
 	// allow overriding config options for testing
 	const orm: MikroORM = await MikroORM.init({
 		...config,
 		...options,
-	});
+	})
 
 	// save to cache before returning
 	return (cache = {
@@ -44,5 +44,5 @@ export async function initOrm(options?: Options): Promise<Services> {
 		documentation: orm.em.getRepository(Documentation),
 		document: orm.em.getRepository(Document),
 		submission: orm.em.getRepository(Submission),
-	});
+	})
 }

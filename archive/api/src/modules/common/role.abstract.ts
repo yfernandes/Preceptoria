@@ -1,7 +1,6 @@
-import { OneToOne, type Rel } from "@mikro-orm/postgresql";
-
-import { BaseEntity } from "./baseEntity";
-import { User } from "@api/modules/users/user.entity";
+import type { User } from "@api/modules/users/user.entity"
+import { OneToOne, type Rel } from "@mikro-orm/postgresql"
+import { BaseEntity } from "./baseEntity"
 
 export enum UserRoles {
 	SysAdmin = "SysAdmin",
@@ -14,10 +13,10 @@ export enum UserRoles {
 
 export abstract class Role extends BaseEntity {
 	@OneToOne("User")
-	user: Rel<User>;
+	user: Rel<User>
 
 	constructor(user: Rel<User>) {
-		super();
-		this.user = user;
+		super()
+		this.user = user
 	}
 }

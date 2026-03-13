@@ -1,19 +1,19 @@
 import {
 	OptionalProps,
+	BaseEntity as ORMBaseEntity,
 	PrimaryKey,
 	Property,
-	BaseEntity as ORMBaseEntity,
-} from "@mikro-orm/postgresql";
+} from "@mikro-orm/postgresql"
 
 export class BaseEntity extends ORMBaseEntity {
-	[OptionalProps]?: "createdAt" | "updatedAt";
+	[OptionalProps]?: "createdAt" | "updatedAt"
 
 	@PrimaryKey({ type: "uuid" })
-	id = Bun.randomUUIDv7();
+	id = Bun.randomUUIDv7()
 
 	@Property()
-	createdAt = new Date();
+	createdAt = new Date()
 
 	@Property({ onUpdate: () => new Date() })
-	updatedAt = new Date();
+	updatedAt = new Date()
 }

@@ -1,6 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { db } from "../index";
-import { ShiftsService } from "./shifts";
+import { beforeEach, describe, expect, it, vi } from "vitest"
+import { ShiftsService } from "./shifts"
 
 vi.mock("../index", () => {
 	return {
@@ -13,15 +12,15 @@ vi.mock("../index", () => {
 			},
 			transaction: vi.fn(),
 		},
-	};
-});
+	}
+})
 
 describe("ShiftsService", () => {
 	beforeEach(() => {
-		vi.clearAllMocks();
-	});
+		vi.clearAllMocks()
+	})
 
 	it("should exist", () => {
-		expect(ShiftsService).toBeDefined();
-	});
-});
+		expect(ShiftsService).toBeDefined()
+	})
+})

@@ -1,43 +1,25 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import type { PageData, ActionData } from "./$types";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Input from "$lib/components/ui/Input.svelte";
-	import Card from "$lib/components/ui/Card.svelte";
-	import Badge from "$lib/components/ui/Badge.svelte";
-	import {
-		Building2,
-		Trash2,
-		Edit2,
-		Search,
-		Plus,
-		X,
-		ArrowRight,
-		ShieldCheck,
-		Globe,
-		MoreHorizontal,
-		CheckCircle2,
-	} from "lucide-svelte";
+import type { ActionData, PageData } from "./$types"
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+let { data, form }: { data: PageData; form: ActionData } = $props()
 
-	let isEditing = $state(false);
-	let searchQuery = $state("");
-	let currentOrg = $state({ id: "", name: "" });
+let _isEditing = $state(false)
+let searchQuery = $state("")
+let _currentOrg = $state({ id: "", name: "" })
 
-	function editOrg(org: any) {
-		currentOrg = { id: org.id, name: org.name };
-		isEditing = true;
-	}
+function _editOrg(org: { id: string; name: string }) {
+	_currentOrg = { id: org.id, name: org.name }
+	_isEditing = true
+}
 
-	function resetForm() {
-		currentOrg = { id: "", name: "" };
-		isEditing = false;
-	}
+function _resetForm() {
+	_currentOrg = { id: "", name: "" }
+	_isEditing = false
+}
 
-	const filteredOrgs = $derived(
-		data.organizations.filter((o) => o.name?.toLowerCase().includes(searchQuery.toLowerCase()))
-	);
+const _filteredOrgs = $derived(
+	data.organizations.filter((o) => o.name?.toLowerCase().includes(searchQuery.toLowerCase()))
+)
 </script>
 
 <div class="animate-in fade-in space-y-8 duration-500">

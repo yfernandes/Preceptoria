@@ -1,26 +1,22 @@
-import {
-	type Rel,
-	Collection,
-	Entity,
-	ManyToOne,
-	OneToMany,
-} from "@mikro-orm/postgresql";
-
-import { Course } from "../courses/course.entity";
-import { Role } from "../common/role.abstract";
-import { School } from "../schools/school.entity";
-import { User } from "../users/user.entity";
+import { Collection, Entity, ManyToOne, OneToMany, type Rel } from "@mikro-orm/postgresql"
+import { Role } from "../common/role.abstract"
+import { Course } from "../courses/course.entity"
+import { School } from "../schools/school.entity"
+import type { User } from "../users/user.entity"
 
 @Entity()
 export class Supervisor extends Role {
 	@ManyToOne(() => School)
-	school: Rel<School>;
+	school: Rel<School>
 
-	@OneToMany(() => Course, (e) => e.supervisor)
-	courses = new Collection<Course>(this);
+	@OneToMany(
+		() => Course,
+		(e) => e.supervisor
+	)
+	courses = new Collection<Course>(this)
 
 	constructor(user: Rel<User>, school: Rel<School>) {
-		super(user);
-		this.school = school;
+		super(user)
+		this.school = school
 	}
 }

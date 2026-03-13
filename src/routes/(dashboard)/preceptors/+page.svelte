@@ -1,46 +1,25 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import type { PageData, ActionData } from "./$types";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Input from "$lib/components/ui/Input.svelte";
-	import Card from "$lib/components/ui/Card.svelte";
-	import Badge from "$lib/components/ui/Badge.svelte";
-	import {
-		Plus,
-		Search,
-		Filter,
-		Hospital,
-		Stethoscope,
-		Mail,
-		Trash2,
-		AlertCircle,
-		ChevronRight,
-		ArrowLeft,
-		X,
-	} from "lucide-svelte";
-	import { cn } from "$lib/utils";
+import type { ActionData, PageData } from "./$types"
 
-	let {
-		data,
-		form,
-	}: { data: PageData; form: ActionData & { message?: string; success?: boolean } } = $props();
+let { data, form }: { data: PageData; form: ActionData & { message?: string; success?: boolean } } =
+	$props()
 
-	let isCreating = $state(false);
-	let searchQuery = $state("");
-	let activeTab = $state("preceptors"); // 'preceptors' or 'invites'
+let isCreating = $state(false)
+let searchQuery = $state("")
+let _activeTab = $state("preceptors") // 'preceptors' or 'invites'
 
-	function toggleCreate() {
-		isCreating = !isCreating;
-	}
+function _toggleCreate() {
+	isCreating = !isCreating
+}
 
-	const filteredPreceptors = $derived(
-		data.preceptors.filter(
-			(p) =>
-				p.user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				p.user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				p.specialty?.toLowerCase().includes(searchQuery.toLowerCase())
-		)
-	);
+const _filteredPreceptors = $derived(
+	data.preceptors.filter(
+		(p) =>
+			p.user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			p.user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			p.specialty?.toLowerCase().includes(searchQuery.toLowerCase())
+	)
+)
 </script>
 
 <div class="animate-in fade-in space-y-8 duration-500">

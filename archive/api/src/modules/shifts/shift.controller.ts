@@ -1,6 +1,6 @@
-import Elysia, { status as error, t } from "elysia";
-import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
-import { ShiftService } from "./shift.service";
+import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware"
+import Elysia, { status as error, t } from "elysia"
+import { ShiftService } from "./shift.service"
 
 // DTOs for request validation
 const createShiftDto = {
@@ -13,7 +13,7 @@ const createShiftDto = {
 		preceptorId: t.String(),
 		studentIds: t.Array(t.String()), // Array of student IDs
 	}),
-};
+}
 
 const updateShiftDto = {
 	body: t.Object({
@@ -25,9 +25,9 @@ const updateShiftDto = {
 		preceptorId: t.Optional(t.String()),
 		studentIds: t.Optional(t.Array(t.String())),
 	}),
-};
+}
 
-const shiftService = new ShiftService();
+const shiftService = new ShiftService()
 
 export const shiftController = new Elysia({ prefix: "/shifts" })
 	.use(authenticatedUserMiddleware)
@@ -36,69 +36,69 @@ export const shiftController = new Elysia({ prefix: "/shifts" })
 	.post(
 		"/",
 		async ({ body, requester }) => {
-			const result = await shiftService.createShift(requester, body);
+			const result = await shiftService.createShift(requester, body)
 			if (!result.success) {
-				return error(result.status, result);
+				return error(result.status, result)
 			}
 			return {
 				success: true,
 				data: result.data,
 				message: result.message,
-			};
+			}
 		},
 		createShiftDto
 	)
 
 	// Get all shifts (with optional filtering)
 	.get("/", async ({ requester, query }) => {
-		const result = await shiftService.getAllShifts(requester, query);
+		const result = await shiftService.getAllShifts(requester, query)
 		if (!result.success) {
-			return error(result.status, result);
+			return error(result.status, result)
 		}
 		return {
 			success: true,
 			data: result.data,
 			pagination: result.pagination,
-		};
+		}
 	})
 
 	// Get a specific shift by ID
 	.get("/:id", async ({ params: { id }, requester }) => {
-		const result = await shiftService.getShiftById(requester, id);
+		const result = await shiftService.getShiftById(requester, id)
 		if (!result.success) {
-			return error(result.status, result);
+			return error(result.status, result)
 		}
 		return {
 			success: true,
 			data: result.data,
-		};
+		}
 	})
 
 	// Update a shift
 	.patch(
 		"/:id",
 		async ({ params: { id }, body, requester }) => {
-			const result = await shiftService.updateShift(requester, id, body);
+			const result = await shiftService.updateShift(requester, id, body)
 			if (!result.success) {
-				return error(result.status, result);
+				return error(result.status, result)
 			}
 			return {
 				success: true,
 				data: result.data,
 				message: result.message,
-			};
+			}
 		},
 		updateShiftDto
 	)
 
 	// Delete a shift
 	.delete("/:id", async ({ params: { id }, requester }) => {
-		const result = await shiftService.deleteShift(requester, id);
+		const result = await shiftService.deleteShift(requester, id)
 		if (!result.success) {
-			return error(result.status, result);
+			return error(result.status, result)
 		}
 		return {
 			success: true,
 			message: result.message,
-		};
-	});
+		}
+	})

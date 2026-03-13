@@ -1,46 +1,29 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import type { PageData, ActionData } from "./$types";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Input from "$lib/components/ui/Input.svelte";
-	import Card from "$lib/components/ui/Card.svelte";
-	import Badge from "$lib/components/ui/Badge.svelte";
-	import {
-		GraduationCap,
-		Building2,
-		Trash2,
-		Edit2,
-		Search,
-		Plus,
-		X,
-		ArrowRight,
-		MapPin,
-		School,
-	} from "lucide-svelte";
+import type { ActionData, PageData } from "./$types"
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+let { data, form }: { data: PageData; form: ActionData } = $props()
 
-	let isEditing = $state(false);
-	let searchQuery = $state("");
-	let currentSchool = $state({ id: "", name: "", organizationId: "" });
+let _isEditing = $state(false)
+let searchQuery = $state("")
+let _currentSchool = $state({ id: "", name: "", organizationId: "" })
 
-	function editSchool(school: any) {
-		currentSchool = {
-			id: school.id,
-			name: school.name,
-			organizationId: school.organizationId || "",
-		};
-		isEditing = true;
+function _editSchool(school: { id: string; name: string; organizationId: string | null }) {
+	_currentSchool = {
+		id: school.id,
+		name: school.name,
+		organizationId: school.organizationId || "",
 	}
+	_isEditing = true
+}
 
-	function resetForm() {
-		currentSchool = { id: "", name: "", organizationId: "" };
-		isEditing = false;
-	}
+function _resetForm() {
+	_currentSchool = { id: "", name: "", organizationId: "" }
+	_isEditing = false
+}
 
-	const filteredSchools = $derived(
-		data.schools.filter((s) => s.name?.toLowerCase().includes(searchQuery.toLowerCase()))
-	);
+const _filteredSchools = $derived(
+	data.schools.filter((s) => s.name?.toLowerCase().includes(searchQuery.toLowerCase()))
+)
 </script>
 
 <div class="animate-in fade-in space-y-8 duration-500">

@@ -7,9 +7,7 @@
 	"author": "Yago Fernandes",
 	"private": true,
 	"types": "index.ts",
-	"files": [
-		"src"
-	],
+	"files": ["src"],
 	"scripts": {
 		"db:cache": "bunx --bun mikro-orm cache:generate --combined",
 		"db:initialMigration": "bunx --bun mikro-orm migration:create --initial",

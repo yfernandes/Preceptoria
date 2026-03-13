@@ -1,0 +1,103 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
+	"vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+	"files": { "ignoreUnknown": false },
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineEnding": "lf",
+		"lineWidth": 100,
+		"attributePosition": "auto",
+		"bracketSameLine": false,
+		"bracketSpacing": true,
+		"expand": "auto",
+		"useEditorconfig": true,
+		"includes": [
+			"**",
+			"!**/package-lock.json",
+			"!**/pnpm-lock.yaml",
+			"!**/yarn.lock",
+			"!**/bun.lock",
+			"!**/bun.lockb",
+			"!./static/",
+			"!./drizzle/",
+			"!archive/**"
+		]
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"complexity": {
+				"noAdjacentSpacesInRegex": "error",
+				"noExtraBooleanCast": "error",
+				"noUselessCatch": "error",
+				"noUselessEscapeInRegex": "error"
+			},
+			"correctness": {
+				"noUnusedVariables": "off"
+			},
+			"suspicious": {
+				"noExplicitAny": "warn",
+				"noArrayIndexKey": "warn"
+			},
+			"style": {
+				"noNonNullAssertion": "off"
+			}
+		},
+		"includes": [
+			"**",
+			"!**/node_modules",
+			"!**/.output",
+			"!**/.vercel",
+			"!**/.netlify",
+			"!**/.wrangler",
+			"!.svelte-kit",
+			"!build",
+			"!**/.DS_Store",
+			"!**/Thumbs.db",
+			"!**/.env",
+			"!**/.env.*",
+			"**/.env.example",
+			"**/.env.test",
+			"!**/vite.config.js.timestamp-*",
+			"!**/vite.config.ts.timestamp-*",
+			"!**/test-results",
+			"!**/*storybook.log",
+			"!**/storybook-static",
+			"!archive/**"
+		]
+	},
+	"javascript": {
+		"formatter": {
+			"jsxQuoteStyle": "double",
+			"quoteProperties": "asNeeded",
+			"trailingCommas": "es5",
+			"semicolons": "asNeeded",
+			"arrowParentheses": "always",
+			"bracketSameLine": false,
+			"quoteStyle": "double",
+			"attributePosition": "auto",
+			"bracketSpacing": true
+		},
+		"globals": []
+	},
+	"html": {
+		"formatter": {
+			"indentScriptAndStyle": false,
+			"selfCloseVoidElements": "always"
+		}
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"overrides": [{ "includes": ["*.svelte"] }],
+	"assist": {
+		"enabled": true,
+		"actions": { "source": { "organizeImports": "on" } }
+	}
+}

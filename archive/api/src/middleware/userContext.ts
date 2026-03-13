@@ -1,13 +1,11 @@
-import { Elysia } from "elysia";
-import { LRUCache } from "lru-cache";
-import { db } from "@api/db";
-import { UserContext } from "../types/jwtCookie";
-import { authMiddleware } from "../modules/auth/auth.middleware";
+import { db } from "@api/db"
+import { Elysia } from "elysia"
+import { LRUCache } from "lru-cache"
+import { authMiddleware } from "../modules/auth/auth.middleware"
+import type { UserContext } from "../types/jwtCookie"
 
 // Extract user lookup logic for better testability
-export async function findUserById(
-	userId: string
-): Promise<UserContext | null> {
+export async function findUserById(userId: string): Promise<UserContext | null> {
 	const dbUser = await db.user.findOne(
 		{ id: userId },
 		{
@@ -21,9 +19,9 @@ export async function findUserById(
 			],
 			fields: ["id", "roles"],
 		}
-	);
+	)
 	if (!dbUser) {
-		return null;
+		return null
 	}
 
 	return {
@@ -35,7 +33,7 @@ export async function findUserById(
 		hospitalManagerId: dbUser.hospitalManager?.id ?? undefined,
 		preceptorId: dbUser.preceptor?.id ?? undefined,
 		studentId: dbUser.student?.id ?? undefined,
-	};
+	}
 }
 
 // User context middleware - handles user data injection and caching
@@ -53,23 +51,23 @@ export const userContextMiddleware = new Elysia({
 	.derive(async ({ store: { users }, authenticatedUser }) => {
 		try {
 			if (!authenticatedUser.id) {
-				throw new Error("No authenticated user found");
+				throw new Error("No authenticated user found")
 			}
 
-			let user = users.get(authenticatedUser.id);
+			let user = users.get(authenticatedUser.id)
 			if (!user) {
-				const foundUser = await findUserById(authenticatedUser.id);
+				const foundUser = await findUserById(authenticatedUser.id)
 				if (!foundUser) {
-					throw new Error("User not found");
+					throw new Error("User not found")
 				}
-				user = foundUser;
-				users.set(user.id, user);
+				user = foundUser
+				users.set(user.id, user)
 			}
 
-			return { requester: user };
+			return { requester: user }
 		} catch (err) {
-			console.error("User context middleware error:", err);
-			throw new Error("User context failed");
+			console.error("User context middleware error:", err)
+			throw new Error("User context failed")
 		}
 	})
 	.onError(({ error, set }) => {
@@ -79,11 +77,11 @@ export const userContextMiddleware = new Elysia({
 				error.message === "No authenticated user found" ||
 				error.message === "User not found")
 		) {
-			set.status = 401;
-			return { message: "User context failed" };
+			set.status = 401
+			return { message: "User context failed" }
 		}
 		// Return a default error response for other errors
-		set.status = 500;
-		return { message: "Internal server error" };
+		set.status = 500
+		return { message: "Internal server error" }
 	})
-	.as("scoped");
+	.as("scoped")

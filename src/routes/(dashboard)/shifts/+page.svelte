@@ -1,33 +1,14 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import type { PageData, ActionData } from "./$types";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Input from "$lib/components/ui/Input.svelte";
-	import Card from "$lib/components/ui/Card.svelte";
-	import Badge from "$lib/components/ui/Badge.svelte";
-	import {
-		Calendar,
-		Clock,
-		Plus,
-		Users,
-		User,
-		Hospital,
-		MapPin,
-		Trash2,
-		AlertCircle,
-		CheckCircle2,
-		X,
-	} from "lucide-svelte";
-	import { cn } from "$lib/utils";
+import type { ActionData, PageData } from "./$types"
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+let { data, form }: { data: PageData; form: ActionData } = $props()
 
-	let isCreating = $state(false);
-	let selectedShiftId = $state<string | null>(null);
+let isCreating = $state(false)
+let _selectedShiftId = $state<string | null>(null)
 
-	function toggleCreate() {
-		isCreating = !isCreating;
-	}
+function _toggleCreate() {
+	isCreating = !isCreating
+}
 </script>
 
 <div class="animate-in fade-in space-y-8 duration-500">

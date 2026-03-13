@@ -6,5 +6,5 @@ export default function HospitalsPage() {
 				<p className="text-gray-600">Gestão de Hospitais</p>
 			</div>
 		</div>
-	);
+	)
 }

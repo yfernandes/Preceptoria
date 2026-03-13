@@ -16,7 +16,7 @@ export const APP_CONFIG = {
 	CRON_PATTERNS: {
 		GOOGLE_SHEETS_SYNC: "0 3 * * *", // Every day at 3am
 	},
-} as const;
+} as const
 
 // Type-safe config access
-export type AppConfig = typeof APP_CONFIG;
+export type AppConfig = typeof APP_CONFIG

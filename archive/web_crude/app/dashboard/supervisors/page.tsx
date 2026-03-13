@@ -1,61 +1,58 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { treatise } from "lib/eden";
-import { Supervisor } from "@api/modules/supervisors/supervisor.entity";
-import { useRouter } from "next/navigation";
+import type { Supervisor } from "@api/modules/supervisors/supervisor.entity"
+import { treatise } from "lib/eden"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 interface SupervisorsResponse {
-	success: boolean;
-	data: Supervisor[];
+	success: boolean
+	data: Supervisor[]
 	pagination: {
-		total: number;
-		limit: number;
-		offset: number;
-		hasMore: boolean;
-	};
+		total: number
+		limit: number
+		offset: number
+		hasMore: boolean
+	}
 }
 
 export default function CoursesPage() {
-	const router = useRouter();
-	const [data, setData] = useState<SupervisorsResponse | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const router = useRouter()
+	const [data, setData] = useState<SupervisorsResponse | null>(null)
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
 		const fetchSupervisors = async () => {
 			try {
-				setLoading(true);
-				setError(null);
+				setLoading(true)
+				setError(null)
 
 				const response = await treatise.classes.get({
 					query: {
 						limit: 10,
 						offset: 0,
 					},
-				});
+				})
 
-				console.log(response.data);
+				console.log(response.data)
 
-				const result = response.data;
-				setData(result);
+				const result = response.data
+				setData(result)
 			} catch (err: any) {
 				// If unauthorized, redirect to login
-				if (
-					err?.response?.status === 401 ||
-					err?.message?.toLowerCase().includes("unauthorized")
-				) {
-					router.push("/login");
-					return;
+				if (err?.response?.status === 401 || err?.message?.toLowerCase().includes("unauthorized")) {
+					router.push("/login")
+					return
 				}
-				setError(err instanceof Error ? err.message : "Unknown error");
+				setError(err instanceof Error ? err.message : "Unknown error")
 			} finally {
-				setLoading(false);
+				setLoading(false)
 			}
-		};
+		}
 
-		fetchSupervisors();
-	}, [router]);
+		fetchSupervisors()
+	}, [router])
 
 	if (loading) {
 		return (
@@ -63,7 +60,7 @@ export default function CoursesPage() {
 				<h1 className="mb-4 text-2xl font-bold">Supervisors</h1>
 				<p>Loading...</p>
 			</div>
-		);
+		)
 	}
 
 	if (error) {
@@ -74,7 +71,7 @@ export default function CoursesPage() {
 					<strong>Error:</strong> {error}
 				</div>
 			</div>
-		);
+		)
 	}
 
 	if (!data || !data.success) {
@@ -85,16 +82,14 @@ export default function CoursesPage() {
 					<strong>No data available</strong>
 				</div>
 			</div>
-		);
+		)
 	}
 
 	return (
 		<div className="p-8">
 			<h1 className="mb-4 text-2xl font-bold">Supervisors</h1>
 
-			<div className="mb-4 text-sm text-gray-600">
-				Total: {data.pagination.total} supervisors
-			</div>
+			<div className="mb-4 text-sm text-gray-600">Total: {data.pagination.total} supervisors</div>
 
 			<div className="space-y-4" data-testid="supervisors-table">
 				{data.data.map((supervisorItem) => (
@@ -104,12 +99,8 @@ export default function CoursesPage() {
 					>
 						<div className="flex items-center justify-between">
 							<div>
-								<h3 className="text-lg font-semibold text-gray-900">
-									{supervisorItem.user.name}
-								</h3>
-								<p className="text-sm text-gray-600">
-									Supervisor: {supervisorItem.user.name}
-								</p>
+								<h3 className="text-lg font-semibold text-gray-900">{supervisorItem.user.name}</h3>
+								<p className="text-sm text-gray-600">Supervisor: {supervisorItem.user.name}</p>
 								<p className="text-xs text-gray-500">ID: {supervisorItem.id}</p>
 							</div>
 							<div className="text-right">
@@ -124,10 +115,8 @@ export default function CoursesPage() {
 			</div>
 
 			{data.data.length === 0 && (
-				<div className="py-8 text-center text-gray-500">
-					No supervisors found
-				</div>
+				<div className="py-8 text-center text-gray-500">No supervisors found</div>
 			)}
 		</div>
-	);
+	)
 }

@@ -4,7 +4,7 @@
  * Utility to detect network errors.
  */
 
-import type { ApiError } from "./index";
+import type { ApiError } from "./index"
 
 export function isNetworkError(error: unknown): boolean {
 	return (
@@ -13,5 +13,5 @@ export function isNetworkError(error: unknown): boolean {
 			typeof error === "object" &&
 			"isNetworkError" in error &&
 			(error as ApiError).isNetworkError === true)
-	);
+	)
 }

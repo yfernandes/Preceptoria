@@ -6,5 +6,5 @@ export default function ShiftsPage() {
 				<p className="text-gray-600">Gestão de Turnos</p>
 			</div>
 		</div>
-	);
+	)
 }

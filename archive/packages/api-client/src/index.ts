@@ -6,4 +6,4 @@
  */
 
 // Re-export from core
-export * from "./core/client";
+export * from "./core/client"

@@ -1,50 +1,34 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Input from "$lib/components/ui/Input.svelte";
-	import Card from "$lib/components/ui/Card.svelte";
-	import Badge from "$lib/components/ui/Badge.svelte";
-	import {
-		Building2,
-		User,
-		GraduationCap,
-		Hospital,
-		ArrowRight,
-		CheckCircle2,
-		ArrowLeft,
-		ShieldCheck,
-		Lock,
-	} from "lucide-svelte";
-	import { cn } from "$lib/utils";
+import { Building2, Hospital } from "lucide-svelte"
 
-	let step = $state(1);
-	let selectedRole = $state("PRECEPTOR");
+let step = $state(1)
+let _selectedRole = $state("PRECEPTOR")
 
-	const roles = [
-		{
-			id: "PRECEPTOR",
-			name: "Preceptor",
-			icon: Hospital,
-			description: "Acompanhe seus alunos e valide frequências.",
-			color: "text-emerald-600",
-			bg: "bg-emerald-50",
-		},
-		{
-			id: "INSTITUTION",
-			name: "Instituição",
-			icon: Building2,
-			description: "Gerencie convênios, documentos e auditorias.",
-			color: "text-indigo-600",
-			bg: "bg-indigo-50",
-		},
-	];
+const _roles = [
+	{
+		id: "PRECEPTOR",
+		name: "Preceptor",
+		icon: Hospital,
+		description: "Acompanhe seus alunos e valide frequências.",
+		color: "text-emerald-600",
+		bg: "bg-emerald-50",
+	},
+	{
+		id: "INSTITUTION",
+		name: "Instituição",
+		icon: Building2,
+		description: "Gerencie convênios, documentos e auditorias.",
+		color: "text-indigo-600",
+		bg: "bg-indigo-50",
+	},
+]
 
-	function nextStep() {
-		if (step < 2) step++;
-	}
-	function prevStep() {
-		if (step > 1) step--;
-	}
+function _nextStep() {
+	if (step < 2) step++
+}
+function _prevStep() {
+	if (step > 1) step--
+}
 </script>
 
 <div
@@ -104,7 +88,7 @@
 						</div>
 
 						<div class="grid grid-cols-1 gap-4">
-							{#each roles as role}
+							{#each roles as role (role.id)}
 								<button
 									onclick={() => (selectedRole = role.id)}
 									class={cn(

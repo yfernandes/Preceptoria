@@ -1,53 +1,41 @@
 <script lang="ts">
-	import Button from "$lib/components/ui/Button.svelte";
-	import {
-		Building2,
-		ShieldCheck,
-		Users,
-		FileCheck,
-		ArrowRight,
-		CheckCircle2,
-		Menu,
-		X,
-	} from "lucide-svelte";
-	import { cn } from "$lib/utils";
+import { Building2, FileCheck, ShieldCheck, Users } from "lucide-svelte"
 
-	let isMenuOpen = $state(false);
+let _isMenuOpen = $state(false)
 
-	const features = [
-		{
-			title: "Gestão de Convênios",
-			description:
-				"Controle total sobre contratos entre instituições de ensino e unidades hospitalares.",
-			icon: Building2,
-			color: "text-blue-600",
-			bg: "bg-blue-50",
-		},
-		{
-			title: "Auditoria de Documentos",
-			description:
-				"Fluxo automatizado para validação de vacinas, contratos e seguros obrigatórios.",
-			icon: ShieldCheck,
-			color: "text-emerald-600",
-			bg: "bg-emerald-50",
-		},
-		{
-			title: "Portal do Estudante",
-			description:
-				"Interface intuitiva para que alunos enviem documentação e acompanhem seus estágios.",
-			icon: Users,
-			color: "text-indigo-600",
-			bg: "bg-indigo-50",
-		},
-		{
-			title: "Relatórios de Conformidade",
-			description:
-				"Gere documentos e certificados de estágio com um clique, garantindo segurança jurídica.",
-			icon: FileCheck,
-			color: "text-amber-600",
-			bg: "bg-amber-50",
-		},
-	];
+const _features = [
+	{
+		title: "Gestão de Convênios",
+		description:
+			"Controle total sobre contratos entre instituições de ensino e unidades hospitalares.",
+		icon: Building2,
+		color: "text-blue-600",
+		bg: "bg-blue-50",
+	},
+	{
+		title: "Auditoria de Documentos",
+		description: "Fluxo automatizado para validação de vacinas, contratos e seguros obrigatórios.",
+		icon: ShieldCheck,
+		color: "text-emerald-600",
+		bg: "bg-emerald-50",
+	},
+	{
+		title: "Portal do Estudante",
+		description:
+			"Interface intuitiva para que alunos enviem documentação e acompanhem seus estágios.",
+		icon: Users,
+		color: "text-indigo-600",
+		bg: "bg-indigo-50",
+	},
+	{
+		title: "Relatórios de Conformidade",
+		description:
+			"Gere documentos e certificados de estágio com um clique, garantindo segurança jurídica.",
+		icon: FileCheck,
+		color: "text-amber-600",
+		bg: "bg-amber-50",
+	},
+]
 </script>
 
 <div
@@ -72,17 +60,17 @@
 			<!-- Desktop Nav -->
 			<div class="hidden items-center gap-8 md:flex">
 				<a
-					href="#features"
+					href={resolve("#features")}
 					class="text-sm font-semibold text-gray-500 transition-colors hover:text-blue-600"
 					>Funcionalidades</a
 				>
 				<a
-					href="#about"
+					href={resolve("#about")}
 					class="text-sm font-semibold text-gray-500 transition-colors hover:text-blue-600">Sobre</a
 				>
 				<div class="h-6 w-px bg-gray-100"></div>
 				<a
-					href="/login"
+					href={resolve("/login")}
 					class="text-sm font-bold text-gray-900 transition-colors hover:text-blue-600">Entrar</a
 				>
 				<Button
@@ -108,8 +96,10 @@
 			<div
 				class="animate-in slide-in-from-top space-y-4 border-b border-gray-100 bg-white p-6 duration-300 md:hidden"
 			>
-				<a href="#features" class="block py-2 text-base font-bold text-gray-900">Funcionalidades</a>
-				<a href="/login" class="block py-2 text-base font-bold text-gray-900">Entrar</a>
+				<a href={resolve("#features")} class="block py-2 text-base font-bold text-gray-900"
+					>Funcionalidades</a
+				>
+				<a href={resolve("/login")} class="block py-2 text-base font-bold text-gray-900">Entrar</a>
 				<Button onclick={() => (window.location.href = "/signup")} class="w-full rounded-xl py-4"
 					>Criar Conta Gratuita</Button
 				>
@@ -219,7 +209,7 @@
 				</div>
 
 				<div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-					{#each features as feature}
+					{#each features as feature (feature.title)}
 						<div
 							class="group rounded-[2rem] border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
 						>
@@ -287,9 +277,9 @@
 			</div>
 
 			<div class="flex gap-8 text-sm font-bold text-gray-400">
-				<a href="#" class="transition-colors hover:text-blue-600">Termos</a>
-				<a href="#" class="transition-colors hover:text-blue-600">Privacidade</a>
-				<a href="#" class="transition-colors hover:text-blue-600">Contato</a>
+				<a href="javascript:void(0)" class="transition-colors hover:text-blue-600">Termos</a>
+				<a href="javascript:void(0)" class="transition-colors hover:text-blue-600">Privacidade</a>
+				<a href="javascript:void(0)" class="transition-colors hover:text-blue-600">Contato</a>
 			</div>
 
 			<p class="text-xs font-bold tracking-widest text-gray-300 uppercase">

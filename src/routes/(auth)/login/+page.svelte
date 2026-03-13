@@ -1,29 +1,17 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Input from "$lib/components/ui/Input.svelte";
-	import Card from "$lib/components/ui/Card.svelte";
-	import {
-		Building2,
-		Github,
-		ArrowRight,
-		ShieldCheck,
-		HeartPulse,
-	} from "lucide-svelte";
-	import { cn } from "$lib/utils";
-	import type { ActionData } from "./$types";
-	import { authClient } from "$lib/auth-client";
+import { authClient } from "$lib/auth-client"
+import type { ActionData } from "./$types"
 
-	let { form }: { form: ActionData } = $props();
+let { form }: { form: ActionData } = $props()
 
-	let isLoading = $state(false);
+let _isLoading = $state(false)
 
-	async function signInSocial(provider: "google" | "github") {
-		await authClient.signIn.social({
-			provider,
-			callbackURL: "/dashboard",
-		});
-	}
+async function _signInSocial(provider: "google" | "github") {
+	await authClient.signIn.social({
+		provider,
+		callbackURL: "/dashboard",
+	})
+}
 </script>
 
 <div class="flex min-h-screen flex-col overflow-hidden bg-[#F9FAFB] lg:flex-row">
@@ -133,7 +121,7 @@
 						<div class="flex items-center justify-between px-1">
 							<label class="text-sm font-bold text-gray-700" for="password">Senha</label>
 							<a
-								href="/forgot-password"
+								href={resolve("/forgot-password")}
 								class="text-xs font-bold text-blue-600 hover:text-blue-700 hover:underline"
 								>Esqueceu a senha?</a
 							>
@@ -217,8 +205,9 @@
 			<div class="pt-8 text-center">
 				<p class="text-sm font-medium text-gray-500">
 					Ainda não tem uma conta?
-					<a href="/signup" class="font-bold text-blue-600 transition-colors hover:text-blue-700"
-						>Crie uma agora</a
+					<a
+						href={resolve("/signup")}
+						class="font-bold text-blue-600 transition-colors hover:text-blue-700">Crie uma agora</a
 					>
 				</p>
 			</div>

@@ -1,21 +1,14 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../contexts/AuthContext";
-import Link from "next/link";
-import { Button } from "@web/components/ui/button";
-import { Input } from "@web/components/ui/input";
-import { Label } from "@web/components/ui/label";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@web/components/ui/card";
-import { Alert, AlertDescription } from "@web/components/ui/alert";
-import { GraduationCap } from "lucide-react";
+import { Alert, AlertDescription } from "@web/components/ui/alert"
+import { Button } from "@web/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@web/components/ui/card"
+import { Input } from "@web/components/ui/input"
+import { Label } from "@web/components/ui/label"
+import { GraduationCap } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 export default function SignupPage() {
 	const [formData, setFormData] = useState({
@@ -23,49 +16,49 @@ export default function SignupPage() {
 		email: "",
 		password: "",
 		confirmPassword: "",
-	});
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState("");
-	const router = useRouter();
+	})
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState("")
+	const router = useRouter()
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData({
 			...formData,
 			[e.target.name]: e.target.value,
-		});
-	};
+		})
+	}
 
 	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setError("");
+		e.preventDefault()
+		setError("")
 
 		// Basic validation
 		if (formData.password !== formData.confirmPassword) {
-			setError("As senhas não coincidem");
-			return;
+			setError("As senhas não coincidem")
+			return
 		}
 
 		if (formData.password.length < 6) {
-			setError("A senha deve ter pelo menos 6 caracteres");
-			return;
+			setError("A senha deve ter pelo menos 6 caracteres")
+			return
 		}
 
-		setLoading(true);
+		setLoading(true)
 
 		try {
 			// TODO: Implement signup logic
 			// For now, just simulate a signup process
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+			await new Promise((resolve) => setTimeout(resolve, 1000))
 
 			// Redirect to login page after successful signup
-			router.push("/login?message=signup-success");
+			router.push("/login?message=signup-success")
 		} catch (err) {
-			setError("Erro ao criar conta. Tente novamente.");
-			console.error("Signup failed:", err);
+			setError("Erro ao criar conta. Tente novamente.")
+			console.error("Signup failed:", err)
 		} finally {
-			setLoading(false);
+			setLoading(false)
 		}
-	};
+	}
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-12 sm:px-6 lg:px-8">
@@ -76,9 +69,7 @@ export default function SignupPage() {
 						<GraduationCap className="h-6 w-6 text-white" />
 					</div>
 					<h1 className="text-3xl font-bold text-gray-900">Preceptoria</h1>
-					<p className="mt-2 text-sm text-gray-600">
-						Sistema de Gestão de Estágios
-					</p>
+					<p className="mt-2 text-sm text-gray-600">Sistema de Gestão de Estágios</p>
 				</div>
 
 				{/* Signup Card */}
@@ -188,7 +179,7 @@ export default function SignupPage() {
 				</div>
 			</div>
 		</div>
-	);
+	)
 }
 
 /* ShadCN Login Form

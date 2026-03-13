@@ -1,6 +1,6 @@
-import { db } from "$lib/server/db";
-import { documents } from "$lib/server/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm"
+import { db } from "$lib/server/db"
+import { documents } from "$lib/server/db/schema"
 
 export type DocumentType =
 	| "PROFESSIONAL_ID"
@@ -9,20 +9,20 @@ export type DocumentType =
 	| "ADMISSION_FORM"
 	| "BADGE_PICTURE"
 	| "INSURANCE_DOCUMENTATION"
-	| "OTHER";
-export type DocumentStatus = "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED";
+	| "OTHER"
+export type DocumentStatus = "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED"
 
 export async function createDocument(data: {
-	studentId: string;
-	name: string;
-	type: DocumentType;
-	url: string;
-	mimeType?: string;
-	fileSize?: number;
-	expiresAt?: Date;
+	studentId: string
+	name: string
+	type: DocumentType
+	url: string
+	mimeType?: string
+	fileSize?: number
+	expiresAt?: Date
 }) {
-	const [result] = await db.insert(documents).values(data).returning();
-	return result;
+	const [result] = await db.insert(documents).values(data).returning()
+	return result
 }
 
 export async function getDocumentById(id: string) {
@@ -35,7 +35,7 @@ export async function getDocumentById(id: string) {
 				},
 			},
 		},
-	});
+	})
 }
 
 export async function listDocumentsByStudent(studentId: string) {
@@ -48,7 +48,7 @@ export async function listDocumentsByStudent(studentId: string) {
 				},
 			},
 		},
-	});
+	})
 }
 
 export async function updateDocumentStatus(
@@ -66,11 +66,11 @@ export async function updateDocumentStatus(
 			rejectionReason,
 		})
 		.where(eq(documents.id, id))
-		.returning();
-	return result;
+		.returning()
+	return result
 }
 
 export async function deleteDocument(id: string) {
-	const [result] = await db.delete(documents).where(eq(documents.id, id)).returning();
-	return result;
+	const [result] = await db.delete(documents).where(eq(documents.id, id)).returning()
+	return result
 }

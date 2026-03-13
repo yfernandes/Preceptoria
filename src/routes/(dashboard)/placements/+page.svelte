@@ -1,39 +1,22 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import type { PageData, ActionData } from "./$types";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Input from "$lib/components/ui/Input.svelte";
-	import Card from "$lib/components/ui/Card.svelte";
-	import Badge from "$lib/components/ui/Badge.svelte";
-	import {
-		Link,
-		Hospital,
-		User,
-		Calendar,
-		Plus,
-		ArrowLeft,
-		AlertCircle,
-		Search,
-		X,
-	} from "lucide-svelte";
-	import { cn } from "$lib/utils";
+import type { ActionData, PageData } from "./$types"
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+let { data, form }: { data: PageData; form: ActionData } = $props()
 
-	let isCreating = $state(false);
-	let searchQuery = $state("");
+let isCreating = $state(false)
+let searchQuery = $state("")
 
-	function toggleCreate() {
-		isCreating = !isCreating;
-	}
+function _toggleCreate() {
+	isCreating = !isCreating
+}
 
-	const filteredPlacements = $derived(
-		data.placements.filter(
-			(p) =>
-				p.student.user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				p.hospital.name.toLowerCase().includes(searchQuery.toLowerCase())
-		)
-	);
+const _filteredPlacements = $derived(
+	data.placements.filter(
+		(p) =>
+			p.student.user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			p.hospital.name.toLowerCase().includes(searchQuery.toLowerCase())
+	)
+)
 </script>
 
 <div class="animate-in fade-in space-y-8 duration-500">

@@ -1,18 +1,18 @@
-import { Elysia } from "elysia";
-import { JwtOptions } from "@api/jwt";
+import { JwtOptions } from "@api/jwt"
 import {
+	type AuthenticatedUser,
+	type CookieValue,
+	type TJwtPayload,
 	tCookie,
-	TJwtPayload,
-	AuthenticatedUser,
-	CookieValue,
-} from "@api/types/jwtCookie";
-import { jwt } from "@elysiajs/jwt";
+} from "@api/types/jwtCookie"
+import { jwt } from "@elysiajs/jwt"
+import { Elysia } from "elysia"
 
 // Helper function to extract session token from cookie
 function extractSessionToken(cookieValue: CookieValue): string | null {
 	// For real HTTP requests (parsed cookie object)
 	if (typeof cookieValue === "object" && cookieValue.CookieValue) {
-		return cookieValue.CookieValue;
+		return cookieValue.CookieValue
 	}
 
 	// For unit tests (raw string)
@@ -20,16 +20,16 @@ function extractSessionToken(cookieValue: CookieValue): string | null {
 		// If the value is a stringified object, parse it
 		if (cookieValue.startsWith("{")) {
 			try {
-				const parsed = JSON.parse(cookieValue) as { CookieValue?: string };
-				return parsed.CookieValue ?? null;
+				const parsed = JSON.parse(cookieValue) as { CookieValue?: string }
+				return parsed.CookieValue ?? null
 			} catch {
-				return null;
+				return null
 			}
 		}
-		return cookieValue;
+		return cookieValue
 	}
 
-	return null;
+	return null
 }
 
 // Pure authentication middleware - only handles JWT verification
@@ -38,16 +38,16 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 	.guard(tCookie)
 	.derive(async ({ cookie, jwt }) => {
 		try {
-			const sessionToken = extractSessionToken(cookie.session.value);
+			const sessionToken = extractSessionToken(cookie.session.value)
 
 			if (!sessionToken) {
-				throw new Error("No session cookie found");
+				throw new Error("No session cookie found")
 			}
 
-			const token = (await jwt.verify(sessionToken)) as TJwtPayload;
+			const token = (await jwt.verify(sessionToken)) as TJwtPayload
 
 			if (!token.id) {
-				throw new Error("Invalid token");
+				throw new Error("Invalid token")
 			}
 
 			return {
@@ -55,10 +55,10 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 					id: token.id,
 					roles: token.roles,
 				} as AuthenticatedUser,
-			};
+			}
 		} catch (err) {
-			console.error("Auth middleware error:", err);
-			throw new Error("Authentication failed");
+			console.error("Auth middleware error:", err)
+			throw new Error("Authentication failed")
 		}
 	})
 	.onError(({ error, set }) => {
@@ -68,11 +68,11 @@ export const authMiddleware = new Elysia({ name: "AuthMiddleware" })
 				error.message === "No session cookie found" ||
 				error.message === "Invalid token")
 		) {
-			set.status = 401;
-			return { message: "Authentication failed" };
+			set.status = 401
+			return { message: "Authentication failed" }
 		}
 		// Return a default error response for other errors
-		set.status = 500;
-		return { message: "Internal server error" };
+		set.status = 500
+		return { message: "Internal server error" }
 	})
-	.as("scoped");
+	.as("scoped")

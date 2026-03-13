@@ -1,29 +1,15 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import type { PageData, ActionData } from "./$types";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Input from "$lib/components/ui/Input.svelte";
-	import Card from "$lib/components/ui/Card.svelte";
-	import Badge from "$lib/components/ui/Badge.svelte";
-	import {
-		Building2,
-		ShieldCheck,
-		Lock,
-		CheckCircle2,
-		AlertCircle,
-		ArrowRight,
-	} from "lucide-svelte";
-	import { cn } from "$lib/utils";
+import type { ActionData, PageData } from "./$types"
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+let { data, form }: { data: PageData; form: ActionData } = $props()
 
-	let success = $state(false);
+let _success = $state(false)
 
-	const roleNames: Record<string, string> = {
-		Student: "Estudante",
-		Preceptor: "Preceptor",
-		Supervisor: "Supervisor",
-	};
+const _roleNames: Record<string, string> = {
+	Student: "Estudante",
+	Preceptor: "Preceptor",
+	Supervisor: "Supervisor",
+}
 </script>
 
 <div

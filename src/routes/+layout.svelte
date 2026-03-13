@@ -1,16 +1,15 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { inject } from "@vercel/analytics";
-	import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
-	import "./layout.css";
-	import favicon from "$lib/assets/favicon.svg";
+import { inject } from "@vercel/analytics"
+import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit"
+import { onMount } from "svelte"
+import "./layout.css"
 
-	let { children } = $props();
+let { children } = $props()
 
-	onMount(() => {
-		inject();
-		injectSpeedInsights();
-	});
+onMount(() => {
+	inject()
+	injectSpeedInsights()
+})
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>

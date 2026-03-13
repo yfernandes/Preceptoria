@@ -1,5 +1,5 @@
-import { GraduationCap } from "lucide-react";
-import { SignupForm } from "@/components/signup-form";
+import { GraduationCap } from "lucide-react"
+import { SignupForm } from "@/components/signup-form"
 
 export default function SignupPage() {
 	return (
@@ -23,5 +23,5 @@ export default function SignupPage() {
 				</div>
 			</div>
 		</div>
-	);
+	)
 }

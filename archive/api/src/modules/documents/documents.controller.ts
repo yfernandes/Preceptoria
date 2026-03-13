@@ -1,7 +1,7 @@
-import Elysia, { status as error, t } from "elysia";
-import { DocumentType } from "@api/modules/documents";
-import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
-import { DocumentService } from "./document.service";
+import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware"
+import { DocumentType } from "@api/modules/documents"
+import Elysia, { status as error, t } from "elysia"
+import { DocumentService } from "./document.service"
 
 const documentValidationDto = {
 	body: t.Object({
@@ -11,22 +11,22 @@ const documentValidationDto = {
 	params: t.Object({
 		id: t.String(),
 	}),
-};
+}
 
 const documentApprovalDto = {
 	body: t.Object({
 		notes: t.Optional(t.String()),
 	}),
-};
+}
 
 const documentRejectionDto = {
 	body: t.Object({
 		reason: t.String(),
 		notes: t.Optional(t.String()),
 	}),
-};
+}
 
-const documentService = new DocumentService();
+const documentService = new DocumentService()
 
 export const documentsController = new Elysia({ prefix: "/documents" })
 	.use(authenticatedUserMiddleware)
@@ -42,21 +42,21 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				body.studentId,
 				body.url,
 				body.notes
-			);
+			)
 			if (result.status && result.status !== 201) {
-				return error(result.status, { success: false, message: result.error });
+				return error(result.status, { success: false, message: result.error })
 			}
 			if (!result.document) {
 				return error(500, {
 					success: false,
 					message: "Unexpected error: document missing",
-				});
+				})
 			}
 			return {
 				success: true,
 				message: "Document created successfully",
 				data: result.document.toPOJO(),
-			};
+			}
 		},
 		{
 			body: t.Object({
@@ -71,30 +71,27 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 
 	// Get all documents (filtered by permissions)
 	.get("", async ({ requester, query }) => {
-		const result = await documentService.getDocuments(requester, query);
+		const result = await documentService.getDocuments(requester, query)
 		return {
 			success: true,
 			data: result.data,
 			pagination: result.pagination,
-		};
+		}
 	})
 
 	// Get a specific document
 	.get(
 		":id",
 		async ({ params, requester }) => {
-			const result = await documentService.getDocumentById(
-				requester,
-				params.id
-			);
+			const result = await documentService.getDocumentById(requester, params.id)
 			if (result.status) {
-				return error(result.status, { success: false, message: result.error });
+				return error(result.status, { success: false, message: result.error })
 			}
 			if (!result.document) {
 				return error(500, {
 					success: false,
 					message: "Unexpected error: document missing",
-				});
+				})
 			}
 			return {
 				success: true,
@@ -104,7 +101,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 						.getValidationTemplates()
 						.find((t) => t.type === result.document.type)?.template,
 				},
-			};
+			}
 		},
 		{
 			params: t.Object({
@@ -122,21 +119,21 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				params.id,
 				body.validationChecks,
 				body.notes
-			);
+			)
 			if (result.status) {
-				return error(result.status, { success: false, message: result.error });
+				return error(result.status, { success: false, message: result.error })
 			}
 			if (!result.document) {
 				return error(500, {
 					success: false,
 					message: "Unexpected error: document missing",
-				});
+				})
 			}
 			return {
 				success: true,
 				message: "Validation checks updated successfully",
 				data: result.document.toPOJO(),
-			};
+			}
 		},
 		documentValidationDto
 	)
@@ -145,25 +142,21 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 	.post(
 		"/:id/approve",
 		async ({ params, requester, body }) => {
-			const result = await documentService.approveDocument(
-				requester,
-				params.id,
-				body.notes
-			);
+			const result = await documentService.approveDocument(requester, params.id, body.notes)
 			if (result.status) {
-				return error(result.status, { success: false, message: result.error });
+				return error(result.status, { success: false, message: result.error })
 			}
 			if (!result.document) {
 				return error(500, {
 					success: false,
 					message: "Unexpected error: document missing",
-				});
+				})
 			}
 			return {
 				success: true,
 				message: "Document approved successfully",
 				data: result.document.toPOJO(),
-			};
+			}
 		},
 		documentApprovalDto
 	)
@@ -177,21 +170,21 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				params.id,
 				body.reason,
 				body.notes
-			);
+			)
 			if (result.status) {
-				return error(result.status, { success: false, message: result.error });
+				return error(result.status, { success: false, message: result.error })
 			}
 			if (!result.document) {
 				return error(500, {
 					success: false,
 					message: "Unexpected error: document missing",
-				});
+				})
 			}
 			return {
 				success: true,
 				message: "Document rejected successfully",
 				data: result.document.toPOJO(),
-			};
+			}
 		},
 		documentRejectionDto
 	)
@@ -201,7 +194,7 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 		return {
 			success: true,
 			data: documentService.getValidationTemplates(),
-		};
+		}
 	})
 
 	// Compile student documents into bundles (Supervisor only)
@@ -213,15 +206,15 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 				body.studentIds,
 				body.bundleName,
 				body.notes
-			);
+			)
 			if (result.status) {
-				return error(result.status, { success: false, message: result.error });
+				return error(result.status, { success: false, message: result.error })
 			}
 			return {
 				success: true,
 				message: "Document bundle compiled successfully",
 				data: result.bundle,
-			};
+			}
 		},
 		{
 			body: t.Object({
@@ -234,9 +227,9 @@ export const documentsController = new Elysia({ prefix: "/documents" })
 
 	// Get pending documents count (for dashboard)
 	.get("/stats/pending", async () => {
-		const stats = await documentService.getStats();
+		const stats = await documentService.getStats()
 		return {
 			success: true,
 			data: stats,
-		};
-	});
+		}
+	})

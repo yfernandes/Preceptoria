@@ -1,27 +1,26 @@
-import { Seeder } from "@mikro-orm/seeder";
-import { EntityManager } from "@mikro-orm/postgresql";
-
-import { DocumentType } from "@api/modules/documents";
+import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity"
+import { SysAdmin } from "@api/modules/admin/SysAdmin.entity"
+import { Classes } from "@api/modules/classes/classes.entity"
+import { UserRoles } from "@api/modules/common/role.abstract"
+import { Course } from "@api/modules/courses/course.entity"
+import { DocumentType } from "@api/modules/documents"
+import { Document } from "@api/modules/documents/document.entity"
+import { HospitalManager } from "@api/modules/hospitalManagers/hospitalManager.entity"
+import { Hospital } from "@api/modules/hospitals/hospital.entity"
+import { School } from "@api/modules/schools/school.entity"
+import { Student } from "@api/modules/students/student.entity"
+import { Supervisor } from "@api/modules/supervisors/supervisor.entity"
+import { User } from "@api/modules/users/user.entity"
 import {
 	GoogleSheetsService,
 	// ConsolidatedSubmission,
-} from "@api/services/googleSheets";
-import { UserRoles } from "@api/modules/common/role.abstract";
-import { User } from "@api/modules/users/user.entity";
-import { School } from "@api/modules/schools/school.entity";
-import { Supervisor } from "@api/modules/supervisors/supervisor.entity";
-import { Course } from "@api/modules/courses/course.entity";
-import { Classes } from "@api/modules/classes/classes.entity";
-import { Student } from "@api/modules/students/student.entity";
-import { Document } from "@api/modules/documents/document.entity";
-import { Hospital } from "@api/modules/hospitals/hospital.entity";
-import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity";
-import { SysAdmin } from "@api/modules/admin/SysAdmin.entity";
-import { HospitalManager } from "@api/modules/hospitalManagers/hospitalManager.entity";
+} from "@api/services/googleSheets"
+import type { EntityManager } from "@mikro-orm/postgresql"
+import { Seeder } from "@mikro-orm/seeder"
 
 export class DatabaseSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {
-		console.log("🌱 Starting database seeding for Faculdade Santa Casa...");
+		console.log("🌱 Starting database seeding for Faculdade Santa Casa...")
 
 		await this.call(em, [
 			SchoolsSeeder,
@@ -32,43 +31,43 @@ export class DatabaseSeeder extends Seeder {
 			ClassesSeeder,
 			StudentsSeeder,
 			DocumentsSeeder,
-		]);
+		])
 
-		console.log("✅ Database seeding completed!");
+		console.log("✅ Database seeding completed!")
 	}
 }
 
 export class SchoolsSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {
-		console.log("🏫 Seeding Faculdade Santa Casa...");
+		console.log("🏫 Seeding Faculdade Santa Casa...")
 
 		const schoolData = {
 			name: "Faculdade Santa Casa",
 			address: "Rua Santa Casa, 123 - Salvador, BA",
 			email: "contato@faculdadesantacasa.edu.br",
 			phone: "+55 71 3000-0000",
-		};
+		}
 
-		const existingSchool = await em.findOne(School, { name: schoolData.name });
+		const existingSchool = await em.findOne(School, { name: schoolData.name })
 		if (!existingSchool) {
 			const school = new School(
 				schoolData.name,
 				schoolData.address,
 				schoolData.email,
 				schoolData.phone
-			);
-			em.persist(school);
-			await em.flush();
-			console.log("✅ Seeded Faculdade Santa Casa");
+			)
+			em.persist(school)
+			await em.flush()
+			console.log("✅ Seeded Faculdade Santa Casa")
 		} else {
-			console.log("✅ Faculdade Santa Casa already exists");
+			console.log("✅ Faculdade Santa Casa already exists")
 		}
 	}
 }
 
 export class HospitalsSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {
-		console.log("🏥 Seeding hospitals...");
+		console.log("🏥 Seeding hospitals...")
 
 		const hospitals = [
 			{
@@ -83,31 +82,31 @@ export class HospitalsSeeder extends Seeder {
 				email: "contato@hospitalsantaisabel.com.br",
 				phone: "+55 71 3000-2000",
 			},
-		];
+		]
 
 		for (const hospitalData of hospitals) {
 			const existingHospital = await em.findOne(Hospital, {
 				name: hospitalData.name,
-			});
+			})
 			if (!existingHospital) {
 				const hospital = new Hospital(
 					hospitalData.name,
 					hospitalData.address,
 					hospitalData.email,
 					hospitalData.phone
-				);
-				em.persist(hospital);
+				)
+				em.persist(hospital)
 			}
 		}
 
-		await em.flush();
-		console.log(`✅ Seeded ${hospitals.length.toString()} hospitals`);
+		await em.flush()
+		console.log(`✅ Seeded ${hospitals.length.toString()} hospitals`)
 	}
 }
 
 export class UsersSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {
-		console.log("👥 Seeding users...");
+		console.log("👥 Seeding users...")
 
 		const users = [
 			{
@@ -138,91 +137,76 @@ export class UsersSeeder extends Seeder {
 				password: this.generateTemporaryPassword(),
 				roles: [UserRoles.OrgAdmin, UserRoles.HospitalManager],
 			},
-		];
+		]
 
 		for (const userData of users) {
-			const existingUser = await em.findOne(User, { email: userData.email });
+			const existingUser = await em.findOne(User, { email: userData.email })
 			if (!existingUser) {
 				const user = await User.create(
 					userData.name,
 					userData.email,
 					userData.phone,
 					userData.password
-				);
-				user.roles = userData.roles;
-				em.persist(user);
+				)
+				user.roles = userData.roles
+				em.persist(user)
 			}
 		}
 
-		await em.flush();
-		console.log(`✅ Seeded ${users.length.toString()} users`);
+		await em.flush()
+		console.log(`✅ Seeded ${users.length.toString()} users`)
 	}
 
 	private generateTemporaryPassword(): string {
-		return (
-			Math.random().toString(36).slice(-8) +
-			Math.random().toString(36).slice(-8)
-		);
+		return Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)
 	}
 }
 
 export class RolesSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {
-		console.log("🔐 Seeding roles...");
+		console.log("🔐 Seeding roles...")
 
-		const yagoUser = await em.findOne(User, { email: "yagoalmeida@gmail.com" });
+		const yagoUser = await em.findOne(User, { email: "yagoalmeida@gmail.com" })
 		const ayalaUser = await em.findOne(User, {
 			email: "ayala.fernandes@faculdadesantacasa.edu.br",
-		});
+		})
 		const danielUser = await em.findOne(User, {
 			email: "daniel.silva@hms.salvador.ba.gov.br",
-		});
+		})
 		const carlaUser = await em.findOne(User, {
 			email: "carla.santos@hospitalsantaisabel.com.br",
-		});
+		})
 
 		const santaCasaSchool = await em.findOne(School, {
 			name: "Faculdade Santa Casa",
-		});
+		})
 		const hmsHospital = await em.findOne(Hospital, {
 			name: "Hospital Municipal de Salvador",
-		});
+		})
 		const hsiHospital = await em.findOne(Hospital, {
 			name: "Hospital Santa Isabel",
-		});
+		})
 
 		if (yagoUser && !(await em.findOne(SysAdmin, { user: yagoUser.id }))) {
-			const sysAdmin = new SysAdmin(yagoUser);
-			em.persist(sysAdmin);
+			const sysAdmin = new SysAdmin(yagoUser)
+			em.persist(sysAdmin)
 		}
 
-		if (
-			ayalaUser &&
-			santaCasaSchool &&
-			!(await em.findOne(OrgAdmin, { user: ayalaUser.id }))
-		) {
-			const orgAdmin = new OrgAdmin(ayalaUser);
-			orgAdmin.school = santaCasaSchool;
-			em.persist(orgAdmin);
+		if (ayalaUser && santaCasaSchool && !(await em.findOne(OrgAdmin, { user: ayalaUser.id }))) {
+			const orgAdmin = new OrgAdmin(ayalaUser)
+			orgAdmin.school = santaCasaSchool
+			em.persist(orgAdmin)
 		}
 
-		if (
-			ayalaUser &&
-			santaCasaSchool &&
-			!(await em.findOne(Supervisor, { user: ayalaUser.id }))
-		) {
-			const supervisor = new Supervisor(ayalaUser, santaCasaSchool);
-			em.persist(supervisor);
+		if (ayalaUser && santaCasaSchool && !(await em.findOne(Supervisor, { user: ayalaUser.id }))) {
+			const supervisor = new Supervisor(ayalaUser, santaCasaSchool)
+			em.persist(supervisor)
 		}
 
-		if (
-			danielUser &&
-			hmsHospital &&
-			!(await em.findOne(OrgAdmin, { user: danielUser.id }))
-		) {
-			const orgAdmin = new OrgAdmin(danielUser);
-			orgAdmin.hospital = hmsHospital;
-			em.persist(orgAdmin);
+		if (danielUser && hmsHospital && !(await em.findOne(OrgAdmin, { user: danielUser.id }))) {
+			const orgAdmin = new OrgAdmin(danielUser)
+			orgAdmin.hospital = hmsHospital
+			em.persist(orgAdmin)
 		}
 
 		if (
@@ -230,58 +214,48 @@ export class RolesSeeder extends Seeder {
 			hmsHospital &&
 			!(await em.findOne(HospitalManager, { user: danielUser.id }))
 		) {
-			const hospManager = new HospitalManager(danielUser, hmsHospital);
-			em.persist(hospManager);
+			const hospManager = new HospitalManager(danielUser, hmsHospital)
+			em.persist(hospManager)
 		}
 
-		if (
-			carlaUser &&
-			hsiHospital &&
-			!(await em.findOne(OrgAdmin, { user: carlaUser.id }))
-		) {
-			const orgAdmin = new OrgAdmin(carlaUser);
-			orgAdmin.hospital = hsiHospital;
-			em.persist(orgAdmin);
+		if (carlaUser && hsiHospital && !(await em.findOne(OrgAdmin, { user: carlaUser.id }))) {
+			const orgAdmin = new OrgAdmin(carlaUser)
+			orgAdmin.hospital = hsiHospital
+			em.persist(orgAdmin)
 		}
 
-		if (
-			carlaUser &&
-			hsiHospital &&
-			!(await em.findOne(HospitalManager, { user: carlaUser.id }))
-		) {
-			const hospManager = new HospitalManager(carlaUser, hsiHospital);
-			em.persist(hospManager);
+		if (carlaUser && hsiHospital && !(await em.findOne(HospitalManager, { user: carlaUser.id }))) {
+			const hospManager = new HospitalManager(carlaUser, hsiHospital)
+			em.persist(hospManager)
 		}
 
-		await em.flush();
-		console.log("✅ Seeded roles");
+		await em.flush()
+		console.log("✅ Seeded roles")
 	}
 }
 
 export class CoursesSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {
-		console.log("📚 Seeding course...");
+		console.log("📚 Seeding course...")
 
 		const santaCasaSchool = await em.findOne(School, {
 			name: "Faculdade Santa Casa",
-		});
+		})
 		const ayalaSupervisor = await em.findOne(Supervisor, {
 			user: { email: "ayala.fernandes@faculdadesantacasa.edu.br" },
-		});
+		})
 
 		if (santaCasaSchool && ayalaSupervisor) {
-			const courseName = "Fisioterapia em Neonatologia e Pediatria";
-			const existingCourse = await em.findOne(Course, { name: courseName });
+			const courseName = "Fisioterapia em Neonatologia e Pediatria"
+			const existingCourse = await em.findOne(Course, { name: courseName })
 
 			if (!existingCourse) {
-				const course = new Course(courseName, santaCasaSchool, ayalaSupervisor);
-				em.persist(course);
-				await em.flush();
-				console.log(
-					"✅ Seeded Fisioterapia em Neonatologia e Pediatria course"
-				);
+				const course = new Course(courseName, santaCasaSchool, ayalaSupervisor)
+				em.persist(course)
+				await em.flush()
+				console.log("✅ Seeded Fisioterapia em Neonatologia e Pediatria course")
 			} else {
-				console.log("✅ Course already exists");
+				console.log("✅ Course already exists")
 			}
 		}
 	}
@@ -289,114 +263,98 @@ export class CoursesSeeder extends Seeder {
 
 export class ClassesSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {
-		console.log("🎓 Seeding classes from Google Sheets...");
+		console.log("🎓 Seeding classes from Google Sheets...")
 
 		try {
 			const course = await em.findOne(Course, {
 				name: "Fisioterapia em Neonatologia e Pediatria",
-			});
+			})
 			if (!course) {
-				console.log("⚠️ Course not found, skipping class seeding");
-				return;
+				console.log("⚠️ Course not found, skipping class seeding")
+				return
 			}
 
 			if (Bun.env.GOOGLE_SPREADSHEET_ID) {
-				const googleSheets = new GoogleSheetsService();
-				const rawSubmissions = await googleSheets.getSubmissions(
-					Bun.env.GOOGLE_SPREADSHEET_ID
-				);
-				const consolidatedSubmissions =
-					googleSheets.consolidateSubmissionsByCrefito(rawSubmissions);
+				const googleSheets = new GoogleSheetsService()
+				const rawSubmissions = await googleSheets.getSubmissions(Bun.env.GOOGLE_SPREADSHEET_ID)
+				const consolidatedSubmissions = googleSheets.consolidateSubmissionsByCrefito(rawSubmissions)
 
 				const classNumbers = [
-					...new Set(
-						consolidatedSubmissions.map((s) => s.classNumber).filter(Boolean)
-					),
-				];
+					...new Set(consolidatedSubmissions.map((s) => s.classNumber).filter(Boolean)),
+				]
 
 				console.log(
 					`📊 Found ${classNumbers.length.toString()} unique class numbers: ${classNumbers.join(", ")}`
-				);
+				)
 
 				for (const classNumber of classNumbers) {
 					const existingClass = await em.findOne(Classes, {
 						name: classNumber,
 						course: course.id,
-					});
+					})
 
 					if (!existingClass) {
-						const classEntity = new Classes(classNumber, course);
-						em.persist(classEntity);
-						console.log(`✅ Created class: ${classNumber}`);
+						const classEntity = new Classes(classNumber, course)
+						em.persist(classEntity)
+						console.log(`✅ Created class: ${classNumber}`)
 					}
 				}
 
-				await em.flush();
-				console.log(
-					`✅ Seeded ${classNumbers.length.toString()} classes from Google Sheets`
-				);
+				await em.flush()
+				console.log(`✅ Seeded ${classNumbers.length.toString()} classes from Google Sheets`)
 			} else {
-				console.log(
-					"⚠️ No Google Sheets ID configured, skipping class seeding"
-				);
+				console.log("⚠️ No Google Sheets ID configured, skipping class seeding")
 			}
 		} catch (error) {
-			console.error("Error seeding classes:", error);
+			console.error("Error seeding classes:", error)
 		}
 	}
 }
 
 export class StudentsSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {
-		console.log("👨‍🎓 Seeding students from Google Sheets...");
+		console.log("👨‍🎓 Seeding students from Google Sheets...")
 
 		if (!Bun.env.GOOGLE_SPREADSHEET_ID) {
-			console.log(
-				"⚠️ No Google Sheets ID configured, skipping student seeding"
-			);
-			return;
+			console.log("⚠️ No Google Sheets ID configured, skipping student seeding")
+			return
 		}
 
 		try {
-			const googleSheets = new GoogleSheetsService();
-			const rawSubmissions = await googleSheets.getSubmissions(
-				Bun.env.GOOGLE_SPREADSHEET_ID
-			);
-			const consolidatedSubmissions =
-				googleSheets.consolidateSubmissionsByCrefito(rawSubmissions);
+			const googleSheets = new GoogleSheetsService()
+			const rawSubmissions = await googleSheets.getSubmissions(Bun.env.GOOGLE_SPREADSHEET_ID)
+			const consolidatedSubmissions = googleSheets.consolidateSubmissionsByCrefito(rawSubmissions)
 
 			console.log(
 				`📊 Processing ${consolidatedSubmissions.length.toString()} consolidated students...`
-			);
+			)
 
-			let createdCount = 0;
-			let updatedCount = 0;
+			let createdCount = 0
+			let updatedCount = 0
 
 			for (const submission of consolidatedSubmissions) {
 				try {
 					// Process ALL entries - even incomplete ones
 					console.log(
 						`📝 Processing student (Crefito: ${submission.crefito}): ${submission.fullName} (${submission.entryCount.toString()} entries)`
-					);
+					)
 
 					// Check if student already exists by email
 					const existingStudent = await em.findOne(Student, {
 						user: { email: submission.email },
-					});
+					})
 
 					if (existingStudent) {
-						console.log(
-							`ℹ️ Student already exists: ${submission.fullName} (${submission.email})`
-						);
-						continue;
+						console.log(`ℹ️ Student already exists: ${submission.fullName} (${submission.email})`)
+						continue
 					}
 
 					// Create or find user (try by email first, then by Crefito)
-					let user = await em.findOne(User, { email: submission.email });
+					let user = await em.findOne(User, { email: submission.email })
 					if (!user && submission.crefito) {
 						user = await em.findOne(User, {
 							professionalIdentityNumber: submission.crefito,
-						});
+						})
 					}
 
 					if (!user) {
@@ -407,182 +365,164 @@ export class StudentsSeeder extends Seeder {
 							submission.phone,
 							this.generateTemporaryPassword(),
 							submission.crefito
-						);
-						user.roles = [UserRoles.Student];
-						em.persist(user);
+						)
+						user.roles = [UserRoles.Student]
+						em.persist(user)
 						console.log(
 							`✅ Created new user: ${submission.fullName} (Crefito: ${submission.crefito})`
-						);
+						)
 					} else {
 						// Smart update: only update fields that are empty or contain placeholder values
-						let updated = false;
+						let updated = false
 
 						if (
 							(!user.professionalIdentityNumber ||
 								user.professionalIdentityNumber === "Not submitted") &&
 							submission.crefito !== "Not submitted"
 						) {
-							user.professionalIdentityNumber = submission.crefito;
-							updated = true;
+							user.professionalIdentityNumber = submission.crefito
+							updated = true
 						}
 						if (
-							(!user.email ||
-								GoogleSheetsService.isPlaceholder(user.email, "email")) &&
+							(!user.email || GoogleSheetsService.isPlaceholder(user.email, "email")) &&
 							!GoogleSheetsService.isPlaceholder(submission.email, "email")
 						) {
-							user.email = submission.email;
-							updated = true;
+							user.email = submission.email
+							updated = true
 						}
 						if (
-							(!user.phoneNumber ||
-								GoogleSheetsService.isPlaceholder(user.phoneNumber, "phone")) &&
+							(!user.phoneNumber || GoogleSheetsService.isPlaceholder(user.phoneNumber, "phone")) &&
 							!GoogleSheetsService.isPlaceholder(submission.phone, "phone")
 						) {
-							user.phoneNumber = submission.phone;
-							updated = true;
+							user.phoneNumber = submission.phone
+							updated = true
 						}
 						if (
-							(!user.name ||
-								GoogleSheetsService.isPlaceholder(user.name, "name")) &&
+							(!user.name || GoogleSheetsService.isPlaceholder(user.name, "name")) &&
 							!GoogleSheetsService.isPlaceholder(submission.fullName, "name")
 						) {
-							user.name = submission.fullName;
-							updated = true;
+							user.name = submission.fullName
+							updated = true
 						}
 
 						if (updated) {
 							console.log(
 								`🔄 Updated user: ${submission.fullName} (Crefito: ${submission.crefito})`
-							);
-							updatedCount++;
+							)
+							updatedCount++
 						} else {
 							console.log(
 								`ℹ️ No updates needed for: ${submission.fullName} (Crefito: ${submission.crefito})`
-							);
+							)
 						}
 					}
 
 					// Find class
 					let classEntity = await em.findOne(Classes, {
 						name: submission.classNumber,
-					});
+					})
 
 					if (!classEntity) {
-						console.log(
-							`⚠️ Class not found: ${submission.classNumber}, creating default class`
-						);
+						console.log(`⚠️ Class not found: ${submission.classNumber}, creating default class`)
 						const course = await em.findOne(Course, {
 							name: "Fisioterapia em Neonatologia e Pediatria",
-						});
+						})
 						if (course) {
-							classEntity = new Classes(submission.classNumber, course);
-							em.persist(classEntity);
+							classEntity = new Classes(submission.classNumber, course)
+							em.persist(classEntity)
 						}
 					}
 
 					if (classEntity) {
-						const student = new Student(user, classEntity);
-						em.persist(student);
-						createdCount++;
+						const student = new Student(user, classEntity)
+						em.persist(student)
+						createdCount++
 						console.log(
 							`✅ Created student: ${submission.fullName} (Crefito: ${submission.crefito}, ${submission.entryCount.toString()} entries)`
-						);
+						)
 					}
 				} catch (error) {
 					console.error(
 						`Error processing student ${submission.fullName} (Crefito: ${submission.crefito}):`,
 						error
-					);
+					)
 				}
 			}
 
-			await em.flush();
-			console.log(`✅ Created ${createdCount.toString()} new students`);
-			console.log(`🔄 Updated ${updatedCount.toString()} existing students`);
+			await em.flush()
+			console.log(`✅ Created ${createdCount.toString()} new students`)
+			console.log(`🔄 Updated ${updatedCount.toString()} existing students`)
 		} catch (error) {
-			console.error("Error seeding students:", error);
+			console.error("Error seeding students:", error)
 		}
 	}
 
 	private generateTemporaryPassword(): string {
-		return (
-			Math.random().toString(36).slice(-8) +
-			Math.random().toString(36).slice(-8)
-		);
+		return Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)
 	}
 }
 
 export class DocumentsSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {
-		console.log("📄 Seeding documents from Google Sheets...");
+		console.log("📄 Seeding documents from Google Sheets...")
 
 		if (!Bun.env.GOOGLE_SPREADSHEET_ID) {
-			console.log(
-				"⚠️ No Google Sheets ID configured, skipping document seeding"
-			);
-			return;
+			console.log("⚠️ No Google Sheets ID configured, skipping document seeding")
+			return
 		}
 
 		try {
-			const googleSheets = new GoogleSheetsService();
-			const rawSubmissions = await googleSheets.getSubmissions(
-				Bun.env.GOOGLE_SPREADSHEET_ID
-			);
-			const consolidatedSubmissions =
-				googleSheets.consolidateSubmissionsByCrefito(rawSubmissions);
+			const googleSheets = new GoogleSheetsService()
+			const rawSubmissions = await googleSheets.getSubmissions(Bun.env.GOOGLE_SPREADSHEET_ID)
+			const consolidatedSubmissions = googleSheets.consolidateSubmissionsByCrefito(rawSubmissions)
 
 			console.log(
 				`📊 Processing documents for ${consolidatedSubmissions.length.toString()} consolidated students...`
-			);
+			)
 
 			// Debug: Count total documents by type
-			let totalVaccinationCards = 0;
-			let totalIdentityFront = 0;
-			let totalIdentityBack = 0;
-			let totalHSICommitments = 0;
-			let totalHMSCommitments = 0;
-			let totalHospitalForms = 0;
-			let totalBadgePictures = 0;
+			let totalVaccinationCards = 0
+			let totalIdentityFront = 0
+			let totalIdentityBack = 0
+			let totalHSICommitments = 0
+			let totalHMSCommitments = 0
+			let totalHospitalForms = 0
+			let totalBadgePictures = 0
 
 			for (const submission of consolidatedSubmissions) {
-				totalVaccinationCards +=
-					submission.documentation.vaccinationCard.length;
-				totalIdentityFront +=
-					submission.documentation.professionalIdentityFront.length;
-				totalIdentityBack +=
-					submission.documentation.professionalIdentityBack.length;
-				totalHSICommitments +=
-					submission.documentation.internshipCommitmentTermHSI.length;
-				totalHMSCommitments +=
-					submission.documentation.internshipCommitmentTermHMS.length;
-				totalHospitalForms += submission.documentation.cityHospitalForm.length;
-				totalBadgePictures += submission.documentation.badgePicture.length;
+				totalVaccinationCards += submission.documentation.vaccinationCard.length
+				totalIdentityFront += submission.documentation.professionalIdentityFront.length
+				totalIdentityBack += submission.documentation.professionalIdentityBack.length
+				totalHSICommitments += submission.documentation.internshipCommitmentTermHSI.length
+				totalHMSCommitments += submission.documentation.internshipCommitmentTermHMS.length
+				totalHospitalForms += submission.documentation.cityHospitalForm.length
+				totalBadgePictures += submission.documentation.badgePicture.length
 			}
 
-			console.log(`📊 Document counts by type:`);
-			console.log(`  - Vaccination Cards: ${totalVaccinationCards.toString()}`);
-			console.log(`  - Identity Front: ${totalIdentityFront.toString()}`);
-			console.log(`  - Identity Back: ${totalIdentityBack.toString()}`);
-			console.log(`  - HSI Commitments: ${totalHSICommitments.toString()}`);
-			console.log(`  - HMS Commitments: ${totalHMSCommitments.toString()}`);
-			console.log(`  - Hospital Forms: ${totalHospitalForms.toString()}`);
-			console.log(`  - Badge Pictures: ${totalBadgePictures.toString()}`);
+			console.log(`📊 Document counts by type:`)
+			console.log(`  - Vaccination Cards: ${totalVaccinationCards.toString()}`)
+			console.log(`  - Identity Front: ${totalIdentityFront.toString()}`)
+			console.log(`  - Identity Back: ${totalIdentityBack.toString()}`)
+			console.log(`  - HSI Commitments: ${totalHSICommitments.toString()}`)
+			console.log(`  - HMS Commitments: ${totalHMSCommitments.toString()}`)
+			console.log(`  - Hospital Forms: ${totalHospitalForms.toString()}`)
+			console.log(`  - Badge Pictures: ${totalBadgePictures.toString()}`)
 			console.log(
 				`  - Total: ${(totalVaccinationCards + totalIdentityFront + totalIdentityBack + totalHSICommitments + totalHMSCommitments + totalHospitalForms + totalBadgePictures).toString()}`
-			);
+			)
 
-			let createdCount = 0;
-			let processedCount = 0;
+			let createdCount = 0
+			let processedCount = 0
 
 			for (const submission of consolidatedSubmissions) {
 				try {
 					// Process ALL entries - even incomplete ones
 					console.log(
 						`📄 Processing documents for student (Crefito: ${submission.crefito}): ${submission.fullName} (${submission.entryCount.toString()} entries)`
-					);
+					)
 
 					// Find student by email or by Crefito if email is placeholder
-					let student = null;
+					let student = null
 					if (!GoogleSheetsService.isPlaceholder(submission.email, "email")) {
 						student = await em.findOne(
 							Student,
@@ -590,7 +530,7 @@ export class DocumentsSeeder extends Seeder {
 								user: { email: submission.email },
 							},
 							{ populate: ["user"] }
-						);
+						)
 					}
 
 					if (!student && submission.crefito) {
@@ -600,109 +540,74 @@ export class DocumentsSeeder extends Seeder {
 								user: { professionalIdentityNumber: submission.crefito },
 							},
 							{ populate: ["user"] }
-						);
+						)
 					}
 
 					if (!student) {
 						console.log(
 							`⚠️ Student not found for Crefito: ${submission.crefito} (${submission.fullName})`
-						);
-						continue;
+						)
+						continue
 					}
 
-					const { documentation } = submission;
+					const { documentation } = submission
 
 					for (const url of documentation.vaccinationCard) {
-						await this.createDocumentFromUrl(
-							url,
-							student,
-							DocumentType.VACCINATION_CARD,
-							em
-						);
-						createdCount++;
+						await this.createDocumentFromUrl(url, student, DocumentType.VACCINATION_CARD, em)
+						createdCount++
 					}
 
 					for (const url of documentation.professionalIdentityFront) {
-						await this.createDocumentFromUrl(
-							url,
-							student,
-							DocumentType.PROFESSIONAL_ID,
-							em
-						);
-						createdCount++;
+						await this.createDocumentFromUrl(url, student, DocumentType.PROFESSIONAL_ID, em)
+						createdCount++
 					}
 
 					for (const url of documentation.professionalIdentityBack) {
-						await this.createDocumentFromUrl(
-							url,
-							student,
-							DocumentType.PROFESSIONAL_ID,
-							em
-						);
-						createdCount++;
+						await this.createDocumentFromUrl(url, student, DocumentType.PROFESSIONAL_ID, em)
+						createdCount++
 					}
 
 					// Handle HSI internship commitment terms
 					for (const url of documentation.internshipCommitmentTermHSI) {
-						await this.createDocumentFromUrl(
-							url,
-							student,
-							DocumentType.COMMITMENT_CONTRACT,
-							em
-						);
-						createdCount++;
+						await this.createDocumentFromUrl(url, student, DocumentType.COMMITMENT_CONTRACT, em)
+						createdCount++
 					}
 
 					// Handle HMS internship commitment terms
 					for (const url of documentation.internshipCommitmentTermHMS) {
-						await this.createDocumentFromUrl(
-							url,
-							student,
-							DocumentType.COMMITMENT_CONTRACT,
-							em
-						);
-						createdCount++;
+						await this.createDocumentFromUrl(url, student, DocumentType.COMMITMENT_CONTRACT, em)
+						createdCount++
 					}
 
 					for (const url of documentation.cityHospitalForm) {
-						await this.createDocumentFromUrl(
-							url,
-							student,
-							DocumentType.ADMISSION_FORM,
-							em
-						);
-						createdCount++;
+						await this.createDocumentFromUrl(url, student, DocumentType.ADMISSION_FORM, em)
+						createdCount++
 					}
 
 					// Handle badge pictures (now an array)
 					for (const url of documentation.badgePicture) {
-						await this.createDocumentFromUrl(
-							url,
-							student,
-							DocumentType.BADGE_PICTURE,
-							em
-						);
-						createdCount++;
+						await this.createDocumentFromUrl(url, student, DocumentType.BADGE_PICTURE, em)
+						createdCount++
 					}
 
-					processedCount++;
+					processedCount++
 					console.log(
 						`✅ Processed documents for ${submission.fullName} (Crefito: ${submission.crefito}, ${submission.entryCount.toString()} entries, ${Object.values(documentation).flat().length.toString()} total docs)`
-					);
+					)
 				} catch (error) {
 					console.error(
 						`Error processing documents for ${submission.fullName} (Crefito: ${submission.crefito}):`,
 						error
-					);
+					)
 				}
 			}
 
-			await em.flush();
+			await em.flush()
 			console.log(
 				`✅ Created ${createdCount.toString()} documents for ${processedCount.toString()} students`
-			);
+			)
 		} catch (error) {
-			console.error("Error seeding documents:", error);
+			console.error("Error seeding documents:", error)
 		}
 	}
 
@@ -713,15 +618,15 @@ export class DocumentsSeeder extends Seeder {
 		em: EntityManager
 	): Promise<void> {
 		try {
-			const fileId = this.extractFileId(url);
+			const fileId = this.extractFileId(url)
 
 			const existingDoc = await em.findOne(Document, {
 				googleDriveId: fileId,
 				student: student.id,
-			});
+			})
 
 			if (existingDoc) {
-				return;
+				return
 			}
 
 			const document = new Document(
@@ -730,21 +635,21 @@ export class DocumentsSeeder extends Seeder {
 				url,
 				student,
 				`Auto-imported from Google Sheets on ${new Date().toISOString()}`
-			);
+			)
 
-			document.googleDriveId = fileId;
-			em.persist(document);
+			document.googleDriveId = fileId
+			em.persist(document)
 		} catch (error) {
-			console.error(`Error creating document from URL ${url}:`, error);
+			console.error(`Error creating document from URL ${url}:`, error)
 		}
 	}
 
 	private extractFileId(url: string): string {
-		const regex = /[-\w]{25,}/;
-		const match = regex.exec(url);
+		const regex = /[-\w]{25,}/
+		const match = regex.exec(url)
 		if (!match) {
-			throw new Error(`Invalid Google Drive URL: ${url}`);
+			throw new Error(`Invalid Google Drive URL: ${url}`)
 		}
-		return match[0];
+		return match[0]
 	}
 }

@@ -1,4 +1,6 @@
-export default function OrgAdminsPage() [object Object] return (
+export default function OrgAdminsPage()
+[object Object]
+return (
     <div className=flexmin-h-screen items-center justify-center">
       <div className="text-center">
         <h1 className="text-4ont-bold text-gray-900">

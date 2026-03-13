@@ -1,11 +1,11 @@
-import { Elysia } from "elysia";
-
 // --- Controllers ---
 import {
 	adminController,
 	authController,
 	classesController,
 	coursesController,
+	documentsController,
+	healthController,
 	hospitalController,
 	hospitalManagerController,
 	orgAdminController,
@@ -14,18 +14,17 @@ import {
 	shiftController,
 	studentsController,
 	supervisorController,
-	documentsController,
 	userController,
-	healthController,
-} from "@api/modules/controllers";
+} from "@api/modules/controllers"
+import { Elysia } from "elysia"
 
 // --- Middleware ---
 import {
 	commonMiddlewares,
-	loggingMiddleware,
-	errorHandlerMiddleware,
 	cronMiddleware,
-} from "./middleware";
+	errorHandlerMiddleware,
+	loggingMiddleware,
+} from "./middleware"
 
 // Create and configure the Elysia app
 const app = new Elysia()
@@ -50,7 +49,7 @@ const app = new Elysia()
 	.use(studentsController)
 	.use(supervisorController)
 	.use(documentsController)
-	.use(userController);
+	.use(userController)
 
 // Export the app instance
-export { app };
+export { app }

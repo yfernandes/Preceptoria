@@ -6,5 +6,5 @@ export default function ClassesPage() {
 				<p className="text-gray-600">Gestão de Turmas</p>
 			</div>
 		</div>
-	);
+	)
 }

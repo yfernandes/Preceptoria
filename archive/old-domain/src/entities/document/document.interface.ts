@@ -1,18 +1,18 @@
-import type { SourceId } from "../../types.js";
+import type { SourceId } from "../../types.js"
 
 export interface IDocument {
 	// Metadata
-	sourceId: SourceId; // Sanitized id from Source Url
-	srcName?: string; // Original file name
-	mimeType?: string; // File Type from src
-	extension?: string; // Derived from mimeType
+	sourceId: SourceId // Sanitized id from Source Url
+	srcName?: string // Original file name
+	mimeType?: string // File Type from src
+	extension?: string // Derived from mimeType
 
 	// Internal
-	fileName: string; // Based on document type and documentation index
-	destPath: string;
-	downloadStatus: DownloadStatus;
-	approvalStatus: ApprovalStatus;
-	documentType: DocumentType;
+	fileName: string // Based on document type and documentation index
+	destPath: string
+	downloadStatus: DownloadStatus
+	approvalStatus: ApprovalStatus
+	documentType: DocumentType
 }
 
 export enum DownloadStatus {

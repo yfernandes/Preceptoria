@@ -1,78 +1,77 @@
-import path from "path";
+import path from "node:path"
 import {
-	Entity,
-	OneToMany,
-	Property,
 	Collection,
-	OneToOne,
+	Entity,
 	EntityRepositoryType,
-} from "@mikro-orm/sqlite";
-
-import { Documentation } from "../documentation/documentation.entity.js";
-import type { ISubmission } from "../submission/submission.interface.js";
-import { Document } from "../document/document.entity.js";
-import { StudentRepository } from "./student.repository.js";
-import { User, UserRole } from "entities/user.abstract";
+	OneToMany,
+	OneToOne,
+	Property,
+} from "@mikro-orm/sqlite"
+import { User, UserRole } from "entities/user.abstract"
+import type { Document } from "../document/document.entity.js"
+import type { Documentation } from "../documentation/documentation.entity.js"
+import type { ISubmission } from "../submission/submission.interface.js"
+import { StudentRepository } from "./student.repository.js"
 
 @Entity({
 	repository: () => StudentRepository,
 })
 export class Student extends User {
-	[EntityRepositoryType]?: StudentRepository;
+	[EntityRepositoryType]?: StudentRepository
 	// Personal Info
 
 	@Property({
 		unique: true,
 	})
-	crefito!: string;
+	crefito!: string
 
 	// Course related Info
 	@Property()
-	timestamp!: string;
+	timestamp!: string
 
 	@OneToMany({ mappedBy: "student" })
-	documentations = new Collection<Documentation>(this);
+	documentations = new Collection<Documentation>(this)
 
 	@Property()
-	course?: string; // Ex: Pos graduação em Neonatologia e Pediatria
+	course?: string // Ex: Pos graduação em Neonatologia e Pediatria
 
 	@Property()
-	classNumber?: string;
+	classNumber?: string
 
 	@OneToOne()
-	insurance?: Document;
+	insurance?: Document
 
 	// shifts
 
 	//  App Data
 	@Property()
-	studentFolder?: string;
+	studentFolder?: string
 
 	@Property()
-	projectRoot!: string;
+	projectRoot!: string
 
 	@Property({ nullable: true })
-	deleted: boolean = false;
+	deleted: boolean = false
 
 	constructor(data: ISubmission, ProjectRoot: string) {
-		super(data.fullName, UserRole.Student, data.cpf, data.phone, data.email);
-		this.timestamp = data.timestamp;
-		this.crefito = data.crefito;
-		this.projectRoot = ProjectRoot;
-		this.fullName = data.fullName;
-		this.email = data.email;
-		this.phone = data.phone;
-		this.cpf = data.cpf;
-		this.classNumber = data.classNumber;
+		super(data.fullName, UserRole.Student, data.cpf, data.phone, data.email)
+		this.timestamp = data.timestamp
+		this.crefito = data.crefito
+		this.projectRoot = ProjectRoot
+		this.fullName = data.fullName
+		this.email = data.email
+		this.phone = data.phone
+		this.cpf = data.cpf
+		this.classNumber = data.classNumber
 
-		this.setFolderName();
+		this.setFolderName()
 	}
 
 	private setFolderName() {
 		if (this.fullName) {
-			this.studentFolder = path.join(this.projectRoot, "StudentsData", this.crefito);
+			this.studentFolder = path.join(this.projectRoot, "StudentsData", this.crefito)
 		} else {
-			console.log("Could not find crefito number");
+			console.log("Could not find crefito number")
 		}
 	}
 
@@ -81,14 +80,14 @@ export class Student extends User {
 		if (this.documentations.find((entry) => entry.timestamp === submission.timestamp)) {
 			console.log(
 				`-- Documentation with timestamp ${submission.timestamp} already exists for user with crefito ${this.crefito}`
-			);
-			return;
+			)
+			return
 		}
 
 		console.log(
 			`-- New Documentation for ${this.fullName}\n-- Documentation Timestamp: ${submission.timestamp}`
-		);
+		)
 
-		this.documentations.add(submission);
+		this.documentations.add(submission)
 	}
 }

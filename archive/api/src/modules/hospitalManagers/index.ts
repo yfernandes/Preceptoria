@@ -1,2 +1,2 @@
-export * from "./hospitalManager.entity";
-export * from "./hospitalManager.controller";
+export * from "./hospitalManager.controller"
+export * from "./hospitalManager.entity"

@@ -1,15 +1,8 @@
-import {
-	type Rel,
-	Entity,
-	Enum,
-	ManyToOne,
-	Property,
-} from "@mikro-orm/postgresql";
-import { IsUrl } from "class-validator";
-
-import { BaseEntity } from "@api/modules/common/baseEntity";
-import { Student } from "@api/modules/students/student.entity";
-import { User } from "@api/modules/users/user.entity";
+import { BaseEntity } from "@api/modules/common/baseEntity"
+import { Student } from "@api/modules/students/student.entity"
+import { User } from "@api/modules/users/user.entity"
+import { Entity, Enum, ManyToOne, Property, type Rel } from "@mikro-orm/postgresql"
+import { IsUrl } from "class-validator"
 
 export enum DocumentType {
 	PROFESSIONAL_ID = "PROFESSIONAL_ID", // e.g., Crefito for physiotherapists
@@ -31,66 +24,66 @@ export enum DocumentStatus {
 @Entity()
 export class Document extends BaseEntity {
 	@ManyToOne(() => Student)
-	student: Rel<Student>;
+	student: Rel<Student>
 
 	@Property()
-	name: string;
+	name: string
 
 	@Property({ nullable: true })
-	description?: string;
+	description?: string
 
 	@Enum(() => DocumentType)
-	type: DocumentType;
+	type: DocumentType
 
 	@Property()
 	@IsUrl()
-	url: string;
+	url: string
 
 	@Property({ nullable: true })
-	thumbnailUrl?: string;
+	thumbnailUrl?: string
 
 	@Property()
-	uploadedAt = new Date();
+	uploadedAt = new Date()
 
 	@Property({ nullable: true })
-	expiresAt?: Date;
+	expiresAt?: Date
 
 	@Enum(() => DocumentStatus)
-	status: DocumentStatus = DocumentStatus.PENDING;
+	status: DocumentStatus = DocumentStatus.PENDING
 
 	@Property({ nullable: true })
-	rejectionReason?: string;
+	rejectionReason?: string
 
 	@ManyToOne(() => User, { nullable: true })
-	verifiedBy?: Rel<User>;
+	verifiedBy?: Rel<User>
 
 	@Property({ nullable: true })
-	verifiedAt?: Date;
+	verifiedAt?: Date
 
 	@Property({ nullable: true })
-	fileSize?: number; // in bytes
+	fileSize?: number // in bytes
 
 	@Property({ nullable: true })
-	mimeType?: string;
+	mimeType?: string
 
 	@Property({ default: false })
-	isRequired = true;
+	isRequired = true
 
 	@Property({ default: false })
-	isPublic = false; // for documents that can be viewed by hospital managers
+	isPublic = false // for documents that can be viewed by hospital managers
 
 	// Validation fields
 	@Property({ type: "json", nullable: true })
-	validationChecks?: Record<string, boolean>; // e.g., { "hasVaccineA": true, "hasVaccineB": false }
+	validationChecks?: Record<string, boolean> // e.g., { "hasVaccineA": true, "hasVaccineB": false }
 
 	@Property({ nullable: true })
-	validationNotes?: string; // Additional notes from supervisor
+	validationNotes?: string // Additional notes from supervisor
 
 	@Property({ nullable: true })
-	originalFileName?: string; // Original filename from Google Drive
+	originalFileName?: string // Original filename from Google Drive
 
 	@Property({ nullable: true })
-	googleDriveId?: string; // Google Drive file ID for reference
+	googleDriveId?: string // Google Drive file ID for reference
 
 	constructor(
 		name: string,
@@ -101,46 +94,46 @@ export class Document extends BaseEntity {
 		expiresAt?: Date,
 		isRequired = true
 	) {
-		super();
-		this.name = name;
-		this.type = type;
-		this.url = url;
-		this.student = student;
-		this.description = description;
-		this.expiresAt = expiresAt;
-		this.isRequired = isRequired;
+		super()
+		this.name = name
+		this.type = type
+		this.url = url
+		this.student = student
+		this.description = description
+		this.expiresAt = expiresAt
+		this.isRequired = isRequired
 	}
 
 	// Helper methods
 	isExpired(): boolean {
-		return this.expiresAt ? new Date() > this.expiresAt : false;
+		return this.expiresAt ? new Date() > this.expiresAt : false
 	}
 
 	isValid(): boolean {
-		return this.status === DocumentStatus.APPROVED && !this.isExpired();
+		return this.status === DocumentStatus.APPROVED && !this.isExpired()
 	}
 
 	canBeVerified(): boolean {
-		return this.status === DocumentStatus.PENDING;
+		return this.status === DocumentStatus.PENDING
 	}
 
 	// Validation helpers
 	updateValidationChecks(checks: Record<string, boolean>): void {
-		this.validationChecks = { ...this.validationChecks, ...checks };
+		this.validationChecks = { ...this.validationChecks, ...checks }
 	}
 
 	approve(verifiedBy: Rel<User>, notes?: string): void {
-		this.status = DocumentStatus.APPROVED;
-		this.verifiedBy = verifiedBy;
-		this.verifiedAt = new Date();
-		if (notes) this.validationNotes = notes;
+		this.status = DocumentStatus.APPROVED
+		this.verifiedBy = verifiedBy
+		this.verifiedAt = new Date()
+		if (notes) this.validationNotes = notes
 	}
 
 	reject(verifiedBy: Rel<User>, reason: string, notes?: string): void {
-		this.status = DocumentStatus.REJECTED;
-		this.verifiedBy = verifiedBy;
-		this.verifiedAt = new Date();
-		this.rejectionReason = reason;
-		if (notes) this.validationNotes = notes;
+		this.status = DocumentStatus.REJECTED
+		this.verifiedBy = verifiedBy
+		this.verifiedAt = new Date()
+		this.rejectionReason = reason
+		if (notes) this.validationNotes = notes
 	}
 }

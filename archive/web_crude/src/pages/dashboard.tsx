@@ -1,9 +1,9 @@
-import { AppSidebar } from "@web/components/app-sidebar";
-import { ChartAreaInteractive } from "@web/components/chart-area-interactive";
-import { DataTable } from "@web/components/data-table";
-import { SectionCards } from "@web/components/section-cards";
-import { SiteHeader } from "@web/components/site-header";
-import { SidebarInset, SidebarProvider } from "@web/components/ui/sidebar";
+import { AppSidebar } from "@web/components/app-sidebar"
+import { ChartAreaInteractive } from "@web/components/chart-area-interactive"
+import { DataTable } from "@web/components/data-table"
+import { SectionCards } from "@web/components/section-cards"
+import { SiteHeader } from "@web/components/site-header"
+import { SidebarInset, SidebarProvider } from "@web/components/ui/sidebar"
 
 export default function Page() {
 	return (
@@ -31,5 +31,5 @@ export default function Page() {
 				</div>
 			</SidebarInset>
 		</SidebarProvider>
-	);
+	)
 }

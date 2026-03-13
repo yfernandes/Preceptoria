@@ -1,24 +1,23 @@
-import { defineConfig, PostgreSqlDriver } from "@mikro-orm/postgresql";
-import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
-import { Migrator } from "@mikro-orm/migrations";
-import { SeedManager } from "@mikro-orm/seeder";
-
-import { BaseEntity } from "@api/modules/common/baseEntity";
-import { User } from "@api/modules/users/user.entity";
-import { SysAdmin } from "@api/modules/admin/SysAdmin.entity";
-import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity";
-import { Supervisor } from "@api/modules/supervisors/supervisor.entity";
-import { HospitalManager } from "@api/modules/hospitalManagers/hospitalManager.entity";
-import { Preceptor } from "@api/modules/preceptors/preceptor.entity";
-import { School } from "@api/modules/schools/school.entity";
-import { Shift } from "@api/modules/shifts/shift.entity";
-import { Student } from "@api/modules/students/student.entity";
-import { Course } from "@api/modules/courses/course.entity";
-import { Classes } from "@api/modules/classes/classes.entity";
-import { Document } from "@api/modules/documents/document.entity";
-import { Hospital } from "@api/modules/hospitals/hospital.entity";
-import { Role } from "@api/modules/common/role.abstract";
-import { Organization } from "@api/modules/common/organization.abstract";
+import { OrgAdmin } from "@api/modules/admin/OrgAdmin.entity"
+import { SysAdmin } from "@api/modules/admin/SysAdmin.entity"
+import { Classes } from "@api/modules/classes/classes.entity"
+import { BaseEntity } from "@api/modules/common/baseEntity"
+import { Organization } from "@api/modules/common/organization.abstract"
+import { Role } from "@api/modules/common/role.abstract"
+import { Course } from "@api/modules/courses/course.entity"
+import { Document } from "@api/modules/documents/document.entity"
+import { HospitalManager } from "@api/modules/hospitalManagers/hospitalManager.entity"
+import { Hospital } from "@api/modules/hospitals/hospital.entity"
+import { Preceptor } from "@api/modules/preceptors/preceptor.entity"
+import { School } from "@api/modules/schools/school.entity"
+import { Shift } from "@api/modules/shifts/shift.entity"
+import { Student } from "@api/modules/students/student.entity"
+import { Supervisor } from "@api/modules/supervisors/supervisor.entity"
+import { User } from "@api/modules/users/user.entity"
+import { Migrator } from "@mikro-orm/migrations"
+import { defineConfig, PostgreSqlDriver } from "@mikro-orm/postgresql"
+import { TsMorphMetadataProvider } from "@mikro-orm/reflection"
+import { SeedManager } from "@mikro-orm/seeder"
 
 // Base configuration shared across all environments
 const baseConfig = defineConfig({
@@ -102,13 +101,13 @@ const baseConfig = defineConfig({
 	// Schema validation
 	validateRequired: true,
 	validate: true,
-});
+})
 
 // Development configuration
 export const devConfig = defineConfig({
 	...baseConfig,
 	host: Bun.env.DB_HOST || "localhost",
-	port: Bun.env.DB_PORT ? parseInt(Bun.env.DB_PORT) : 5432,
+	port: Bun.env.DB_PORT ? parseInt(Bun.env.DB_PORT, 10) : 5432,
 	user: Bun.env.DB_USER || "postgres",
 	password: Bun.env.DB_PASS || "postgres",
 	dbName: Bun.env.DB_NAME || "preceptoria_dev",
@@ -123,13 +122,13 @@ export const devConfig = defineConfig({
 		...baseConfig.discovery,
 		warnWhenNoEntities: true,
 	},
-});
+})
 
 // Production configuration
 export const prodConfig = defineConfig({
 	...baseConfig,
 	host: Bun.env.DB_HOST,
-	port: Bun.env.DB_PORT ? parseInt(Bun.env.DB_PORT) : 5432,
+	port: Bun.env.DB_PORT ? parseInt(Bun.env.DB_PORT, 10) : 5432,
 	user: Bun.env.DB_USER,
 	password: Bun.env.DB_PASS,
 	dbName: Bun.env.DB_NAME,
@@ -147,13 +146,13 @@ export const prodConfig = defineConfig({
 
 	// Disable schema validation in production for performance
 	validate: false,
-});
+})
 
 // Test configuration
 export const testConfig = defineConfig({
 	...baseConfig,
 	host: Bun.env.DB_HOST || "localhost",
-	port: Bun.env.DB_PORT ? parseInt(Bun.env.DB_PORT) : 5432,
+	port: Bun.env.DB_PORT ? parseInt(Bun.env.DB_PORT, 10) : 5432,
 	user: Bun.env.DB_USER || "postgres",
 	password: Bun.env.DB_PASS || "postgres",
 	dbName: Bun.env.DB_NAME || "preceptoria_test",
@@ -181,32 +180,31 @@ export const testConfig = defineConfig({
 	// Disable validation in tests for speed
 	validate: false,
 	validateRequired: false,
-});
+})
 
 // Default configuration based on environment
 const getConfig = () => {
-	const nodeEnv = Bun.env.NODE_ENV ?? "development";
+	const nodeEnv = Bun.env.NODE_ENV ?? "development"
 
 	switch (nodeEnv) {
 		case "production":
-			return prodConfig;
+			return prodConfig
 		case "test":
-			return testConfig;
-		case "development":
+			return testConfig
 		default:
-			return devConfig;
+			return devConfig
 	}
-};
+}
 
 // Export the appropriate config for the current environment
-export const localConfig = getConfig();
+export const localConfig = getConfig()
 
 // Export all configs for testing purposes
 export const configs = {
 	development: devConfig,
 	production: prodConfig,
 	test: testConfig,
-};
+}
 
 // Default export for MikroORM CLI
-export default localConfig;
+export default localConfig

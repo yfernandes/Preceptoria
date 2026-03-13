@@ -13,6 +13,6 @@ const nextConfig = {
 	experimental: {
 		// This will be used by the dev script
 	},
-};
+}
 
-export default nextConfig;
+export default nextConfig

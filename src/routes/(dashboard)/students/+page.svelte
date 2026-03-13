@@ -1,44 +1,25 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import type { PageData, ActionData } from "./$types";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Input from "$lib/components/ui/Input.svelte";
-	import Card from "$lib/components/ui/Card.svelte";
-	import Badge from "$lib/components/ui/Badge.svelte";
-	import {
-		Plus,
-		Search,
-		Filter,
-		MoreVertical,
-		Trash2,
-		Edit2,
-		ArrowLeft,
-		UserCircle,
-		Mail,
-		IdCard,
-		AlertCircle,
-	} from "lucide-svelte";
-	import { cn } from "$lib/utils";
+import type { ActionData, PageData } from "./$types"
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+let { data, form }: { data: PageData; form: ActionData } = $props()
 
-	let isCreating = $state(false);
-	let searchQuery = $state("");
+let isCreating = $state(false)
+let searchQuery = $state("")
 
-	function toggleCreate() {
-		isCreating = !isCreating;
-	}
+function _toggleCreate() {
+	isCreating = !isCreating
+}
 
-	const filteredStudents = $derived(
-		data.students.filter(
-			(s) =>
-				s.user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				s.user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				s.registrationNumber?.toLowerCase().includes(searchQuery.toLowerCase())
-		)
-	);
+const _filteredStudents = $derived(
+	data.students.filter(
+		(s) =>
+			s.user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			s.user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			s.registrationNumber?.toLowerCase().includes(searchQuery.toLowerCase())
+	)
+)
 
-	let activeTab = $state("students"); // 'students' or 'invites'
+let _activeTab = $state("students") // 'students' or 'invites'
 </script>
 
 <div class="animate-in fade-in slide-in-from-bottom-4 space-y-8 duration-500">

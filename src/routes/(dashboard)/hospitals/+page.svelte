@@ -1,50 +1,30 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import type { PageData, ActionData } from "./$types";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Input from "$lib/components/ui/Input.svelte";
-	import Card from "$lib/components/ui/Card.svelte";
-	import Badge from "$lib/components/ui/Badge.svelte";
-	import {
-		Plus,
-		Search,
-		Filter,
-		Hospital,
-		MapPin,
-		Building2,
-		Trash2,
-		Edit2,
-		AlertCircle,
-		ArrowLeft,
-		Mail,
-		UserCog,
-	} from "lucide-svelte";
-	import { cn } from "$lib/utils";
+import type { ActionData, PageData } from "./$types"
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+let { data, form }: { data: PageData; form: ActionData } = $props()
 
-	let isCreating = $state(false);
-	let isInviting = $state(false);
-	let searchQuery = $state("");
-	let activeTab = $state("hospitals"); // 'hospitals' or 'invites'
+let isCreating = $state(false)
+let isInviting = $state(false)
+let searchQuery = $state("")
+let _activeTab = $state("hospitals") // 'hospitals' or 'invites'
 
-	function toggleCreate() {
-		isCreating = !isCreating;
-		isInviting = false;
-	}
+function _toggleCreate() {
+	isCreating = !isCreating
+	isInviting = false
+}
 
-	function toggleInvite() {
-		isInviting = !isInviting;
-		isCreating = false;
-	}
+function _toggleInvite() {
+	isInviting = !isInviting
+	isCreating = false
+}
 
-	const filteredHospitals = $derived(
-		data.hospitals.filter(
-			(h) =>
-				h.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				h.address?.toLowerCase().includes(searchQuery.toLowerCase())
-		)
-	);
+const _filteredHospitals = $derived(
+	data.hospitals.filter(
+		(h) =>
+			h.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			h.address?.toLowerCase().includes(searchQuery.toLowerCase())
+	)
+)
 </script>
 
 <div class="animate-in fade-in space-y-8 duration-500">

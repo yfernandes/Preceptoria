@@ -4,16 +4,16 @@
  * Standardized error objects and error handling utilities.
  */
 
-import { ValidationErrors } from "./validationError";
+import type { ValidationErrors } from "./validationError"
 
 export interface ApiError {
-	message: string;
-	status?: number;
-	code?: string;
-	validationErrors?: ValidationErrors;
-	isNetworkError?: boolean;
+	message: string
+	status?: number
+	code?: string
+	validationErrors?: ValidationErrors
+	isNetworkError?: boolean
 }
 
-export * from "./classifyError";
-export * from "./networkError";
-export * from "./validationError";
+export * from "./classifyError"
+export * from "./networkError"
+export * from "./validationError"

@@ -1,13 +1,7 @@
-"use client";
+"use client"
 
-import { Button } from "@web/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@web/components/ui/card";
+import { Button } from "@web/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@web/components/ui/card"
 
 export default function DashboardPage() {
 	return (
@@ -21,8 +15,7 @@ export default function DashboardPage() {
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<p className="text-sm text-muted-foreground">
-						Select a resource from the sidebar to get started with managing your
-						data.
+						Select a resource from the sidebar to get started with managing your data.
 					</p>
 					<div className="flex gap-2">
 						<Button variant="default">Get Started</Button>
@@ -31,5 +24,5 @@ export default function DashboardPage() {
 				</CardContent>
 			</Card>
 		</div>
-	);
+	)
 }

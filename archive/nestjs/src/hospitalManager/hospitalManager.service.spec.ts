@@ -1,18 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { HospitalManagerService } from './hospitalManager.service';
+import { Test, type TestingModule } from "@nestjs/testing"
+import { HospitalManagerService } from "./hospitalManager.service"
 
-describe('HospitalManagerService', () => {
-  let service: HospitalManagerService;
+describe("HospitalManagerService", () => {
+	let service: HospitalManagerService
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [HospitalManagerService],
-    }).compile();
+	beforeEach(async () => {
+		const module: TestingModule = await Test.createTestingModule({
+			providers: [HospitalManagerService],
+		}).compile()
 
-    service = module.get<HospitalManagerService>(HospitalManagerService);
-  });
+		service = module.get<HospitalManagerService>(HospitalManagerService)
+	})
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-});
+	it("should be defined", () => {
+		expect(service).toBeDefined()
+	})
+})

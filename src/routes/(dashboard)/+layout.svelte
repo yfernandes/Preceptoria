@@ -1,9 +1,8 @@
 <script lang="ts">
-	import Sidebar from "$lib/components/layout/Sidebar.svelte";
-	import Header from "$lib/components/layout/Header.svelte";
-	import type { LayoutData } from "./$types";
+import type { Snippet } from "svelte"
+import type { LayoutData } from "./$types"
 
-	let { children, data }: { children: any; data: LayoutData } = $props();
+let { children, data }: { children: Snippet; data: LayoutData } = $props()
 </script>
 
 <div class="flex h-screen bg-[#F9FAFB]">

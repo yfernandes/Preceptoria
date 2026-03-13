@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import React from "react";
-import Link from "next/link";
+import Link from "next/link"
+import type React from "react"
 
 const resources = [
 	{ name: "Classes", path: "/dashboard/classes" },
@@ -17,13 +17,9 @@ const resources = [
 	{ name: "Users", path: "/dashboard/users" },
 	{ name: "Audit", path: "/dashboard/audit" },
 	{ name: "Org Admin", path: "/dashboard/orgAdmin" },
-];
+]
 
-export default function DashboardLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div className="min-h-screen flex flex-col">
 			{/* Fixed Header */}
@@ -53,10 +49,8 @@ export default function DashboardLayout({
 					</nav>
 				</aside>
 				{/* Main Content */}
-				<main className="flex-1 ml-64 p-8 bg-white min-h-[calc(100vh-4rem)]">
-					{children}
-				</main>
+				<main className="flex-1 ml-64 p-8 bg-white min-h-[calc(100vh-4rem)]">{children}</main>
 			</div>
 		</div>
-	);
+	)
 }

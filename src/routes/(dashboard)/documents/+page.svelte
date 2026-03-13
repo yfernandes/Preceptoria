@@ -1,105 +1,84 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import type { PageData, ActionData } from "./$types";
-	import Button from "$lib/components/ui/Button.svelte";
-	import Card from "$lib/components/ui/Card.svelte";
-	import Badge from "$lib/components/ui/Badge.svelte";
-	import {
-		Upload,
-		FileText,
-		Clock,
-		CheckCircle2,
-		AlertCircle,
-		MoreVertical,
-		Eye,
-		History,
-		Search,
-		Filter,
-		XCircle,
-		ExternalLink,
-		ChevronRight,
-		ShieldCheck,
-	} from "lucide-svelte";
+import { invalidateAll } from "$app/navigation"
+import type { ActionData, PageData } from "./$types"
 
-	import { invalidateAll } from "$app/navigation";
-	import { cn } from "$lib/utils";
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+let { data, form }: { data: PageData; form: ActionData } = $props()
 
-	const documentsWithWarnings = $derived(
-		data.documents.map((doc) => {
-			if (!doc.expiresAt) return { ...doc, isExpiringSoon: false, isExpired: false };
-			const daysUntilExpiry = Math.ceil(
-				(new Date(doc.expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-			);
-			return {
-				...doc,
-				isExpiringSoon: daysUntilExpiry <= 30 && daysUntilExpiry > 0,
-				isExpired: daysUntilExpiry <= 0,
-			};
-		})
-	);
-
-	let uploadFile: File | null = $state(null);
-	let selectedType = $state("VACCINATION_CARD");
-	let isUploading = $state(false);
-
-	async function handleUpload(e: Event) {
-		e.preventDefault();
-		if (!uploadFile || !data.studentId) return;
-
-		isUploading = true;
-
-		try {
-			const formData = new FormData();
-			formData.append("name", uploadFile.name);
-			formData.append("type", uploadFile.type);
-			formData.append("documentType", selectedType);
-			formData.append("studentId", data.studentId);
-			formData.append("size", uploadFile.size.toString());
-
-			const response = await fetch("?/getUploadUrl", {
-				method: "POST",
-				body: formData,
-			});
-
-			const result = await response.json();
-
-			if (result.type === "success" && result.data?.uploadUrl) {
-				const { uploadUrl } = result.data;
-
-				const uploadResponse = await fetch(uploadUrl, {
-					method: "PUT",
-					body: uploadFile,
-					headers: {
-						"Content-Type": uploadFile.type,
-					},
-				});
-
-				if (uploadResponse.ok) {
-					uploadFile = null;
-					await invalidateAll();
-				} else {
-					alert("Falha ao enviar arquivo para o storage.");
-				}
-			} else {
-				alert(result.data?.message || "Falha ao obter URL de upload.");
-			}
-		} catch (err) {
-			console.error(err);
-			alert("Erro inesperado durante o envio.");
-		} finally {
-			isUploading = false;
+const _documentsWithWarnings = $derived(
+	data.documents.map((doc) => {
+		if (!doc.expiresAt) return { ...doc, isExpiringSoon: false, isExpired: false }
+		const daysUntilExpiry = Math.ceil(
+			(new Date(doc.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+		)
+		return {
+			...doc,
+			isExpiringSoon: daysUntilExpiry <= 30 && daysUntilExpiry > 0,
+			isExpired: daysUntilExpiry <= 0,
 		}
-	}
+	})
+)
 
-	const docTypeLabels: Record<string, string> = {
-		VACCINATION_CARD: "Cartão de Vacinação",
-		PROFESSIONAL_ID: "Identidade Profissional",
-		COMMITMENT_CONTRACT: "Termo de Compromisso",
-		ADMISSION_FORM: "Ficha de Admissão",
-		BADGE_PICTURE: "Foto para Crachá",
-		OTHER: "Outro",
-	};
+let uploadFile: File | null = $state(null)
+let selectedType = $state("VACCINATION_CARD")
+let _isUploading = $state(false)
+
+async function _handleUpload(e: Event) {
+	e.preventDefault()
+	if (!uploadFile || !data.studentId) return
+
+	_isUploading = true
+
+	try {
+		const formData = new FormData()
+		formData.append("name", uploadFile.name)
+		formData.append("type", uploadFile.type)
+		formData.append("documentType", selectedType)
+		formData.append("studentId", data.studentId)
+		formData.append("size", uploadFile.size.toString())
+
+		const response = await fetch("?/getUploadUrl", {
+			method: "POST",
+			body: formData,
+		})
+
+		const result = await response.json()
+
+		if (result.type === "success" && result.data?.uploadUrl) {
+			const { uploadUrl } = result.data
+
+			const uploadResponse = await fetch(uploadUrl, {
+				method: "PUT",
+				body: uploadFile,
+				headers: {
+					"Content-Type": uploadFile.type,
+				},
+			})
+
+			if (uploadResponse.ok) {
+				uploadFile = null
+				await invalidateAll()
+			} else {
+				alert("Falha ao enviar arquivo para o storage.")
+			}
+		} else {
+			alert(result.data?.message || "Falha ao obter URL de upload.")
+		}
+	} catch (err) {
+		console.error(err)
+		alert("Erro inesperado durante o envio.")
+	} finally {
+		_isUploading = false
+	}
+}
+
+const _docTypeLabels: Record<string, string> = {
+	VACCINATION_CARD: "Cartão de Vacinação",
+	PROFESSIONAL_ID: "Identidade Profissional",
+	COMMITMENT_CONTRACT: "Termo de Compromisso",
+	ADMISSION_FORM: "Ficha de Admissão",
+	BADGE_PICTURE: "Foto para Crachá",
+	OTHER: "Outro",
+}
 </script>
 
 <div class="animate-in fade-in space-y-8 duration-500">

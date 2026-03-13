@@ -1,16 +1,16 @@
-import { DocumentType } from "@api/modules/documents/document.entity";
+import { DocumentType } from "@api/modules/documents/document.entity"
 
 export interface ValidationCheck {
-	id: string;
-	label: string;
-	description?: string;
-	required: boolean;
+	id: string
+	label: string
+	description?: string
+	required: boolean
 }
 
 export interface ValidationTemplate {
-	documentType: DocumentType;
-	checks: ValidationCheck[];
-	instructions?: string;
+	documentType: DocumentType
+	checks: ValidationCheck[]
+	instructions?: string
 }
 
 export const validationTemplates: ValidationTemplate[] = [
@@ -46,8 +46,7 @@ export const validationTemplates: ValidationTemplate[] = [
 	},
 	{
 		documentType: DocumentType.PROFESSIONAL_ID,
-		instructions:
-			"Verify that the professional ID is valid and contains all required information.",
+		instructions: "Verify that the professional ID is valid and contains all required information.",
 		checks: [
 			{
 				id: "hasValidNumber",
@@ -78,8 +77,7 @@ export const validationTemplates: ValidationTemplate[] = [
 	},
 	{
 		documentType: DocumentType.COMMITMENT_CONTRACT,
-		instructions:
-			"Verify that the commitment contract is properly filled and signed.",
+		instructions: "Verify that the commitment contract is properly filled and signed.",
 		checks: [
 			{
 				id: "hasStudentSignature",
@@ -204,8 +202,7 @@ export const validationTemplates: ValidationTemplate[] = [
 	},
 	{
 		documentType: DocumentType.OTHER,
-		instructions:
-			"Verify that the document meets the requirements for this category.",
+		instructions: "Verify that the document meets the requirements for this category.",
 		checks: [
 			{
 				id: "isRelevant",
@@ -224,29 +221,21 @@ export const validationTemplates: ValidationTemplate[] = [
 			},
 		],
 	},
-];
+]
 
-export function getValidationTemplate(
-	documentType: DocumentType
-): ValidationTemplate | undefined {
-	return validationTemplates.find(
-		(template) => template.documentType === documentType
-	);
+export function getValidationTemplate(documentType: DocumentType): ValidationTemplate | undefined {
+	return validationTemplates.find((template) => template.documentType === documentType)
 }
 
-export function getValidationTemplateForDocument(
-	documentType: DocumentType
-): ValidationTemplate {
-	const template = getValidationTemplate(documentType);
+export function getValidationTemplateForDocument(documentType: DocumentType): ValidationTemplate {
+	const template = getValidationTemplate(documentType)
 	if (!template) {
 		// Fallback to OTHER template
-		const otherTemplate = validationTemplates.find(
-			(t) => t.documentType === DocumentType.OTHER
-		);
+		const otherTemplate = validationTemplates.find((t) => t.documentType === DocumentType.OTHER)
 		if (!otherTemplate) {
-			throw new Error("OTHER validation template is missing.");
+			throw new Error("OTHER validation template is missing.")
 		}
-		return otherTemplate;
+		return otherTemplate
 	}
-	return template;
+	return template
 }

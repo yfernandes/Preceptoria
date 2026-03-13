@@ -1,35 +1,31 @@
-import {
-	type Rel,
-	Collection,
-	Entity,
-	ManyToOne,
-	OneToMany,
-	Property,
-} from "@mikro-orm/postgresql";
+import { Classes } from "@api/modules/classes/classes.entity"
 
-import { BaseEntity } from "@api/modules/common/";
-import { Classes } from "@api/modules/classes/classes.entity";
-import { School } from "@api/modules/schools/school.entity";
-import { Supervisor } from "@api/modules/supervisors/supervisor.entity";
+import { BaseEntity } from "@api/modules/common/"
+import type { School } from "@api/modules/schools/school.entity"
+import type { Supervisor } from "@api/modules/supervisors/supervisor.entity"
+import { Collection, Entity, ManyToOne, OneToMany, Property, type Rel } from "@mikro-orm/postgresql"
 
 @Entity()
 export class Course extends BaseEntity {
 	@Property()
-	name: string;
+	name: string
 
 	@ManyToOne()
-	school: Rel<School>;
+	school: Rel<School>
 
-	@OneToMany(() => Classes, (e) => e.course)
-	classes = new Collection<Classes>(this);
+	@OneToMany(
+		() => Classes,
+		(e) => e.course
+	)
+	classes = new Collection<Classes>(this)
 
 	@ManyToOne()
-	supervisor: Rel<Supervisor>;
+	supervisor: Rel<Supervisor>
 
 	constructor(name: string, school: Rel<School>, supervisor: Rel<Supervisor>) {
-		super();
-		this.name = name;
-		this.school = school;
-		this.supervisor = supervisor;
+		super()
+		this.name = name
+		this.school = school
+		this.supervisor = supervisor
 	}
 }

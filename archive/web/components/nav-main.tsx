@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { ChevronRight, type LucideIcon } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -14,31 +14,31 @@ import {
 	SidebarMenuSub,
 	SidebarMenuSubButton,
 	SidebarMenuSubItem,
-} from "@/components/ui/sidebar";
+} from "@/components/ui/sidebar"
 
 export function NavMain({
 	items,
 }: {
 	items: {
-		title: string;
-		url: string;
-		icon?: LucideIcon;
-		isActive?: boolean;
+		title: string
+		url: string
+		icon?: LucideIcon
+		isActive?: boolean
 		items?: {
-			title: string;
-			url: string;
-		}[];
-	}[];
+			title: string
+			url: string
+		}[]
+	}[]
 }) {
-	const pathname = usePathname();
+	const pathname = usePathname()
 
 	return (
 		<SidebarGroup>
 			<SidebarGroupLabel>Platform</SidebarGroupLabel>
 			<SidebarMenu>
 				{items.map((item) => {
-					const isActive = pathname === item.url || pathname.startsWith(item.url + "/");
-					const hasActiveChild = item.items?.some((subItem) => pathname === subItem.url);
+					const isActive = pathname === item.url || pathname.startsWith(`${item.url}/`)
+					const hasActiveChild = item.items?.some((subItem) => pathname === subItem.url)
 
 					return (
 						<Collapsible
@@ -58,7 +58,7 @@ export function NavMain({
 								<CollapsibleContent>
 									<SidebarMenuSub>
 										{item.items?.map((subItem) => {
-											const isSubActive = pathname === subItem.url;
+											const isSubActive = pathname === subItem.url
 
 											return (
 												<SidebarMenuSubItem key={subItem.title}>
@@ -68,15 +68,15 @@ export function NavMain({
 														</Link>
 													</SidebarMenuSubButton>
 												</SidebarMenuSubItem>
-											);
+											)
 										})}
 									</SidebarMenuSub>
 								</CollapsibleContent>
 							</SidebarMenuItem>
 						</Collapsible>
-					);
+					)
 				})}
 			</SidebarMenu>
 		</SidebarGroup>
-	);
+	)
 }

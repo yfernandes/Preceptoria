@@ -1,9 +1,9 @@
-import { treaty } from "@elysiajs/eden";
-import { App } from "@api";
+import type { App } from "@api"
+import { treaty } from "@elysiajs/eden"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
 
-type TreatyApp = ReturnType<typeof treaty<App>>;
+type TreatyApp = ReturnType<typeof treaty<App>>
 
 // Configure eden to include credentials for cookie handling
 export const treatise: TreatyApp = treaty<App>(API_BASE_URL, {
@@ -13,7 +13,7 @@ export const treatise: TreatyApp = treaty<App>(API_BASE_URL, {
 	headers: {
 		"Content-Type": "application/json",
 	},
-});
+})
 
 // void treatise.healthFile.get();
 // void treatise.admin.get();

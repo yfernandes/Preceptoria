@@ -1,28 +1,28 @@
-import { Property } from "@mikro-orm/postgresql";
-import { IsEmail, IsPhoneNumber } from "class-validator";
-import { BaseEntity } from "./baseEntity";
+import { Property } from "@mikro-orm/postgresql"
+import { IsEmail, IsPhoneNumber } from "class-validator"
+import { BaseEntity } from "./baseEntity"
 
 export abstract class Organization extends BaseEntity {
 	@Property()
-	name: string;
+	name: string
 
 	@Property()
-	address: string;
+	address: string
 
 	@Property()
 	@IsEmail()
-	email: string;
+	email: string
 
 	@Property()
 	@IsPhoneNumber("BR")
-	phone: string;
+	phone: string
 
 	constructor(name: string, address: string, mail: string, phone: string) {
-		super();
+		super()
 
-		this.name = name;
-		this.address = address;
-		this.email = mail;
-		this.phone = phone;
+		this.name = name
+		this.address = address
+		this.email = mail
+		this.phone = phone
 	}
 }

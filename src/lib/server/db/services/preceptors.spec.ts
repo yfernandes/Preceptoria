@@ -1,6 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { db } from "../index";
-import { PreceptorsService } from "./preceptors";
+import { beforeEach, describe, expect, it, vi } from "vitest"
+import { PreceptorsService } from "./preceptors"
 
 vi.mock("../index", () => {
 	return {
@@ -21,15 +20,15 @@ vi.mock("../index", () => {
 			update: vi.fn(),
 			delete: vi.fn(),
 		},
-	};
-});
+	}
+})
 
 describe("PreceptorsService", () => {
 	beforeEach(() => {
-		vi.clearAllMocks();
-	});
+		vi.clearAllMocks()
+	})
 
 	it("should exist", () => {
-		expect(PreceptorsService).toBeDefined();
-	});
-});
+		expect(PreceptorsService).toBeDefined()
+	})
+})

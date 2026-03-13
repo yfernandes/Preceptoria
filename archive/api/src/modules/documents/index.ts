@@ -1,2 +1,2 @@
-export * from "./documents.controller";
-export * from "./document.entity";
+export * from "./document.entity"
+export * from "./documents.controller"

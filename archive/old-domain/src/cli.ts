@@ -1,26 +1,26 @@
-import { initOrm } from "db";
+import { Separator, select } from "@inquirer/prompts"
+import { initOrm } from "db"
 import {
-	matchInsuranceFilesToStudents,
 	downloadFiles,
-	spreadsheetSync,
-	preProcessing,
+	matchInsuranceFilesToStudents,
 	postProcessing,
+	preProcessing,
+	spreadsheetSync,
 	// approveDocs,
-} from "tools";
-import { PROJECT_ROOT } from "./types.js";
-import { select, Separator } from "@inquirer/prompts";
+} from "tools"
+import { PROJECT_ROOT } from "./types.js"
 
-console.log(PROJECT_ROOT);
-const DRY_RUN = false;
+console.log(PROJECT_ROOT)
+const DRY_RUN = false
 
 async function main() {
 	try {
 		// Configure Services
-		const db = await initOrm();
-		await db.student.findAll();
+		const db = await initOrm()
+		await db.student.findAll()
 
-		console.clear();
-		let keepRunning = true;
+		console.clear()
+		let keepRunning = true
 
 		while (keepRunning) {
 			const answer = await select<string>({
@@ -65,52 +65,52 @@ async function main() {
 						description: "Exit the application",
 					},
 				],
-			});
+			})
 
 			switch (answer) {
 				case "sync":
-					console.log("Syncing with Google Sheets...");
-					if (!DRY_RUN) await spreadsheetSync(db);
-					break;
+					console.log("Syncing with Google Sheets...")
+					if (!DRY_RUN) await spreadsheetSync(db)
+					break
 				case "insurance":
-					console.log("Matching insurance files to students...");
-					if (!DRY_RUN) await matchInsuranceFilesToStudents(db);
-					break;
+					console.log("Matching insurance files to students...")
+					if (!DRY_RUN) await matchInsuranceFilesToStudents(db)
+					break
 				case "preProcessing":
-					console.log("Running pre-processing tasks...");
-					if (!DRY_RUN) await preProcessing();
-					break;
+					console.log("Running pre-processing tasks...")
+					if (!DRY_RUN) await preProcessing()
+					break
 				case "download":
-					console.log("Downloading files...");
-					if (!DRY_RUN) await downloadFiles(db);
-					break;
+					console.log("Downloading files...")
+					if (!DRY_RUN) await downloadFiles(db)
+					break
 				// case "approval":
 				// 	console.log("Running approve tasks...");
 				// 	if (!DRY_RUN) await approveDocs();
 				// 	break;
 				case "postProcessing":
-					console.log("Running post-processing tasks...");
-					if (!DRY_RUN) await postProcessing(db);
-					break;
+					console.log("Running post-processing tasks...")
+					if (!DRY_RUN) await postProcessing(db)
+					break
 				case "exit":
-					console.log("Exiting...");
-					keepRunning = false;
-					break;
+					console.log("Exiting...")
+					keepRunning = false
+					break
 				default:
-					console.error("Invalid choice");
-					break;
+					console.error("Invalid choice")
+					break
 			}
 
 			if (keepRunning) {
 				// ------------------- Wrap Up -------------------
-				console.log("Task completed successfully.");
+				console.log("Task completed successfully.")
 			}
 		}
 	} catch (error) {
-		console.error("Error in main process:", error);
+		console.error("Error in main process:", error)
 	} finally {
-		process.exit();
+		process.exit()
 	}
 }
 
-await main();
+await main()

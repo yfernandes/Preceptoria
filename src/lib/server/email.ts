@@ -1,17 +1,17 @@
-import { Resend } from "resend";
-import { env } from "$env/dynamic/private";
+import { Resend } from "resend"
+import { env } from "$env/dynamic/private"
 
-const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
+const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null
 
-const FROM_EMAIL = "Preceptoria <no-reply@preceptoria.com>";
+const FROM_EMAIL = "Preceptoria <no-reply@preceptoria.com>"
 
 export async function sendInvitationEmail(email: string, token: string, className: string) {
 	if (!resend) {
-		console.log("Mock Email: Invitation to", email, "token:", token);
-		return;
+		console.log("Mock Email: Invitation to", email, "token:", token)
+		return
 	}
 
-	const url = `${env.ORIGIN}/register/${token}`;
+	const url = `${env.ORIGIN}/register/${token}`
 
 	await resend.emails.send({
 		from: FROM_EMAIL,
@@ -23,7 +23,7 @@ export async function sendInvitationEmail(email: string, token: string, classNam
 			<p>Para concluir seu cadastro, clique no link abaixo:</p>
 			<a href="${url}">${url}</a>
 		`,
-	});
+	})
 }
 
 export async function sendDocumentStatusEmail(
@@ -33,12 +33,12 @@ export async function sendDocumentStatusEmail(
 	reason?: string
 ) {
 	if (!resend) {
-		console.log("Mock Email: Doc Status to", email, status, docName);
-		return;
+		console.log("Mock Email: Doc Status to", email, status, docName)
+		return
 	}
 
-	const statusText = status === "APPROVED" ? "Aprovado" : "Rejeitado";
-	const color = status === "APPROVED" ? "green" : "red";
+	const statusText = status === "APPROVED" ? "Aprovado" : "Rejeitado"
+	const color = status === "APPROVED" ? "green" : "red"
 
 	await resend.emails.send({
 		from: FROM_EMAIL,
@@ -50,5 +50,5 @@ export async function sendDocumentStatusEmail(
 			${reason ? `<p><strong>Motivo:</strong> ${reason}</p>` : ""}
 			<p>Acesse a plataforma para mais detalhes.</p>
 		`,
-	});
+	})
 }

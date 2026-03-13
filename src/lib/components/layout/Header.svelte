@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { Bell, Search, User, LogOut } from "lucide-svelte";
-	import { authClient } from "$lib/auth-client";
-	import { goto } from "$app/navigation";
+import { goto } from "$app/navigation"
+import { resolve } from "$app/paths"
+import { authClient } from "$lib/auth-client"
 
-	let { user }: { user: { name: string; role: string } | null } = $props();
+let { user }: { user: { name: string; role: string } | null } = $props()
 
-	async function handleLogout() {
-		await authClient.signOut();
-		await goto("/login");
-	}
+async function _handleLogout() {
+	await authClient.signOut()
+	await goto(resolve("/login"))
+}
 </script>
 
 <header

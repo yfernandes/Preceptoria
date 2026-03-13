@@ -1,14 +1,14 @@
-import { eq } from "drizzle-orm";
-import { db } from "$lib/server/db";
-import { students, user } from "$lib/server/db/schema";
+import { eq } from "drizzle-orm"
+import { db } from "$lib/server/db"
+import { students } from "$lib/server/db/schema"
 
 export async function createStudent(data: {
-	userId: string;
-	classId: string;
-	registrationNumber?: string;
+	userId: string
+	classId: string
+	registrationNumber?: string
 }) {
-	const [result] = await db.insert(students).values(data).returning();
-	return result;
+	const [result] = await db.insert(students).values(data).returning()
+	return result
 }
 
 export async function getStudentById(id: string) {
@@ -17,8 +17,8 @@ export async function getStudentById(id: string) {
 		with: {
 			user: true,
 		},
-	});
-	return result;
+	})
+	return result
 }
 
 export async function listStudentsByClass(classId: string) {
@@ -27,18 +27,18 @@ export async function listStudentsByClass(classId: string) {
 		with: {
 			user: true,
 		},
-	});
+	})
 }
 
 export async function updateStudent(
 	id: string,
 	data: Partial<{ classId: string; registrationNumber: string }>
 ) {
-	const [result] = await db.update(students).set(data).where(eq(students.id, id)).returning();
-	return result;
+	const [result] = await db.update(students).set(data).where(eq(students.id, id)).returning()
+	return result
 }
 
 export async function deleteStudent(id: string) {
-	const [result] = await db.delete(students).where(eq(students.id, id)).returning();
-	return result;
+	const [result] = await db.delete(students).where(eq(students.id, id)).returning()
+	return result
 }

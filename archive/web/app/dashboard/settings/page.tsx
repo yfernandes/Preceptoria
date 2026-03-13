@@ -6,5 +6,5 @@ export default function SettingsPage() {
 				<p className="text-gray-600">Configurações do Sistema</p>
 			</div>
 		</div>
-	);
+	)
 }

@@ -1,4 +1,4 @@
-import { UserRoles } from "../modules/common/role.abstract";
+import type { UserRoles } from "../modules/common/role.abstract"
 export enum Resource {
 	Hospital = "Hospital",
 	Student = "Student",
@@ -34,7 +34,7 @@ export enum Modifiers {
 	Bundle = "Bundle", // Document bundles for approval workflow
 }
 
-type Perm = (`${Resource}:${Actions}_${Modifiers}` | "*:*:*")[];
+type Perm = (`${Resource}:${Actions}_${Modifiers}` | "*:*:*")[]
 
 // Helper functions to reduce repetition and improve readability
 const crud = (resource: Resource, modifier: Modifiers): Perm => [
@@ -42,16 +42,14 @@ const crud = (resource: Resource, modifier: Modifiers): Perm => [
 	`${resource}:Read_${modifier}`,
 	`${resource}:Update_${modifier}`,
 	`${resource}:Delete_${modifier}`,
-];
+]
 
-const readOnly = (resource: Resource, modifier: Modifiers): Perm => [
-	`${resource}:Read_${modifier}`,
-];
+const readOnly = (resource: Resource, modifier: Modifiers): Perm => [`${resource}:Read_${modifier}`]
 
 const readUpdate = (resource: Resource, modifier: Modifiers): Perm => [
 	`${resource}:Read_${modifier}`,
 	`${resource}:Update_${modifier}`,
-];
+]
 
 export const rolesPermissions: Record<keyof typeof UserRoles, Perm> = {
 	SysAdmin: [
@@ -147,4 +145,4 @@ export const rolesPermissions: Record<keyof typeof UserRoles, Perm> = {
 		...readOnly(Resource.Hospital, Modifiers.Basic), // For navigation
 		...readOnly(Resource.Student, Modifiers.Class), // See classmates only
 	],
-} as const;
+} as const

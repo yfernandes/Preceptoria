@@ -77,14 +77,7 @@
 		"name": "Shift",
 		"abstract": false,
 		"internal": true,
-		"constructorParams": [
-			"date",
-			"startTime",
-			"endTime",
-			"location",
-			"hospital",
-			"preceptor"
-		],
+		"constructorParams": ["date", "startTime", "endTime", "location", "hospital", "preceptor"],
 		"toJsonParams": [],
 		"extends": "BaseEntity",
 		"useCache": true,

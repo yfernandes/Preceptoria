@@ -6,5 +6,5 @@ export default function StudentsPage() {
 				<p className="text-gray-600">Gestão de Estudantes</p>
 			</div>
 		</div>
-	);
+	)
 }

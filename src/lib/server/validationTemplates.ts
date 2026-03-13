@@ -9,16 +9,16 @@ export enum DocumentType {
 }
 
 export interface ValidationCheck {
-	id: string;
-	label: string;
-	description?: string;
-	required: boolean;
+	id: string
+	label: string
+	description?: string
+	required: boolean
 }
 
 export interface ValidationTemplate {
-	documentType: DocumentType;
-	checks: ValidationCheck[];
-	instructions?: string;
+	documentType: DocumentType
+	checks: ValidationCheck[]
+	instructions?: string
 }
 
 export const validationTemplates: ValidationTemplate[] = [
@@ -51,16 +51,16 @@ export const validationTemplates: ValidationTemplate[] = [
 		],
 	},
 	// ... other templates simplified or just brought over
-];
+]
 
 export function getValidationTemplateForDocument(type: string): ValidationTemplate {
-	const template = validationTemplates.find((t) => t.documentType === type);
+	const template = validationTemplates.find((t) => t.documentType === type)
 	if (!template) {
 		return {
 			documentType: DocumentType.OTHER,
 			instructions: "Check document for general requirements.",
 			checks: [{ id: "isRelevant", label: "Is relevant", required: true }],
-		};
+		}
 	}
-	return template;
+	return template
 }

@@ -1,16 +1,15 @@
-import { OptionalProps, PrimaryKey, Property } from '@mikro-orm/core';
-import { v6 } from 'uuid';
-import { BaseEntity as ORMBaseEntity } from '@mikro-orm/core';
+import { OptionalProps, BaseEntity as ORMBaseEntity, PrimaryKey, Property } from "@mikro-orm/core"
+import { v6 } from "uuid"
 
 export class BaseEntity extends ORMBaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt';
+	[OptionalProps]?: "createdAt" | "updatedAt"
 
-  @PrimaryKey({ type: 'uuid' })
-  id = v6();
+	@PrimaryKey({ type: "uuid" })
+	id = v6()
 
-  @Property()
-  createdAt = new Date();
+	@Property()
+	createdAt = new Date()
 
-  @Property({ onUpdate: () => new Date() })
-  updatedAt = new Date();
+	@Property({ onUpdate: () => new Date() })
+	updatedAt = new Date()
 }

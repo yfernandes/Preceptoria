@@ -1,37 +1,36 @@
-import { mergePdfAndImages } from "tools";
-import { ApprovalStatus, Student } from "entities";
-import { type Services } from "db";
+import type { Services } from "db"
+import { ApprovalStatus, type Document, DocumentType, type Student } from "entities"
 import {
 	BadgeTags,
 	CityHospitalFormTags,
+	type DocumentTag,
 	InternshipCommitmentTermTags,
 	ProfessionalIdentityTags,
 	VaccineTags,
-	type DocumentTag,
-} from "entities/document/document.tags";
-import { Document, DocumentType } from "entities";
+} from "entities/document/document.tags"
+import { mergePdfAndImages } from "tools"
 // import { $ } from "bun";
 // await $`rm -rf ./**/*\ \-\ Completo.pdf`.nothrow();
 
 export async function compileDocumentation(db: Services): Promise<void> {
-	console.clear();
-	console.log("\n\n\n\n\n------------------------------------------------");
+	console.clear()
+	console.log("\n\n\n\n\n------------------------------------------------")
 	// await $`rm -rf ./**/*\ \-\ Completo.pdf`.nothrow();
 
 	// List of all students with their documentations
 	const allStudents: Student[] = await db.student.findAll({
 		populate: ["insurance"],
-	});
+	})
 
 	for (const [studentIndex, student] of allStudents.entries()) {
-		console.log(student.crefito);
+		console.log(student.crefito)
 		// Requirements list for student approval
 		const badgeRequirements: DocumentTag[] = [
 			BadgeTags.IsFromShoulderUp,
 			BadgeTags.HasNoHatsOrSunglasses,
 			BadgeTags.HasNoDistractingElements,
 			BadgeTags.IsClear,
-		];
+		]
 
 		const vaccineRequirements: DocumentTag[] = [
 			VaccineTags.FirstDoseHepB,
@@ -40,23 +39,23 @@ export async function compileDocumentation(db: Services): Promise<void> {
 			VaccineTags.FirstDoseCovid,
 			VaccineTags.SecondDoseCovid,
 			VaccineTags.UpToDateDT,
-		];
+		]
 
 		const crefitoRequirements: DocumentTag[] = [
 			ProfessionalIdentityTags.FrontPage,
 			ProfessionalIdentityTags.BackPage,
-		];
+		]
 
 		const hospitalFormRequirements: DocumentTag[] = [
 			CityHospitalFormTags.AllFieldsFilled,
 			CityHospitalFormTags.Signed,
-		];
+		]
 
 		const commitmentTermRequirements: DocumentTag[] = [
 			InternshipCommitmentTermTags.HasFullNameOnFirstPage,
 			InternshipCommitmentTermTags.IsDatedOnSecondPage,
 			InternshipCommitmentTermTags.Signed,
-		];
+		]
 		// Get all approved documents for the student
 		const documents: Document[] = await db.document.findAll({
 			populate: ["documentation.student.id"],
@@ -64,7 +63,7 @@ export async function compileDocumentation(db: Services): Promise<void> {
 				documentation: { student: { id: student.id } },
 				approvalStatus: ApprovalStatus.Approved,
 			},
-		});
+		})
 		// console.log(
 		// 	`Creating list of approved documents for Crefito: ${student.crefito}`
 		// );
@@ -74,55 +73,55 @@ export async function compileDocumentation(db: Services): Promise<void> {
 				// Is this document tag present in the requirements list?
 				if (requirements.includes(tag)) {
 					// Remove it from the requirements list
-					requirements = requirements.filter((requirement) => requirement !== tag);
+					requirements = requirements.filter((requirement) => requirement !== tag)
 					// Add it to the approved list
 					if (!approved.includes(document)) {
-						approved.push(document);
+						approved.push(document)
 					}
 				}
-			});
+			})
 		}
 
-		const approved: Document[] = [];
+		const approved: Document[] = []
 		for (const document of documents) {
 			switch (document.documentType) {
 				case DocumentType.badgePicture: {
-					checkRequirements(document, badgeRequirements);
-					break;
+					checkRequirements(document, badgeRequirements)
+					break
 				}
 				case DocumentType.vaccinationCard: {
-					checkRequirements(document, vaccineRequirements);
-					break;
+					checkRequirements(document, vaccineRequirements)
+					break
 				}
 				case DocumentType.cityHospitalForm: {
-					checkRequirements(document, hospitalFormRequirements);
-					break;
+					checkRequirements(document, hospitalFormRequirements)
+					break
 				}
 				case DocumentType.internshipCommitmentTerm: {
-					checkRequirements(document, commitmentTermRequirements);
-					break;
+					checkRequirements(document, commitmentTermRequirements)
+					break
 				}
 				case DocumentType.professionalIdentityFront:
 				case DocumentType.professionalIdentityBack: {
-					checkRequirements(document, crefitoRequirements);
-					break;
+					checkRequirements(document, crefitoRequirements)
+					break
 				}
 				default: {
-					break;
+					break
 				}
 			}
 		}
 
 		if (student.insurance) {
 			console.log(
-				`Student Has Insurance: ${student.insurance.destPath + "/" + student.insurance.fileName + ".pdf"}`
-			);
-			approved.push(student.insurance);
+				`Student Has Insurance: ${`${student.insurance.destPath}/${student.insurance.fileName}.pdf`}`
+			)
+			approved.push(student.insurance)
 		}
 		await mergePdfAndImages(approved, student.crefito).then(() => {
 			console.log(
 				`----------------- Done ${studentIndex + 1}/${allStudents.length} -----------------\n`
-			);
-		});
+			)
+		})
 	}
 }

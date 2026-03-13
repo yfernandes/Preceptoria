@@ -1,17 +1,17 @@
-import { db } from "$lib/server/db";
-import { invitations } from "$lib/server/db/schema";
-import { eq } from "drizzle-orm";
+import { eq } from "drizzle-orm"
+import { db } from "$lib/server/db"
+import { invitations } from "$lib/server/db/schema"
 
 export async function createInvitation(data: {
-	email: string;
-	role: "Student" | "Preceptor" | "Supervisor" | "HospitalManager";
-	classId?: string;
-	hospitalId?: string;
-	invitedBy: string;
+	email: string
+	role: "Student" | "Preceptor" | "Supervisor" | "HospitalManager"
+	classId?: string
+	hospitalId?: string
+	invitedBy: string
 }) {
-	const token = crypto.randomUUID();
-	const expiresAt = new Date();
-	expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiry
+	const token = crypto.randomUUID()
+	const expiresAt = new Date()
+	expiresAt.setDate(expiresAt.getDate() + 7) // 7 days expiry
 
 	const [invitation] = await db
 		.insert(invitations)
@@ -25,9 +25,9 @@ export async function createInvitation(data: {
 			expiresAt: expiresAt,
 			status: "PENDING",
 		})
-		.returning();
+		.returning()
 
-	return invitation;
+	return invitation
 }
 
 export async function getInvitationByToken(token: string) {
@@ -42,9 +42,9 @@ export async function getInvitationByToken(token: string) {
 			},
 			inviter: true,
 		},
-	});
+	})
 }
 
 export async function acceptInvitation(id: string) {
-	await db.update(invitations).set({ status: "ACCEPTED" }).where(eq(invitations.id, id));
+	await db.update(invitations).set({ status: "ACCEPTED" }).where(eq(invitations.id, id))
 }

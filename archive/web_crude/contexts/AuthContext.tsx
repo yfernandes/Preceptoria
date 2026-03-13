@@ -1,63 +1,63 @@
-"use client";
+"use client"
 
-import React, { createContext, useContext, useState } from "react";
-import { treatise } from "../lib/eden";
-import { User } from "types";
+import type React from "react"
+import { createContext, useContext, useState } from "react"
+import type { User } from "types"
+import { treatise } from "../lib/eden"
 
 interface AuthContextType {
-	user: User | null;
-	loading: boolean;
-	error: string | null;
-	signin: (email: string, password: string) => Promise<void>;
-	signout: () => Promise<void>;
-	clearError: () => void;
+	user: User | null
+	loading: boolean
+	error: string | null
+	signin: (email: string, password: string) => Promise<void>
+	signout: () => Promise<void>
+	clearError: () => void
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-	const [user, setUser] = useState<User | null>(null);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [user, setUser] = useState<User | null>(null)
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState<string | null>(null)
 
 	const signin = async (email: string, password: string) => {
 		try {
-			setLoading(true);
-			setError(null);
+			setLoading(true)
+			setError(null)
 
-			const response = await treatise.auth.signin.post({ email, password });
+			const response = await treatise.auth.signin.post({ email, password })
 
 			if (response.data?.success && response.data.user) {
 				// Session cookie is automatically set by the server
-				setUser(response.data.user);
-				console.log("Login successful, user set:", response.data.user);
+				setUser(response.data.user)
+				console.log("Login successful, user set:", response.data.user)
 			} else {
-				throw new Error(response.data?.message || "Login failed");
+				throw new Error(response.data?.message || "Login failed")
 			}
 		} catch (error) {
-			const errorMessage =
-				error instanceof Error ? error.message : "Login failed";
-			setError(errorMessage);
-			throw error;
+			const errorMessage = error instanceof Error ? error.message : "Login failed"
+			setError(errorMessage)
+			throw error
 		} finally {
-			setLoading(false);
+			setLoading(false)
 		}
-	};
+	}
 
 	const signout = async () => {
 		try {
-			await treatise.auth.logout.post();
-			setUser(null);
+			await treatise.auth.logout.post()
+			setUser(null)
 		} catch (error) {
-			console.error("Logout error:", error);
+			console.error("Logout error:", error)
 			// Still clear user even if logout request fails
-			setUser(null);
+			setUser(null)
 		}
-	};
+	}
 
 	const clearError = () => {
-		setError(null);
-	};
+		setError(null)
+	}
 
 	const value: AuthContextType = {
 		user,
@@ -66,15 +66,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		signin,
 		signout,
 		clearError,
-	};
+	}
 
-	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {
-	const context = useContext(AuthContext);
+	const context = useContext(AuthContext)
 	if (context === undefined) {
-		throw new Error("useAuth must be used within an AuthProvider");
+		throw new Error("useAuth must be used within an AuthProvider")
 	}
-	return context;
+	return context
 }

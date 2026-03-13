@@ -1,5 +1,5 @@
 export async function preProcessing(): Promise<void> {
-	console.log("Running pre-processing tasks...");
+	console.log("Running pre-processing tasks...")
 
 	// TODO: Extract images from Pdfs
 	// TODO: Create preview thumbnails

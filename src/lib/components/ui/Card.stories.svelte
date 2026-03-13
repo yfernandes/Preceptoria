@@ -1,15 +1,15 @@
 <script lang="ts" module>
-	import { defineMeta } from "@storybook/addon-svelte-csf";
-	import Card from "./Card.svelte";
+import { defineMeta } from "@storybook/addon-svelte-csf"
+import Card from "./Card.svelte"
 
-	const { Story } = defineMeta({
-		title: "UI/Card",
-		component: Card,
-		argTypes: {
-			title: { control: "text" },
-			description: { control: "text" },
-		},
-	});
+const { Story } = defineMeta({
+	title: "UI/Card",
+	component: Card,
+	argTypes: {
+		title: { control: "text" },
+		description: { control: "text" },
+	},
+})
 </script>
 
 {#snippet cardContent()}

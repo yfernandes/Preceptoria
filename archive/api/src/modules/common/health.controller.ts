@@ -1,4 +1,4 @@
-import Elysia from "elysia";
+import Elysia from "elysia"
 
 // --- Health Check ---
 export const healthController = new Elysia().get("health", () => ({
@@ -6,4 +6,4 @@ export const healthController = new Elysia().get("health", () => ({
 	timestamp: new Date().toISOString(),
 	uptime: process.uptime(),
 	environment: Bun.env.NODE_ENV ?? "development",
-}));
+}))

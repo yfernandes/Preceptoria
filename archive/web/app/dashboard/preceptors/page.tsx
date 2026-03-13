@@ -6,5 +6,5 @@ export default function PreceptorsPage() {
 				<p className="text-gray-600">Gestão de Preceptores</p>
 			</div>
 		</div>
-	);
+	)
 }

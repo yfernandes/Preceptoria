@@ -1,39 +1,38 @@
+import { BaseEntity } from "@api/modules/common/baseEntity"
+import type { Hospital } from "@api/modules/hospitals/hospital.entity"
+import type { Preceptor } from "@api/modules/preceptors/preceptor.entity"
+import type { Student } from "@api/modules/students/student.entity"
 import {
-	type Rel,
 	Collection,
 	Entity,
 	ManyToMany,
 	ManyToOne,
 	Property,
-} from "@mikro-orm/postgresql";
-
-import { BaseEntity } from "@api/modules/common/baseEntity";
-import { Hospital } from "@api/modules/hospitals/hospital.entity";
-import { Preceptor } from "@api/modules/preceptors/preceptor.entity";
-import { Student } from "@api/modules/students/student.entity";
+	type Rel,
+} from "@mikro-orm/postgresql"
 
 @Entity()
 export class Shift extends BaseEntity {
 	@Property()
-	date: Date;
+	date: Date
 
 	@Property()
-	startTime: Date;
+	startTime: Date
 
 	@Property()
-	endTime: Date;
+	endTime: Date
 
 	@Property()
-	location: string;
+	location: string
 
 	@ManyToOne()
-	hospital: Rel<Hospital>;
+	hospital: Rel<Hospital>
 
 	@ManyToOne()
-	preceptor: Rel<Preceptor>;
+	preceptor: Rel<Preceptor>
 
 	@ManyToMany()
-	students = new Collection<Student>(this);
+	students = new Collection<Student>(this)
 
 	constructor(
 		date: Date,
@@ -43,13 +42,13 @@ export class Shift extends BaseEntity {
 		hospital: Rel<Hospital>,
 		preceptor: Rel<Preceptor>
 	) {
-		super();
+		super()
 
-		this.date = date;
-		this.startTime = startTime;
-		this.endTime = endTime;
-		this.location = location;
-		this.hospital = hospital;
-		this.preceptor = preceptor;
+		this.date = date
+		this.startTime = startTime
+		this.endTime = endTime
+		this.location = location
+		this.hospital = hospital
+		this.preceptor = preceptor
 	}
 }

@@ -6,5 +6,5 @@ export default function SupervisorsPage() {
 				<p className="text-gray-600">Gestão de Supervisores</p>
 			</div>
 		</div>
-	);
+	)
 }

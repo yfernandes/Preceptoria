@@ -1,10 +1,10 @@
-import { Elysia } from "elysia";
-import { swagger } from "@elysiajs/swagger";
-import bearer from "@elysiajs/bearer";
-import cors from "@elysiajs/cors";
-import { opentelemetry } from "@elysiajs/opentelemetry";
-import serverTiming from "@elysiajs/server-timing";
-import { APP_CONFIG } from "../config/app";
+import bearer from "@elysiajs/bearer"
+import cors from "@elysiajs/cors"
+import { opentelemetry } from "@elysiajs/opentelemetry"
+import serverTiming from "@elysiajs/server-timing"
+import { swagger } from "@elysiajs/swagger"
+import { Elysia } from "elysia"
+import { APP_CONFIG } from "../config/app"
 
 /**
  * Applies all middleware to the Elysia app
@@ -29,4 +29,4 @@ export const commonMiddlewares = new Elysia()
 	// Observability
 	.use(opentelemetry())
 	.use(serverTiming())
-	.as("global");
+	.as("global")

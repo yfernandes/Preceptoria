@@ -6,5 +6,5 @@ export default function DocumentsPage() {
 				<p className="text-gray-600">Gestão de Documentos</p>
 			</div>
 		</div>
-	);
+	)
 }

@@ -6,5 +6,5 @@ export default function CoursesPage() {
 				<p className="text-gray-600">Gestão de Cursos Acadêmicos</p>
 			</div>
 		</div>
-	);
+	)
 }

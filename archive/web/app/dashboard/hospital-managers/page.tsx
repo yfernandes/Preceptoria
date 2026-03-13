@@ -6,5 +6,5 @@ export default function HospitalManagersPage() {
 				<p className="text-gray-600">Gestão de Gerentes Hospitalares</p>
 			</div>
 		</div>
-	);
+	)
 }

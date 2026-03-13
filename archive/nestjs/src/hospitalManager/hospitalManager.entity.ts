@@ -1,23 +1,18 @@
-import {
-  Entity,
-  EntityRepositoryType,
-  ManyToOne,
-  type Rel,
-} from '@mikro-orm/core';
-import { HospitalManagerRepository } from './hospitalManager.repository';
-import { Role } from 'src/role.abstract';
-import { Hospital } from 'src/hospital/hospital.entity';
-import type { User } from 'src/user/user.entity';
+import { Entity, EntityRepositoryType, ManyToOne, type Rel } from "@mikro-orm/core"
+import type { Hospital } from "src/hospital/hospital.entity"
+import { Role } from "src/role.abstract"
+import type { User } from "src/user/user.entity"
+import { HospitalManagerRepository } from "./hospitalManager.repository"
 
 @Entity({ repository: () => HospitalManagerRepository })
 export class HospitalManager extends Role {
-  [EntityRepositoryType]?: HospitalManagerRepository;
+	[EntityRepositoryType]?: HospitalManagerRepository
 
-  @ManyToOne()
-  hospital: Rel<Hospital>;
+	@ManyToOne()
+	hospital: Rel<Hospital>
 
-  constructor(user: User, hospital: Hospital) {
-    super(user);
-    this.hospital = hospital;
-  }
+	constructor(user: User, hospital: Hospital) {
+		super(user)
+		this.hospital = hospital
+	}
 }

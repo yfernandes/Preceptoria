@@ -1,17 +1,16 @@
-import Elysia, { t } from "elysia";
-
-import { db } from "@api/db";
-import { SyncService } from "../../services/syncService";
-import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
-import { SysAdmin } from "./SysAdmin.entity";
+import { db } from "@api/db"
+import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware"
+import Elysia, { t } from "elysia"
+import { SyncService } from "../../services/syncService"
+import { SysAdmin } from "./SysAdmin.entity"
 
 const createSysAdminDto = {
 	body: t.Object({
 		userId: t.String(),
 	}),
-};
+}
 
-const syncService = new SyncService();
+const syncService = new SyncService()
 
 export const adminController = new Elysia({ prefix: "admin" })
 	.use(authenticatedUserMiddleware)
@@ -19,40 +18,38 @@ export const adminController = new Elysia({ prefix: "admin" })
 		"/",
 		async ({ requester, status, body: { userId } }) => {
 			try {
-				if (!requester.sysAdminId) return status(401);
+				if (!requester.sysAdminId) return status(401)
 
-				const user = await db.user.findOne({ id: userId });
+				const user = await db.user.findOne({ id: userId })
 				if (!user) {
-					return new Error("User not Found");
+					return new Error("User not Found")
 				}
 
-				const sysAdmin = new SysAdmin(user);
-				await db.em.persistAndFlush(sysAdmin);
-				return sysAdmin;
+				const sysAdmin = new SysAdmin(user)
+				await db.em.persistAndFlush(sysAdmin)
+				return sysAdmin
 			} catch (err) {
-				return status(500, { err });
+				return status(500, { err })
 			}
 		},
 		createSysAdminDto
 	)
 	.post("/syncGoogleSheets", async ({ requester, status }) => {
-		if (!requester.sysAdminId) return status(401, { error: "Unauthorized" });
-		const result = await syncService.syncFromGoogleSheets(
-			Bun.env.GOOGLE_SPREADSHEET_ID
-		);
-		return result;
+		if (!requester.sysAdminId) return status(401, { error: "Unauthorized" })
+		const result = await syncService.syncFromGoogleSheets(Bun.env.GOOGLE_SPREADSHEET_ID)
+		return result
 	})
 	.get(
 		":id",
 		async ({ requester, status, params: { id } }) => {
 			try {
 				if (requester.sysAdminId !== id) {
-					return status(401);
+					return status(401)
 				}
 				// Used only by each SysAdmin
-				return await db.sysAdmin.findOne({ id });
+				return await db.sysAdmin.findOne({ id })
 			} catch (err) {
-				return status(500, { err });
+				return status(500, { err })
 			}
 		},
 		{
@@ -63,5 +60,5 @@ export const adminController = new Elysia({ prefix: "admin" })
 	)
 	// .patch("/:id", "Update One") // Nothing to do here since SysAdmins don't have any properties
 	.delete(":id", () => {
-		return { success: false, message: "Undefined Behaviour" };
-	});
+		return { success: false, message: "Undefined Behaviour" }
+	})

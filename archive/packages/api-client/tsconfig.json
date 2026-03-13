@@ -53,10 +53,5 @@
 
 	// ===== INCLUDE/EXCLUDE =====
 	"include": ["src/**/*", "infrastructure/**/*", "test/**/*", "types/**/*"],
-	"exclude": [
-		"node_modules",
-		"dist",
-		"coverage",
-		"infrastructure/database/migrations"
-	]
+	"exclude": ["node_modules", "dist", "coverage", "infrastructure/database/migrations"]
 }

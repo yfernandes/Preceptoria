@@ -1,8 +1,9 @@
-"use client";
+"use client"
 
-import { usePathname } from "next/navigation";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
+import { usePathname } from "next/navigation"
+import React from "react"
+import { AppSidebar } from "@/components/app-sidebar"
+import { ModeToggle } from "@/components/mode-toggle"
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -10,10 +11,9 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { AppSidebar } from "@/components/app-sidebar";
-import React from "react";
-import { ModeToggle } from "@/components/mode-toggle";
+} from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 
 // Map of routes to their display names
 const routeNames: Record<string, string> = {
@@ -29,7 +29,7 @@ const routeNames: Record<string, string> = {
 	users: "Usuários",
 	"org-admins": "Admins de Organização",
 	settings: "Configurações",
-};
+}
 
 // Map of parent routes to their display names
 const parentRouteNames: Record<string, string> = {
@@ -37,51 +37,51 @@ const parentRouteNames: Record<string, string> = {
 	hospital: "Gestão Hospitalar",
 	internships: "Estágios",
 	admin: "Administração",
-};
+}
 
 function getBreadcrumbs(pathname: string) {
-	const segments = pathname.split("/").filter(Boolean);
-	const breadcrumbs = [];
+	const segments = pathname.split("/").filter(Boolean)
+	const breadcrumbs = []
 
 	// Always add Dashboard as the first breadcrumb
 	breadcrumbs.push({
 		title: "Dashboard",
 		href: "/dashboard",
 		isCurrent: segments.length === 1,
-	});
+	})
 
 	// Add parent section if it exists
 	if (segments.length > 1) {
-		const parentRoute = segments[1];
-		const parentName = parentRouteNames[parentRoute];
+		const parentRoute = segments[1]
+		const parentName = parentRouteNames[parentRoute]
 
 		if (parentName) {
 			breadcrumbs.push({
 				title: parentName,
 				href: `/dashboard/${parentRoute}`,
 				isCurrent: segments.length === 2,
-			});
+			})
 		}
 	}
 
 	// Add current page
 	if (segments.length > 1) {
-		const currentRoute = segments[segments.length - 1];
-		const currentName = routeNames[currentRoute] || currentRoute;
+		const currentRoute = segments[segments.length - 1]
+		const currentName = routeNames[currentRoute] || currentRoute
 
 		breadcrumbs.push({
 			title: currentName,
 			href: pathname,
 			isCurrent: true,
-		});
+		})
 	}
 
-	return breadcrumbs;
+	return breadcrumbs
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-	const pathname = usePathname();
-	const breadcrumbs = getBreadcrumbs(pathname);
+	const pathname = usePathname()
+	const breadcrumbs = getBreadcrumbs(pathname)
 
 	return (
 		<SidebarProvider>
@@ -117,5 +117,5 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 				<div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
 			</SidebarInset>
 		</SidebarProvider>
-	);
+	)
 }

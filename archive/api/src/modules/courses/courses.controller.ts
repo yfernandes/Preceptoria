@@ -1,11 +1,11 @@
-import Elysia, { status as error, t } from "elysia";
-import { Course } from "./";
-import { db } from "@api/db";
-import { hasPermission } from "@api/utils/hasPermissions";
-import { Actions, Resource } from "@api/utils/permissions";
-import { UserRoles } from "@api/modules/common/role.abstract";
-import { FilterQuery } from "@mikro-orm/postgresql";
-import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
+import { db } from "@api/db"
+import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware"
+import { UserRoles } from "@api/modules/common/role.abstract"
+import { hasPermission } from "@api/utils/hasPermissions"
+import { Actions, Resource } from "@api/utils/permissions"
+import type { FilterQuery } from "@mikro-orm/postgresql"
+import Elysia, { status as error, t } from "elysia"
+import { Course } from "./"
 
 // DTOs for request validation
 const createCourseDto = {
@@ -14,7 +14,7 @@ const createCourseDto = {
 		schoolId: t.String(),
 		supervisorId: t.String(),
 	}),
-};
+}
 
 const updateCourseDto = {
 	body: t.Object({
@@ -22,7 +22,7 @@ const updateCourseDto = {
 		schoolId: t.Optional(t.String()),
 		supervisorId: t.Optional(t.String()),
 	}),
-};
+}
 
 export const coursesController = new Elysia({ prefix: "/courses" })
 	.use(authenticatedUserMiddleware)
@@ -33,27 +33,22 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 		async ({ body: { name, schoolId, supervisorId }, requester }) => {
 			try {
 				// Check permissions for creating courses
-				const hasAccess = await hasPermission(
-					requester,
-					Resource.Course,
-					Actions.Create,
-					""
-				);
+				const hasAccess = await hasPermission(requester, Resource.Course, Actions.Create, "")
 
 				if (!hasAccess) {
 					return error(403, {
 						success: false,
 						message: "You don't have permission to create courses",
-					});
+					})
 				}
 
 				// Validate school exists and user has access to it
-				const school = await db.school.findOne({ id: schoolId });
+				const school = await db.school.findOne({ id: schoolId })
 				if (!school) {
 					return error(404, {
 						success: false,
 						message: "School not found",
-					});
+					})
 				}
 
 				// Check if user has access to this school
@@ -62,23 +57,22 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 					Resource.School,
 					Actions.Read,
 					schoolId
-				);
+				)
 
 				if (!hasSchoolAccess) {
 					return error(403, {
 						success: false,
-						message:
-							"You don't have permission to create courses for this school",
-					});
+						message: "You don't have permission to create courses for this school",
+					})
 				}
 
 				// Validate supervisor exists and user has access to them
-				const supervisor = await db.supervisor.findOne({ id: supervisorId });
+				const supervisor = await db.supervisor.findOne({ id: supervisorId })
 				if (!supervisor) {
 					return error(404, {
 						success: false,
 						message: "Supervisor not found",
-					});
+					})
 				}
 
 				// Check if user has access to this supervisor
@@ -87,35 +81,34 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 					Resource.Supervisor,
 					Actions.Read,
 					supervisorId
-				);
+				)
 
 				if (!hasSupervisorAccess) {
 					return error(403, {
 						success: false,
-						message:
-							"You don't have permission to assign this supervisor to the course",
-					});
+						message: "You don't have permission to assign this supervisor to the course",
+					})
 				}
 
 				// Create new course
-				const newCourse = new Course(name, school, supervisor);
+				const newCourse = new Course(name, school, supervisor)
 
-				await db.em.persistAndFlush(newCourse);
+				await db.em.persistAndFlush(newCourse)
 
 				// Return created course with populated relationships
 				const createdCourse = await db.course.findOne(
 					{ id: newCourse.id },
 					{ populate: ["school", "supervisor", "school.orgAdmin"] }
-				);
+				)
 
 				return {
 					success: true,
 					data: createdCourse,
 					message: "Course created successfully",
-				};
+				}
 			} catch (err) {
-				console.error("Error creating course:", err);
-				return error(500, { success: false, message: "Internal server error" });
+				console.error("Error creating course:", err)
+				return error(500, { success: false, message: "Internal server error" })
 			}
 		},
 		createCourseDto
@@ -124,18 +117,18 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 	// Get all courses (with optional filtering)
 	.get("/", async ({ requester, query }) => {
 		try {
-			const { schoolId, supervisorId, limit = 10, offset = 0 } = query;
+			const { schoolId, supervisorId, limit = 10, offset = 0 } = query
 
 			// Build filter based on user permissions and role
-			const filter: FilterQuery<Course> = {};
+			const filter: FilterQuery<Course> = {}
 
 			// Apply query filters
 			if (schoolId) {
-				filter.school = { id: schoolId };
+				filter.school = { id: schoolId }
 			}
 
 			if (supervisorId) {
-				filter.supervisor = { id: supervisorId };
+				filter.supervisor = { id: supervisorId }
 			}
 
 			// Apply role-based filtering for data isolation
@@ -156,23 +149,18 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 			// Get courses with pagination
 			const courses = await db.course.find(filter, {
 				populate: ["school", "supervisor", "classes"],
-				limit: parseInt(limit as string),
-				offset: parseInt(offset as string),
+				limit: parseInt(limit as string, 10),
+				offset: parseInt(offset as string, 10),
 				orderBy: { createdAt: "DESC" },
-			});
+			})
 
 			// Filter courses based on permissions
-			const accessibleCourses = [];
+			const accessibleCourses = []
 			for (const course of courses) {
-				const hasAccess = await hasPermission(
-					requester,
-					Resource.Course,
-					Actions.Read,
-					course.id
-				);
+				const hasAccess = await hasPermission(requester, Resource.Course, Actions.Read, course.id)
 
 				if (hasAccess) {
-					accessibleCourses.push(course);
+					accessibleCourses.push(course)
 				}
 			}
 
@@ -181,14 +169,14 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 				data: accessibleCourses,
 				pagination: {
 					total: accessibleCourses.length,
-					limit: parseInt(limit as string),
-					offset: parseInt(offset as string),
-					hasMore: accessibleCourses.length === parseInt(limit as string),
+					limit: parseInt(limit as string, 10),
+					offset: parseInt(offset as string, 10),
+					hasMore: accessibleCourses.length === parseInt(limit as string, 10),
 				},
-			};
+			}
 		} catch (err) {
-			console.error("Error fetching courses:", err);
-			return error(500, { success: false, message: "Internal server error" });
+			console.error("Error fetching courses:", err)
+			return error(500, { success: false, message: "Internal server error" })
 		}
 	})
 
@@ -196,48 +184,37 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 	.get("/:id", async ({ params: { id }, requester }) => {
 		try {
 			// Check permissions for reading this specific course
-			const hasAccess = await hasPermission(
-				requester,
-				Resource.Course,
-				Actions.Read,
-				id
-			);
+			const hasAccess = await hasPermission(requester, Resource.Course, Actions.Read, id)
 
 			if (!hasAccess) {
 				return error(403, {
 					success: false,
 					message: "You don't have permission to view this course",
-				});
+				})
 			}
 
 			// Find course by ID with populated relationships
 			const course = await db.course.findOne(
 				{ id },
 				{
-					populate: [
-						"school",
-						"supervisor",
-						"classes",
-						"classes.students",
-						"school.orgAdmin",
-					],
+					populate: ["school", "supervisor", "classes", "classes.students", "school.orgAdmin"],
 				}
-			);
+			)
 
 			if (!course) {
 				return error(404, {
 					success: false,
 					message: "Course not found",
-				});
+				})
 			}
 
 			return {
 				success: true,
 				data: course,
-			};
+			}
 		} catch (err) {
-			console.error("Error fetching course:", err);
-			return error(500, { success: false, message: "Internal server error" });
+			console.error("Error fetching course:", err)
+			return error(500, { success: false, message: "Internal server error" })
 		}
 	})
 
@@ -247,37 +224,32 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 		async ({ params: { id }, body, requester }) => {
 			try {
 				// Check permissions for updating this course
-				const hasAccess = await hasPermission(
-					requester,
-					Resource.Course,
-					Actions.Update,
-					id
-				);
+				const hasAccess = await hasPermission(requester, Resource.Course, Actions.Update, id)
 
 				if (!hasAccess) {
 					return error(403, {
 						success: false,
 						message: "You don't have permission to update this course",
-					});
+					})
 				}
 
 				// Find course by ID
-				const course = await db.course.findOne({ id });
+				const course = await db.course.findOne({ id })
 				if (!course) {
 					return error(404, {
 						success: false,
 						message: "Course not found",
-					});
+					})
 				}
 
 				// Validate school exists if schoolId is being updated
 				if (body.schoolId) {
-					const school = await db.school.findOne({ id: body.schoolId });
+					const school = await db.school.findOne({ id: body.schoolId })
 					if (!school) {
 						return error(404, {
 							success: false,
 							message: "School not found",
-						});
+						})
 					}
 
 					// Check if user has access to this school
@@ -286,29 +258,28 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 						Resource.School,
 						Actions.Read,
 						body.schoolId
-					);
+					)
 
 					if (!hasSchoolAccess) {
 						return error(403, {
 							success: false,
-							message:
-								"You don't have permission to assign this course to the specified school",
-						});
+							message: "You don't have permission to assign this course to the specified school",
+						})
 					}
 
-					course.school = school;
+					course.school = school
 				}
 
 				// Validate supervisor exists if supervisorId is being updated
 				if (body.supervisorId) {
 					const supervisor = await db.supervisor.findOne({
 						id: body.supervisorId,
-					});
+					})
 					if (!supervisor) {
 						return error(404, {
 							success: false,
 							message: "Supervisor not found",
-						});
+						})
 					}
 
 					// Check if user has access to this supervisor
@@ -317,40 +288,39 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 						Resource.Supervisor,
 						Actions.Read,
 						body.supervisorId
-					);
+					)
 
 					if (!hasSupervisorAccess) {
 						return error(403, {
 							success: false,
-							message:
-								"You don't have permission to assign this supervisor to the course",
-						});
+							message: "You don't have permission to assign this supervisor to the course",
+						})
 					}
 
-					course.supervisor = supervisor;
+					course.supervisor = supervisor
 				}
 
 				// Update course properties
 				if (body.name) {
-					course.name = body.name;
+					course.name = body.name
 				}
 
-				await db.em.persistAndFlush(course);
+				await db.em.persistAndFlush(course)
 
 				// Return updated course with populated relationships
 				const updatedCourse = await db.course.findOne(
 					{ id },
 					{ populate: ["school", "supervisor", "classes", "school.orgAdmin"] }
-				);
+				)
 
 				return {
 					success: true,
 					data: updatedCourse,
 					message: "Course updated successfully",
-				};
+				}
 			} catch (err) {
-				console.error("Error updating course:", err);
-				return error(500, { success: false, message: "Internal server error" });
+				console.error("Error updating course:", err)
+				return error(500, { success: false, message: "Internal server error" })
 			}
 		},
 		updateCourseDto
@@ -360,28 +330,23 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 	.delete("/:id", async ({ params: { id }, requester }) => {
 		try {
 			// Check permissions for deleting this course
-			const hasAccess = await hasPermission(
-				requester,
-				Resource.Course,
-				Actions.Delete,
-				id
-			);
+			const hasAccess = await hasPermission(requester, Resource.Course, Actions.Delete, id)
 
 			if (!hasAccess) {
 				return error(403, {
 					success: false,
 					message: "You don't have permission to delete this course",
-				});
+				})
 			}
 
 			// Find course by ID with classes
-			const course = await db.course.findOne({ id }, { populate: ["classes"] });
+			const course = await db.course.findOne({ id }, { populate: ["classes"] })
 
 			if (!course) {
 				return error(404, {
 					success: false,
 					message: "Course not found",
-				});
+				})
 			}
 
 			// Check if course has classes (prevent deletion if occupied)
@@ -390,18 +355,18 @@ export const coursesController = new Elysia({ prefix: "/courses" })
 					success: false,
 					message:
 						"Cannot delete course that has classes. Please remove or reassign classes first.",
-				});
+				})
 			}
 
 			// Delete course
-			await db.em.removeAndFlush(course);
+			await db.em.removeAndFlush(course)
 
 			return {
 				success: true,
 				message: "Course deleted successfully",
-			};
+			}
 		} catch (err) {
-			console.error("Error deleting course:", err);
-			return error(500, { success: false, message: "Internal server error" });
+			console.error("Error deleting course:", err)
+			return error(500, { success: false, message: "Internal server error" })
 		}
-	});
+	})

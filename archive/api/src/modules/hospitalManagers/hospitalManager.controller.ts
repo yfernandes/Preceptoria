@@ -1,11 +1,11 @@
-import Elysia, { status as error, t } from "elysia";
-import { HospitalManager } from "./";
-import { db } from "@api/db";
-import { hasPermission } from "@api/utils/hasPermissions";
-import { Actions, Resource } from "@api/utils/permissions";
-import { UserRoles } from "@api/modules/common";
-import { FilterQuery } from "@mikro-orm/postgresql";
-import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware";
+import { db } from "@api/db"
+import { authenticatedUserMiddleware } from "@api/middleware/authenticatedUser.middleware"
+import { UserRoles } from "@api/modules/common"
+import { hasPermission } from "@api/utils/hasPermissions"
+import { Actions, Resource } from "@api/utils/permissions"
+import type { FilterQuery } from "@mikro-orm/postgresql"
+import Elysia, { status as error, t } from "elysia"
+import { HospitalManager } from "./"
 
 // DTOs for request validation
 const createHospitalManagerDto = {
@@ -13,13 +13,13 @@ const createHospitalManagerDto = {
 		userId: t.String(),
 		hospitalId: t.String(),
 	}),
-};
+}
 
 const updateHospitalManagerDto = {
 	body: t.Object({
 		hospitalId: t.Optional(t.String()),
 	}),
-};
+}
 
 export const hospitalManagerController = new Elysia({
 	prefix: "/hospital-managers",
@@ -37,47 +37,41 @@ export const hospitalManagerController = new Elysia({
 					Resource.HospitalManager,
 					Actions.Create,
 					""
-				);
+				)
 
 				if (!hasAccess) {
 					return error(403, {
 						success: false,
 						message: "You don't have permission to create hospital managers",
-					});
+					})
 				}
 
 				// Validate user exists and user has access to them
-				const user = await db.user.findOne({ id: userId });
+				const user = await db.user.findOne({ id: userId })
 				if (!user) {
 					return error(404, {
 						success: false,
 						message: "User not found",
-					});
+					})
 				}
 
 				// Check if user has access to this user
-				const hasUserAccess = await hasPermission(
-					requester,
-					Resource.User,
-					Actions.Read,
-					userId
-				);
+				const hasUserAccess = await hasPermission(requester, Resource.User, Actions.Read, userId)
 
 				if (!hasUserAccess) {
 					return error(403, {
 						success: false,
-						message:
-							"You don't have permission to assign this user as a hospital manager",
-					});
+						message: "You don't have permission to assign this user as a hospital manager",
+					})
 				}
 
 				// Validate hospital exists and user has access to it
-				const hospital = await db.hospital.findOne({ id: hospitalId });
+				const hospital = await db.hospital.findOne({ id: hospitalId })
 				if (!hospital) {
 					return error(404, {
 						success: false,
 						message: "Hospital not found",
-					});
+					})
 				}
 
 				// Check if user has access to this hospital
@@ -86,46 +80,45 @@ export const hospitalManagerController = new Elysia({
 					Resource.Hospital,
 					Actions.Read,
 					hospitalId
-				);
+				)
 
 				if (!hasHospitalAccess) {
 					return error(403, {
 						success: false,
-						message:
-							"You don't have permission to assign hospital managers to this hospital",
-					});
+						message: "You don't have permission to assign hospital managers to this hospital",
+					})
 				}
 
 				// Check if user is already a hospital manager
 				const existingHospitalManager = await db.hospitalManager.findOne({
 					user: { id: userId },
-				});
+				})
 				if (existingHospitalManager) {
 					return error(400, {
 						success: false,
 						message: "User is already a hospital manager",
-					});
+					})
 				}
 
 				// Create new hospital manager
-				const newHospitalManager = new HospitalManager(user, hospital);
+				const newHospitalManager = new HospitalManager(user, hospital)
 
-				await db.em.persistAndFlush(newHospitalManager);
+				await db.em.persistAndFlush(newHospitalManager)
 
 				// Return created hospital manager with populated relationships
 				const createdHospitalManager = await db.hospitalManager.findOne(
 					{ id: newHospitalManager.id },
 					{ populate: ["user", "hospital", "hospital.orgAdmin"] }
-				);
+				)
 
 				return {
 					success: true,
 					data: createdHospitalManager,
 					message: "Hospital manager created successfully",
-				};
+				}
 			} catch (err) {
-				console.error("Error creating hospital manager:", err);
-				return error(500, { success: false, message: "Internal server error" });
+				console.error("Error creating hospital manager:", err)
+				return error(500, { success: false, message: "Internal server error" })
 			}
 		},
 		createHospitalManagerDto
@@ -134,14 +127,14 @@ export const hospitalManagerController = new Elysia({
 	// Get all hospital managers (with optional filtering)
 	.get("/", async ({ requester, query }) => {
 		try {
-			const { hospitalId, limit = 10, offset = 0 } = query;
+			const { hospitalId, limit = 10, offset = 0 } = query
 
 			// Build filter based on user permissions and role
-			const filter: FilterQuery<HospitalManager> = {};
+			const filter: FilterQuery<HospitalManager> = {}
 
 			// Apply query filters
 			if (hospitalId) {
-				filter.hospital = { id: hospitalId };
+				filter.hospital = { id: hospitalId }
 			}
 
 			// Apply role-based filtering for data isolation
@@ -162,23 +155,23 @@ export const hospitalManagerController = new Elysia({
 			// Get hospital managers with pagination
 			const hospitalManagers = await db.hospitalManager.find(filter, {
 				populate: ["user", "hospital", "hospital.orgAdmin"],
-				limit: parseInt(limit as string),
-				offset: parseInt(offset as string),
+				limit: parseInt(limit as string, 10),
+				offset: parseInt(offset as string, 10),
 				orderBy: { createdAt: "DESC" },
-			});
+			})
 
 			// Filter hospital managers based on permissions
-			const accessibleHospitalManagers = [];
+			const accessibleHospitalManagers = []
 			for (const hospitalManager of hospitalManagers) {
 				const hasAccess = await hasPermission(
 					requester,
 					Resource.HospitalManager,
 					Actions.Read,
 					hospitalManager.id
-				);
+				)
 
 				if (hasAccess) {
-					accessibleHospitalManagers.push(hospitalManager);
+					accessibleHospitalManagers.push(hospitalManager)
 				}
 			}
 
@@ -187,15 +180,14 @@ export const hospitalManagerController = new Elysia({
 				data: accessibleHospitalManagers,
 				pagination: {
 					total: accessibleHospitalManagers.length,
-					limit: parseInt(limit as string),
-					offset: parseInt(offset as string),
-					hasMore:
-						accessibleHospitalManagers.length === parseInt(limit as string),
+					limit: parseInt(limit as string, 10),
+					offset: parseInt(offset as string, 10),
+					hasMore: accessibleHospitalManagers.length === parseInt(limit as string, 10),
 				},
-			};
+			}
 		} catch (err) {
-			console.error("Error fetching hospital managers:", err);
-			return error(500, { success: false, message: "Internal server error" });
+			console.error("Error fetching hospital managers:", err)
+			return error(500, { success: false, message: "Internal server error" })
 		}
 	})
 
@@ -203,40 +195,35 @@ export const hospitalManagerController = new Elysia({
 	.get("/:id", async ({ params: { id }, requester }) => {
 		try {
 			// Check permissions for reading this specific hospital manager
-			const hasAccess = await hasPermission(
-				requester,
-				Resource.HospitalManager,
-				Actions.Read,
-				id
-			);
+			const hasAccess = await hasPermission(requester, Resource.HospitalManager, Actions.Read, id)
 
 			if (!hasAccess) {
 				return error(403, {
 					success: false,
 					message: "You don't have permission to view this hospital manager",
-				});
+				})
 			}
 
 			// Find hospital manager by ID with populated relationships
 			const hospitalManager = await db.hospitalManager.findOne(
 				{ id },
 				{ populate: ["user", "hospital", "hospital.orgAdmin"] }
-			);
+			)
 
 			if (!hospitalManager) {
 				return error(404, {
 					success: false,
 					message: "Hospital manager not found",
-				});
+				})
 			}
 
 			return {
 				success: true,
 				data: hospitalManager,
-			};
+			}
 		} catch (err) {
-			console.error("Error fetching hospital manager:", err);
-			return error(500, { success: false, message: "Internal server error" });
+			console.error("Error fetching hospital manager:", err)
+			return error(500, { success: false, message: "Internal server error" })
 		}
 	})
 
@@ -251,34 +238,33 @@ export const hospitalManagerController = new Elysia({
 					Resource.HospitalManager,
 					Actions.Update,
 					id
-				);
+				)
 
 				if (!hasAccess) {
 					return error(403, {
 						success: false,
-						message:
-							"You don't have permission to update this hospital manager",
-					});
+						message: "You don't have permission to update this hospital manager",
+					})
 				}
 
 				// Find hospital manager by ID
-				const hospitalManager = await db.hospitalManager.findOne({ id });
+				const hospitalManager = await db.hospitalManager.findOne({ id })
 				if (!hospitalManager) {
 					return error(404, {
 						success: false,
 						message: "Hospital manager not found",
-					});
+					})
 				}
 
 				// Update hospital if provided
 				if (body.hospitalId) {
 					// Validate hospital exists and user has access to it
-					const hospital = await db.hospital.findOne({ id: body.hospitalId });
+					const hospital = await db.hospital.findOne({ id: body.hospitalId })
 					if (!hospital) {
 						return error(404, {
 							success: false,
 							message: "Hospital not found",
-						});
+						})
 					}
 
 					// Check if user has access to this hospital
@@ -287,35 +273,34 @@ export const hospitalManagerController = new Elysia({
 						Resource.Hospital,
 						Actions.Read,
 						body.hospitalId
-					);
+					)
 
 					if (!hasHospitalAccess) {
 						return error(403, {
 							success: false,
-							message:
-								"You don't have permission to assign hospital managers to this hospital",
-						});
+							message: "You don't have permission to assign hospital managers to this hospital",
+						})
 					}
 
-					hospitalManager.hospital = hospital;
+					hospitalManager.hospital = hospital
 				}
 
-				await db.em.persistAndFlush(hospitalManager);
+				await db.em.persistAndFlush(hospitalManager)
 
 				// Return updated hospital manager with populated relationships
 				const updatedHospitalManager = await db.hospitalManager.findOne(
 					{ id },
 					{ populate: ["user", "hospital", "hospital.orgAdmin"] }
-				);
+				)
 
 				return {
 					success: true,
 					message: "Hospital manager updated successfully",
 					data: updatedHospitalManager,
-				};
+				}
 			} catch (err) {
-				console.error("Error updating hospital manager:", err);
-				return error(500, { success: false, message: "Internal server error" });
+				console.error("Error updating hospital manager:", err)
+				return error(500, { success: false, message: "Internal server error" })
 			}
 		},
 		updateHospitalManagerDto
@@ -325,27 +310,22 @@ export const hospitalManagerController = new Elysia({
 	.delete("/:id", async ({ params: { id }, requester }) => {
 		try {
 			// Check permissions for deleting this hospital manager
-			const hasAccess = await hasPermission(
-				requester,
-				Resource.HospitalManager,
-				Actions.Delete,
-				id
-			);
+			const hasAccess = await hasPermission(requester, Resource.HospitalManager, Actions.Delete, id)
 
 			if (!hasAccess) {
 				return error(403, {
 					success: false,
 					message: "You don't have permission to delete this hospital manager",
-				});
+				})
 			}
 
 			// Find hospital manager by ID
-			const hospitalManager = await db.hospitalManager.findOne({ id });
+			const hospitalManager = await db.hospitalManager.findOne({ id })
 			if (!hospitalManager) {
 				return error(404, {
 					success: false,
 					message: "Hospital manager not found",
-				});
+				})
 			}
 
 			// Check if hospital manager has associated shifts (prevent deletion if occupied)
@@ -353,25 +333,25 @@ export const hospitalManagerController = new Elysia({
 			const hospitalWithShifts = await db.hospital.findOne(
 				{ id: hospitalManager.hospital.id },
 				{ populate: ["shifts"] }
-			);
+			)
 
 			if (hospitalWithShifts && hospitalWithShifts.shifts.length > 0) {
 				return error(400, {
 					success: false,
 					message:
 						"Cannot delete hospital manager while hospital has active shifts. Please reassign or complete shifts first.",
-				});
+				})
 			}
 
 			// Delete hospital manager
-			await db.em.removeAndFlush(hospitalManager);
+			await db.em.removeAndFlush(hospitalManager)
 
 			return {
 				success: true,
 				message: "Hospital manager deleted successfully",
-			};
+			}
 		} catch (err) {
-			console.error("Error deleting hospital manager:", err);
-			return error(500, { success: false, message: "Internal server error" });
+			console.error("Error deleting hospital manager:", err)
+			return error(500, { success: false, message: "Internal server error" })
 		}
-	});
+	})

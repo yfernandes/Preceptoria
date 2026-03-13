@@ -1,21 +1,20 @@
 <script lang="ts">
-	import type { HTMLInputAttributes } from "svelte/elements";
-	import { cn } from "$lib/utils";
+import type { HTMLInputAttributes } from "svelte/elements"
 
-	interface Props extends HTMLInputAttributes {
-		label?: string;
-		error?: string;
-		class?: string;
-	}
+interface Props extends HTMLInputAttributes {
+	label?: string
+	error?: string
+	class?: string
+}
 
-	let {
-		label,
-		error,
-		class: className,
-		id = Math.random().toString(36).substring(2, 9),
-		value = $bindable(),
-		...props
-	}: Props = $props();
+let {
+	label,
+	error,
+	class: className,
+	id = Math.random().toString(36).substring(2, 9),
+	value = $bindable(),
+	...props
+}: Props = $props()
 </script>
 
 <div class="w-full space-y-1.5">

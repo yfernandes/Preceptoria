@@ -1,4 +1,4 @@
-export const enum VaccineTags {
+export enum VaccineTags {
 	FirstDoseHepB = "Hepatitis B - First Dose",
 	SecondDoseHepB = "Hepatitis B - Second Dose",
 	ThirdDoseHepB = "Hepatitis B - Third Dose",
@@ -8,34 +8,34 @@ export const enum VaccineTags {
 	FirstPage = "First Page",
 }
 
-export const enum ProfessionalIdentityTags {
+export enum ProfessionalIdentityTags {
 	FrontPage = "Front Page",
 	BackPage = "Back Page",
 }
 
-export const enum BadgeTags {
+export enum BadgeTags {
 	IsFromShoulderUp = "Is from shoulder up",
 	HasNoHatsOrSunglasses = "Has no hats or sunglasses",
 	HasNoDistractingElements = "Has no distracting elements",
 	IsClear = "Is clear",
 }
 
-export const enum CityHospitalFormTags {
+export enum CityHospitalFormTags {
 	AllFieldsFilled = "All fields filled",
 	Signed = "Signed",
 }
 
-export const enum InternshipCommitmentTermTags {
+export enum InternshipCommitmentTermTags {
 	HasFullNameOnFirstPage = "Has full name on first page",
 	IsDatedOnSecondPage = "Is dated on second page",
 	Signed = "Signed",
 }
 
-export const enum InsuranceTags {
+export enum InsuranceTags {
 	MatchedName = "Matched name",
 }
 
-export const enum ScannedDocumentsTags {
+export enum ScannedDocumentsTags {
 	InFocus = "In focus",
 	Legible = "Legible",
 	Clear = "Clear",
@@ -46,7 +46,7 @@ export const enum ScannedDocumentsTags {
 	ApproveAnyway = "Approve anyway",
 }
 
-export const enum GeneralTags {
+export enum GeneralTags {
 	OutOfDate = "Out of date",
 	Deny = "Deny",
 }
@@ -59,4 +59,4 @@ export type DocumentTag =
 	| InternshipCommitmentTermTags
 	| InsuranceTags
 	| ScannedDocumentsTags
-	| GeneralTags;
+	| GeneralTags
