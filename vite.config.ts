@@ -10,6 +10,7 @@ export default defineConfig({
 			sourceMapsUploadOptions: {
 				org: "preceptoria",
 				project: "preceptoria-v2",
+				enabled: !!process.env.SENTRY_AUTH_TOKEN,
 			},
 		}),
 		tailwindcss(),

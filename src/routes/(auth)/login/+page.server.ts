@@ -1,15 +1,15 @@
-import { auth } from '$lib/server/auth';
-import { redirect, fail } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import { fail, redirect } from "@sveltejs/kit";
+import { auth } from "$lib/server/auth";
+import type { Actions } from "./$types";
 
 export const actions: Actions = {
 	default: async (event) => {
 		const formData = await event.request.formData();
-		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
+		const email = formData.get("email") as string;
+		const password = formData.get("password") as string;
 
 		if (!email || !password) {
-			return fail(400, { message: 'Email and password are required' });
+			return fail(400, { message: "Email and password are required" });
 		}
 
 		try {
@@ -19,19 +19,25 @@ export const actions: Actions = {
 				body: {
 					email,
 					password,
-					provider: 'mock'
+					provider: "mock",
 				},
-				headers: event.request.headers
+				headers: event.request.headers,
 			});
 
 			if (result) {
-				throw redirect(302, '/dashboard');
+				throw redirect(302, "/dashboard");
 			}
 		} catch (e) {
-			if ((e instanceof Error && e.message === '302') || (e as any).status === 302) throw e; // Handle redirect
+			if (
+				(e instanceof Error && e.message === "302") ||
+				(e as any).status === 302
+			)
+				throw e; // Handle redirect
 
 			// Better auth might throw for invalid credentials
-			return fail(401, { message: 'Credenciais inválidas ou ambiente não permitido.' });
+			return fail(401, {
+				message: "Credenciais inválidas ou ambiente não permitido.",
+			});
 		}
-	}
+	},
 };
