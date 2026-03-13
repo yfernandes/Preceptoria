@@ -4,11 +4,7 @@ import { ChevronRight, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -41,11 +37,8 @@ export function NavMain({
 			<SidebarGroupLabel>Platform</SidebarGroupLabel>
 			<SidebarMenu>
 				{items.map((item) => {
-					const isActive =
-						pathname === item.url || pathname.startsWith(item.url + "/");
-					const hasActiveChild = item.items?.some(
-						(subItem) => pathname === subItem.url
-					);
+					const isActive = pathname === item.url || pathname.startsWith(item.url + "/");
+					const hasActiveChild = item.items?.some((subItem) => pathname === subItem.url);
 
 					return (
 						<Collapsible

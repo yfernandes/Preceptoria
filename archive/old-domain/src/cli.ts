@@ -56,8 +56,7 @@ async function main() {
 					{
 						name: "Post Processing",
 						value: "postProcessing",
-						description:
-							"Compiles approved documents, and creates upload bundles",
+						description: "Compiles approved documents, and creates upload bundles",
 					},
 					new Separator(),
 					{

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { PageData, ActionData } from './$types';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Input from '$lib/components/ui/Input.svelte';
-	import Card from '$lib/components/ui/Card.svelte';
-	import Badge from '$lib/components/ui/Badge.svelte';
+	import { enhance } from "$app/forms";
+	import type { PageData, ActionData } from "./$types";
+	import Button from "$lib/components/ui/Button.svelte";
+	import Input from "$lib/components/ui/Input.svelte";
+	import Card from "$lib/components/ui/Card.svelte";
+	import Badge from "$lib/components/ui/Badge.svelte";
 	import {
 		Building2,
 		Trash2,
@@ -16,14 +16,14 @@
 		ShieldCheck,
 		Globe,
 		MoreHorizontal,
-		CheckCircle2
-	} from 'lucide-svelte';
+		CheckCircle2,
+	} from "lucide-svelte";
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let isEditing = $state(false);
-	let searchQuery = $state('');
-	let currentOrg = $state({ id: '', name: '' });
+	let searchQuery = $state("");
+	let currentOrg = $state({ id: "", name: "" });
 
 	function editOrg(org: any) {
 		currentOrg = { id: org.id, name: org.name };
@@ -31,7 +31,7 @@
 	}
 
 	function resetForm() {
-		currentOrg = { id: '', name: '' };
+		currentOrg = { id: "", name: "" };
 		isEditing = false;
 	}
 
@@ -150,7 +150,7 @@
 					</div>
 					<div>
 						<h2 class="text-xl font-bold tracking-tight">
-							{isEditing ? 'Atualizar' : 'Registrar'} Organização
+							{isEditing ? "Atualizar" : "Registrar"} Organização
 						</h2>
 						<p class="mt-1 text-xs font-medium tracking-widest text-gray-400 uppercase">
 							Configurações de Entidade
@@ -160,10 +160,10 @@
 
 				<form
 					method="POST"
-					action={isEditing ? '?/update' : '?/create'}
+					action={isEditing ? "?/update" : "?/create"}
 					use:enhance={() => {
 						return async ({ result }) => {
-							if (result.type === 'success') {
+							if (result.type === "success") {
 								resetForm();
 							}
 						};
@@ -212,7 +212,7 @@
 							type="submit"
 							class="group flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 font-bold text-white shadow-lg shadow-blue-900/20 transition-all hover:bg-blue-500"
 						>
-							{isEditing ? 'Salvar Mudanças' : 'Confirmar Registro'}
+							{isEditing ? "Salvar Mudanças" : "Confirmar Registro"}
 							<ArrowRight class="h-4 w-4 transition-transform group-hover:translate-x-1" />
 						</button>
 					</div>

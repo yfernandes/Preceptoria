@@ -1,7 +1,5 @@
 {
-  "namespaces": [
-    "public"
-  ],
+  "namespaces": ["public"],
   "name": "public",
   "tables": [
     {
@@ -81,9 +79,7 @@
       "indexes": [
         {
           "keyName": "hospital_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -171,9 +167,7 @@
       "indexes": [
         {
           "keyName": "school_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -261,9 +255,7 @@
       "indexes": [
         {
           "keyName": "user_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -319,9 +311,7 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "composite": false,
           "keyName": "sys_admin_user_id_unique",
           "constraint": true,
@@ -330,9 +320,7 @@
         },
         {
           "keyName": "sys_admin_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -343,13 +331,9 @@
       "foreignKeys": {
         "sys_admin_user_id_foreign": {
           "constraintName": "sys_admin_user_id_foreign",
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "localTableName": "public.sys_admin",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "updateRule": "cascade"
         }
@@ -401,9 +385,7 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "composite": false,
           "keyName": "supervisor_user_id_unique",
           "constraint": true,
@@ -412,9 +394,7 @@
         },
         {
           "keyName": "supervisor_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -425,13 +405,9 @@
       "foreignKeys": {
         "supervisor_user_id_foreign": {
           "constraintName": "supervisor_user_id_foreign",
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "localTableName": "public.supervisor",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "updateRule": "cascade"
         }
@@ -503,9 +479,7 @@
       "indexes": [
         {
           "keyName": "course_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -516,25 +490,17 @@
       "foreignKeys": {
         "course_school_id_foreign": {
           "constraintName": "course_school_id_foreign",
-          "columnNames": [
-            "school_id"
-          ],
+          "columnNames": ["school_id"],
           "localTableName": "public.course",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.school",
           "updateRule": "cascade"
         },
         "course_supervisor_id_foreign": {
           "constraintName": "course_supervisor_id_foreign",
-          "columnNames": [
-            "supervisor_id"
-          ],
+          "columnNames": ["supervisor_id"],
           "localTableName": "public.course",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.supervisor",
           "updateRule": "cascade"
         }
@@ -597,9 +563,7 @@
       "indexes": [
         {
           "keyName": "classes_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -610,13 +574,9 @@
       "foreignKeys": {
         "classes_course_id_foreign": {
           "constraintName": "classes_course_id_foreign",
-          "columnNames": [
-            "course_id"
-          ],
+          "columnNames": ["course_id"],
           "localTableName": "public.classes",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.course",
           "updateRule": "cascade"
         }
@@ -677,9 +637,7 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "composite": false,
           "keyName": "student_user_id_unique",
           "constraint": true,
@@ -688,9 +646,7 @@
         },
         {
           "keyName": "student_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -701,25 +657,17 @@
       "foreignKeys": {
         "student_user_id_foreign": {
           "constraintName": "student_user_id_foreign",
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "localTableName": "public.student",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "updateRule": "cascade"
         },
         "student_class_id_foreign": {
           "constraintName": "student_class_id_foreign",
-          "columnNames": [
-            "class_id"
-          ],
+          "columnNames": ["class_id"],
           "localTableName": "public.student",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.classes",
           "updateRule": "cascade"
         }
@@ -822,9 +770,7 @@
       "indexes": [
         {
           "keyName": "document_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -835,13 +781,9 @@
       "foreignKeys": {
         "document_user_id_foreign": {
           "constraintName": "document_user_id_foreign",
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "localTableName": "public.document",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.student",
           "updateRule": "cascade"
         }
@@ -902,9 +844,7 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "composite": false,
           "keyName": "preceptor_user_id_unique",
           "constraint": true,
@@ -913,9 +853,7 @@
         },
         {
           "keyName": "preceptor_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -926,25 +864,17 @@
       "foreignKeys": {
         "preceptor_user_id_foreign": {
           "constraintName": "preceptor_user_id_foreign",
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "localTableName": "public.preceptor",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "updateRule": "cascade"
         },
         "preceptor_hospital_id_foreign": {
           "constraintName": "preceptor_hospital_id_foreign",
-          "columnNames": [
-            "hospital_id"
-          ],
+          "columnNames": ["hospital_id"],
           "localTableName": "public.preceptor",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.hospital",
           "updateRule": "cascade"
         }
@@ -1046,9 +976,7 @@
       "indexes": [
         {
           "keyName": "shift_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1059,25 +987,17 @@
       "foreignKeys": {
         "shift_hospital_id_foreign": {
           "constraintName": "shift_hospital_id_foreign",
-          "columnNames": [
-            "hospital_id"
-          ],
+          "columnNames": ["hospital_id"],
           "localTableName": "public.shift",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.hospital",
           "updateRule": "cascade"
         },
         "shift_preceptor_id_foreign": {
           "constraintName": "shift_preceptor_id_foreign",
-          "columnNames": [
-            "preceptor_id"
-          ],
+          "columnNames": ["preceptor_id"],
           "localTableName": "public.shift",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.preceptor",
           "updateRule": "cascade"
         }
@@ -1110,10 +1030,7 @@
       "indexes": [
         {
           "keyName": "shift_students_pkey",
-          "columnNames": [
-            "shift_id",
-            "student_id"
-          ],
+          "columnNames": ["shift_id", "student_id"],
           "composite": true,
           "constraint": true,
           "primary": true,
@@ -1124,26 +1041,18 @@
       "foreignKeys": {
         "shift_students_shift_id_foreign": {
           "constraintName": "shift_students_shift_id_foreign",
-          "columnNames": [
-            "shift_id"
-          ],
+          "columnNames": ["shift_id"],
           "localTableName": "public.shift_students",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.shift",
           "deleteRule": "cascade",
           "updateRule": "cascade"
         },
         "shift_students_student_id_foreign": {
           "constraintName": "shift_students_student_id_foreign",
-          "columnNames": [
-            "student_id"
-          ],
+          "columnNames": ["student_id"],
           "localTableName": "public.shift_students",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.student",
           "deleteRule": "cascade",
           "updateRule": "cascade"
@@ -1214,9 +1123,7 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "composite": false,
           "keyName": "org_admin_user_id_unique",
           "constraint": true,
@@ -1225,9 +1132,7 @@
         },
         {
           "keyName": "org_admin_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1238,38 +1143,26 @@
       "foreignKeys": {
         "org_admin_user_id_foreign": {
           "constraintName": "org_admin_user_id_foreign",
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "localTableName": "public.org_admin",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "updateRule": "cascade"
         },
         "org_admin_hospital_id_foreign": {
           "constraintName": "org_admin_hospital_id_foreign",
-          "columnNames": [
-            "hospital_id"
-          ],
+          "columnNames": ["hospital_id"],
           "localTableName": "public.org_admin",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.hospital",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "org_admin_school_id_foreign": {
           "constraintName": "org_admin_school_id_foreign",
-          "columnNames": [
-            "school_id"
-          ],
+          "columnNames": ["school_id"],
           "localTableName": "public.org_admin",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.school",
           "deleteRule": "set null",
           "updateRule": "cascade"
@@ -1331,9 +1224,7 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "composite": false,
           "keyName": "hospital_manager_user_id_unique",
           "constraint": true,
@@ -1342,9 +1233,7 @@
         },
         {
           "keyName": "hospital_manager_pkey",
-          "columnNames": [
-            "id"
-          ],
+          "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1355,25 +1244,17 @@
       "foreignKeys": {
         "hospital_manager_user_id_foreign": {
           "constraintName": "hospital_manager_user_id_foreign",
-          "columnNames": [
-            "user_id"
-          ],
+          "columnNames": ["user_id"],
           "localTableName": "public.hospital_manager",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.user",
           "updateRule": "cascade"
         },
         "hospital_manager_hospital_id_foreign": {
           "constraintName": "hospital_manager_hospital_id_foreign",
-          "columnNames": [
-            "hospital_id"
-          ],
+          "columnNames": ["hospital_id"],
           "localTableName": "public.hospital_manager",
-          "referencedColumnNames": [
-            "id"
-          ],
+          "referencedColumnNames": ["id"],
           "referencedTableName": "public.hospital",
           "updateRule": "cascade"
         }

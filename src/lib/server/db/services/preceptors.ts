@@ -33,10 +33,7 @@ export class PreceptorsService {
 			where: eq(user.id, data.userId),
 		});
 		if (u && ["Student", "SysAdmin", "OrgAdmin"].indexOf(u.role) === -1) {
-			await db
-				.update(user)
-				.set({ role: "Preceptor" })
-				.where(eq(user.id, data.userId));
+			await db.update(user).set({ role: "Preceptor" }).where(eq(user.id, data.userId));
 		}
 
 		return newPreceptor;
@@ -51,10 +48,8 @@ export class PreceptorsService {
 		return await db.query.preceptors.findMany({
 			where: (p, { eq, ilike, and }) => {
 				const conditions = [];
-				if (query?.hospitalId)
-					conditions.push(eq(p.hospitalId, query.hospitalId));
-				if (query?.specialty)
-					conditions.push(ilike(p.specialty, `%${query.specialty}%`));
+				if (query?.hospitalId) conditions.push(eq(p.hospitalId, query.hospitalId));
+				if (query?.specialty) conditions.push(ilike(p.specialty, `%${query.specialty}%`));
 				return and(...conditions);
 			},
 			with: {
@@ -80,7 +75,7 @@ export class PreceptorsService {
 
 	static async update(
 		id: string,
-		data: { hospitalId?: string; specialty?: string; licenseNumber?: string },
+		data: { hospitalId?: string; specialty?: string; licenseNumber?: string }
 	) {
 		const [updated] = await db
 			.update(preceptors)
@@ -106,14 +101,11 @@ export class PreceptorsService {
 
 		if (preceptorShifts.length > 0) {
 			throw new Error(
-				"Cannot delete preceptor while they have active shifts. Please reassign or complete shifts first.",
+				"Cannot delete preceptor while they have active shifts. Please reassign or complete shifts first."
 			);
 		}
 
-		const [deleted] = await db
-			.delete(preceptors)
-			.where(eq(preceptors.id, id))
-			.returning();
+		const [deleted] = await db.delete(preceptors).where(eq(preceptors.id, id)).returning();
 		if (!deleted) throw new Error("Preceptor not found");
 		return deleted;
 	}

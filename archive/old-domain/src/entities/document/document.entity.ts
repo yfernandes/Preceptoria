@@ -1,18 +1,7 @@
 import type { Rel } from "@mikro-orm/core";
-import {
-	Entity,
-	ManyToOne,
-	Property,
-	OneToOne,
-	EntityRepositoryType,
-	Enum,
-} from "@mikro-orm/core";
+import { Entity, ManyToOne, Property, OneToOne, EntityRepositoryType, Enum } from "@mikro-orm/core";
 import type { SourceId } from "../../types.js";
-import {
-	ApprovalStatus,
-	DocumentType,
-	DownloadStatus,
-} from "./document.interface.js";
+import { ApprovalStatus, DocumentType, DownloadStatus } from "./document.interface.js";
 import type { IDocument } from "./document.interface.js";
 
 import { BaseEntity } from "../common/base.entity.js";
@@ -28,8 +17,7 @@ export class Document extends BaseEntity implements IDocument {
 	[EntityRepositoryType]?: DocumentRepository;
 
 	@Property({
-		comment:
-			"The id extracted from the google drive url, from google sheets table",
+		comment: "The id extracted from the google drive url, from google sheets table",
 	})
 	sourceId!: SourceId;
 
@@ -72,12 +60,7 @@ export class Document extends BaseEntity implements IDocument {
 	@Property()
 	tags: DocumentTag[] = [];
 
-	constructor(
-		sourceId: SourceId,
-		documentType: DocumentType,
-		fileName: string,
-		destPath: string
-	) {
+	constructor(sourceId: SourceId, documentType: DocumentType, fileName: string, destPath: string) {
 		super();
 		this.sourceId = sourceId;
 		this.downloadStatus = DownloadStatus.NotDownloaded;
@@ -94,10 +77,7 @@ export class Document extends BaseEntity implements IDocument {
 		entryIndex: number,
 		crefito: string
 	) {
-		if (
-			documentType !== DocumentType.insurance &&
-			documentType !== DocumentType.badgePicture
-		) {
+		if (documentType !== DocumentType.insurance && documentType !== DocumentType.badgePicture) {
 			return new Document(
 				sourceId,
 				documentType,

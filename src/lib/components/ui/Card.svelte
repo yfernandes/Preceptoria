@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { type Snippet } from 'svelte';
-	import { cn } from '$lib/utils';
+	import { type Snippet } from "svelte";
+	import { cn } from "$lib/utils";
 
 	interface Props {
 		children: Snippet;
@@ -19,13 +19,13 @@
 		footer,
 		headerAction,
 		class: className,
-		contentClass
+		contentClass,
 	}: Props = $props();
 </script>
 
 <div
 	class={cn(
-		'flex flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm',
+		"flex flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm",
 		className
 	)}
 >
@@ -45,7 +45,7 @@
 		</div>
 	{/if}
 
-	<div class={cn('flex-1 p-6 pt-0', contentClass)}>
+	<div class={cn("flex-1 p-6 pt-0", contentClass)}>
 		{@render children()}
 	</div>
 

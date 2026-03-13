@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Input from '$lib/components/ui/Input.svelte';
-	import Card from '$lib/components/ui/Card.svelte';
-	import Badge from '$lib/components/ui/Badge.svelte';
+	import { enhance } from "$app/forms";
+	import Button from "$lib/components/ui/Button.svelte";
+	import Input from "$lib/components/ui/Input.svelte";
+	import Card from "$lib/components/ui/Card.svelte";
+	import Badge from "$lib/components/ui/Badge.svelte";
 	import {
 		Building2,
 		User,
@@ -13,30 +13,30 @@
 		CheckCircle2,
 		ArrowLeft,
 		ShieldCheck,
-		Lock
-	} from 'lucide-svelte';
-	import { cn } from '$lib/utils';
+		Lock,
+	} from "lucide-svelte";
+	import { cn } from "$lib/utils";
 
 	let step = $state(1);
-	let selectedRole = $state('PRECEPTOR');
+	let selectedRole = $state("PRECEPTOR");
 
 	const roles = [
 		{
-			id: 'PRECEPTOR',
-			name: 'Preceptor',
+			id: "PRECEPTOR",
+			name: "Preceptor",
 			icon: Hospital,
-			description: 'Acompanhe seus alunos e valide frequências.',
-			color: 'text-emerald-600',
-			bg: 'bg-emerald-50'
+			description: "Acompanhe seus alunos e valide frequências.",
+			color: "text-emerald-600",
+			bg: "bg-emerald-50",
 		},
 		{
-			id: 'INSTITUTION',
-			name: 'Instituição',
+			id: "INSTITUTION",
+			name: "Instituição",
 			icon: Building2,
-			description: 'Gerencie convênios, documentos e auditorias.',
-			color: 'text-indigo-600',
-			bg: 'bg-indigo-50'
-		}
+			description: "Gerencie convênios, documentos e auditorias.",
+			color: "text-indigo-600",
+			bg: "bg-indigo-50",
+		},
 	];
 
 	function nextStep() {
@@ -75,14 +75,14 @@
 			<div class="flex w-full items-center gap-4 px-12">
 				<div
 					class={cn(
-						'h-1.5 flex-1 rounded-full transition-all duration-500',
-						step >= 1 ? 'bg-blue-600 shadow-sm shadow-blue-200' : 'bg-gray-200'
+						"h-1.5 flex-1 rounded-full transition-all duration-500",
+						step >= 1 ? "bg-blue-600 shadow-sm shadow-blue-200" : "bg-gray-200"
 					)}
 				></div>
 				<div
 					class={cn(
-						'h-1.5 flex-1 rounded-full transition-all duration-500',
-						step >= 2 ? 'bg-blue-600 shadow-sm shadow-blue-200' : 'bg-gray-200'
+						"h-1.5 flex-1 rounded-full transition-all duration-500",
+						step >= 2 ? "bg-blue-600 shadow-sm shadow-blue-200" : "bg-gray-200"
 					)}
 				></div>
 			</div>
@@ -108,15 +108,15 @@
 								<button
 									onclick={() => (selectedRole = role.id)}
 									class={cn(
-										'group relative flex items-start gap-4 overflow-hidden rounded-2xl border p-5 text-left transition-all duration-300',
+										"group relative flex items-start gap-4 overflow-hidden rounded-2xl border p-5 text-left transition-all duration-300",
 										selectedRole === role.id
-											? 'border-blue-600 bg-blue-50/50 ring-2 ring-blue-600/10'
-											: 'border-gray-100 bg-white hover:-translate-y-0.5 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-900/5'
+											? "border-blue-600 bg-blue-50/50 ring-2 ring-blue-600/10"
+											: "border-gray-100 bg-white hover:-translate-y-0.5 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-900/5"
 									)}
 								>
 									<div
 										class={cn(
-											'rounded-xl p-3 shadow-inner transition-transform group-hover:scale-110',
+											"rounded-xl p-3 shadow-inner transition-transform group-hover:scale-110",
 											role.bg,
 											role.color
 										)}
@@ -147,8 +147,8 @@
 								</div>
 								<div>
 									<h4 class="text-sm font-bold text-gray-900">É um estudante?</h4>
-									<p class="mt-1 text-xs font-medium text-gray-500 leading-relaxed">
-										Estudantes devem ser convidados por seus supervisores para acessar a plataforma. 
+									<p class="mt-1 text-xs leading-relaxed font-medium text-gray-500">
+										Estudantes devem ser convidados por seus supervisores para acessar a plataforma.
 										Verifique seu e-mail institucional pelo link de convite.
 									</p>
 								</div>

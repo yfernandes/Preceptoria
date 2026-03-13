@@ -3,17 +3,20 @@
 ## Current Technology Stack
 
 ### Core Technologies
+
 - **Runtime:** Bun 🍞 - Fast JavaScript runtime for development and production
 - **Language:** TypeScript - Type-safe development across the entire stack
 - **Architecture:** Monorepo - Shared packages and configurations
 
 ### Backend Stack
+
 - **Framework:** Elysia.js - High-performance TypeScript-first web framework
 - **Database:** PostgreSQL with MikroORM for type-safe database operations
 - **Authentication:** JWT with role-based access control and token rotation
 - **Security:** HTTP-only cookies, CORS protection, comprehensive input validation
 
 ### Frontend Stack
+
 - **Framework:** Next.js 15 with App Router
 - **UI Library:** React 19 with TypeScript
 - **Styling:** Tailwind CSS + Shadcn/ui components
@@ -21,6 +24,7 @@
 - **Components:** Radix UI primitives for accessibility
 
 ### Development Tools
+
 - **Testing:** Bun Test with 95%+ coverage
 - **Code Quality:** ESLint + Prettier + EditorConfig
 - **Database:** Drizzle Studio for development browsing

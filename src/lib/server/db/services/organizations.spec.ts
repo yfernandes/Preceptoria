@@ -37,9 +37,7 @@ describe("Organizations Service", () => {
 
 	it("should create an organization", async () => {
 		const mockOrg = { id: "1", name: "Test Org", createdAt: new Date() };
-		(db.insert({} as any).values({} as any).returning as any).mockResolvedValue(
-			[mockOrg],
-		);
+		(db.insert({} as any).values({} as any).returning as any).mockResolvedValue([mockOrg]);
 
 		const result = await orgService.createOrganization("Test Org");
 
@@ -74,9 +72,7 @@ describe("Organizations Service", () => {
 
 	it("should delete an organization", async () => {
 		const mockOrg = { id: "1", name: "Test Org", createdAt: new Date() };
-		(db.delete({} as any).where({} as any).returning as any).mockResolvedValue([
-			mockOrg,
-		]);
+		(db.delete({} as any).where({} as any).returning as any).mockResolvedValue([mockOrg]);
 
 		const result = await orgService.deleteOrganization("1");
 

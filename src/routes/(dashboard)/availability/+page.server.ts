@@ -1,7 +1,12 @@
 import { error, fail } from "@sveltejs/kit";
 import { eq, and, gt } from "drizzle-orm";
 import { db } from "$lib/server/db";
-import { students, preceptors, studentAvailability, preceptorAvailability } from "$lib/server/db/schema";
+import {
+	students,
+	preceptors,
+	studentAvailability,
+	preceptorAvailability,
+} from "$lib/server/db/schema";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -18,7 +23,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		if (studentProfile) {
 			availabilities = await db.query.studentAvailability.findMany({
 				where: eq(studentAvailability.studentId, studentProfile.id),
-				orderBy: (a, { asc }) => [asc(a.date)]
+				orderBy: (a, { asc }) => [asc(a.date)],
 			});
 		}
 	} else if (locals.user.role === "Preceptor") {
@@ -28,14 +33,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 		if (preceptorProfile) {
 			availabilities = await db.query.preceptorAvailability.findMany({
 				where: eq(preceptorAvailability.preceptorId, preceptorProfile.id),
-				orderBy: (a, { asc }) => [asc(a.date)]
+				orderBy: (a, { asc }) => [asc(a.date)],
 			});
 		}
 	}
 
 	return {
 		availabilities,
-		role: locals.user.role
+		role: locals.user.role,
 	};
 };
 
@@ -63,7 +68,7 @@ export const actions: Actions = {
 					studentId: profile.id,
 					date,
 					startTime,
-					endTime
+					endTime,
 				});
 			} else if (locals.user.role === "Preceptor") {
 				const profile = await db.query.preceptors.findFirst({
@@ -75,7 +80,7 @@ export const actions: Actions = {
 					preceptorId: profile.id,
 					date,
 					startTime,
-					endTime
+					endTime,
 				});
 			}
 			return { success: true };
@@ -101,5 +106,5 @@ export const actions: Actions = {
 		} catch (err) {
 			return fail(500, { message: "Erro ao deletar" });
 		}
-	}
+	},
 };

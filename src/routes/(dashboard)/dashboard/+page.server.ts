@@ -1,11 +1,6 @@
 import { count, eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
-import {
-	documents,
-	hospitals,
-	internshipPlacements,
-	students,
-} from "$lib/server/db/schema";
+import { documents, hospitals, internshipPlacements, students } from "$lib/server/db/schema";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {

@@ -53,9 +53,7 @@ export const validationTemplates: ValidationTemplate[] = [
 	// ... other templates simplified or just brought over
 ];
 
-export function getValidationTemplateForDocument(
-	type: string,
-): ValidationTemplate {
+export function getValidationTemplateForDocument(type: string): ValidationTemplate {
 	const template = validationTemplates.find((t) => t.documentType === type);
 	if (!template) {
 		return {

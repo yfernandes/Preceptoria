@@ -11,12 +11,7 @@ export async function mergePdfAndImages(files: Document[], crefito: string) {
 
 	if (files.length === 0) return;
 
-	const outputPath = path.join(
-		PROJECT_ROOT,
-		files[0].destPath,
-		"..",
-		`${crefito} - Completo.pdf`
-	);
+	const outputPath = path.join(PROJECT_ROOT, files[0].destPath, "..", `${crefito} - Completo.pdf`);
 
 	// console.log(`--- Output path: ${outputPath}`);
 

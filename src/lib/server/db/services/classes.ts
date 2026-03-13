@@ -45,20 +45,13 @@ export async function updateClass(
 		supervisorId: string;
 		startDate: Date;
 		endDate: Date;
-	}>,
+	}>
 ) {
-	const [result] = await db
-		.update(classes)
-		.set(data)
-		.where(eq(classes.id, id))
-		.returning();
+	const [result] = await db.update(classes).set(data).where(eq(classes.id, id)).returning();
 	return result;
 }
 
 export async function deleteClass(id: string) {
-	const [result] = await db
-		.delete(classes)
-		.where(eq(classes.id, id))
-		.returning();
+	const [result] = await db.delete(classes).where(eq(classes.id, id)).returning();
 	return result;
 }

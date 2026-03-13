@@ -1,9 +1,16 @@
-import { db } from '$lib/server/db';
-import { documents } from '$lib/server/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { db } from "$lib/server/db";
+import { documents } from "$lib/server/db/schema";
+import { eq, and } from "drizzle-orm";
 
-export type DocumentType = 'PROFESSIONAL_ID' | 'VACCINATION_CARD' | 'COMMITMENT_CONTRACT' | 'ADMISSION_FORM' | 'BADGE_PICTURE' | 'INSURANCE_DOCUMENTATION' | 'OTHER';
-export type DocumentStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'EXPIRED';
+export type DocumentType =
+	| "PROFESSIONAL_ID"
+	| "VACCINATION_CARD"
+	| "COMMITMENT_CONTRACT"
+	| "ADMISSION_FORM"
+	| "BADGE_PICTURE"
+	| "INSURANCE_DOCUMENTATION"
+	| "OTHER";
+export type DocumentStatus = "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED";
 
 export async function createDocument(data: {
 	studentId: string;
@@ -24,10 +31,10 @@ export async function getDocumentById(id: string) {
 		with: {
 			student: {
 				with: {
-					user: true
-				}
-			}
-		}
+					user: true,
+				},
+			},
+		},
 	});
 }
 
@@ -37,21 +44,26 @@ export async function listDocumentsByStudent(studentId: string) {
 		with: {
 			student: {
 				with: {
-					user: true
-				}
-			}
-		}
+					user: true,
+				},
+			},
+		},
 	});
 }
 
-export async function updateDocumentStatus(id: string, status: DocumentStatus, verifiedBy: string, rejectionReason?: string) {
+export async function updateDocumentStatus(
+	id: string,
+	status: DocumentStatus,
+	verifiedBy: string,
+	rejectionReason?: string
+) {
 	const [result] = await db
 		.update(documents)
 		.set({
 			status,
 			verifiedBy,
 			verifiedAt: new Date(),
-			rejectionReason
+			rejectionReason,
 		})
 		.where(eq(documents.id, id))
 		.returning();

@@ -1,29 +1,27 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Input from '$lib/components/ui/Input.svelte';
-	import Card from '$lib/components/ui/Card.svelte';
+	import { enhance } from "$app/forms";
+	import Button from "$lib/components/ui/Button.svelte";
+	import Input from "$lib/components/ui/Input.svelte";
+	import Card from "$lib/components/ui/Card.svelte";
 	import {
 		Building2,
 		Github,
-		Mail,
-		Lock,
 		ArrowRight,
 		ShieldCheck,
-		HeartPulse
-	} from 'lucide-svelte';
-	import { cn } from '$lib/utils';
-	import type { ActionData } from './$types';
-	import { authClient } from '$lib/auth-client';
+		HeartPulse,
+	} from "lucide-svelte";
+	import { cn } from "$lib/utils";
+	import type { ActionData } from "./$types";
+	import { authClient } from "$lib/auth-client";
 
 	let { form }: { form: ActionData } = $props();
 
 	let isLoading = $state(false);
 
-	async function signInSocial(provider: 'google' | 'github') {
+	async function signInSocial(provider: "google" | "github") {
 		await authClient.signIn.social({
 			provider,
-			callbackURL: '/dashboard'
+			callbackURL: "/dashboard",
 		});
 	}
 </script>
@@ -162,7 +160,7 @@
 					class="group h-12 w-full rounded-xl text-base font-bold shadow-2xl shadow-blue-200 transition-all"
 					disabled={isLoading}
 				>
-					{isLoading ? 'Entrando...' : 'Entrar na Conta'}
+					{isLoading ? "Entrando..." : "Entrar na Conta"}
 					<ArrowRight class="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
 				</Button>
 
@@ -181,7 +179,7 @@
 					<Button
 						variant="outline"
 						type="button"
-						onclick={() => signInSocial('github')}
+						onclick={() => signInSocial("github")}
 						class="flex h-12 items-center gap-2 rounded-xl border-gray-100 font-bold hover:bg-gray-50"
 					>
 						<Github class="h-5 w-5" />
@@ -190,7 +188,7 @@
 					<Button
 						variant="outline"
 						type="button"
-						onclick={() => signInSocial('google')}
+						onclick={() => signInSocial("google")}
 						class="flex h-12 items-center gap-2 rounded-xl border-gray-100 font-bold hover:bg-gray-50"
 					>
 						<svg class="h-5 w-5" viewBox="0 0 24 24">

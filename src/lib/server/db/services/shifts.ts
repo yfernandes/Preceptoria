@@ -21,12 +21,7 @@ export class ShiftsService {
 			where: and(
 				eq(shifts.preceptorId, data.preceptorId),
 				eq(shifts.date, shiftDate),
-				or(
-					and(
-						lt(shifts.startTime, shiftEndTime),
-						gt(shifts.endTime, shiftStartTime),
-					),
-				),
+				or(and(lt(shifts.startTime, shiftEndTime), gt(shifts.endTime, shiftStartTime)))
 			),
 		});
 
@@ -39,12 +34,7 @@ export class ShiftsService {
 			const studentConflicts = await db.query.shifts.findMany({
 				where: and(
 					eq(shifts.date, shiftDate),
-					or(
-						and(
-							lt(shifts.startTime, shiftEndTime),
-							gt(shifts.endTime, shiftStartTime),
-						),
-					),
+					or(and(lt(shifts.startTime, shiftEndTime), gt(shifts.endTime, shiftStartTime)))
 				),
 				with: {
 					students: {
@@ -55,9 +45,7 @@ export class ShiftsService {
 
 			const hasConflict = studentConflicts.some((s) => s.students.length > 0);
 			if (hasConflict) {
-				throw new Error(
-					`Student ${studentId} has conflicting shifts at this time`,
-				);
+				throw new Error(`Student ${studentId} has conflicting shifts at this time`);
 			}
 		}
 
@@ -100,10 +88,8 @@ export class ShiftsService {
 		return await db.query.shifts.findMany({
 			where: (s, { eq, and }) => {
 				const conditions = [];
-				if (query?.hospitalId)
-					conditions.push(eq(s.hospitalId, query.hospitalId));
-				if (query?.preceptorId)
-					conditions.push(eq(s.preceptorId, query.preceptorId));
+				if (query?.hospitalId) conditions.push(eq(s.hospitalId, query.hospitalId));
+				if (query?.preceptorId) conditions.push(eq(s.preceptorId, query.preceptorId));
 				if (query?.date) conditions.push(eq(s.date, query.date));
 				return and(...conditions);
 			},
@@ -156,7 +142,7 @@ export class ShiftsService {
 			hospitalId?: string;
 			preceptorId?: string;
 			studentIds?: string[];
-		},
+		}
 	) {
 		return await db.transaction(async (tx) => {
 			const updateData: Record<string, unknown> = {};
@@ -206,10 +192,7 @@ export class ShiftsService {
 			await tx.delete(studentShifts).where(eq(studentShifts.shiftId, id));
 
 			// Then delete shift
-			const [deleted] = await tx
-				.delete(shifts)
-				.where(eq(shifts.id, id))
-				.returning();
+			const [deleted] = await tx.delete(shifts).where(eq(shifts.id, id)).returning();
 			if (!deleted) throw new Error("Shift not found");
 
 			return deleted;

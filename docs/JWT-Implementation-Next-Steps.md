@@ -61,17 +61,13 @@ Standardize test data creation for consistent and maintainable tests.
 
 ```typescript
 // lib/test-factories.ts
-export const createTestUser = (
-	overrides: Partial<{ id: string; roles: UserRoles[] }> = {}
-) => ({
+export const createTestUser = (overrides: Partial<{ id: string; roles: UserRoles[] }> = {}) => ({
 	id: "test-user-123",
 	roles: [UserRoles.Student],
 	...overrides,
 });
 
-export const createTestJwtPayload = (
-	overrides: Partial<CustomJwtPayload> = {}
-) => ({
+export const createTestJwtPayload = (overrides: Partial<CustomJwtPayload> = {}) => ({
 	id: "test-user-123",
 	roles: [UserRoles.Student],
 	...overrides,

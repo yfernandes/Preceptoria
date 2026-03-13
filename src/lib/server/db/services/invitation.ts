@@ -1,10 +1,10 @@
-import { db } from '$lib/server/db';
-import { invitations } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { db } from "$lib/server/db";
+import { invitations } from "$lib/server/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function createInvitation(data: {
 	email: string;
-	role: 'Student' | 'Preceptor' | 'Supervisor' | 'HospitalManager';
+	role: "Student" | "Preceptor" | "Supervisor" | "HospitalManager";
 	classId?: string;
 	hospitalId?: string;
 	invitedBy: string;
@@ -23,7 +23,7 @@ export async function createInvitation(data: {
 			invitedBy: data.invitedBy,
 			token,
 			expiresAt: expiresAt,
-			status: 'PENDING',
+			status: "PENDING",
 		})
 		.returning();
 
@@ -33,25 +33,18 @@ export async function createInvitation(data: {
 export async function getInvitationByToken(token: string) {
 	return await db.query.invitations.findFirst({
 		where: (i, { eq, and, gt }) =>
-			and(
-				eq(i.token, token),
-				eq(i.status, 'PENDING'),
-				gt(i.expiresAt, new Date())
-			),
+			and(eq(i.token, token), eq(i.status, "PENDING"), gt(i.expiresAt, new Date())),
 		with: {
 			class: {
 				with: {
-					course: true
-				}
+					course: true,
+				},
 			},
-			inviter: true
-		}
+			inviter: true,
+		},
 	});
 }
 
 export async function acceptInvitation(id: string) {
-	await db
-		.update(invitations)
-		.set({ status: 'ACCEPTED' })
-		.where(eq(invitations.id, id));
+	await db.update(invitations).set({ status: "ACCEPTED" }).where(eq(invitations.id, id));
 }

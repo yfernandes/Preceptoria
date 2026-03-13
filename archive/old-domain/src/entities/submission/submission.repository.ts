@@ -22,9 +22,7 @@ export class SubmissionRepository extends EntityRepository<Submission> {
 	async createAllIfNotFound(submissions: ISubmission[]) {
 		submissions.forEach(async (submission, i) => {
 			console.log(
-				`---- Processing entry for: ${submission.crefito} (${i + 1}/${
-					submissions.length
-				})`
+				`---- Processing entry for: ${submission.crefito} (${i + 1}/${submissions.length})`
 			);
 			await this.createIfNotFound(submission);
 			console.log("------------ Entry End -------------\n");

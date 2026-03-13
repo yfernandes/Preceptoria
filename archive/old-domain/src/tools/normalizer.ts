@@ -14,13 +14,9 @@ export class Normalize {
 			documentation: {
 				...studentData.documentation,
 				cityHospitalForm:
-					docs.cityHospitalForm.length > 0
-						? docs.cityHospitalForm.map(this.extractFileId)
-						: [],
+					docs.cityHospitalForm.length > 0 ? docs.cityHospitalForm.map(this.extractFileId) : [],
 				vaccinationCard:
-					docs.vaccinationCard.length > 0
-						? docs.vaccinationCard.map(this.extractFileId)
-						: [],
+					docs.vaccinationCard.length > 0 ? docs.vaccinationCard.map(this.extractFileId) : [],
 				professionalIdentityFront:
 					docs.professionalIdentityFront.length > 0
 						? docs.professionalIdentityFront.map(this.extractFileId)
@@ -33,9 +29,7 @@ export class Normalize {
 					docs.internshipCommitmentTerm.length > 0
 						? docs.internshipCommitmentTerm.map(this.extractFileId)
 						: [],
-				badgePicture: docs.badgePicture
-					? this.extractFileId(docs.badgePicture)
-					: undefined,
+				badgePicture: docs.badgePicture ? this.extractFileId(docs.badgePicture) : undefined,
 			},
 		};
 	}
@@ -88,10 +82,7 @@ export class Normalize {
 			return undefined;
 		}
 		cpf = cpf.replace(/\D/g, "");
-		return `${cpf.slice(0, 3)}.${cpf.slice(3, 6)}.${cpf.slice(
-			6,
-			9
-		)}-${cpf.slice(9)}`;
+		return `${cpf.slice(0, 3)}.${cpf.slice(3, 6)}.${cpf.slice(6, 9)}-${cpf.slice(9)}`;
 	}
 
 	static crefito(crefito: string): string {

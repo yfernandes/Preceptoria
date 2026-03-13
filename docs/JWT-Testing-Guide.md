@@ -169,17 +169,13 @@ Create factories for consistent test data:
 
 ```typescript
 // test-factories.ts
-export const createTestUser = (
-	overrides: Partial<{ id: string; roles: UserRoles[] }> = {}
-) => ({
+export const createTestUser = (overrides: Partial<{ id: string; roles: UserRoles[] }> = {}) => ({
 	id: "test-user-123",
 	roles: [UserRoles.Student],
 	...overrides,
 });
 
-export const createTestPayload = (
-	overrides: Partial<CustomJwtPayload> = {}
-) => ({
+export const createTestPayload = (overrides: Partial<CustomJwtPayload> = {}) => ({
 	id: "test-user-123",
 	roles: [UserRoles.Student],
 	...overrides,

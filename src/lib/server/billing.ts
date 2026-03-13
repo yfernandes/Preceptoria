@@ -1,6 +1,6 @@
-import { db } from '$lib/server/db';
-import { organizations, classes, students } from '$lib/server/db/schema';
-import { eq, and, count } from 'drizzle-orm';
+import { db } from "$lib/server/db";
+import { organizations, classes, students } from "$lib/server/db/schema";
+import { eq, and, count } from "drizzle-orm";
 
 /**
  * Stripe logic skeleton.
@@ -13,15 +13,14 @@ export async function createStripeCustomer(orgId: string, email: string, name: s
 	const stripeCustomerId = `cus_mock_${crypto.randomUUID()}`;
 
 	// 2. Save to DB
-	await db.update(organizations)
-		.set({ stripeCustomerId })
-		.where(eq(organizations.id, orgId));
+	await db.update(organizations).set({ stripeCustomerId }).where(eq(organizations.id, orgId));
 
 	return stripeCustomerId;
 }
 
 export async function syncSubscriptionStatus(stripeCustomerId: string, status: string) {
-	await db.update(organizations)
+	await db
+		.update(organizations)
 		.set({ subscriptionStatus: status })
 		.where(eq(organizations.stripeCustomerId, stripeCustomerId));
 }
@@ -32,28 +31,27 @@ export async function syncSubscriptionStatus(stripeCustomerId: string, status: s
  */
 export async function getActiveStudentCount(orgId: string) {
 	// A student is active if their class is ACTIVE
-	const result = await db.select({ value: count() })
+	const result = await db
+		.select({ value: count() })
 		.from(students)
 		.innerJoin(classes, eq(students.classId, classes.id))
-		.innerJoin(organizations, eq(classes.courseId, organizations.id)) // This needs verification of the path
-		// Path: Student -> Class -> Course -> School -> Organization
-		// Let's do a more robust join
-		/*
+		.innerJoin(organizations, eq(classes.courseId, organizations.id)); // This needs verification of the path
+	// Path: Student -> Class -> Course -> School -> Organization
+	// Let's do a more robust join
+	/*
 		.innerJoin(classes, eq(students.classId, classes.id))
 		.innerJoin(courses, eq(classes.courseId, courses.id))
 		.innerJoin(schools, eq(courses.schoolId, schools.id))
 		.innerJoin(organizations, eq(schools.organizationId, organizations.id))
 		*/
-	
+
 	// Simplified logic for now: any student in an ACTIVE class is billable.
 	return result[0].value;
 }
 
 export async function completeClass(classId: string) {
-	await db.update(classes)
-		.set({ status: 'COMPLETED' })
-		.where(eq(classes.id, classId));
-	
+	await db.update(classes).set({ status: "COMPLETED" }).where(eq(classes.id, classId));
+
 	// After completing a class, you might want to trigger a Stripe subscription update
 	// to reduce the quantity of seats.
 }

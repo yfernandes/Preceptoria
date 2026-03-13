@@ -1,28 +1,28 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { PageData, ActionData } from './$types';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Input from '$lib/components/ui/Input.svelte';
-	import Card from '$lib/components/ui/Card.svelte';
-	import Badge from '$lib/components/ui/Badge.svelte';
+	import { enhance } from "$app/forms";
+	import type { PageData, ActionData } from "./$types";
+	import Button from "$lib/components/ui/Button.svelte";
+	import Input from "$lib/components/ui/Input.svelte";
+	import Card from "$lib/components/ui/Card.svelte";
+	import Badge from "$lib/components/ui/Badge.svelte";
 	import {
 		Building2,
 		ShieldCheck,
 		Lock,
 		CheckCircle2,
 		AlertCircle,
-		ArrowRight
-	} from 'lucide-svelte';
-	import { cn } from '$lib/utils';
+		ArrowRight,
+	} from "lucide-svelte";
+	import { cn } from "$lib/utils";
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let success = $state(false);
 
 	const roleNames: Record<string, string> = {
-		'Student': 'Estudante',
-		'Preceptor': 'Preceptor',
-		'Supervisor': 'Supervisor'
+		Student: "Estudante",
+		Preceptor: "Preceptor",
+		Supervisor: "Supervisor",
 	};
 </script>
 
@@ -58,16 +58,20 @@
 			<div class="p-6 md:p-8">
 				{#if form?.success || success}
 					<div class="animate-in fade-in zoom-in space-y-6 py-8 text-center duration-500">
-						<div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+						<div
+							class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"
+						>
 							<CheckCircle2 class="h-10 w-10" />
 						</div>
 						<div class="space-y-2">
 							<h2 class="text-3xl font-black tracking-tight text-gray-900">Cadastro Realizado!</h2>
-							<p class="text-gray-500">Sua conta foi criada com sucesso. Você já pode acessar a plataforma.</p>
+							<p class="text-gray-500">
+								Sua conta foi criada com sucesso. Você já pode acessar a plataforma.
+							</p>
 						</div>
-						<a 
-							href="/login" 
-							class="flex w-full h-14 items-center justify-center rounded-2xl text-base font-black bg-emerald-600 text-white hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-500/20"
+						<a
+							href="/login"
+							class="flex h-14 w-full items-center justify-center rounded-2xl bg-emerald-600 text-base font-black text-white shadow-xl shadow-emerald-500/20 transition-all hover:bg-emerald-700"
 						>
 							Fazer Login
 							<ArrowRight class="ml-2 h-5 w-5" />
@@ -76,16 +80,23 @@
 				{:else}
 					<div class="animate-in fade-in slide-in-from-right-4 space-y-8 duration-500">
 						<div class="space-y-2 text-center">
-							<div class="flex justify-center mb-4">
-								<Badge variant="info" class="bg-blue-50 px-3 py-1 text-[10px] font-bold tracking-widest text-blue-700 uppercase">
+							<div class="mb-4 flex justify-center">
+								<Badge
+									variant="info"
+									class="bg-blue-50 px-3 py-1 text-[10px] font-bold tracking-widest text-blue-700 uppercase"
+								>
 									CONVITE ACEITO
 								</Badge>
 							</div>
 							<h2 class="text-3xl font-black tracking-tight text-gray-900">Complete seu Perfil</h2>
 							<p class="text-sm font-medium text-gray-500">
-								Você foi convidado como <span class="text-blue-600 font-bold">{roleNames[data.invitation.role] || data.invitation.role}</span>
+								Você foi convidado como <span class="font-bold text-blue-600"
+									>{roleNames[data.invitation.role] || data.invitation.role}</span
+								>
 								{#if data.invitation.class}
-									para a turma <span class="text-blue-600 font-bold">{data.invitation.class.name}</span>.
+									para a turma <span class="font-bold text-blue-600"
+										>{data.invitation.class.name}</span
+									>.
 								{/if}
 							</p>
 						</div>
@@ -93,13 +104,18 @@
 						<form method="POST" use:enhance class="space-y-5">
 							<div class="space-y-4">
 								<div class="space-y-1.5">
-									<label class="text-xs font-bold tracking-widest text-gray-400 uppercase" for="email">E-mail</label>
+									<label
+										class="text-xs font-bold tracking-widest text-gray-400 uppercase"
+										for="email">E-mail</label
+									>
 									<Input
 										value={data.invitation.email}
 										disabled
-										class="h-12 rounded-xl bg-gray-50 cursor-not-allowed border-gray-100"
+										class="h-12 cursor-not-allowed rounded-xl border-gray-100 bg-gray-50"
 									/>
-									<p class="text-[10px] text-gray-400 font-medium">O e-mail não pode ser alterado neste convite.</p>
+									<p class="text-[10px] font-medium text-gray-400">
+										O e-mail não pode ser alterado neste convite.
+									</p>
 								</div>
 
 								<Input
@@ -131,7 +147,9 @@
 							</div>
 
 							{#if form?.message}
-								<div class="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-4 text-sm font-medium text-red-600">
+								<div
+									class="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-4 text-sm font-medium text-red-600"
+								>
 									<AlertCircle class="h-4 w-4" />
 									{form.message}
 								</div>

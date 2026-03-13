@@ -1,9 +1,9 @@
 [
-  {
-    "AllowedOrigins": ["*"],
-    "AllowedMethods": ["PUT", "GET"],
-    "AllowedHeaders": ["content-type"],
-    "ExposeHeaders": [],
-    "MaxAgeSeconds": 3000
-  }
+	{
+		"AllowedOrigins": ["*"],
+		"AllowedMethods": ["PUT", "GET"],
+		"AllowedHeaders": ["content-type"],
+		"ExposeHeaders": [],
+		"MaxAgeSeconds": 3000
+	}
 ]

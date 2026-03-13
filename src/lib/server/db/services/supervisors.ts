@@ -2,10 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import { supervisors, user } from "$lib/server/db/schema";
 
-export async function createSupervisor(data: {
-	userId: string;
-	schoolId: string;
-}) {
+export async function createSupervisor(data: { userId: string; schoolId: string }) {
 	const [result] = await db.insert(supervisors).values(data).returning();
 	return result;
 }
@@ -39,9 +36,6 @@ export async function listSupervisors(schoolId?: string) {
 }
 
 export async function deleteSupervisor(id: string) {
-	const [result] = await db
-		.delete(supervisors)
-		.where(eq(supervisors.id, id))
-		.returning();
+	const [result] = await db.delete(supervisors).where(eq(supervisors.id, id)).returning();
 	return result;
 }

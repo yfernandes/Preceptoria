@@ -124,10 +124,7 @@ export const rolesPermissions: Record<string, Perm[]> = {
 	],
 };
 
-type OwnershipResolver = (
-	user: any,
-	resourceId: string,
-) => Promise<boolean> | boolean;
+type OwnershipResolver = (user: any, resourceId: string) => Promise<boolean> | boolean;
 
 const resolvers: Record<
 	string,
@@ -152,7 +149,7 @@ const resolvers: Record<
 				const placement = await db.query.internshipPlacements.findFirst({
 					where: and(
 						eq(internshipPlacements.studentId, resourceId),
-						eq(internshipPlacements.hospitalId, mgr.hospitalId),
+						eq(internshipPlacements.hospitalId, mgr.hospitalId)
 					),
 				});
 				return !!placement;
@@ -217,8 +214,7 @@ const resolvers: Record<
 					where: eq(documents.studentId, studentId),
 				});
 				const allApproved =
-					studentDocs.length > 0 &&
-					studentDocs.every((d) => d.status === "APPROVED");
+					studentDocs.length > 0 && studentDocs.every((d) => d.status === "APPROVED");
 				return allApproved;
 			},
 		},
@@ -275,7 +271,7 @@ export async function hasPermission(
 	user: any,
 	resource: Resource,
 	action: Actions,
-	resourceId: string = "",
+	resourceId: string = ""
 ): Promise<boolean> {
 	if (!user || !user.role) return false;
 
@@ -299,12 +295,7 @@ export async function hasPermission(
 			if (!resolver) {
 				// But let's be strict for core modifiers
 				if (
-					[
-						Modifiers.Own,
-						Modifiers.Managed,
-						Modifiers.Students,
-						Modifiers.Class,
-					].includes(modifier)
+					[Modifiers.Own, Modifiers.Managed, Modifiers.Students, Modifiers.Class].includes(modifier)
 				) {
 					return false;
 				}

@@ -2,12 +2,7 @@ import { EntityManager, MikroORM } from "@mikro-orm/sqlite";
 import type { Options } from "@mikro-orm/sqlite";
 
 // Entities
-import {
-	Student,
-	Documentation,
-	Document,
-	Submission,
-} from "entities/entities";
+import { Student, Documentation, Document, Submission } from "entities/entities";
 
 // Repositories
 import {

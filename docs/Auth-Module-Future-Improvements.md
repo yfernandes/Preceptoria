@@ -165,10 +165,7 @@ const setupTOTP = async (userId: string) => {
 #### Email/SMS 2FA
 
 ```typescript
-const sendVerificationCode = async (
-	userId: string,
-	method: "email" | "sms"
-) => {
+const sendVerificationCode = async (userId: string, method: "email" | "sms") => {
 	const code = generateVerificationCode();
 	const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
@@ -230,11 +227,7 @@ interface UserSession {
 	isActive: boolean;
 }
 
-const trackSession = async (
-	userId: string,
-	tokenId: string,
-	deviceInfo: any
-) => {
+const trackSession = async (userId: string, tokenId: string, deviceInfo: any) => {
 	await db.session.create({
 		userId,
 		tokenId,
@@ -257,12 +250,7 @@ const trackSession = async (
 interface AuditLog {
 	id: string;
 	userId: string;
-	action:
-		| "login"
-		| "logout"
-		| "token_refresh"
-		| "password_change"
-		| "mfa_setup";
+	action: "login" | "logout" | "token_refresh" | "password_change" | "mfa_setup";
 	ip: string;
 	userAgent: string;
 	success: boolean;
@@ -305,11 +293,7 @@ const trackSecurityMetrics = async (metric: keyof SecurityMetrics) => {
 
 ```typescript
 // Token storage in Redis
-const storeTokenInRedis = async (
-	tokenId: string,
-	payload: any,
-	ttl: number
-) => {
+const storeTokenInRedis = async (tokenId: string, payload: any, ttl: number) => {
 	await redis.setex(`token:${tokenId}`, ttl, JSON.stringify(payload));
 };
 

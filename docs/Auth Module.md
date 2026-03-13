@@ -7,12 +7,14 @@ The Auth Module provides comprehensive authentication functionality for the Prec
 ## Architecture
 
 ### Core Components
+
 - **Pure Functions:** All business logic extracted into pure, testable functions
 - **JWT Helper:** Centralized JWT operations with security hardening
 - **Type Safety:** Comprehensive TypeScript interfaces for all operations
 - **Token Rotation:** Refresh token rotation for enhanced security
 
 ### Key Features
+
 - ✅ **Pure Function Architecture:** All core logic in pure functions for easy testing
 - ✅ **Token Rotation:** Refresh tokens rotated on each use
 - ✅ **Type Safety:** Comprehensive TypeScript interfaces

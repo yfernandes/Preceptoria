@@ -8,10 +8,7 @@ export async function createOrganization(name: string) {
 }
 
 export async function getOrganizationById(id: string) {
-	const [result] = await db
-		.select()
-		.from(organizations)
-		.where(eq(organizations.id, id));
+	const [result] = await db.select().from(organizations).where(eq(organizations.id, id));
 	return result;
 }
 
@@ -29,9 +26,6 @@ export async function updateOrganization(id: string, name: string) {
 }
 
 export async function deleteOrganization(id: string) {
-	const [result] = await db
-		.delete(organizations)
-		.where(eq(organizations.id, id))
-		.returning();
+	const [result] = await db.delete(organizations).where(eq(organizations.id, id)).returning();
 	return result;
 }

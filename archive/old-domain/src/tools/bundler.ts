@@ -26,9 +26,7 @@ export async function bundlePDFs(bundleSize: number = 25 * MB) {
 	console.log("Starting to bundle PDFs...");
 
 	// Get all PDFs
-	const pdfPaths = await globby(
-		`${PROJECT_ROOT}/deliverables/* - Completo.pdf`
-	);
+	const pdfPaths = await globby(`${PROJECT_ROOT}/deliverables/* - Completo.pdf`);
 	console.log(`Found ${pdfPaths.length} PDFs.`);
 
 	// Get the size of PDFs

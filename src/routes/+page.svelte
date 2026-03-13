@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/Button.svelte';
+	import Button from "$lib/components/ui/Button.svelte";
 	import {
 		Building2,
 		ShieldCheck,
@@ -8,45 +8,45 @@
 		ArrowRight,
 		CheckCircle2,
 		Menu,
-		X
-	} from 'lucide-svelte';
-	import { cn } from '$lib/utils';
+		X,
+	} from "lucide-svelte";
+	import { cn } from "$lib/utils";
 
 	let isMenuOpen = $state(false);
 
 	const features = [
 		{
-			title: 'Gestão de Convênios',
+			title: "Gestão de Convênios",
 			description:
-				'Controle total sobre contratos entre instituições de ensino e unidades hospitalares.',
+				"Controle total sobre contratos entre instituições de ensino e unidades hospitalares.",
 			icon: Building2,
-			color: 'text-blue-600',
-			bg: 'bg-blue-50'
+			color: "text-blue-600",
+			bg: "bg-blue-50",
 		},
 		{
-			title: 'Auditoria de Documentos',
+			title: "Auditoria de Documentos",
 			description:
-				'Fluxo automatizado para validação de vacinas, contratos e seguros obrigatórios.',
+				"Fluxo automatizado para validação de vacinas, contratos e seguros obrigatórios.",
 			icon: ShieldCheck,
-			color: 'text-emerald-600',
-			bg: 'bg-emerald-50'
+			color: "text-emerald-600",
+			bg: "bg-emerald-50",
 		},
 		{
-			title: 'Portal do Estudante',
+			title: "Portal do Estudante",
 			description:
-				'Interface intuitiva para que alunos enviem documentação e acompanhem seus estágios.',
+				"Interface intuitiva para que alunos enviem documentação e acompanhem seus estágios.",
 			icon: Users,
-			color: 'text-indigo-600',
-			bg: 'bg-indigo-50'
+			color: "text-indigo-600",
+			bg: "bg-indigo-50",
 		},
 		{
-			title: 'Relatórios de Conformidade',
+			title: "Relatórios de Conformidade",
 			description:
-				'Gere documentos e certificados de estágio com um clique, garantindo segurança jurídica.',
+				"Gere documentos e certificados de estágio com um clique, garantindo segurança jurídica.",
 			icon: FileCheck,
-			color: 'text-amber-600',
-			bg: 'bg-amber-50'
-		}
+			color: "text-amber-600",
+			bg: "bg-amber-50",
+		},
 	];
 </script>
 
@@ -86,7 +86,7 @@
 					class="text-sm font-bold text-gray-900 transition-colors hover:text-blue-600">Entrar</a
 				>
 				<Button
-					onclick={() => (window.location.href = '/signup')}
+					onclick={() => (window.location.href = "/signup")}
 					class="rounded-full px-6 shadow-md shadow-blue-100"
 				>
 					Começar Agora
@@ -110,7 +110,7 @@
 			>
 				<a href="#features" class="block py-2 text-base font-bold text-gray-900">Funcionalidades</a>
 				<a href="/login" class="block py-2 text-base font-bold text-gray-900">Entrar</a>
-				<Button onclick={() => (window.location.href = '/signup')} class="w-full rounded-xl py-4"
+				<Button onclick={() => (window.location.href = "/signup")} class="w-full rounded-xl py-4"
 					>Criar Conta Gratuita</Button
 				>
 			</div>
@@ -163,7 +163,7 @@
 					class="animate-in fade-in slide-in-from-bottom-16 flex flex-col items-center justify-center gap-4 delay-500 duration-1000 sm:flex-row"
 				>
 					<Button
-						onclick={() => (window.location.href = '/signup')}
+						onclick={() => (window.location.href = "/signup")}
 						class="group h-14 rounded-full px-10 text-lg shadow-2xl shadow-blue-500/30"
 					>
 						Começar Agora
@@ -171,7 +171,7 @@
 					</Button>
 					<Button
 						variant="ghost"
-						onclick={() => (window.location.href = '/login')}
+						onclick={() => (window.location.href = "/login")}
 						class="h-14 rounded-full px-10 text-lg font-bold text-gray-600"
 					>
 						Agendar Demonstração
@@ -225,7 +225,7 @@
 						>
 							<div
 								class={cn(
-									'mb-6 flex h-14 w-14 items-center justify-center rounded-2xl shadow-inner transition-transform group-hover:scale-110',
+									"mb-6 flex h-14 w-14 items-center justify-center rounded-2xl shadow-inner transition-transform group-hover:scale-110",
 									feature.bg,
 									feature.color
 								)}
@@ -264,7 +264,7 @@
 						</p>
 						<div class="pt-4">
 							<Button
-								onclick={() => (window.location.href = '/signup')}
+								onclick={() => (window.location.href = "/signup")}
 								class="h-16 rounded-full border-none bg-white px-12 text-lg font-black text-blue-600 shadow-xl shadow-white/10 hover:bg-gray-100"
 							>
 								Começar Teste Grátis

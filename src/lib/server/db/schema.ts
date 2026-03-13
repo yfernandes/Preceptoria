@@ -37,16 +37,9 @@ export const documentStatusEnum = pgEnum("document_status", [
 	"EXPIRED",
 ]);
 
-export const invitationStatusEnum = pgEnum("invitation_status", [
-	"PENDING",
-	"ACCEPTED",
-	"EXPIRED",
-]);
+export const invitationStatusEnum = pgEnum("invitation_status", ["PENDING", "ACCEPTED", "EXPIRED"]);
 
-export const classStatusEnum = pgEnum("class_status", [
-	"ACTIVE",
-	"COMPLETED",
-]);
+export const classStatusEnum = pgEnum("class_status", ["ACTIVE", "COMPLETED"]);
 
 // Better Auth Tables
 export const user = pgTable("user", {
@@ -220,7 +213,7 @@ export const studentShifts = pgTable(
 	},
 	(t) => ({
 		pk: primaryKey({ columns: [t.studentId, t.shiftId] }),
-	}),
+	})
 );
 
 export const studentAvailability = pgTable("student_availability", {
@@ -376,19 +369,16 @@ export const supervisorRelations = relations(supervisors, ({ one, many }) => ({
 	classes: many(classes),
 }));
 
-export const hospitalManagerRelations = relations(
-	hospitalManagers,
-	({ one }) => ({
-		user: one(user, {
-			fields: [hospitalManagers.userId],
-			references: [user.id],
-		}),
-		hospital: one(hospitals, {
-			fields: [hospitalManagers.hospitalId],
-			references: [hospitals.id],
-		}),
+export const hospitalManagerRelations = relations(hospitalManagers, ({ one }) => ({
+	user: one(user, {
+		fields: [hospitalManagers.userId],
+		references: [user.id],
 	}),
-);
+	hospital: one(hospitals, {
+		fields: [hospitalManagers.hospitalId],
+		references: [hospitals.id],
+	}),
+}));
 
 export const preceptorRelations = relations(preceptors, ({ one, many }) => ({
 	user: one(user, { fields: [preceptors.userId], references: [user.id] }),
@@ -434,19 +424,16 @@ export const documentRelations = relations(documents, ({ one }) => ({
 	}),
 }));
 
-export const placementRelations = relations(
-	internshipPlacements,
-	({ one }) => ({
-		student: one(students, {
-			fields: [internshipPlacements.studentId],
-			references: [students.id],
-		}),
-		hospital: one(hospitals, {
-			fields: [internshipPlacements.hospitalId],
-			references: [hospitals.id],
-		}),
+export const placementRelations = relations(internshipPlacements, ({ one }) => ({
+	student: one(students, {
+		fields: [internshipPlacements.studentId],
+		references: [students.id],
 	}),
-);
+	hospital: one(hospitals, {
+		fields: [internshipPlacements.hospitalId],
+		references: [hospitals.id],
+	}),
+}));
 
 export const invitationRelations = relations(invitations, ({ one }) => ({
 	inviter: one(user, {

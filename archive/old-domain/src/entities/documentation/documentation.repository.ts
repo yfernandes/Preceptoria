@@ -11,10 +11,7 @@ export class DocumentationRepository extends EntityRepository<Documentation> {
 		submission: Submission
 	): Documentation {
 		// Create a new documentation based on the submission
-		const documentation = new Documentation(
-			submission.timestamp,
-			student.documentations.length
-		);
+		const documentation = new Documentation(submission.timestamp, student.documentations.length);
 
 		// Initialize the documents and add them to the documentation
 		const entryIndex = student.documentations.length;
@@ -63,7 +60,7 @@ export class DocumentationRepository extends EntityRepository<Documentation> {
 						0,
 						entryIndex,
 						crefito
-				  )
+					)
 				: undefined,
 
 			// Internship Commitment Term
@@ -96,7 +93,7 @@ export class DocumentationRepository extends EntityRepository<Documentation> {
 						0,
 						entryIndex,
 						crefito
-				  )
+					)
 				: undefined,
 		].filter((doc): doc is Document => doc !== undefined); // Filter out undefined
 		// Apply documents to the Documentation entity

@@ -11,22 +11,22 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const placements = await db.query.internshipPlacements.findMany({
 		with: {
 			student: { with: { user: true, class: true } },
-			hospital: true
+			hospital: true,
 		},
-		where: eq(internshipPlacements.status, "ACTIVE")
+		where: eq(internshipPlacements.status, "ACTIVE"),
 	});
 
 	const hospitalsList = await db.query.hospitals.findMany();
-	
+
 	// List students who don't have an active placement (optional filter)
 	const studentsList = await db.query.students.findMany({
-		with: { user: true, class: true }
+		with: { user: true, class: true },
 	});
 
 	return {
 		placements,
 		hospitals: hospitalsList,
-		students: studentsList
+		students: studentsList,
 	};
 };
 
@@ -49,7 +49,7 @@ export const actions: Actions = {
 				hospitalId,
 				startDate,
 				endDate,
-				status: "ACTIVE"
+				status: "ACTIVE",
 			});
 			return { success: true };
 		} catch (err) {
@@ -63,10 +63,11 @@ export const actions: Actions = {
 		const id = formData.get("id")?.toString();
 		if (!id) return fail(400);
 
-		await db.update(internshipPlacements)
+		await db
+			.update(internshipPlacements)
 			.set({ status: "COMPLETED" })
 			.where(eq(internshipPlacements.id, id));
-		
+
 		return { success: true };
-	}
+	},
 };

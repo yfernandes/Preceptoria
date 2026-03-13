@@ -74,11 +74,7 @@ export class GDrive {
 				throw new Error("Mimetype Not found, unable to download");
 			}
 			const extension = this.getExtension(metadata.mimeType);
-			const filePath = path.join(
-				PROJECT_ROOT,
-				doc.destPath,
-				doc.fileName + extension
-			);
+			const filePath = path.join(PROJECT_ROOT, doc.destPath, doc.fileName + extension);
 			doc.extension = extension;
 
 			await this.ensureDirectoryExistence(filePath);

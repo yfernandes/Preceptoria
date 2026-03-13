@@ -1,12 +1,6 @@
-import {
-	EntityManager,
-	EntityRepository,
-	type AnyEntity,
-} from "@mikro-orm/sqlite";
+import { EntityManager, EntityRepository, type AnyEntity } from "@mikro-orm/sqlite";
 
-export class ExtendedEntityRepository<
-	T extends object
-> extends EntityRepository<T> {
+export class ExtendedEntityRepository<T extends object> extends EntityRepository<T> {
 	persist(entity: AnyEntity | AnyEntity[]): EntityManager {
 		return this.em.persist(entity);
 	}

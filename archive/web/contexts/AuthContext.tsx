@@ -78,8 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		} catch (error: unknown) {
 			let errorMessage = "Login failed";
 			if (axios.isAxiosError(error)) {
-				errorMessage =
-					error.response?.data?.message || error.message || "Login failed";
+				errorMessage = error.response?.data?.message || error.message || "Login failed";
 			} else if (error instanceof Error) {
 				errorMessage = error.message;
 			}

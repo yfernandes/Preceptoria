@@ -16,11 +16,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 			licenseNumber: preceptors.licenseNumber,
 			user: {
 				name: user.name,
-				email: user.email
+				email: user.email,
 			},
 			hospital: {
-				name: hospitals.name
-			}
+				name: hospitals.name,
+			},
 		})
 		.from(preceptors)
 		.innerJoin(user, eq(preceptors.userId, user.id))
@@ -29,21 +29,17 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const allHospitals = await db.select().from(hospitals);
 
 	const pendingInvitations = await db.query.invitations.findMany({
-		where: (i, { eq, and, gt }) => 
-			and(
-				eq(i.role, "Preceptor"),
-				eq(i.status, "PENDING"),
-				gt(i.expiresAt, new Date())
-			),
+		where: (i, { eq, and, gt }) =>
+			and(eq(i.role, "Preceptor"), eq(i.status, "PENDING"), gt(i.expiresAt, new Date())),
 		with: {
-			hospital: true
-		}
+			hospital: true,
+		},
 	});
 
 	return {
 		preceptors: allPreceptors,
 		hospitals: allHospitals,
-		pendingInvitations
+		pendingInvitations,
 	};
 };
 
@@ -62,7 +58,7 @@ export const actions: Actions = {
 		try {
 			// Check if user already exists
 			const existingUser = await db.query.user.findFirst({
-				where: (u, { eq }) => eq(u.email, email)
+				where: (u, { eq }) => eq(u.email, email),
 			});
 			if (existingUser) return fail(400, { message: "User already exists" });
 
@@ -70,21 +66,25 @@ export const actions: Actions = {
 				email,
 				role: "Preceptor",
 				hospitalId,
-				invitedBy: locals.user.id
+				invitedBy: locals.user.id,
 			});
 
 			const targetHospital = await db.query.hospitals.findFirst({
-				where: eq(hospitals.id, hospitalId)
+				where: eq(hospitals.id, hospitalId),
 			});
 
 			// Note: I should probably update emailService to handle Preceptor invitations properly
 			// but for now I'll use a generic one or sendInvitationEmail
-			await emailService.sendInvitationEmail(email, invitation.token, targetHospital?.name || "Hospital");
+			await emailService.sendInvitationEmail(
+				email,
+				invitation.token,
+				targetHospital?.name || "Hospital"
+			);
 
 			return { success: true };
 		} catch (err) {
 			console.error(err);
 			return fail(500, { message: "Failed to send invitation" });
 		}
-	}
+	},
 };

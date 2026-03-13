@@ -84,9 +84,7 @@ const response = await authApi.signin({ email, password });
 
 ```typescript
 // ✅ Good: Inferred from API
-type User = NonNullable<
-	Awaited<ReturnType<typeof api.auth.signin.post>>
->["data"]["user"];
+type User = NonNullable<Awaited<ReturnType<typeof api.auth.signin.post>>>["data"]["user"];
 
 // ❌ Bad: Manual definition (can drift)
 interface User {
@@ -152,9 +150,7 @@ export const withErrorHandling = <T>(promise: Promise<T>) =>
 	});
 
 // Usage
-const response = await withErrorHandling(
-	api.auth.signin.post({ email, password })
-);
+const response = await withErrorHandling(api.auth.signin.post({ email, password }));
 ```
 
 ## Authentication Context

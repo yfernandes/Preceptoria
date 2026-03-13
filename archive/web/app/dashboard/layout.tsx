@@ -1,11 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import {
-	SidebarProvider,
-	SidebarInset,
-	SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
 	Breadcrumb,
@@ -83,11 +79,7 @@ function getBreadcrumbs(pathname: string) {
 	return breadcrumbs;
 }
 
-export default function DashboardLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
 	const breadcrumbs = getBreadcrumbs(pathname);
 
@@ -96,13 +88,10 @@ export default function DashboardLayout({
 			<AppSidebar />
 			<SidebarInset>
 				<header className="flex h-16 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-					<div className="flex items-center gap-2 px-4 w-full justify-between">
+					<div className="flex w-full items-center justify-between gap-2 px-4">
 						<div className="flex items-center gap-2">
 							<SidebarTrigger className="-ml-1" />
-							<Separator
-								orientation="vertical"
-								className="mr-2 data-[orientation=vertical]:h-4"
-							/>
+							<Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
 							<Breadcrumb>
 								<BreadcrumbList>
 									{breadcrumbs.map((breadcrumb, index) => (
@@ -111,9 +100,7 @@ export default function DashboardLayout({
 												{breadcrumb.isCurrent ? (
 													<BreadcrumbPage>{breadcrumb.title}</BreadcrumbPage>
 												) : (
-													<BreadcrumbLink href={breadcrumb.href}>
-														{breadcrumb.title}
-													</BreadcrumbLink>
+													<BreadcrumbLink href={breadcrumb.href}>{breadcrumb.title}</BreadcrumbLink>
 												)}
 											</BreadcrumbItem>
 											{index < breadcrumbs.length - 1 && (

@@ -6,17 +6,17 @@ export default function Home() {
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
 			{/* Header */}
 			<header className="bg-white shadow-sm">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-					<div className="flex justify-between items-center py-6">
+				<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+					<div className="flex items-center justify-between py-6">
 						<div className="flex items-center gap-3">
-							<div className="bg-blue-600 text-white p-2 rounded-lg">
+							<div className="rounded-lg bg-blue-600 p-2 text-white">
 								<GraduationCap className="h-6 w-6" />
 							</div>
 							<h1 className="text-2xl font-bold text-gray-900">Preceptoria</h1>
 						</div>
 						<Link
 							href="/login"
-							className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+							className="rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition-colors hover:bg-blue-700"
 						>
 							Entrar
 						</Link>
@@ -25,20 +25,17 @@ export default function Home() {
 			</header>
 
 			{/* Hero Section */}
-			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+			<main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
 				<div className="text-center">
-					<h2 className="text-4xl font-bold text-gray-900 mb-6">
-						Sistema de Gestão de Estágios
-					</h2>
-					<p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-						Gerencie seus documentos, acompanhe seus estágios e mantenha-se
-						organizado durante sua jornada acadêmica de forma simples e
-						eficiente.
+					<h2 className="mb-6 text-4xl font-bold text-gray-900">Sistema de Gestão de Estágios</h2>
+					<p className="mx-auto mb-8 max-w-3xl text-xl text-gray-600">
+						Gerencie seus documentos, acompanhe seus estágios e mantenha-se organizado durante sua
+						jornada acadêmica de forma simples e eficiente.
 					</p>
 
 					<Link
 						href="/login"
-						className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors font-medium text-lg"
+						className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-4 text-lg font-medium text-white transition-colors hover:bg-blue-700"
 					>
 						<GraduationCap className="h-5 w-5" />
 						Acessar Sistema
@@ -46,57 +43,44 @@ export default function Home() {
 				</div>
 
 				{/* Features */}
-				<div className="mt-20 grid md:grid-cols-3 gap-8">
-					<div className="bg-white p-6 rounded-lg shadow-sm text-center">
-						<div className="bg-blue-100 text-blue-600 p-3 rounded-lg w-fit mx-auto mb-4">
+				<div className="mt-20 grid gap-8 md:grid-cols-3">
+					<div className="rounded-lg bg-white p-6 text-center shadow-sm">
+						<div className="mx-auto mb-4 w-fit rounded-lg bg-blue-100 p-3 text-blue-600">
 							<FileText className="h-6 w-6" />
 						</div>
-						<h3 className="text-lg font-semibold text-gray-900 mb-2">
-							Gestão de Documentos
-						</h3>
+						<h3 className="mb-2 text-lg font-semibold text-gray-900">Gestão de Documentos</h3>
 						<p className="text-gray-600">
-							Envie e organize seus documentos de estágio de forma segura e
-							organizada.
+							Envie e organize seus documentos de estágio de forma segura e organizada.
 						</p>
 					</div>
 
-					<div className="bg-white p-6 rounded-lg shadow-sm text-center">
-						<div className="bg-green-100 text-green-600 p-3 rounded-lg w-fit mx-auto mb-4">
+					<div className="rounded-lg bg-white p-6 text-center shadow-sm">
+						<div className="mx-auto mb-4 w-fit rounded-lg bg-green-100 p-3 text-green-600">
 							<Calendar className="h-6 w-6" />
 						</div>
-						<h3 className="text-lg font-semibold text-gray-900 mb-2">
-							Acompanhamento de Estágios
-						</h3>
+						<h3 className="mb-2 text-lg font-semibold text-gray-900">Acompanhamento de Estágios</h3>
 						<p className="text-gray-600">
-							Visualize seus horários, preceptores e locais de estágio em tempo
-							real.
+							Visualize seus horários, preceptores e locais de estágio em tempo real.
 						</p>
 					</div>
 
-					<div className="bg-white p-6 rounded-lg shadow-sm text-center">
-						<div className="bg-purple-100 text-purple-600 p-3 rounded-lg w-fit mx-auto mb-4">
+					<div className="rounded-lg bg-white p-6 text-center shadow-sm">
+						<div className="mx-auto mb-4 w-fit rounded-lg bg-purple-100 p-3 text-purple-600">
 							<Shield className="h-6 w-6" />
 						</div>
-						<h3 className="text-lg font-semibold text-gray-900 mb-2">
-							Acesso Seguro
-						</h3>
+						<h3 className="mb-2 text-lg font-semibold text-gray-900">Acesso Seguro</h3>
 						<p className="text-gray-600">
-							Seus dados estão protegidos com criptografia e controle de acesso
-							rigoroso.
+							Seus dados estão protegidos com criptografia e controle de acesso rigoroso.
 						</p>
 					</div>
 				</div>
 
 				{/* Info Section */}
-				<div className="mt-16 bg-white rounded-lg shadow-sm p-8">
-					<h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">
-						Como Funciona
-					</h3>
-					<div className="grid md:grid-cols-2 gap-8">
+				<div className="mt-16 rounded-lg bg-white p-8 shadow-sm">
+					<h3 className="mb-4 text-center text-2xl font-bold text-gray-900">Como Funciona</h3>
+					<div className="grid gap-8 md:grid-cols-2">
 						<div>
-							<h4 className="text-lg font-semibold text-gray-900 mb-3">
-								Para Estudantes
-							</h4>
+							<h4 className="mb-3 text-lg font-semibold text-gray-900">Para Estudantes</h4>
 							<ul className="space-y-2 text-gray-600">
 								<li>• Faça login com suas credenciais acadêmicas</li>
 								<li>• Envie seus documentos de estágio</li>
@@ -106,9 +90,7 @@ export default function Home() {
 							</ul>
 						</div>
 						<div>
-							<h4 className="text-lg font-semibold text-gray-900 mb-3">
-								Benefícios
-							</h4>
+							<h4 className="mb-3 text-lg font-semibold text-gray-900">Benefícios</h4>
 							<ul className="space-y-2 text-gray-600">
 								<li>• Organização automática de documentos</li>
 								<li>• Notificações sobre atualizações</li>
@@ -122,8 +104,8 @@ export default function Home() {
 			</main>
 
 			{/* Footer */}
-			<footer className="bg-gray-50 border-t border-gray-200 mt-20">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			<footer className="mt-20 border-t border-gray-200 bg-gray-50">
+				<div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 					<div className="text-center text-gray-600">
 						<p>© 2024 Preceptoria. Sistema de Gestão de Estágios.</p>
 						<p className="mt-2 text-sm">

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { PageData, ActionData } from './$types';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Input from '$lib/components/ui/Input.svelte';
-	import Card from '$lib/components/ui/Card.svelte';
-	import Badge from '$lib/components/ui/Badge.svelte';
+	import { enhance } from "$app/forms";
+	import type { PageData, ActionData } from "./$types";
+	import Button from "$lib/components/ui/Button.svelte";
+	import Input from "$lib/components/ui/Input.svelte";
+	import Card from "$lib/components/ui/Card.svelte";
+	import Badge from "$lib/components/ui/Badge.svelte";
 	import {
 		GraduationCap,
 		Building2,
@@ -15,26 +15,26 @@
 		X,
 		ArrowRight,
 		MapPin,
-		School
-	} from 'lucide-svelte';
+		School,
+	} from "lucide-svelte";
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let isEditing = $state(false);
-	let searchQuery = $state('');
-	let currentSchool = $state({ id: '', name: '', organizationId: '' });
+	let searchQuery = $state("");
+	let currentSchool = $state({ id: "", name: "", organizationId: "" });
 
 	function editSchool(school: any) {
 		currentSchool = {
 			id: school.id,
 			name: school.name,
-			organizationId: school.organizationId || ''
+			organizationId: school.organizationId || "",
 		};
 		isEditing = true;
 	}
 
 	function resetForm() {
-		currentSchool = { id: '', name: '', organizationId: '' };
+		currentSchool = { id: "", name: "", organizationId: "" };
 		isEditing = false;
 	}
 
@@ -115,7 +115,7 @@
 									<Building2 class="h-3.5 w-3.5 text-gray-400" />
 									<span class="truncate text-xs font-bold tracking-tighter text-gray-500 uppercase">
 										{data.organizations.find((o) => o.id === school.organizationId)?.name ||
-											'Sem Organização'}
+											"Sem Organização"}
 									</span>
 								</div>
 							</div>
@@ -150,14 +150,14 @@
 					<div class="mb-8 flex items-center gap-4">
 						<div
 							class={isEditing
-								? 'rotate-3 rounded-2xl bg-amber-100 p-3 text-amber-600'
-								: '-rotate-3 rounded-2xl bg-blue-100 p-3 text-blue-600'}
+								? "rotate-3 rounded-2xl bg-amber-100 p-3 text-amber-600"
+								: "-rotate-3 rounded-2xl bg-blue-100 p-3 text-blue-600"}
 						>
 							<Plus class="h-6 w-6" />
 						</div>
 						<div>
 							<h2 class="text-2xl font-bold tracking-tight text-gray-900">
-								{isEditing ? 'Editar' : 'Nova'} Escola
+								{isEditing ? "Editar" : "Nova"} Escola
 							</h2>
 							<Badge
 								variant="neutral"
@@ -169,10 +169,10 @@
 
 					<form
 						method="POST"
-						action={isEditing ? '?/update' : '?/create'}
+						action={isEditing ? "?/update" : "?/create"}
 						use:enhance={() => {
 							return async ({ result }) => {
-								if (result.type === 'success') {
+								if (result.type === "success") {
 									resetForm();
 								}
 							};
@@ -233,7 +233,7 @@
 								type="submit"
 								class="group h-12 flex-1 rounded-xl font-bold shadow-xl shadow-blue-500/20"
 							>
-								{isEditing ? 'Salvar Alterações' : 'Cadastrar Escola'}
+								{isEditing ? "Salvar Alterações" : "Cadastrar Escola"}
 								<ArrowRight class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
 							</Button>
 						</div>

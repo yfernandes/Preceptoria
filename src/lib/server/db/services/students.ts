@@ -32,20 +32,13 @@ export async function listStudentsByClass(classId: string) {
 
 export async function updateStudent(
 	id: string,
-	data: Partial<{ classId: string; registrationNumber: string }>,
+	data: Partial<{ classId: string; registrationNumber: string }>
 ) {
-	const [result] = await db
-		.update(students)
-		.set(data)
-		.where(eq(students.id, id))
-		.returning();
+	const [result] = await db.update(students).set(data).where(eq(students.id, id)).returning();
 	return result;
 }
 
 export async function deleteStudent(id: string) {
-	const [result] = await db
-		.delete(students)
-		.where(eq(students.id, id))
-		.returning();
+	const [result] = await db.delete(students).where(eq(students.id, id)).returning();
 	return result;
 }

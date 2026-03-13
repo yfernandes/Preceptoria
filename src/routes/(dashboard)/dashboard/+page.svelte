@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	import Card from '$lib/components/ui/Card.svelte';
-	import Badge from '$lib/components/ui/Badge.svelte';
+	import type { PageData } from "./$types";
+	import Card from "$lib/components/ui/Card.svelte";
+	import Badge from "$lib/components/ui/Badge.svelte";
 	import {
 		Users,
 		Hospital,
@@ -10,70 +10,70 @@
 		ArrowUpRight,
 		Clock,
 		CheckCircle2,
-		AlertCircle
-	} from 'lucide-svelte';
+		AlertCircle,
+	} from "lucide-svelte";
 
 	let { data }: { data: PageData } = $props();
 
 	const stats = $derived([
 		{
-			name: 'Total de Estudantes',
+			name: "Total de Estudantes",
 			value: data.stats.students,
 			icon: Users,
-			color: 'text-blue-600',
-			bg: 'bg-blue-50',
-			trend: '+12% este mês'
+			color: "text-blue-600",
+			bg: "bg-blue-50",
+			trend: "+12% este mês",
 		},
 		{
-			name: 'Hospitais',
+			name: "Hospitais",
 			value: data.stats.hospitals,
 			icon: Hospital,
-			color: 'text-green-600',
-			bg: 'bg-green-50',
-			trend: 'Ativos'
+			color: "text-green-600",
+			bg: "bg-green-50",
+			trend: "Ativos",
 		},
 		{
-			name: 'Documentos Pendentes',
+			name: "Documentos Pendentes",
 			value: data.stats.pendingDocuments,
 			icon: FileText,
-			color: 'text-orange-600',
-			bg: 'bg-orange-50',
-			trend: 'Urgente'
+			color: "text-orange-600",
+			bg: "bg-orange-50",
+			trend: "Urgente",
 		},
 		{
-			name: 'Estágios Ativos',
+			name: "Estágios Ativos",
 			value: data.stats.activePlacements,
 			icon: Briefcase,
-			color: 'text-purple-600',
-			bg: 'bg-purple-50',
-			trend: 'Em andamento'
-		}
+			color: "text-purple-600",
+			bg: "bg-purple-50",
+			trend: "Em andamento",
+		},
 	]);
 
 	// Mock recent activity for the vibe check
 	const activities = [
 		{
 			id: 1,
-			user: 'Maria Silva',
-			action: 'enviou um novo documento',
-			time: 'Há 5 minutos',
-			type: 'upload'
+			user: "Maria Silva",
+			action: "enviou um novo documento",
+			time: "Há 5 minutos",
+			type: "upload",
 		},
 		{
 			id: 2,
-			user: 'João Pereira',
-			action: 'completou o estágio',
-			time: 'Há 2 horas',
-			type: 'complete'
+			user: "João Pereira",
+			action: "completou o estágio",
+			time: "Há 2 horas",
+			type: "complete",
 		},
 		{
 			id: 3,
-			user: 'Hospital Santa Luzia',
-			action: 'solicitou novos estagiários',
-			time: 'Há 5 horas',
-			type: 'request'
+			user: "Hospital Santa Luzia",
+			action: "solicitou novos estagiários",
+			time: "Há 5 horas",
+			type: "request",
 		},
-		{ id: 4, user: 'Ana Costa', action: 'teve documento rejeitado', time: 'Ontem', type: 'reject' }
+		{ id: 4, user: "Ana Costa", action: "teve documento rejeitado", time: "Ontem", type: "reject" },
 	];
 </script>
 
@@ -90,7 +90,7 @@
 		{#each stats as stat}
 			<Card class="transition-shadow hover:shadow-md">
 				<div class="mb-4 flex items-center justify-between">
-					<div class={stat.bg + ' rounded-xl p-3 ' + stat.color}>
+					<div class={stat.bg + " rounded-xl p-3 " + stat.color}>
 						<stat.icon class="h-6 w-6" />
 					</div>
 					<Badge variant="neutral" class="border-none bg-gray-50 font-medium text-gray-500">
@@ -118,11 +118,11 @@
 						class="group flex items-start gap-4 rounded-xl p-3 transition-colors hover:bg-gray-50"
 					>
 						<div class="mt-1">
-							{#if activity.type === 'upload'}
+							{#if activity.type === "upload"}
 								<Clock class="h-5 w-5 text-blue-500" />
-							{:else if activity.type === 'complete'}
+							{:else if activity.type === "complete"}
 								<CheckCircle2 class="h-5 w-5 text-green-500" />
-							{:else if activity.type === 'reject'}
+							{:else if activity.type === "reject"}
 								<AlertCircle class="h-5 w-5 text-red-500" />
 							{:else}
 								<Briefcase class="h-5 w-5 text-purple-500" />

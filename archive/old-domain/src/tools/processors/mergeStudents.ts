@@ -54,11 +54,7 @@ async function MigrateStudent() {
 				db.em.persist(incorrect);
 
 				// Move insurance file on disk
-				const oldPath = path.join(
-					PROJECT_ROOT,
-					entry.incorrect,
-					"insurance.pdf"
-				);
+				const oldPath = path.join(PROJECT_ROOT, entry.incorrect, "insurance.pdf");
 				const newPath = path.join(PROJECT_ROOT, entry.correct, "insurance.pdf");
 
 				await moveFile(oldPath, newPath);
@@ -74,19 +70,9 @@ async function MigrateStudent() {
 
 				(await documentation.documents.init()).getItems();
 				for (const document of documentation.documents) {
-					const oldPath = path.join(
-						PROJECT_ROOT,
-						document.destPath,
-						document.fileName
-					);
-					document.destPath = `${correct.crefito}/${
-						documentation.documentationIdx
-					}`;
-					const newPath = path.join(
-						PROJECT_ROOT,
-						document.destPath,
-						document.fileName
-					);
+					const oldPath = path.join(PROJECT_ROOT, document.destPath, document.fileName);
+					document.destPath = `${correct.crefito}/${documentation.documentationIdx}`;
+					const newPath = path.join(PROJECT_ROOT, document.destPath, document.fileName);
 
 					console.log(oldPath, newPath);
 					await moveFile(oldPath, newPath);
@@ -108,9 +94,7 @@ async function MigrateStudent() {
 				`Migrated student data for ${entry.studentName} from ${entry.incorrect} to ${entry.correct}`
 			);
 		} else {
-			console.log(
-				`Could not find both students for entry: ${entry.studentName}`
-			);
+			console.log(`Could not find both students for entry: ${entry.studentName}`);
 		}
 	}
 }

@@ -4,21 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 
-export function LoginForm({
-	className,
-	...props
-}: React.ComponentProps<"div">) {
+export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const { signin, loading, error, clearError } = useAuth();
@@ -79,11 +70,11 @@ export function LoginForm({
 
 							{/* Credenciais de desenvolvimento */}
 							{isDevelopment && (
-								<div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-									<h4 className="text-sm font-semibold text-blue-900 mb-2">
+								<div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+									<h4 className="mb-2 text-sm font-semibold text-blue-900">
 										🔧 Credenciais de Desenvolvimento
 									</h4>
-									<div className="text-xs text-blue-700 space-y-1">
+									<div className="space-y-1 text-xs text-blue-700">
 										<p>
 											<strong>Email:</strong> yagoalmeida@gmail.com
 										</p>
@@ -109,10 +100,7 @@ export function LoginForm({
 								<div className="grid gap-3">
 									<div className="flex items-center">
 										<Label htmlFor="password">Senha</Label>
-										<a
-											href="#"
-											className="ml-auto text-sm underline-offset-4 hover:underline"
-										>
+										<a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
 											Esqueceu sua senha?
 										</a>
 									</div>
@@ -126,7 +114,7 @@ export function LoginForm({
 								</div>
 
 								{error && (
-									<div className="bg-red-100 border border-red-300 text-red-800 rounded p-2 text-sm mb-2 text-center">
+									<div className="mb-2 rounded border border-red-300 bg-red-100 p-2 text-center text-sm text-red-800">
 										{error}
 									</div>
 								)}
@@ -146,8 +134,7 @@ export function LoginForm({
 				</CardContent>
 			</Card>
 			<div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-				Ao clicar em continuar, você concorda com nossos{" "}
-				<a href="#">Termos de Serviço</a> e{" "}
+				Ao clicar em continuar, você concorda com nossos <a href="#">Termos de Serviço</a> e{" "}
 				<a href="#">Política de Privacidade</a>.
 			</div>
 		</div>

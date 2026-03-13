@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { Bell, Search, User, LogOut } from 'lucide-svelte';
-	import { authClient } from '$lib/auth-client';
-	import { goto } from '$app/navigation';
+	import { Bell, Search, User, LogOut } from "lucide-svelte";
+	import { authClient } from "$lib/auth-client";
+	import { goto } from "$app/navigation";
 
 	let { user }: { user: { name: string; role: string } | null } = $props();
 
 	async function handleLogout() {
 		await authClient.signOut();
-		await goto('/login');
+		await goto("/login");
 	}
 </script>
 
@@ -36,9 +36,9 @@
 
 		<div class="flex items-center gap-4">
 			<div class="hidden text-right sm:block">
-				<p class="text-sm font-semibold text-gray-900">{user?.name || 'Usuário'}</p>
+				<p class="text-sm font-semibold text-gray-900">{user?.name || "Usuário"}</p>
 				<p class="text-xs font-medium tracking-tight text-gray-500 uppercase">
-					{user?.role || 'Visitante'}
+					{user?.role || "Visitante"}
 				</p>
 			</div>
 

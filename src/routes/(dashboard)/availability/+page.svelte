@@ -1,19 +1,12 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { PageData, ActionData } from './$types';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Input from '$lib/components/ui/Input.svelte';
-	import Card from '$lib/components/ui/Card.svelte';
-	import Badge from '$lib/components/ui/Badge.svelte';
-	import {
-		Calendar,
-		Clock,
-		Plus,
-		Trash2,
-		AlertCircle,
-		CheckCircle2
-	} from 'lucide-svelte';
-	import { cn } from '$lib/utils';
+	import { enhance } from "$app/forms";
+	import type { PageData, ActionData } from "./$types";
+	import Button from "$lib/components/ui/Button.svelte";
+	import Input from "$lib/components/ui/Input.svelte";
+	import Card from "$lib/components/ui/Card.svelte";
+	import Badge from "$lib/components/ui/Badge.svelte";
+	import { Calendar, Clock, Plus, Trash2, AlertCircle, CheckCircle2 } from "lucide-svelte";
+	import { cn } from "$lib/utils";
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -30,7 +23,7 @@
 		</div>
 		<Button
 			onclick={() => (isAdding = !isAdding)}
-			variant={isAdding ? 'outline' : 'primary'}
+			variant={isAdding ? "outline" : "primary"}
 			class="shadow-lg shadow-blue-100"
 		>
 			{#if isAdding}
@@ -50,7 +43,7 @@
 					action="?/submit"
 					use:enhance={() => {
 						return async ({ result }) => {
-							if (result.type === 'success') {
+							if (result.type === "success") {
 								isAdding = false;
 							}
 						};
@@ -66,7 +59,9 @@
 					</div>
 
 					{#if form?.message}
-						<div class="flex items-center gap-2 rounded-lg border border-red-100 bg-red-50 p-3 text-sm font-medium text-red-600">
+						<div
+							class="flex items-center gap-2 rounded-lg border border-red-100 bg-red-50 p-3 text-sm font-medium text-red-600"
+						>
 							<AlertCircle class="h-4 w-4" />
 							{form.message}
 						</div>
@@ -74,7 +69,9 @@
 
 					{#snippet footer()}
 						<div class="flex justify-end gap-3">
-							<Button type="button" variant="ghost" onclick={() => (isAdding = false)}>Voltar</Button>
+							<Button type="button" variant="ghost" onclick={() => (isAdding = false)}
+								>Voltar</Button
+							>
 							<Button type="submit">Salvar Disponibilidade</Button>
 						</div>
 					{/snippet}
@@ -90,17 +87,27 @@
 					<div class="space-y-3">
 						<div class="flex items-center gap-2 text-blue-600">
 							<Calendar class="h-5 w-5" />
-							<span class="text-sm font-bold uppercase tracking-tight">
-								{new Date(avail.date).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
+							<span class="text-sm font-bold tracking-tight uppercase">
+								{new Date(avail.date).toLocaleDateString("pt-BR", {
+									weekday: "long",
+									day: "2-digit",
+									month: "long",
+								})}
 							</span>
 						</div>
 						<div class="flex items-center gap-4 text-gray-600">
 							<div class="flex items-center gap-1.5">
 								<Clock class="h-4 w-4 text-gray-400" />
 								<span class="text-sm font-medium">
-									{new Date(avail.startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-									- 
-									{new Date(avail.endTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+									{new Date(avail.startTime).toLocaleTimeString("pt-BR", {
+										hour: "2-digit",
+										minute: "2-digit",
+									})}
+									-
+									{new Date(avail.endTime).toLocaleTimeString("pt-BR", {
+										hour: "2-digit",
+										minute: "2-digit",
+									})}
 								</span>
 							</div>
 						</div>
@@ -108,7 +115,12 @@
 
 					<form method="POST" action="?/delete" use:enhance>
 						<input type="hidden" name="id" value={avail.id} />
-						<Button variant="ghost" size="icon" type="submit" class="text-gray-400 hover:text-red-600">
+						<Button
+							variant="ghost"
+							size="icon"
+							type="submit"
+							class="text-gray-400 hover:text-red-600"
+						>
 							<Trash2 class="h-4 w-4" />
 						</Button>
 					</form>
@@ -117,7 +129,9 @@
 		{/each}
 
 		{#if data.availabilities.length === 0}
-			<div class="col-span-full flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-gray-100 bg-gray-50/50 py-20 text-center">
+			<div
+				class="col-span-full flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-gray-100 bg-gray-50/50 py-20 text-center"
+			>
 				<div class="mb-4 rounded-full bg-white p-4 shadow-sm">
 					<Calendar class="h-8 w-8 text-gray-200" />
 				</div>

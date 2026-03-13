@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { PageData, ActionData } from './$types';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Input from '$lib/components/ui/Input.svelte';
-	import Card from '$lib/components/ui/Card.svelte';
-	import Badge from '$lib/components/ui/Badge.svelte';
+	import { enhance } from "$app/forms";
+	import type { PageData, ActionData } from "./$types";
+	import Button from "$lib/components/ui/Button.svelte";
+	import Input from "$lib/components/ui/Input.svelte";
+	import Card from "$lib/components/ui/Card.svelte";
+	import Badge from "$lib/components/ui/Badge.svelte";
 	import {
 		Plus,
 		Search,
@@ -16,14 +16,14 @@
 		UserCircle,
 		Mail,
 		IdCard,
-		AlertCircle
-	} from 'lucide-svelte';
-	import { cn } from '$lib/utils';
+		AlertCircle,
+	} from "lucide-svelte";
+	import { cn } from "$lib/utils";
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let isCreating = $state(false);
-	let searchQuery = $state('');
+	let searchQuery = $state("");
 
 	function toggleCreate() {
 		isCreating = !isCreating;
@@ -38,7 +38,7 @@
 		)
 	);
 
-	let activeTab = $state('students'); // 'students' or 'invites'
+	let activeTab = $state("students"); // 'students' or 'invites'
 </script>
 
 <div class="animate-in fade-in slide-in-from-bottom-4 space-y-8 duration-500">
@@ -51,7 +51,7 @@
 		</div>
 		<Button
 			onclick={toggleCreate}
-			variant={isCreating ? 'outline' : 'primary'}
+			variant={isCreating ? "outline" : "primary"}
 			class="shadow-lg shadow-blue-100"
 		>
 			{#if isCreating}
@@ -75,9 +75,9 @@
 					action="?/invite"
 					use:enhance={() => {
 						return async ({ result }) => {
-							if (result.type === 'success') {
+							if (result.type === "success") {
 								isCreating = false;
-								activeTab = 'invites';
+								activeTab = "invites";
 							}
 						};
 					}}
@@ -91,7 +91,7 @@
 							placeholder="maria@universidade.edu"
 							required
 						/>
-						
+
 						<div class="space-y-1.5">
 							<label class="text-sm font-medium text-gray-700" for="classId">Turma</label>
 							<select
@@ -112,7 +112,9 @@
 						<div
 							class={cn(
 								"flex items-center gap-2 rounded-lg border p-3 text-sm font-medium",
-								form.success ? "border-emerald-100 bg-emerald-50 text-emerald-600" : "border-red-100 bg-red-50 text-red-600"
+								form.success
+									? "border-emerald-100 bg-emerald-50 text-emerald-600"
+									: "border-red-100 bg-red-50 text-red-600"
 							)}
 						>
 							<AlertCircle class="h-4 w-4" />
@@ -134,36 +136,36 @@
 			<!-- Tabs -->
 			<div class="flex border-b border-gray-100">
 				<button
-					onclick={() => (activeTab = 'students')}
+					onclick={() => (activeTab = "students")}
 					class={cn(
-						'px-6 py-3 text-sm font-bold transition-all border-b-2',
-						activeTab === 'students'
-							? 'border-blue-600 text-blue-600'
-							: 'border-transparent text-gray-400 hover:text-gray-600'
+						"border-b-2 px-6 py-3 text-sm font-bold transition-all",
+						activeTab === "students"
+							? "border-blue-600 text-blue-600"
+							: "border-transparent text-gray-400 hover:text-gray-600"
 					)}
 				>
 					Estudantes Ativos
-					<Badge class="ml-2 bg-blue-50 text-blue-600 border-blue-100">
+					<Badge class="ml-2 border-blue-100 bg-blue-50 text-blue-600">
 						{data.students.length}
 					</Badge>
 				</button>
 				<button
-					onclick={() => (activeTab = 'invites')}
+					onclick={() => (activeTab = "invites")}
 					class={cn(
-						'px-6 py-3 text-sm font-bold transition-all border-b-2',
-						activeTab === 'invites'
-							? 'border-blue-600 text-blue-600'
-							: 'border-transparent text-gray-400 hover:text-gray-600'
+						"border-b-2 px-6 py-3 text-sm font-bold transition-all",
+						activeTab === "invites"
+							? "border-blue-600 text-blue-600"
+							: "border-transparent text-gray-400 hover:text-gray-600"
 					)}
 				>
 					Convites Pendentes
-					<Badge class="ml-2 bg-amber-50 text-amber-600 border-amber-100">
+					<Badge class="ml-2 border-amber-100 bg-amber-50 text-amber-600">
 						{data.pendingInvitations.length}
 					</Badge>
 				</button>
 			</div>
 
-			{#if activeTab === 'students'}
+			{#if activeTab === "students"}
 				<div class="space-y-4">
 					<!-- Filters & Search -->
 					<div class="flex flex-col gap-4 sm:flex-row">
@@ -220,7 +222,7 @@
 														<div class="text-sm font-bold text-gray-900">{student.user.name}</div>
 														<div class="mt-0.5 flex items-center gap-1 text-xs text-gray-500">
 															<IdCard class="h-3 w-3" />
-															{student.registrationNumber || 'Sem matrícula'}
+															{student.registrationNumber || "Sem matrícula"}
 														</div>
 													</div>
 												</div>
@@ -280,8 +282,8 @@
 													</div>
 													<p class="font-medium text-gray-500 italic">
 														{searchQuery
-															? 'Nenhum estudante encontrado para sua busca.'
-															: 'Nenhum estudante cadastrado no sistema.'}
+															? "Nenhum estudante encontrado para sua busca."
+															: "Nenhum estudante cadastrado no sistema."}
 													</p>
 												</div>
 											</td>
@@ -335,7 +337,7 @@
 													variant="info"
 													class="border-blue-100 bg-blue-50 px-3 py-1 font-medium text-blue-700"
 												>
-													{invite.class?.name || 'Sem turma'}
+													{invite.class?.name || "Sem turma"}
 												</Badge>
 											</td>
 											<td class="px-6 py-4 whitespace-nowrap">
@@ -344,13 +346,13 @@
 												</div>
 											</td>
 											<td class="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">
-												<Button 
-													variant="outline" 
+												<Button
+													variant="outline"
 													size="sm"
 													onclick={() => {
 														const url = `${window.location.origin}/register/${invite.token}`;
 														navigator.clipboard.writeText(url);
-														alert('Link copiado!');
+														alert("Link copiado!");
 													}}
 												>
 													Copiar Link
@@ -366,9 +368,7 @@
 													<div class="rounded-full bg-gray-50 p-4">
 														<Mail class="h-8 w-8 text-gray-300" />
 													</div>
-													<p class="font-medium text-gray-500 italic">
-														Nenhum convite pendente.
-													</p>
+													<p class="font-medium text-gray-500 italic">Nenhum convite pendente.</p>
 													<Button variant="outline" size="sm" onclick={toggleCreate} class="mt-2">
 														Enviar Primeiro Convite
 													</Button>

@@ -2,13 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import {
-	Folder,
-	Forward,
-	MoreHorizontal,
-	Trash2,
-	type LucideIcon,
-} from "lucide-react";
+import { Folder, Forward, MoreHorizontal, Trash2, type LucideIcon } from "lucide-react";
 
 import {
 	DropdownMenu,

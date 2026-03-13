@@ -38,9 +38,7 @@ export async function matchInsuranceFilesToStudents(db: Services) {
 			console.log(`Extracted CPF: ${extractedCpf}`);
 			if (typeof extractedCpf === "string") {
 				// Find the student by matching the extracted CPF
-				const matchedStudent = students.find(
-					(student) => student.cpf === extractedCpf
-				);
+				const matchedStudent = students.find((student) => student.cpf === extractedCpf);
 
 				if (!matchedStudent) {
 					console.log(`No match for CPF ${extractedCpf} in ${file}`);
@@ -54,9 +52,7 @@ export async function matchInsuranceFilesToStudents(db: Services) {
 		}
 
 		// Write all files to the insurance directory
-		console.log(
-			"\n\n\n\n\n----------------------\nWriting files to insurances directory..."
-		);
+		console.log("\n\n\n\n\n----------------------\nWriting files to insurances directory...");
 
 		for (const { file, student } of matchedStudents) {
 			if (student) {
@@ -73,10 +69,7 @@ export async function matchInsuranceFilesToStudents(db: Services) {
 
 				await db.em.persistAndFlush(student);
 
-				const destPath = path.join(
-					PROJECT_ROOT,
-					path.dirname(student.insurance.destPath)
-				);
+				const destPath = path.join(PROJECT_ROOT, path.dirname(student.insurance.destPath));
 				// // Ensure destination directory exists
 				await fs.mkdir(destPath, {
 					recursive: true,

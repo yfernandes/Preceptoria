@@ -53,10 +53,7 @@ export async function moveInsuranceFiles() {
 			renameSync(oldFilePath, newFilePath);
 			console.log(`Moved insurance.pdf from ${folder} to ${targetPath}`);
 		} catch (error) {
-			console.error(
-				`Failed to move insurance.pdf from ${folder} to ${targetPath}:`,
-				error
-			);
+			console.error(`Failed to move insurance.pdf from ${folder} to ${targetPath}:`, error);
 		}
 	}
 

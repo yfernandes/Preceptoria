@@ -4,21 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 
-export function SignupForm({
-	className,
-	...props
-}: React.ComponentProps<"div">) {
+export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -53,20 +44,18 @@ export function SignupForm({
 			<Card>
 				<CardHeader className="text-center">
 					<CardTitle className="text-xl">Criar conta</CardTitle>
-					<CardDescription>
-						Preencha os campos para se cadastrar
-					</CardDescription>
+					<CardDescription>Preencha os campos para se cadastrar</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form onSubmit={handleSubmit}>
 						<div className="grid gap-6">
 							{localError && (
-								<div className="bg-red-100 border border-red-300 text-red-800 rounded p-2 text-sm mb-2 text-center">
+								<div className="mb-2 rounded border border-red-300 bg-red-100 p-2 text-center text-sm text-red-800">
 									{localError}
 								</div>
 							)}
 							{error && (
-								<div className="bg-red-100 border border-red-300 text-red-800 rounded p-2 text-sm mb-2 text-center">
+								<div className="mb-2 rounded border border-red-300 bg-red-100 p-2 text-center text-sm text-red-800">
 									{error}
 								</div>
 							)}
@@ -119,7 +108,7 @@ export function SignupForm({
 					</form>
 				</CardContent>
 			</Card>
-			<div className="text-muted-foreground text-center text-xs mt-2">
+			<div className="text-muted-foreground mt-2 text-center text-xs">
 				Já tem uma conta?{" "}
 				<a href="/login" className="underline underline-offset-4">
 					Entrar

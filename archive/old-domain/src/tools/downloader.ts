@@ -1,10 +1,7 @@
 import path from "path";
 import { GDrive } from "tools";
 import { type Services } from "../db.js";
-import {
-	DocumentType,
-	DownloadStatus,
-} from "../entities/document/document.interface.js";
+import { DocumentType, DownloadStatus } from "../entities/document/document.interface.js";
 
 export async function downloadFiles(db: Services) {
 	const gDrive = new GDrive();

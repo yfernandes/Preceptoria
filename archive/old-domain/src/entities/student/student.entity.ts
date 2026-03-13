@@ -70,11 +70,7 @@ export class Student extends User {
 
 	private setFolderName() {
 		if (this.fullName) {
-			this.studentFolder = path.join(
-				this.projectRoot,
-				"StudentsData",
-				this.crefito
-			);
+			this.studentFolder = path.join(this.projectRoot, "StudentsData", this.crefito);
 		} else {
 			console.log("Could not find crefito number");
 		}
@@ -82,11 +78,7 @@ export class Student extends User {
 
 	addDocumentation(submission: Documentation) {
 		// Check if the documentation already exists
-		if (
-			this.documentations.find(
-				(entry) => entry.timestamp === submission.timestamp
-			)
-		) {
+		if (this.documentations.find((entry) => entry.timestamp === submission.timestamp)) {
 			console.log(
 				`-- Documentation with timestamp ${submission.timestamp} already exists for user with crefito ${this.crefito}`
 			);

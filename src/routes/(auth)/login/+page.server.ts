@@ -28,11 +28,7 @@ export const actions: Actions = {
 				throw redirect(302, "/dashboard");
 			}
 		} catch (e) {
-			if (
-				(e instanceof Error && e.message === "302") ||
-				(e as any).status === 302
-			)
-				throw e; // Handle redirect
+			if ((e instanceof Error && e.message === "302") || (e as any).status === 302) throw e; // Handle redirect
 
 			// Better auth might throw for invalid credentials
 			return fail(401, {

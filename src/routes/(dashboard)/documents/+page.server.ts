@@ -30,7 +30,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		rawDocuments.map(async (doc) => ({
 			...doc,
 			downloadUrl: await getPresignedDownloadUrl(doc.url),
-		})),
+		}))
 	);
 
 	return {
@@ -87,7 +87,7 @@ export const actions: Actions = {
 		// Send notification
 		const doc = await db.query.documents.findFirst({
 			where: (d, { eq }) => eq(d.id, id),
-			with: { student: { with: { user: true } } }
+			with: { student: { with: { user: true } } },
 		});
 		if (doc?.student.user.email) {
 			await emailService.sendDocumentStatusEmail(doc.student.user.email, doc.name, "APPROVED");
@@ -105,20 +105,20 @@ export const actions: Actions = {
 
 		if (!id || !reason) return fail(400);
 
-		await documentService.updateDocumentStatus(
-			id,
-			"REJECTED",
-			locals.user.id,
-			reason,
-		);
+		await documentService.updateDocumentStatus(id, "REJECTED", locals.user.id, reason);
 
 		// Send notification
 		const doc = await db.query.documents.findFirst({
 			where: (d, { eq }) => eq(d.id, id),
-			with: { student: { with: { user: true } } }
+			with: { student: { with: { user: true } } },
 		});
 		if (doc?.student.user.email) {
-			await emailService.sendDocumentStatusEmail(doc.student.user.email, doc.name, "REJECTED", reason);
+			await emailService.sendDocumentStatusEmail(
+				doc.student.user.email,
+				doc.name,
+				"REJECTED",
+				reason
+			);
 		}
 
 		return { success: true };

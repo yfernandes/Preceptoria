@@ -1,10 +1,10 @@
-import * as Sentry from '@sentry/sveltekit';
-import { env } from '$env/dynamic/public';
+import * as Sentry from "@sentry/sveltekit";
+import { env } from "$env/dynamic/public";
 
 Sentry.init({
-	dsn: env.PUBLIC_SENTRY_DSN || '',
+	dsn: env.PUBLIC_SENTRY_DSN || "",
 	tracesSampleRate: 1.0,
 	replaysSessionSampleRate: 0.1,
 	replaysOnErrorSampleRate: 1.0,
-	integrations: [Sentry.replayIntegration()]
+	integrations: [Sentry.replayIntegration()],
 });

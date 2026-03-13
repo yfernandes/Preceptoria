@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { PageData, ActionData } from './$types';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Card from '$lib/components/ui/Card.svelte';
-	import Badge from '$lib/components/ui/Badge.svelte';
+	import { enhance } from "$app/forms";
+	import type { PageData, ActionData } from "./$types";
+	import Button from "$lib/components/ui/Button.svelte";
+	import Card from "$lib/components/ui/Card.svelte";
+	import Badge from "$lib/components/ui/Badge.svelte";
 	import {
 		Upload,
 		FileText,
@@ -18,11 +18,11 @@
 		XCircle,
 		ExternalLink,
 		ChevronRight,
-		ShieldCheck
-	} from 'lucide-svelte';
+		ShieldCheck,
+	} from "lucide-svelte";
 
-	import { invalidateAll } from '$app/navigation';
-	import { cn } from '$lib/utils';
+	import { invalidateAll } from "$app/navigation";
+	import { cn } from "$lib/utils";
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	const documentsWithWarnings = $derived(
@@ -31,12 +31,16 @@
 			const daysUntilExpiry = Math.ceil(
 				(new Date(doc.expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
 			);
-			return { ...doc, isExpiringSoon: daysUntilExpiry <= 30 && daysUntilExpiry > 0, isExpired: daysUntilExpiry <= 0 };
+			return {
+				...doc,
+				isExpiringSoon: daysUntilExpiry <= 30 && daysUntilExpiry > 0,
+				isExpired: daysUntilExpiry <= 0,
+			};
 		})
 	);
 
 	let uploadFile: File | null = $state(null);
-	let selectedType = $state('VACCINATION_CARD');
+	let selectedType = $state("VACCINATION_CARD");
 	let isUploading = $state(false);
 
 	async function handleUpload(e: Event) {
@@ -44,57 +48,57 @@
 		if (!uploadFile || !data.studentId) return;
 
 		isUploading = true;
-		
+
 		try {
 			const formData = new FormData();
-			formData.append('name', uploadFile.name);
-			formData.append('type', uploadFile.type);
-			formData.append('documentType', selectedType);
-			formData.append('studentId', data.studentId);
-			formData.append('size', uploadFile.size.toString());
+			formData.append("name", uploadFile.name);
+			formData.append("type", uploadFile.type);
+			formData.append("documentType", selectedType);
+			formData.append("studentId", data.studentId);
+			formData.append("size", uploadFile.size.toString());
 
-			const response = await fetch('?/getUploadUrl', {
-				method: 'POST',
-				body: formData
+			const response = await fetch("?/getUploadUrl", {
+				method: "POST",
+				body: formData,
 			});
 
 			const result = await response.json();
-			
-			if (result.type === 'success' && result.data?.uploadUrl) {
+
+			if (result.type === "success" && result.data?.uploadUrl) {
 				const { uploadUrl } = result.data;
-				
+
 				const uploadResponse = await fetch(uploadUrl, {
-					method: 'PUT',
+					method: "PUT",
 					body: uploadFile,
 					headers: {
-						'Content-Type': uploadFile.type
-					}
+						"Content-Type": uploadFile.type,
+					},
 				});
 
 				if (uploadResponse.ok) {
 					uploadFile = null;
 					await invalidateAll();
 				} else {
-					alert('Falha ao enviar arquivo para o storage.');
+					alert("Falha ao enviar arquivo para o storage.");
 				}
 			} else {
-				alert(result.data?.message || 'Falha ao obter URL de upload.');
+				alert(result.data?.message || "Falha ao obter URL de upload.");
 			}
 		} catch (err) {
 			console.error(err);
-			alert('Erro inesperado durante o envio.');
+			alert("Erro inesperado durante o envio.");
 		} finally {
 			isUploading = false;
 		}
 	}
 
 	const docTypeLabels: Record<string, string> = {
-		VACCINATION_CARD: 'Cartão de Vacinação',
-		PROFESSIONAL_ID: 'Identidade Profissional',
-		COMMITMENT_CONTRACT: 'Termo de Compromisso',
-		ADMISSION_FORM: 'Ficha de Admissão',
-		BADGE_PICTURE: 'Foto para Crachá',
-		OTHER: 'Outro'
+		VACCINATION_CARD: "Cartão de Vacinação",
+		PROFESSIONAL_ID: "Identidade Profissional",
+		COMMITMENT_CONTRACT: "Termo de Compromisso",
+		ADMISSION_FORM: "Ficha de Admissão",
+		BADGE_PICTURE: "Foto para Crachá",
+		OTHER: "Outro",
 	};
 </script>
 
@@ -104,8 +108,8 @@
 			<h1 class="text-3xl font-bold tracking-tight text-gray-900">Gestão de Documentos</h1>
 			<p class="mt-1 text-gray-500">
 				{data.isStudent
-					? 'Envie e acompanhe o status dos seus documentos.'
-					: 'Revise e aprove os documentos enviados pelos alunos.'}
+					? "Envie e acompanhe o status dos seus documentos."
+					: "Revise e aprove os documentos enviados pelos alunos."}
 			</p>
 		</div>
 		{#if !data.isStudent}
@@ -163,7 +167,7 @@
 										<Upload class="h-6 w-6 text-blue-600" />
 									</div>
 									<div class="mt-1 text-xs font-bold text-gray-900">
-										{uploadFile ? uploadFile.name : 'Clique para selecionar'}
+										{uploadFile ? uploadFile.name : "Clique para selecionar"}
 									</div>
 									<p class="text-[10px] font-medium text-gray-400">Tamanho máximo: 10MB</p>
 								</div>
@@ -211,8 +215,11 @@
 							<div
 								class={cn(
 									"group rounded-2xl border p-5 shadow-sm transition-all hover:shadow-md",
-									doc.isExpired ? "border-red-200 bg-red-50/30" : 
-									doc.isExpiringSoon ? "border-amber-200 bg-amber-50/30" : "border-gray-100 bg-white"
+									doc.isExpired
+										? "border-red-200 bg-red-50/30"
+										: doc.isExpiringSoon
+											? "border-amber-200 bg-amber-50/30"
+											: "border-gray-100 bg-white"
 								)}
 							>
 								<div class="flex items-start justify-between">
@@ -220,8 +227,11 @@
 										<div
 											class={cn(
 												"flex h-12 w-12 items-center justify-center rounded-xl shadow-inner transition-colors",
-												doc.isExpired ? "bg-red-100 text-red-600" :
-												doc.isExpiringSoon ? "bg-amber-100 text-amber-600" : "bg-gray-50 text-gray-400 group-hover:bg-blue-50 group-hover:text-blue-600"
+												doc.isExpired
+													? "bg-red-100 text-red-600"
+													: doc.isExpiringSoon
+														? "bg-amber-100 text-amber-600"
+														: "bg-gray-50 text-gray-400 group-hover:bg-blue-50 group-hover:text-blue-600"
 											)}
 										>
 											<FileText class="h-6 w-6" />
@@ -234,28 +244,38 @@
 												).toLocaleDateString()}
 											</p>
 											{#if doc.expiresAt}
-												<div class={cn(
-													"mt-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-tight",
-													doc.isExpired ? "text-red-600" : doc.isExpiringSoon ? "text-amber-600" : "text-gray-400"
-												)}>
+												<div
+													class={cn(
+														"mt-1 flex items-center gap-1 text-[10px] font-bold tracking-tight uppercase",
+														doc.isExpired
+															? "text-red-600"
+															: doc.isExpiringSoon
+																? "text-amber-600"
+																: "text-gray-400"
+													)}
+												>
 													<AlertCircle class="h-3 w-3" />
 													Expira em: {new Date(doc.expiresAt).toLocaleDateString()}
-													{doc.isExpired ? '(EXPIRADO)' : doc.isExpiringSoon ? '(EXPIRA EM BREVE)' : ''}
+													{doc.isExpired
+														? "(EXPIRADO)"
+														: doc.isExpiringSoon
+															? "(EXPIRA EM BREVE)"
+															: ""}
 												</div>
 											{/if}
 										</div>
 									</div>
 
 									<div class="flex items-center gap-3">
-										<a 
-											href={doc.downloadUrl} 
-											target="_blank" 
+										<a
+											href={doc.downloadUrl}
+											target="_blank"
 											rel="noopener noreferrer"
-											class="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+											class="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-50 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600"
 										>
 											<Eye class="h-4 w-4" />
 										</a>
-										{#if doc.status === 'APPROVED'}
+										{#if doc.status === "APPROVED"}
 											<Badge
 												variant="success"
 												class="border-emerald-100 bg-emerald-50 px-3 py-1 text-emerald-700"
@@ -263,7 +283,7 @@
 												<CheckCircle2 class="mr-1 h-3 w-3" />
 												Aprovado
 											</Badge>
-										{:else if doc.status === 'REJECTED'}
+										{:else if doc.status === "REJECTED"}
 											<Badge
 												variant="error"
 												class="border-rose-100 bg-rose-50 px-3 py-1 text-rose-700"
@@ -283,7 +303,7 @@
 									</div>
 								</div>
 
-								{#if doc.status === 'REJECTED'}
+								{#if doc.status === "REJECTED"}
 									<div
 										class="mt-4 flex gap-2 rounded-xl border border-rose-100 bg-rose-50 p-3 text-[11px] font-bold text-rose-700"
 									>
@@ -351,13 +371,20 @@
 											<div class="text-sm font-bold tracking-tight text-gray-900">
 												{doc.student.user.name}
 												{#if doc.expiresAt}
-													{@const days = Math.ceil((new Date(doc.expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}
+													{@const days = Math.ceil(
+														(new Date(doc.expiresAt).getTime() - new Date().getTime()) /
+															(1000 * 60 * 60 * 24)
+													)}
 													{#if days <= 30}
-														<span class={cn(
-															"ml-2 rounded-full px-2 py-0.5 text-[8px] font-black uppercase",
-															days <= 0 ? "bg-red-100 text-red-600" : "bg-amber-100 text-amber-600"
-														)}>
-															{days <= 0 ? 'Expirado' : 'Expira em breve'}
+														<span
+															class={cn(
+																"ml-2 rounded-full px-2 py-0.5 text-[8px] font-black uppercase",
+																days <= 0
+																	? "bg-red-100 text-red-600"
+																	: "bg-amber-100 text-amber-600"
+															)}
+														>
+															{days <= 0 ? "Expirado" : "Expira em breve"}
 														</span>
 													{/if}
 												{/if}
@@ -371,12 +398,12 @@
 										</div>
 									</td>
 									<td class="px-8 py-5 whitespace-nowrap">
-										{#if doc.status === 'APPROVED'}
+										{#if doc.status === "APPROVED"}
 											<Badge
 												variant="success"
 												class="border-none bg-emerald-50 font-bold text-emerald-700">APROVADO</Badge
 											>
-										{:else if doc.status === 'REJECTED'}
+										{:else if doc.status === "REJECTED"}
 											<Badge variant="error" class="border-none bg-rose-50 font-bold text-rose-700"
 												>REJEITADO</Badge
 											>
@@ -393,39 +420,39 @@
 												href={doc.downloadUrl}
 												target="_blank"
 												rel="noopener noreferrer"
-												class="flex h-9 items-center justify-center rounded-xl border border-blue-100 bg-white px-4 text-xs font-bold text-blue-600 hover:bg-blue-50 transition-all shadow-sm"
+												class="flex h-9 items-center justify-center rounded-xl border border-blue-100 bg-white px-4 text-xs font-bold text-blue-600 shadow-sm transition-all hover:bg-blue-50"
 											>
 												<Eye class="mr-2 h-4 w-4" />
 												Analisar
 											</a>
-											
-											{#if doc.status === 'PENDING'}
+
+											{#if doc.status === "PENDING"}
 												<div class="flex gap-2">
 													<form method="POST" action="?/approve" use:enhance>
 														<input type="hidden" name="id" value={doc.id} />
-														<Button 
+														<Button
 															type="submit"
-															variant="ghost" 
-															size="icon" 
+															variant="ghost"
+															size="icon"
 															class="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
 														>
 															<CheckCircle2 class="h-4 w-4" />
 														</Button>
 													</form>
-													<form 
-														method="POST" 
-														action="?/reject" 
+													<form
+														method="POST"
+														action="?/reject"
 														use:enhance={({ formData }) => {
-															const reason = prompt('Motivo da rejeição:');
+															const reason = prompt("Motivo da rejeição:");
 															if (!reason) return;
-															formData.set('reason', reason);
+															formData.set("reason", reason);
 														}}
 													>
 														<input type="hidden" name="id" value={doc.id} />
-														<Button 
+														<Button
 															type="submit"
-															variant="ghost" 
-															size="icon" 
+															variant="ghost"
+															size="icon"
 															class="h-9 w-9 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100"
 														>
 															<XCircle class="h-4 w-4" />

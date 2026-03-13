@@ -69,17 +69,12 @@ export async function compileDocumentation(db: Services): Promise<void> {
 		// 	`Creating list of approved documents for Crefito: ${student.crefito}`
 		// );
 
-		function checkRequirements(
-			document: Document,
-			requirements: DocumentTag[]
-		) {
+		function checkRequirements(document: Document, requirements: DocumentTag[]) {
 			document.tags.forEach((tag) => {
 				// Is this document tag present in the requirements list?
 				if (requirements.includes(tag)) {
 					// Remove it from the requirements list
-					requirements = requirements.filter(
-						(requirement) => requirement !== tag
-					);
+					requirements = requirements.filter((requirement) => requirement !== tag);
 					// Add it to the approved list
 					if (!approved.includes(document)) {
 						approved.push(document);

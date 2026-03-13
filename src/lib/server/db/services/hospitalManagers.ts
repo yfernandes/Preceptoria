@@ -2,10 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import { hospitalManagers, user } from "$lib/server/db/schema";
 
-export async function createHospitalManager(data: {
-	userId: string;
-	hospitalId: string;
-}) {
+export async function createHospitalManager(data: { userId: string; hospitalId: string }) {
 	const [result] = await db.insert(hospitalManagers).values(data).returning();
 	return result;
 }
@@ -39,9 +36,6 @@ export async function listHospitalManagers(hospitalId?: string) {
 }
 
 export async function deleteHospitalManager(id: string) {
-	const [result] = await db
-		.delete(hospitalManagers)
-		.where(eq(hospitalManagers.id, id))
-		.returning();
+	const [result] = await db.delete(hospitalManagers).where(eq(hospitalManagers.id, id)).returning();
 	return result;
 }

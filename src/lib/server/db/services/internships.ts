@@ -8,10 +8,7 @@ export async function createInternshipPlacement(data: {
 	startDate: Date;
 	endDate: Date;
 }) {
-	const [result] = await db
-		.insert(internshipPlacements)
-		.values(data)
-		.returning();
+	const [result] = await db.insert(internshipPlacements).values(data).returning();
 	return result;
 }
 
@@ -29,10 +26,7 @@ export async function getPlacementById(id: string) {
 	});
 }
 
-export async function listPlacementsByHospital(
-	hospitalId: string,
-	activeOnly = true,
-) {
+export async function listPlacementsByHospital(hospitalId: string, activeOnly = true) {
 	const conditions = [eq(internshipPlacements.hospitalId, hospitalId)];
 	if (activeOnly) {
 		conditions.push(eq(internshipPlacements.status, "ACTIVE"));
@@ -52,7 +46,7 @@ export async function listPlacementsByHospital(
 
 export async function updatePlacementStatus(
 	id: string,
-	status: "ACTIVE" | "COMPLETED" | "CANCELLED",
+	status: "ACTIVE" | "COMPLETED" | "CANCELLED"
 ) {
 	const [result] = await db
 		.update(internshipPlacements)

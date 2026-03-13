@@ -25,8 +25,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 		classesList = await db.query.classes.findMany({
 			where: eq(classes.supervisorId, supervisor.id),
 			with: {
-				course: true
-			}
+				course: true,
+			},
 		});
 	} else {
 		classesList = await classService.listClasses();
@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	// List students. If supervisor, only from their classes
 	const studentsList = await db.query.students.findMany({
-		where: supervisor 
+		where: supervisor
 			? sql`${students.classId} IN (SELECT id FROM ${classes} WHERE supervisor_id = ${supervisor.id})`
 			: undefined,
 		with: {
@@ -50,12 +50,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 	// List pending invitations. If supervisor, only for their classes
 	const pendingInvitations = await db.query.invitations.findMany({
 		where: (i, { eq, and, gt, inArray }) => {
-			const baseFilters = [
-				eq(i.status, "PENDING"),
-				gt(i.expiresAt, new Date())
-			];
+			const baseFilters = [eq(i.status, "PENDING"), gt(i.expiresAt, new Date())];
 			if (supervisor) {
-				const classIds = classesList.map(c => c.id);
+				const classIds = classesList.map((c) => c.id);
 				if (classIds.length > 0) {
 					baseFilters.push(inArray(i.classId, classIds));
 				} else {
@@ -84,7 +81,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions: Actions = {
 	invite: async ({ request, locals }) => {
 		if (!locals.user) return fail(401);
-		
+
 		const formData = await request.formData();
 		const email = formData.get("email")?.toString();
 		const classId = formData.get("classId")?.toString();
@@ -101,10 +98,7 @@ export const actions: Actions = {
 			if (!supervisor) return fail(403, { message: "Supervisor not found" });
 
 			const targetClass = await db.query.classes.findFirst({
-				where: and(
-					eq(classes.id, classId),
-					eq(classes.supervisorId, supervisor.id)
-				)
+				where: and(eq(classes.id, classId), eq(classes.supervisorId, supervisor.id)),
 			});
 
 			if (!targetClass) {
@@ -127,11 +121,7 @@ export const actions: Actions = {
 			// Check if invitation already exists and is pending
 			const existingInvite = await db.query.invitations.findFirst({
 				where: (i, { eq, and, gt }) =>
-					and(
-						eq(i.email, email),
-						eq(i.status, "PENDING"),
-						gt(i.expiresAt, new Date())
-					),
+					and(eq(i.email, email), eq(i.status, "PENDING"), gt(i.expiresAt, new Date())),
 			});
 
 			if (existingInvite) {
@@ -149,7 +139,11 @@ export const actions: Actions = {
 				where: eq(classes.id, classId),
 			});
 
-			await emailService.sendInvitationEmail(email, invitation.token, targetClass?.name || "Sua Turma");
+			await emailService.sendInvitationEmail(
+				email,
+				invitation.token,
+				targetClass?.name || "Sua Turma"
+			);
 
 			return { success: true, message: "Invitation sent successfully" };
 		} catch (err) {

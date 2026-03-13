@@ -5,6 +5,7 @@ A comprehensive student management system for healthcare education institutions,
 ## 🚀 Key Features
 
 ### 📊 Advanced Data Processing
+
 - **Multi-form consolidation**: Processes data from 4 merged Google Forms
 - **Crefito-based grouping**: Uses professional identity numbers for reliable student matching
 - **Smart deduplication**: Removes duplicate documents while preserving all unique files
@@ -12,12 +13,14 @@ A comprehensive student management system for healthcare education institutions,
 - **99.46% data completion** achieved in production
 
 ### 🏥 Healthcare Institution Management
+
 - **Multi-hospital support**: Hospital Municipal de Salvador and Hospital Santa Isabel
 - **Role-based access control**: SysAdmin, OrgAdmin, Supervisor, HospitalManager, Preceptor, Student
 - **Document management**: Vaccination cards, professional IDs, commitment terms, hospital forms
 - **Class organization**: Dynamic class creation from Google Sheets data
 
 ### 🔄 Automated Data Sync
+
 - **Daily Google Sheets sync**: Runs automatically at 3am
 - **Real-time updates**: Processes new submissions and updates
 - **Data protection**: Smart field updates prevent overwriting meaningful data
@@ -39,6 +42,7 @@ PreceptoriaV2/
 ## 🛠️ Quick Start
 
 ### Prerequisites
+
 - **Bun** (latest version)
 - **PostgreSQL** database
 - **Google Cloud** service account (for Sheets integration)

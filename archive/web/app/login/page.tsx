@@ -8,13 +8,11 @@ export default function LoginPage() {
 			<div className="w-full max-w-md space-y-8">
 				{/* Header */}
 				<div className="text-center">
-					<div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 mb-4">
+					<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600">
 						<GraduationCap className="h-6 w-6 text-white" />
 					</div>
 					<h1 className="text-3xl font-bold text-gray-900">Preceptoria</h1>
-					<p className="mt-2 text-sm text-gray-600">
-						Sistema de Gestão de Estágios
-					</p>
+					<p className="mt-2 text-sm text-gray-600">Sistema de Gestão de Estágios</p>
 				</div>
 
 				{/* Login Form */}

@@ -17,21 +17,17 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const organizationsList = await orgService.listOrganizations();
 
 	const pendingInvitations = await db.query.invitations.findMany({
-		where: (i, { eq, and, gt }) => 
-			and(
-				eq(i.role, "HospitalManager"),
-				eq(i.status, "PENDING"),
-				gt(i.expiresAt, new Date())
-			),
+		where: (i, { eq, and, gt }) =>
+			and(eq(i.role, "HospitalManager"), eq(i.status, "PENDING"), gt(i.expiresAt, new Date())),
 		with: {
-			hospital: true
-		}
+			hospital: true,
+		},
 	});
 
 	return {
 		hospitals: hospitalsList,
 		organizations: organizationsList,
-		pendingInvitations
+		pendingInvitations,
 	};
 };
 
@@ -68,7 +64,7 @@ export const actions: Actions = {
 
 		try {
 			const existingUser = await db.query.user.findFirst({
-				where: (u, { eq }) => eq(u.email, email)
+				where: (u, { eq }) => eq(u.email, email),
 			});
 			if (existingUser) return fail(400, { message: "User already exists" });
 
@@ -76,18 +72,22 @@ export const actions: Actions = {
 				email,
 				role: "HospitalManager",
 				hospitalId,
-				invitedBy: locals.user.id
+				invitedBy: locals.user.id,
 			});
 
 			const targetHospital = await db.query.hospitals.findFirst({
-				where: eq(hospitals.id, hospitalId)
+				where: eq(hospitals.id, hospitalId),
 			});
 
-			await emailService.sendInvitationEmail(email, invitation.token, targetHospital?.name || "Hospital");
+			await emailService.sendInvitationEmail(
+				email,
+				invitation.token,
+				targetHospital?.name || "Hospital"
+			);
 
 			return { success: true };
 		} catch (err) {
 			return fail(500, { message: "Failed to send invitation" });
 		}
-	}
+	},
 };

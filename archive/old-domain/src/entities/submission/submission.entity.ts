@@ -1,13 +1,5 @@
-import {
-	Entity,
-	EntityRepositoryType,
-	Property,
-	Unique,
-} from "@mikro-orm/core";
-import type {
-	ISubmission,
-	SubmissionDocumentation,
-} from "./submission.interface.js";
+import { Entity, EntityRepositoryType, Property, Unique } from "@mikro-orm/core";
+import type { ISubmission, SubmissionDocumentation } from "./submission.interface.js";
 import { BaseEntity } from "../common/base.entity.js";
 import { SubmissionRepository } from "./submission.repository.js";
 

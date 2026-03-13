@@ -11,11 +11,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	let classesList;
 	const allCourses = await db.query.courses.findMany({
-		with: { school: true }
+		with: { school: true },
 	});
-	
+
 	const allSupervisors = await db.query.supervisors.findMany({
-		with: { user: true }
+		with: { user: true },
 	});
 
 	if (locals.user.role === "Supervisor") {
@@ -28,29 +28,29 @@ export const load: PageServerLoad = async ({ locals }) => {
 			where: eq(classes.supervisorId, supervisor.id),
 			with: {
 				course: { with: { school: true } },
-				supervisor: { with: { user: true } }
-			}
+				supervisor: { with: { user: true } },
+			},
 		});
 	} else {
 		classesList = await db.query.classes.findMany({
 			with: {
 				course: { with: { school: true } },
-				supervisor: { with: { user: true } }
-			}
+				supervisor: { with: { user: true } },
+			},
 		});
 	}
 
 	return {
 		classes: classesList,
 		courses: allCourses,
-		supervisors: allSupervisors
+		supervisors: allSupervisors,
 	};
 };
 
 export const actions: Actions = {
 	create: async ({ request, locals }) => {
 		if (!locals.user) return fail(401);
-		
+
 		// Only Admins or Supervisors (for themselves) can create
 		const formData = await request.formData();
 		const name = formData.get("name")?.toString();
@@ -65,7 +65,7 @@ export const actions: Actions = {
 
 		try {
 			let finalSupervisorId = supervisorId;
-			
+
 			if (locals.user.role === "Supervisor") {
 				const sup = await db.query.supervisors.findFirst({
 					where: eq(supervisors.userId, locals.user.id),
@@ -78,7 +78,7 @@ export const actions: Actions = {
 				courseId,
 				supervisorId: finalSupervisorId || undefined,
 				startDate,
-				endDate
+				endDate,
 			});
 			return { success: true };
 		} catch (err) {
@@ -89,7 +89,7 @@ export const actions: Actions = {
 
 	complete: async ({ request, locals }) => {
 		if (!locals.user) return fail(401);
-		
+
 		const formData = await request.formData();
 		const id = formData.get("id")?.toString();
 
@@ -102,7 +102,7 @@ export const actions: Actions = {
 					where: eq(supervisors.userId, locals.user.id),
 				});
 				const c = await db.query.classes.findFirst({
-					where: and(eq(classes.id, id), eq(classes.supervisorId, sup?.id || ""))
+					where: and(eq(classes.id, id), eq(classes.supervisorId, sup?.id || "")),
 				});
 				if (!c) return fail(403, { message: "Unauthorized" });
 			} else if (!["SysAdmin", "OrgAdmin"].includes(locals.user.role)) {
@@ -115,5 +115,5 @@ export const actions: Actions = {
 			console.error(err);
 			return fail(500, { message: "Failed to complete class" });
 		}
-	}
+	},
 };

@@ -57,11 +57,10 @@ export class StudentRepository extends EntityRepository<Student> {
 				console.log(
 					`-- Adding documentation with timestamp ${submission.timestamp} for user with crefito ${existingStudent.crefito}`
 				);
-				const documentation =
-					DocumentationRepository.createDocumentationFromSubmission(
-						existingStudent,
-						submission
-					);
+				const documentation = DocumentationRepository.createDocumentationFromSubmission(
+					existingStudent,
+					submission
+				);
 				// Add complete Documentation to student
 				existingStudent.addDocumentation(documentation);
 			}
@@ -71,11 +70,10 @@ export class StudentRepository extends EntityRepository<Student> {
 			console.log(`-- Creating new student with crefito ${submission.crefito}`);
 			// Create new student
 			const student = new Student(submission, PROJECT_ROOT); // The constructor wont add the documentation automatically
-			const documentation =
-				DocumentationRepository.createDocumentationFromSubmission(
-					student,
-					submission
-				);
+			const documentation = DocumentationRepository.createDocumentationFromSubmission(
+				student,
+				submission
+			);
 			student.addDocumentation(documentation);
 			await this.em.persistAndFlush(student);
 		}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/state';
+	import { page } from "$app/state";
 	import {
 		LayoutDashboard,
 		Hospital,
@@ -13,26 +13,26 @@
 		Layers,
 		Clock,
 		Calendar,
-		Link
-	} from 'lucide-svelte';
-	import { cn } from '$lib/utils';
+		Link,
+	} from "lucide-svelte";
+	import { cn } from "$lib/utils";
 
 	const navItems = [
-		{ name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-		{ name: 'Hospitais', href: '/hospitals', icon: Hospital },
-		{ name: 'Preceptores', href: '/preceptors', icon: User },
-		{ name: 'Escolas', href: '/schools', icon: GraduationCap },
-		{ name: 'Turmas', href: '/classes', icon: Layers },
-		{ name: 'Organizações', href: '/organizations', icon: Building2 },
-		{ name: 'Estudantes', href: '/students', icon: Users },
-		{ name: 'Vínculos', href: '/placements', icon: Link },
-		{ name: 'Documentos', href: '/documents', icon: Files },
-		{ name: 'Disponibilidade', href: '/availability', icon: Clock },
-		{ name: 'Plantões', href: '/shifts', icon: Calendar }
+		{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+		{ name: "Hospitais", href: "/hospitals", icon: Hospital },
+		{ name: "Preceptores", href: "/preceptors", icon: User },
+		{ name: "Escolas", href: "/schools", icon: GraduationCap },
+		{ name: "Turmas", href: "/classes", icon: Layers },
+		{ name: "Organizações", href: "/organizations", icon: Building2 },
+		{ name: "Estudantes", href: "/students", icon: Users },
+		{ name: "Vínculos", href: "/placements", icon: Link },
+		{ name: "Documentos", href: "/documents", icon: Files },
+		{ name: "Disponibilidade", href: "/availability", icon: Clock },
+		{ name: "Plantões", href: "/shifts", icon: Calendar },
 	];
 
 	const isActive = (href: string) => {
-		if (href === '/dashboard') return page.url.pathname === '/dashboard';
+		if (href === "/dashboard") return page.url.pathname === "/dashboard";
 		return page.url.pathname.startsWith(href);
 	};
 </script>
@@ -63,17 +63,17 @@
 			<a
 				href={item.href}
 				class={cn(
-					'group flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200',
+					"group flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
 					active
-						? 'bg-blue-50 text-blue-700 shadow-sm shadow-blue-50'
-						: 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+						? "bg-blue-50 text-blue-700 shadow-sm shadow-blue-50"
+						: "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
 				)}
 			>
 				<div class="flex items-center gap-3">
 					<item.icon
 						class={cn(
-							'h-5 w-5 transition-colors',
-							active ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'
+							"h-5 w-5 transition-colors",
+							active ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"
 						)}
 					/>
 					<span>{item.name}</span>
