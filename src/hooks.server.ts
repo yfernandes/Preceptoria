@@ -1,3 +1,5 @@
+import { sequence } from '@sveltejs/kit/hooks';
+import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';
 import type { Handle } from "@sveltejs/kit";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/environment";
@@ -14,4 +16,6 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 	return svelteKitHandler({ event, resolve, auth, building });
 };
 
-export const handle: Handle = handleBetterAuth;
+export const handle: Handle = sequence(sentryHandle(), handleBetterAuth);
+
+export const handleError = handleErrorWithSentry();

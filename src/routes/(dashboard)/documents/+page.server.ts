@@ -3,7 +3,8 @@ import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import { students } from "$lib/server/db/schema";
 import * as documentService from "$lib/server/db/services/documents";
-import { getPresignedUploadUrl } from "$lib/server/r2";
+import * as emailService from "$lib/server/email";
+import { getPresignedUploadUrl, getPresignedDownloadUrl } from "$lib/server/r2";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -19,11 +20,18 @@ export const load: PageServerLoad = async ({ locals }) => {
 		studentId = studentEntry.id;
 	}
 
-	const documents = studentId
+	const rawDocuments = studentId
 		? await documentService.listDocumentsByStudent(studentId)
 		: await db.query.documents.findMany({
 				with: { student: { with: { user: true } } },
 			});
+
+	const documents = await Promise.all(
+		rawDocuments.map(async (doc) => ({
+			...doc,
+			downloadUrl: await getPresignedDownloadUrl(doc.url),
+		})),
+	);
 
 	return {
 		documents,
@@ -41,6 +49,7 @@ export const actions: Actions = {
 		const contentType = formData.get("type")?.toString();
 		const documentType = formData.get("documentType")?.toString() as any;
 		const studentId = formData.get("studentId")?.toString();
+		const fileSize = parseInt(formData.get("size")?.toString() || "0");
 
 		if (!fileName || !contentType || !documentType || !studentId) {
 			return fail(400, { message: "Missing required fields" });
@@ -49,14 +58,13 @@ export const actions: Actions = {
 		const key = `documents/${studentId}/${crypto.randomUUID()}-${fileName}`;
 		const uploadUrl = await getPresignedUploadUrl(key, contentType);
 
-		// We'll create the document entry in the DB *after* the client uploads to R2
-		// or we can create it now as PENDING. Let's create it now.
 		const doc = await documentService.createDocument({
 			studentId,
 			name: fileName,
 			type: documentType,
-			url: key, // Store the R2 key as the URL base
+			url: key,
 			mimeType: contentType,
+			fileSize,
 		});
 
 		return {
@@ -75,6 +83,16 @@ export const actions: Actions = {
 		if (!id) return fail(400);
 
 		await documentService.updateDocumentStatus(id, "APPROVED", locals.user.id);
+
+		// Send notification
+		const doc = await db.query.documents.findFirst({
+			where: (d, { eq }) => eq(d.id, id),
+			with: { student: { with: { user: true } } }
+		});
+		if (doc?.student.user.email) {
+			await emailService.sendDocumentStatusEmail(doc.student.user.email, doc.name, "APPROVED");
+		}
+
 		return { success: true };
 	},
 
@@ -93,6 +111,16 @@ export const actions: Actions = {
 			locals.user.id,
 			reason,
 		);
+
+		// Send notification
+		const doc = await db.query.documents.findFirst({
+			where: (d, { eq }) => eq(d.id, id),
+			with: { student: { with: { user: true } } }
+		});
+		if (doc?.student.user.email) {
+			await emailService.sendDocumentStatusEmail(doc.student.user.email, doc.name, "REJECTED", reason);
+		}
+
 		return { success: true };
 	},
 };

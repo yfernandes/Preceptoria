@@ -37,6 +37,17 @@ export const documentStatusEnum = pgEnum("document_status", [
 	"EXPIRED",
 ]);
 
+export const invitationStatusEnum = pgEnum("invitation_status", [
+	"PENDING",
+	"ACCEPTED",
+	"EXPIRED",
+]);
+
+export const classStatusEnum = pgEnum("class_status", [
+	"ACTIVE",
+	"COMPLETED",
+]);
+
 // Better Auth Tables
 export const user = pgTable("user", {
 	id: text("id").primaryKey(),
@@ -93,6 +104,8 @@ export const verification = pgTable("verification", {
 export const organizations = pgTable("organization", {
 	id: uuid("id").defaultRandom().primaryKey(),
 	name: text("name").notNull(),
+	stripeCustomerId: text("stripe_customer_id"),
+	subscriptionStatus: text("subscription_status"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -126,6 +139,8 @@ export const classes = pgTable("class", {
 	courseId: uuid("course_id")
 		.notNull()
 		.references(() => courses.id),
+	supervisorId: uuid("supervisor_id").references(() => supervisors.id),
+	status: classStatusEnum("status").default("ACTIVE").notNull(),
 	startDate: timestamp("start_date").notNull(),
 	endDate: timestamp("end_date").notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -208,6 +223,28 @@ export const studentShifts = pgTable(
 	}),
 );
 
+export const studentAvailability = pgTable("student_availability", {
+	id: uuid("id").defaultRandom().primaryKey(),
+	studentId: uuid("student_id")
+		.notNull()
+		.references(() => students.id),
+	date: timestamp("date").notNull(),
+	startTime: timestamp("start_time").notNull(),
+	endTime: timestamp("end_time").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const preceptorAvailability = pgTable("preceptor_availability", {
+	id: uuid("id").defaultRandom().primaryKey(),
+	preceptorId: uuid("preceptor_id")
+		.notNull()
+		.references(() => preceptors.id),
+	date: timestamp("date").notNull(),
+	startTime: timestamp("start_time").notNull(),
+	endTime: timestamp("end_time").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const documents = pgTable("document", {
 	id: uuid("id").defaultRandom().primaryKey(),
 	studentId: uuid("student_id")
@@ -242,6 +279,21 @@ export const internshipPlacements = pgTable("internship_placement", {
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const invitations = pgTable("invitation", {
+	id: uuid("id").defaultRandom().primaryKey(),
+	email: text("email").notNull(),
+	role: userRoleEnum("role").default("Student").notNull(),
+	classId: uuid("class_id").references(() => classes.id),
+	hospitalId: uuid("hospital_id").references(() => hospitals.id),
+	invitedBy: text("invited_by")
+		.notNull()
+		.references(() => user.id),
+	token: text("token").notNull().unique(),
+	status: invitationStatusEnum("status").default("PENDING").notNull(),
+	expiresAt: timestamp("expires_at").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Relations
 export const userRelations = relations(user, ({ many, one }) => ({
 	student: one(students, { fields: [user.id], references: [students.userId] }),
@@ -257,6 +309,7 @@ export const userRelations = relations(user, ({ many, one }) => ({
 		fields: [user.id],
 		references: [preceptors.userId],
 	}),
+	invitationsSent: many(invitations),
 }));
 
 export const organizationRelations = relations(organizations, ({ many }) => ({
@@ -297,7 +350,12 @@ export const classRelations = relations(classes, ({ one, many }) => ({
 		fields: [classes.courseId],
 		references: [courses.id],
 	}),
+	supervisor: one(supervisors, {
+		fields: [classes.supervisorId],
+		references: [supervisors.id],
+	}),
 	students: many(students),
+	invitations: many(invitations),
 }));
 
 export const studentRelations = relations(students, ({ one, many }) => ({
@@ -306,6 +364,7 @@ export const studentRelations = relations(students, ({ one, many }) => ({
 	documents: many(documents),
 	placements: many(internshipPlacements),
 	shifts: many(studentShifts),
+	availabilities: many(studentAvailability),
 }));
 
 export const supervisorRelations = relations(supervisors, ({ one, many }) => ({
@@ -314,6 +373,7 @@ export const supervisorRelations = relations(supervisors, ({ one, many }) => ({
 		fields: [supervisors.schoolId],
 		references: [schools.id],
 	}),
+	classes: many(classes),
 }));
 
 export const hospitalManagerRelations = relations(
@@ -337,6 +397,7 @@ export const preceptorRelations = relations(preceptors, ({ one, many }) => ({
 		references: [hospitals.id],
 	}),
 	shifts: many(shifts),
+	availabilities: many(preceptorAvailability),
 }));
 
 export const shiftRelations = relations(shifts, ({ one, many }) => ({
@@ -386,3 +447,32 @@ export const placementRelations = relations(
 		}),
 	}),
 );
+
+export const invitationRelations = relations(invitations, ({ one }) => ({
+	inviter: one(user, {
+		fields: [invitations.invitedBy],
+		references: [user.id],
+	}),
+	class: one(classes, {
+		fields: [invitations.classId],
+		references: [classes.id],
+	}),
+	hospital: one(hospitals, {
+		fields: [invitations.hospitalId],
+		references: [hospitals.id],
+	}),
+}));
+
+export const studentAvailabilityRelations = relations(studentAvailability, ({ one }) => ({
+	student: one(students, {
+		fields: [studentAvailability.studentId],
+		references: [students.id],
+	}),
+}));
+
+export const preceptorAvailabilityRelations = relations(preceptorAvailability, ({ one }) => ({
+	preceptor: one(preceptors, {
+		fields: [preceptorAvailability.preceptorId],
+		references: [preceptors.id],
+	}),
+}));

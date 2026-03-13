@@ -5,6 +5,7 @@ import { classes } from "$lib/server/db/schema";
 export async function createClass(data: {
 	name: string;
 	courseId: string;
+	supervisorId?: string;
 	startDate: Date;
 	endDate: Date;
 }) {
@@ -39,7 +40,12 @@ export async function listClasses(courseId?: string) {
 
 export async function updateClass(
 	id: string,
-	data: Partial<{ name: string; startDate: Date; endDate: Date }>,
+	data: Partial<{
+		name: string;
+		supervisorId: string;
+		startDate: Date;
+		endDate: Date;
+	}>,
 ) {
 	const [result] = await db
 		.update(classes)

@@ -135,21 +135,20 @@ const resolvers: Record<
 > = {
 	SysAdmin: {},
 	OrgAdmin: {
-		Document: { Managed: () => true },
-		Student: { Managed: () => true },
-		Hospital: { Managed: () => true },
-		School: { Managed: () => true },
-		Course: { Managed: () => true },
-		Classes: { Managed: () => true },
+		Document: { Managed: (user: any, resourceId: string) => true },
+		Student: { Managed: (user: any, resourceId: string) => true },
+		Hospital: { Managed: (user: any, resourceId: string) => true },
+		School: { Managed: (user: any, resourceId: string) => true },
+		Course: { Managed: (user: any, resourceId: string) => true },
+		Classes: { Managed: (user: any, resourceId: string) => true },
 	},
 	HospitalManager: {
 		Student: {
-			Own: async (user, resourceId) => {
+			Own: async (user: any, resourceId: string) => {
 				const mgr = await db.query.hospitalManagers.findFirst({
 					where: eq(hospitalManagers.userId, user.id),
 				});
 				if (!mgr) return false;
-				// Check if student has a placement at this hospital
 				const placement = await db.query.internshipPlacements.findFirst({
 					where: and(
 						eq(internshipPlacements.studentId, resourceId),
@@ -160,7 +159,7 @@ const resolvers: Record<
 			},
 		},
 		Shift: {
-			Own: async (user, resourceId) => {
+			Own: async (user: any, resourceId: string) => {
 				const mgr = await db.query.hospitalManagers.findFirst({
 					where: eq(hospitalManagers.userId, user.id),
 				});
@@ -171,44 +170,80 @@ const resolvers: Record<
 				return s?.hospitalId === mgr.hospitalId;
 			},
 		},
-		Document: { Managed: () => true },
-		Classes: { Managed: () => true },
+		Document: { Managed: (user: any, resourceId: string) => true },
+		Classes: { Managed: (user: any, resourceId: string) => true },
 	},
 	Supervisor: {
 		Student: {
-			Own: async (user, resourceId) => {
+			Own: async (user: any, resourceId: string) => {
 				const sup = await db.query.supervisors.findFirst({
 					where: eq(supervisors.userId, user.id),
 				});
 				if (!sup) return false;
 				const studentEntry = await db.query.students.findFirst({
 					where: eq(students.id, resourceId),
-					with: { class: { with: { course: true } } },
+					with: { class: true },
 				});
-				return studentEntry?.class.course.schoolId === sup.schoolId;
+				return studentEntry?.class.supervisorId === sup.id;
+			},
+			Class: async (user: any, resourceId: string) => {
+				const sup = await db.query.supervisors.findFirst({
+					where: eq(supervisors.userId, user.id),
+				});
+				if (!sup) return false;
+				const studentEntry = await db.query.students.findFirst({
+					where: eq(students.id, resourceId),
+					with: { class: true },
+				});
+				return studentEntry?.class.supervisorId === sup.id;
 			},
 		},
 		Document: {
-			Students: async (user, resourceId) => {
+			Students: async (user: any, resourceId: string) => {
 				const sup = await db.query.supervisors.findFirst({
 					where: eq(supervisors.userId, user.id),
 				});
 				if (!sup) return false;
 				const doc = await db.query.documents.findFirst({
 					where: eq(documents.id, resourceId),
-					with: { student: { with: { class: { with: { course: true } } } } },
+					with: { student: { with: { class: true } } },
 				});
-				return doc?.student.class.course.schoolId === sup.schoolId;
+				return doc?.student.class.supervisorId === sup.id;
+			},
+		},
+		Shift: {
+			Assigned: async (user: any, studentId: string) => {
+				const studentDocs = await db.query.documents.findMany({
+					where: eq(documents.studentId, studentId),
+				});
+				const allApproved =
+					studentDocs.length > 0 &&
+					studentDocs.every((d) => d.status === "APPROVED");
+				return allApproved;
+			},
+		},
+		Classes: {
+			Own: async (user: any, resourceId: string) => {
+				const sup = await db.query.supervisors.findFirst({
+					where: eq(supervisors.userId, user.id),
+				});
+				if (!sup) return false;
+				const c = await db.query.classes.findFirst({
+					where: eq(classes.id, resourceId),
+				});
+				return c?.supervisorId === sup.id;
 			},
 		},
 	},
 	Student: {
 		Document: {
-			Own: async (user, resourceId) => {
+			Own: async (user: any, resourceId: string) => {
 				const studentEntry = await db.query.students.findFirst({
 					where: eq(students.userId, user.id),
+					with: { class: true },
 				});
 				if (!studentEntry) return false;
+				if (studentEntry.class.status === "COMPLETED") return false;
 				const doc = await db.query.documents.findFirst({
 					where: eq(documents.id, resourceId),
 				});
@@ -216,11 +251,21 @@ const resolvers: Record<
 			},
 		},
 		Student: {
-			Own: async (user, resourceId) => {
+			Own: async (user: any, resourceId: string) => {
 				const studentEntry = await db.query.students.findFirst({
 					where: eq(students.userId, user.id),
 				});
 				return studentEntry?.id === resourceId;
+			},
+			Class: async (user: any, resourceId: string) => {
+				const studentEntry = await db.query.students.findFirst({
+					where: eq(students.userId, user.id),
+				});
+				if (!studentEntry) return false;
+				const otherStudent = await db.query.students.findFirst({
+					where: eq(students.id, resourceId),
+				});
+				return studentEntry.classId === otherStudent?.classId;
 			},
 		},
 	},
@@ -252,12 +297,14 @@ export async function hasPermission(
 		if (permissions.includes(`${resource}:${action}_${modifier}`)) {
 			const resolver = resolvers[user.role]?.[resource]?.[modifier];
 			if (!resolver) {
-				// If no resolver defined for this modifier, default to true (legacy behavior for some modifiers)
-				// But let's be strict for Own/Managed/Students
+				// But let's be strict for core modifiers
 				if (
-					[Modifiers.Own, Modifiers.Managed, Modifiers.Students].includes(
-						modifier,
-					)
+					[
+						Modifiers.Own,
+						Modifiers.Managed,
+						Modifiers.Students,
+						Modifiers.Class,
+					].includes(modifier)
 				) {
 					return false;
 				}

@@ -1,8 +1,39 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { PageData, ActionData } from './$types';
+	import Button from '$lib/components/ui/Button.svelte';
+	import Card from '$lib/components/ui/Card.svelte';
+	import Badge from '$lib/components/ui/Badge.svelte';
+	import {
+		Upload,
+		FileText,
+		Clock,
+		CheckCircle2,
+		AlertCircle,
+		MoreVertical,
+		Eye,
+		History,
+		Search,
+		Filter,
+		XCircle,
+		ExternalLink,
+		ChevronRight,
+		ShieldCheck
+	} from 'lucide-svelte';
 
+	import { invalidateAll } from '$app/navigation';
+	import { cn } from '$lib/utils';
 	let { data, form }: { data: PageData; form: ActionData } = $props();
+
+	const documentsWithWarnings = $derived(
+		data.documents.map((doc) => {
+			if (!doc.expiresAt) return { ...doc, isExpiringSoon: false, isExpired: false };
+			const daysUntilExpiry = Math.ceil(
+				(new Date(doc.expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+			);
+			return { ...doc, isExpiringSoon: daysUntilExpiry <= 30 && daysUntilExpiry > 0, isExpired: daysUntilExpiry <= 0 };
+		})
+	);
 
 	let uploadFile: File | null = $state(null);
 	let selectedType = $state('VACCINATION_CARD');
@@ -13,14 +44,14 @@
 		if (!uploadFile || !data.studentId) return;
 
 		isUploading = true;
-
+		
 		try {
-			// 1. Get presigned URL via action
 			const formData = new FormData();
 			formData.append('name', uploadFile.name);
 			formData.append('type', uploadFile.type);
 			formData.append('documentType', selectedType);
 			formData.append('studentId', data.studentId);
+			formData.append('size', uploadFile.size.toString());
 
 			const response = await fetch('?/getUploadUrl', {
 				method: 'POST',
@@ -28,14 +59,11 @@
 			});
 
 			const result = await response.json();
-			// result is stringified JSON from SvelteKit action
-			const actionResult = JSON.parse(result.data);
 			
-			if (actionResult[1]?.uploadUrl) {
-				const uploadUrl = actionResult[1].uploadUrl;
+			if (result.type === 'success' && result.data?.uploadUrl) {
+				const { uploadUrl } = result.data;
 				
-				// 2. Upload to R2 directly from client
-				await fetch(uploadUrl, {
+				const uploadResponse = await fetch(uploadUrl, {
 					method: 'PUT',
 					body: uploadFile,
 					headers: {
@@ -43,80 +71,226 @@
 					}
 				});
 
-				alert('Documento enviado com sucesso!');
-				window.location.reload();
+				if (uploadResponse.ok) {
+					uploadFile = null;
+					await invalidateAll();
+				} else {
+					alert('Falha ao enviar arquivo para o storage.');
+				}
+			} else {
+				alert(result.data?.message || 'Falha ao obter URL de upload.');
 			}
 		} catch (err) {
 			console.error(err);
-			alert('Falha ao enviar documento.');
+			alert('Erro inesperado durante o envio.');
 		} finally {
 			isUploading = false;
 		}
 	}
+
+	const docTypeLabels: Record<string, string> = {
+		VACCINATION_CARD: 'Cartão de Vacinação',
+		PROFESSIONAL_ID: 'Identidade Profissional',
+		COMMITMENT_CONTRACT: 'Termo de Compromisso',
+		ADMISSION_FORM: 'Ficha de Admissão',
+		BADGE_PICTURE: 'Foto para Crachá',
+		OTHER: 'Outro'
+	};
 </script>
 
-<div class="p-6">
-	<h1 class="text-2xl font-bold mb-6">Documentos</h1>
+<div class="animate-in fade-in space-y-8 duration-500">
+	<div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+		<div>
+			<h1 class="text-3xl font-bold tracking-tight text-gray-900">Gestão de Documentos</h1>
+			<p class="mt-1 text-gray-500">
+				{data.isStudent
+					? 'Envie e acompanhe o status dos seus documentos.'
+					: 'Revise e aprove os documentos enviados pelos alunos.'}
+			</p>
+		</div>
+		{#if !data.isStudent}
+			<div class="flex gap-2">
+				<Button variant="outline" size="sm">
+					<History class="mr-2 h-4 w-4" />
+					Histórico de Revisões
+				</Button>
+			</div>
+		{/if}
+	</div>
 
 	{#if data.isStudent}
-		<!-- Student View: Upload and My Documents -->
-		<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-			<div class="lg:col-span-1 bg-white p-6 rounded shadow h-fit">
-				<h2 class="text-xl font-semibold mb-4">Enviar Novo Documento</h2>
-				<form onsubmit={handleUpload}>
-					<div class="mb-4">
-						<label class="block text-sm font-medium text-gray-700" for="docType">Tipo de Documento</label>
-						<select bind:value={selectedType} id="docType" class="mt-1 block w-full border rounded-md px-3 py-2">
-							<option value="VACCINATION_CARD">Cartão de Vacinação</option>
-							<option value="PROFESSIONAL_ID">Identidade Profissional (Crefito)</option>
-							<option value="COMMITMENT_CONTRACT">Termo de Compromisso</option>
-							<option value="ADMISSION_FORM">Ficha de Admissão</option>
-							<option value="BADGE_PICTURE">Foto para Crachá</option>
-							<option value="OTHER">Outro</option>
-						</select>
-					</div>
+		<div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+			<!-- Upload Section -->
+			<div class="sticky top-28 lg:col-span-4">
+				<Card
+					title="Enviar Novo Documento"
+					description="Selecione o tipo de arquivo e envie para revisão."
+				>
+					<form onsubmit={handleUpload} class="space-y-6">
+						<div class="space-y-2">
+							<label class="text-sm font-semibold text-gray-700" for="docType"
+								>Tipo de Documento</label
+							>
+							<select
+								bind:value={selectedType}
+								id="docType"
+								class="w-full cursor-pointer rounded-xl border-none bg-gray-50 px-4 py-3 text-sm transition-all outline-none focus:ring-2 focus:ring-blue-100"
+							>
+								{#each Object.entries(docTypeLabels) as [val, label]}
+									<option value={val}>{label}</option>
+								{/each}
+							</select>
+						</div>
 
-					<div class="mb-4">
-						<label class="block text-sm font-medium text-gray-700" for="file">Arquivo</label>
-						<input
-							type="file"
-							id="file"
-							onchange={(e) => (uploadFile = (e.target as HTMLInputElement).files?.[0] || null)}
-							required
-							class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-						/>
-					</div>
+						<div class="space-y-2">
+							<label class="text-sm font-semibold text-gray-700" for="file"
+								>Arquivo (PDF, JPG, PNG)</label
+							>
+							<div class="group relative">
+								<input
+									type="file"
+									id="file"
+									onchange={(e) => (uploadFile = (e.target as HTMLInputElement).files?.[0] || null)}
+									required
+									class="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+								/>
+								<div
+									class="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 p-8 text-center transition-all group-hover:border-blue-300 group-hover:bg-blue-50/50"
+								>
+									<div
+										class="rounded-xl bg-white p-3 shadow-sm transition-transform group-hover:scale-110"
+									>
+										<Upload class="h-6 w-6 text-blue-600" />
+									</div>
+									<div class="mt-1 text-xs font-bold text-gray-900">
+										{uploadFile ? uploadFile.name : 'Clique para selecionar'}
+									</div>
+									<p class="text-[10px] font-medium text-gray-400">Tamanho máximo: 10MB</p>
+								</div>
+							</div>
+						</div>
 
-					<button
-						type="submit"
-						disabled={isUploading}
-						class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium disabled:bg-blue-300"
-					>
-						{isUploading ? 'Enviando...' : 'Enviar Documento'}
-					</button>
-				</form>
+						<Button
+							type="submit"
+							disabled={isUploading || !uploadFile}
+							class="h-12 w-full rounded-xl shadow-lg shadow-blue-100"
+						>
+							{#if isUploading}
+								<Clock class="mr-2 h-4 w-4 animate-spin" />
+								Enviando...
+							{:else}
+								<ShieldCheck class="mr-2 h-4 w-4" />
+								Enviar para Auditoria
+							{/if}
+						</Button>
+					</form>
+				</Card>
 			</div>
 
-			<div class="lg:col-span-2 bg-white p-6 rounded shadow">
-				<h2 class="text-xl font-semibold mb-4">Meus Documentos</h2>
+			<!-- Student History Section -->
+			<div class="space-y-6 lg:col-span-8">
+				<h2 class="flex items-center gap-2 text-xl font-bold text-gray-900">
+					<History class="h-5 w-5 text-gray-400" />
+					Seus Documentos Recentes
+				</h2>
+
 				{#if data.documents.length === 0}
-					<p class="text-gray-500 italic">Você ainda não enviou nenhum documento.</p>
+					<div
+						class="rounded-3xl border-2 border-dashed border-gray-100 bg-gray-50/50 py-20 text-center"
+					>
+						<div
+							class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm"
+						>
+							<FileText class="h-8 w-8 text-gray-200" />
+						</div>
+						<p class="font-medium text-gray-500 italic">Você ainda não enviou nenhum documento.</p>
+					</div>
 				{:else}
-					<div class="space-y-4">
-						{#each data.documents as doc}
-							<div class="border rounded p-4 flex justify-between items-center">
-								<div>
-									<p class="font-medium">{doc.name}</p>
-									<p class="text-xs text-gray-500">{doc.type} • {new Date(doc.createdAt).toLocaleDateString()}</p>
+					<div class="grid grid-cols-1 gap-4">
+						{#each documentsWithWarnings as doc}
+							<div
+								class={cn(
+									"group rounded-2xl border p-5 shadow-sm transition-all hover:shadow-md",
+									doc.isExpired ? "border-red-200 bg-red-50/30" : 
+									doc.isExpiringSoon ? "border-amber-200 bg-amber-50/30" : "border-gray-100 bg-white"
+								)}
+							>
+								<div class="flex items-start justify-between">
+									<div class="flex items-center gap-4">
+										<div
+											class={cn(
+												"flex h-12 w-12 items-center justify-center rounded-xl shadow-inner transition-colors",
+												doc.isExpired ? "bg-red-100 text-red-600" :
+												doc.isExpiringSoon ? "bg-amber-100 text-amber-600" : "bg-gray-50 text-gray-400 group-hover:bg-blue-50 group-hover:text-blue-600"
+											)}
+										>
+											<FileText class="h-6 w-6" />
+										</div>
+										<div>
+											<h3 class="leading-tight font-bold text-gray-900">{doc.name}</h3>
+											<p class="mt-1 text-xs font-medium text-gray-500">
+												{docTypeLabels[doc.type] || doc.type} • {new Date(
+													doc.createdAt
+												).toLocaleDateString()}
+											</p>
+											{#if doc.expiresAt}
+												<div class={cn(
+													"mt-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-tight",
+													doc.isExpired ? "text-red-600" : doc.isExpiringSoon ? "text-amber-600" : "text-gray-400"
+												)}>
+													<AlertCircle class="h-3 w-3" />
+													Expira em: {new Date(doc.expiresAt).toLocaleDateString()}
+													{doc.isExpired ? '(EXPIRADO)' : doc.isExpiringSoon ? '(EXPIRA EM BREVE)' : ''}
+												</div>
+											{/if}
+										</div>
+									</div>
+
+									<div class="flex items-center gap-3">
+										<a 
+											href={doc.downloadUrl} 
+											target="_blank" 
+											rel="noopener noreferrer"
+											class="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+										>
+											<Eye class="h-4 w-4" />
+										</a>
+										{#if doc.status === 'APPROVED'}
+											<Badge
+												variant="success"
+												class="border-emerald-100 bg-emerald-50 px-3 py-1 text-emerald-700"
+											>
+												<CheckCircle2 class="mr-1 h-3 w-3" />
+												Aprovado
+											</Badge>
+										{:else if doc.status === 'REJECTED'}
+											<Badge
+												variant="error"
+												class="border-rose-100 bg-rose-50 px-3 py-1 text-rose-700"
+											>
+												<XCircle class="mr-1 h-3 w-3" />
+												Rejeitado
+											</Badge>
+										{:else}
+											<Badge
+												variant="warning"
+												class="border-amber-100 bg-amber-50 px-3 py-1 text-amber-700"
+											>
+												<Clock class="mr-1 h-3 w-3" />
+												Pendente
+											</Badge>
+										{/if}
+									</div>
 								</div>
-								<div class="flex items-center gap-4">
-									<span class="px-2 py-1 rounded text-xs font-bold {doc.status === 'APPROVED' ? 'bg-green-100 text-green-800' : doc.status === 'REJECTED' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}">
-										{doc.status}
-									</span>
-									{#if doc.status === 'REJECTED'}
-										<p class="text-xs text-red-600 max-w-xs">{doc.rejectionReason}</p>
-									{/if}
-								</div>
+
+								{#if doc.status === 'REJECTED'}
+									<div
+										class="mt-4 flex gap-2 rounded-xl border border-rose-100 bg-rose-50 p-3 text-[11px] font-bold text-rose-700"
+									>
+										<AlertCircle class="h-4 w-4 shrink-0" />
+										<span>Motivo: {doc.rejectionReason}</span>
+									</div>
+								{/if}
 							</div>
 						{/each}
 					</div>
@@ -124,59 +298,149 @@
 			</div>
 		</div>
 	{:else}
-		<!-- Supervisor/Admin View: Verification Queue -->
-		<div class="bg-white p-6 rounded shadow">
-			<h2 class="text-xl font-semibold mb-4">Fila de Verificação</h2>
-			<div class="overflow-x-auto">
-				<table class="min-w-full divide-y divide-gray-200">
-					<thead class="bg-gray-50">
-						<tr>
-							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estudante</th>
-							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Documento</th>
-							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ações</th>
-						</tr>
-					</thead>
-					<tbody class="bg-white divide-y divide-gray-200">
-						{#each data.documents as doc}
-							<tr>
-								<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-									{doc.student.user.name}
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-									<div>{doc.name}</div>
-									<div class="text-xs">{doc.type}</div>
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap">
-									<span class="px-2 py-1 rounded text-xs font-bold {doc.status === 'APPROVED' ? 'bg-green-100 text-green-800' : doc.status === 'REJECTED' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}">
-										{doc.status}
-									</span>
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-									<div class="flex gap-2">
-										<a href="/documents/{doc.id}" class="text-blue-600 hover:underline">Ver</a>
-										{#if doc.status === 'PENDING'}
-											<form method="POST" action="?/approve" use:enhance>
-												<input type="hidden" name="id" value={doc.id} />
-												<button type="submit" class="text-green-600 hover:underline">Aprovar</button>
-											</form>
-											<button onclick={() => {
-												const reason = prompt('Motivo da rejeição:');
-												if (reason) {
-													const formData = new FormData();
-													formData.append('id', doc.id);
-													formData.append('reason', reason);
-													fetch('?/reject', { method: 'POST', body: formData }).then(() => window.location.reload());
-												}
-											}} class="text-red-600 hover:underline">Rejeitar</button>
-										{/if}
-									</div>
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
+		<!-- Supervisor View -->
+		<div class="space-y-6">
+			<div class="flex flex-col gap-4 sm:flex-row">
+				<div class="relative flex-1">
+					<Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+					<input
+						type="text"
+						placeholder="Buscar por nome do estudante ou documento..."
+						class="w-full rounded-2xl border border-gray-100 bg-white py-3 pr-4 pl-10 text-sm shadow-sm transition-all outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+					/>
+				</div>
+				<Button variant="outline" class="flex items-center gap-2 rounded-2xl">
+					<Filter class="h-4 w-4" />
+					Status: Todos
+				</Button>
 			</div>
+
+			<Card contentClass="p-0 overflow-visible">
+				<div class="overflow-x-auto">
+					<table class="min-w-full divide-y divide-gray-50">
+						<thead>
+							<tr class="bg-gray-50/50">
+								<th
+									class="px-8 py-5 text-left text-xs font-bold tracking-widest text-gray-400 uppercase"
+									>Estudante</th
+								>
+								<th
+									class="px-8 py-5 text-left text-xs font-bold tracking-widest text-gray-400 uppercase"
+									>Documento</th
+								>
+								<th
+									class="px-8 py-5 text-left text-xs font-bold tracking-widest text-gray-400 uppercase"
+									>Status</th
+								>
+								<th
+									class="px-8 py-5 text-right text-xs font-bold tracking-widest text-gray-400 uppercase"
+									>Ações</th
+								>
+							</tr>
+						</thead>
+						<tbody class="divide-y divide-gray-50">
+							{#each documentsWithWarnings as doc}
+								<tr class="group transition-colors hover:bg-gray-50/50">
+									<td class="px-8 py-5 whitespace-nowrap">
+										<div class="flex items-center gap-3">
+											<div
+												class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-sm font-bold text-blue-600 shadow-inner"
+											>
+												{doc.student.user.name?.charAt(0)}
+											</div>
+											<div class="text-sm font-bold tracking-tight text-gray-900">
+												{doc.student.user.name}
+												{#if doc.expiresAt}
+													{@const days = Math.ceil((new Date(doc.expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}
+													{#if days <= 30}
+														<span class={cn(
+															"ml-2 rounded-full px-2 py-0.5 text-[8px] font-black uppercase",
+															days <= 0 ? "bg-red-100 text-red-600" : "bg-amber-100 text-amber-600"
+														)}>
+															{days <= 0 ? 'Expirado' : 'Expira em breve'}
+														</span>
+													{/if}
+												{/if}
+											</div>
+										</div>
+									</td>
+									<td class="px-8 py-5 whitespace-nowrap">
+										<div class="mb-1 text-sm leading-none font-bold text-gray-900">{doc.name}</div>
+										<div class="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+											{docTypeLabels[doc.type] || doc.type}
+										</div>
+									</td>
+									<td class="px-8 py-5 whitespace-nowrap">
+										{#if doc.status === 'APPROVED'}
+											<Badge
+												variant="success"
+												class="border-none bg-emerald-50 font-bold text-emerald-700">APROVADO</Badge
+											>
+										{:else if doc.status === 'REJECTED'}
+											<Badge variant="error" class="border-none bg-rose-50 font-bold text-rose-700"
+												>REJEITADO</Badge
+											>
+										{:else}
+											<Badge
+												variant="warning"
+												class="border-none bg-amber-50 font-bold text-amber-700">PENDENTE</Badge
+											>
+										{/if}
+									</td>
+									<td class="px-8 py-5 text-right whitespace-nowrap">
+										<div class="flex items-center justify-end gap-2">
+											<a
+												href={doc.downloadUrl}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="flex h-9 items-center justify-center rounded-xl border border-blue-100 bg-white px-4 text-xs font-bold text-blue-600 hover:bg-blue-50 transition-all shadow-sm"
+											>
+												<Eye class="mr-2 h-4 w-4" />
+												Analisar
+											</a>
+											
+											{#if doc.status === 'PENDING'}
+												<div class="flex gap-2">
+													<form method="POST" action="?/approve" use:enhance>
+														<input type="hidden" name="id" value={doc.id} />
+														<Button 
+															type="submit"
+															variant="ghost" 
+															size="icon" 
+															class="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+														>
+															<CheckCircle2 class="h-4 w-4" />
+														</Button>
+													</form>
+													<form 
+														method="POST" 
+														action="?/reject" 
+														use:enhance={({ formData }) => {
+															const reason = prompt('Motivo da rejeição:');
+															if (!reason) return;
+															formData.set('reason', reason);
+														}}
+													>
+														<input type="hidden" name="id" value={doc.id} />
+														<Button 
+															type="submit"
+															variant="ghost" 
+															size="icon" 
+															class="h-9 w-9 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100"
+														>
+															<XCircle class="h-4 w-4" />
+														</Button>
+													</form>
+												</div>
+											{/if}
+										</div>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			</Card>
 		</div>
 	{/if}
 </div>
